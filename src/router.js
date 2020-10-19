@@ -23,9 +23,19 @@ const routes = [
         component:() => import('@/views/Home/Home.vue')
       },
       {
+        path: '/info',
+        name: 'info',
+        component:() => import('@/views/testcaseManage/testcaseManage.vue')
+      },
+      {
         path: '/testcase',
         name: 'test-case',
         component:() => import('@/views/testcaseManage/testcaseManage.vue')
+      },
+        {
+        path: '/testexecute',
+        name: 'test-execute',
+        component:() => import('@/views/testexecute/testexecute.vue')
       },
       {
         path: '/testresult',

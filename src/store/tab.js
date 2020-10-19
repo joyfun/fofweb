@@ -37,9 +37,7 @@ export default {
     closeTab(state,val) {
       let result = state.tablist.findIndex(item => item.name === val.name)
       state.tablist.splice(result,1)
-
     }
-
   },
   actions: {}
 }

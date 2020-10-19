@@ -50,13 +50,19 @@ export default {
                     path: '/testcase',
                     label: '测试用例',
                     name:'test-case',
-                    icon: 'video-play'
+                    icon: 's-operation'
+                },
+              {
+                    path: '/testexecute',
+                    label: '测试执行',
+                    name:'test-execute',
+                    icon: 's-promotion'
                 },
                  {
                     path: '/testresult',
                     label: '测试结果',
                     name:'test-result',
-                    icon: 'user'
+                    icon: 's-order'
                 },
                 {
                     label: '其他',

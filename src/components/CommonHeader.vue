@@ -15,7 +15,7 @@
               <span class="el-dropdown-link"><img :src="userImg" alt="" class="user"></span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item >个人中心</el-dropdown-item>
-                <el-dropdown-item >退出</el-dropdown-item>
+                <el-dropdown-item @click="clickPerson(item)">退出</el-dropdown-item>
 
               </el-dropdown-menu>
             </el-dropdown>
@@ -31,6 +31,12 @@ export default {
             current: state => state.tab.currentMenu
         })
     },
+      methods: {
+        clickPerson(item) {
+          this.$router.push({name:item.name})
+          this.$store.commit('selectMenu',item);
+        }
+      },
     data(){
         return{
            userImg:require('../assets/images/user.png')
