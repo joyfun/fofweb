@@ -25,35 +25,39 @@
     :data="tableData"
     tooltip-effect="dark"
     style="width: 100%;margin-top:20px;"
-    @selection-change="handleSelectionChange"
-    @row-click = "clickSelection"
-      >
+    @selection-change="handleSelectionChange">
     <el-table-column
       type="selection"
       width="55">
     </el-table-column>
-<!--      测试ID-->
-    <el-table-column
-      prop="id"
-      label="测试用例ID"
-      width="120">
-    </el-table-column>
 <!--      用例编号-->
-     <el-table-column
-      prop="test_id"
+    <el-table-column
+      prop="test_caseid"
       label="用例编号"
       show-overflow-tooltip>
     </el-table-column>
-<!--      测试项目-->
+<!--      日期-->
     <el-table-column
       prop="test_pro"
       label="测试项目"
       show-overflow-tooltip>
     </el-table-column>
-<!--      测试用例是否关联-->
+<!--      测试项目-->
     <el-table-column
-      prop="is_connect"
-      label="测试用例是否关联"
+      prop="test_condition"
+      label="预置条件"
+      show-overflow-tooltip>
+    </el-table-column>
+<!--      日期-->
+    <el-table-column
+      prop="test_time"
+      label="测试时间"
+      show-overflow-tooltip>
+    </el-table-column>
+<!--      重要级别-->
+    <el-table-column
+      prop="test_level"
+      label="重要级别"
       show-overflow-tooltip>
     </el-table-column>
 <!--      测试输入-->
@@ -62,50 +66,26 @@
       label="测试输入"
       show-overflow-tooltip>
     </el-table-column>
-<!--      测试等级-->
-    <el-table-column
-      prop="test_level"
-      label="测试等级"
-      show-overflow-tooltip>
-    </el-table-column>
-<!--      测试模块-->
-    <el-table-column
-      prop="test_module"
-      label="测试模块"
-      show-overflow-tooltip>
-    </el-table-column>
-<!--      测试输出-->
-    <el-table-column
-      prop="test_output"
-      label="测试输出"
-      show-overflow-tooltip>
-    </el-table-column>
-<!--      测试步骤-->
+<!--      操作步骤-->
     <el-table-column
       prop="test_step"
-      label="测试步骤"
+      label="操作步骤"
       show-overflow-tooltip>
     </el-table-column>
-<!--      测试目标-->
+<!--      预期输出-->
     <el-table-column
-      prop="test_target"
-      label="测试目标"
+      prop="test_output"
+      label="预期输出"
       show-overflow-tooltip>
-    </el-table-column>
-    <!--      测试-->
-    <el-table-column
-      prop=""
-      label="测试"
-      show-overflow-tooltip>
-        <el-button @click="clickSelection()"  size="mini">运行</el-button>
     </el-table-column>
 
   </el-table>
       <div style="display: flex;justify-content: space-between">
-      <div style="margin-top: 20px; width: 250px; height: 120px;">
-        <el-button  size="small" @click="delSelection()">删除</el-button>
-        <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
-        <el-button  size="small" @click="allrun()">全部运行</el-button>
+      <div style="margin-top: 20px; width: 400px; height: 120px;">
+        <el-button @click="delSelection()">删除</el-button>
+          <el-button @click="">立即执行</el-button>
+        <el-button @click="">定时执行</el-button>
+        <el-button @click="toggleSelection()">取消选择</el-button>
       </div>
       <div class="block" style=" margin-top: 25px; height: 120px; ">
         <el-pagination
@@ -131,7 +111,8 @@
 <!--7、操作步骤;-->
 <!--8、预期输出-->
 <script>
-    import axis from 'axios'
+  import axis from "axios";
+
   export default {
     data() {
       return {
@@ -156,15 +137,6 @@
           this.$refs.multipleTable.clearSelection();
         }
       },
-      //
-      allrun() {
-        // console.log(this.multipleSelection)
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-              console.log(this.multipleSelection[i].test_id);
-              this.request_excute(this.multipleSelection[i].test_id);
-        }
-      },
-      // 选中
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
@@ -179,20 +151,13 @@
             }
          }
       },
-      //
-       clickSelection(row){
-           console.log(row.test_id)
-           this.request_excute(row.test_id)
-        },
-
-      // 分页方法
+      //分页方法
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
         this.PageSize = val;
         console.log(this.PageSize)
         console.log(this.currentPage)
       },
-      // 跳转
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
         this.currentPage = val;
@@ -212,44 +177,32 @@
         }
         console.log(startindex,endindex)
           this.tableData =  this.totaltableData.slice(startindex ,endindex);
+        console.log(this.tableData)
       },
       //时间选择器方法
       handeldateChange(){
-        console.log(this.value2[0]);
-        console.log(this.value2[1]);
+        console.log(this.value2[0])
+        console.log(this.value2[1])
       },
-      //
+        //
         async getList(){
-            await axis.get('/api/testcase/')//axis后面的.get可以省略；
+            await axis.get('/api/testresult/')//axis后面的.get可以省略；
                         .then(
                             (response) => {
                                 console.log(response);
                                 this.totaltableData = response.data['result'];
+                                //初始第一页数据
                                 this.tableData = this.totaltableData.slice(0 ,9);
                             })
                         .catch(
                             (error) => {
                                 console.log(error);
                     });
-            },
-              //
-        request_excute(test_id){
-            let url = '/api/testcase/case/?testid=' + test_id
-            console.log(url)
-            axis.get(url)//axis后面的.get可以省略；
-                        .then(
-                            (response) => {
-                                console.log(response);
-                            })
-                        .catch(
-                            (error) => {
-                                console.log(error);
-                    });
-            },
-        },
-
-      async created() {
-            this.getList();
+        }
+    },
+      created() {
+        //获取全部数据
+        this.getList();
       }
   }
 </script>

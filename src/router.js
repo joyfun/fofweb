@@ -22,11 +22,11 @@ const routes = [
         name: 'home',
         component:() => import('@/views/Home/Home.vue')
       },
-      {
-        path: '/info',
-        name: 'info',
-        component:() => import('@/views/testcaseManage/testcaseManage.vue')
-      },
+      // {
+      //   path: '/info',
+      //   name: 'info',
+      //   component:() => import('@/views/testcaseManage/testcaseManage.vue')
+      // },
       {
         path: '/testcase',
         name: 'test-case',
@@ -40,7 +40,7 @@ const routes = [
       {
         path: '/testresult',
         name: 'test-result',
-        component:() => import('@/views/UserManage/UserManage.vue')
+        component:() => import('@/views/testresult/testresult.vue')
       },
       {
         path: '/page1',
