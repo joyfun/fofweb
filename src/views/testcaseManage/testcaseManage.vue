@@ -25,9 +25,9 @@
     :data="tableData"
     tooltip-effect="dark"
     style="width: 100%;margin-top:20px;"
-    @selection-change="handleSelectionChange"
-    @row-click = "clickSelection"
-      >
+    @selection-change="handleSelectionChange"      >
+<!--    @row-click = "Selection"-->
+
     <el-table-column
       type="selection"
       width="55">
@@ -37,67 +37,79 @@
       prop="id"
       label="测试用例ID"
       width="120">
+      <template slot-scope="scope">{{ scope.row.id }}</template>
     </el-table-column>
 <!--      用例编号-->
      <el-table-column
       prop="test_id"
       label="用例编号"
       show-overflow-tooltip>
+      <template slot-scope="scope">{{ scope.row.test_id }}</template>
     </el-table-column>
 <!--      测试项目-->
     <el-table-column
       prop="test_pro"
       label="测试项目"
       show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.test_pro }}</template>
     </el-table-column>
 <!--      测试用例是否关联-->
     <el-table-column
       prop="is_connect"
       label="测试用例是否关联"
       show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.is_connect }}</template>
     </el-table-column>
 <!--      测试输入-->
     <el-table-column
       prop="test_input"
       label="测试输入"
       show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.test_input }}</template>
     </el-table-column>
 <!--      测试等级-->
     <el-table-column
       prop="test_level"
       label="测试等级"
       show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.test_level }}</template>
     </el-table-column>
 <!--      测试模块-->
     <el-table-column
       prop="test_module"
       label="测试模块"
       show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.test_module }}</template>
     </el-table-column>
 <!--      测试输出-->
     <el-table-column
       prop="test_output"
       label="测试输出"
       show-overflow-tooltip>
+      <template slot-scope="scope">{{ scope.row.test_output }}</template>
     </el-table-column>
 <!--      测试步骤-->
     <el-table-column
       prop="test_step"
       label="测试步骤"
       show-overflow-tooltip>
+      <template slot-scope="scope">{{ scope.row.test_step }}</template>
     </el-table-column>
 <!--      测试目标-->
     <el-table-column
       prop="test_target"
       label="测试目标"
       show-overflow-tooltip>
+    <template slot-scope="scope">{{ scope.row.test_target }}</template>
     </el-table-column>
     <!--      测试-->
     <el-table-column
       prop=""
       label="测试"
       show-overflow-tooltip>
-        <el-button @click="clickSelection()"  size="mini">运行</el-button>
+    <template slot-scope="scope">
+        <el-button @click="clickSelection(scope.$index, scope.row)"  size="mini">运行</el-button>
+    </template>
     </el-table-column>
 
   </el-table>
@@ -135,6 +147,7 @@
   export default {
     data() {
       return {
+        rowdata: '',
         value2: '',
         input: '',
           tableData:[],
@@ -179,12 +192,11 @@
             }
          }
       },
-      //
-       clickSelection(row){
+       clickSelection(index, row){
+            // console.log(index, row);
            console.log(row.test_id)
            this.request_excute(row.test_id)
         },
-
       // 分页方法
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
@@ -235,7 +247,7 @@
               //
         request_excute(test_id){
             let url = '/api/testcase/case/?testid=' + test_id
-            console.log(url)
+            // console.log(url)
             axis.get(url)//axis后面的.get可以省略；
                         .then(
                             (response) => {

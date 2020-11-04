@@ -11,7 +11,7 @@ module.exports = {
                 target: 'http://127.0.0.1:8081/', //接口域名
                 changeOrigin: true,             //是否跨域
                 ws: true,                       //是否代理 websockets
-                secure: true,                   //是否https接口
+                secure: false,                   //是否https接口
                 pathRewrite: {                  //路径重置
                     '^/api/testcase/': '/api/testcase/'
                 }
@@ -20,7 +20,7 @@ module.exports = {
                 target: 'http://127.0.0.1:8081/', //接口域名
                 changeOrigin: true,             //是否跨域
                 ws: true,                       //是否代理 websockets
-                secure: true,                   //是否https接口
+                secure: false,                   //是否https接口
                 pathRewrite: {                  //路径重置
                     '^/api/testresult/': '/api/testresult/'
                 }
@@ -29,7 +29,7 @@ module.exports = {
                 target: 'http://127.0.0.1:8081/', //接口域名
                 changeOrigin: true,             //是否跨域
                 ws: true,                       //是否代理 websockets
-                secure: true,                   //是否https接口
+                secure: false,                   //是否https接口
                 pathRewrite: {                  //路径重置
                     '^/api/testcase/case/': '/api/testcase/case/'
                 }
@@ -38,7 +38,7 @@ module.exports = {
                 target: 'http://127.0.0.1:8081/', //接口域名
                 changeOrigin: true,             //是否跨域
                 ws: true,                       //是否代理 websockets
-                secure: true,                   //是否https接口
+                secure: false,                   //是否https接口
                 pathRewrite: {                  //路径重置
                     '^/api/tetask/': '/api/tetask/'
                 }
@@ -47,9 +47,18 @@ module.exports = {
                 target: 'http://127.0.0.1:8081/', //接口域名
                 changeOrigin: true,             //是否跨域
                 ws: true,                       //是否代理 websockets
-                secure: true,                   //是否https接口
+                secure: false,                   //是否https接口
                 pathRewrite: {                  //路径重置
                     '^/api/temoudle/': '/api/temoudle/'
+                }
+            },
+             '/api/testtask/': {
+                target: 'http://127.0.0.1:8081/', //接口域名
+                changeOrigin: true,             //是否跨域
+                ws: true,                       //是否代理 websockets
+                secure: false,                   //是否https接口
+                pathRewrite: {                  //路径重置
+                    '^/api/testtask/': '/api/testtask/'
                 }
             },
         },

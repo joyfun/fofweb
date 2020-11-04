@@ -25,7 +25,8 @@
                 :data="tableData"
                 tooltip-effect="dark"
                 style="width: 100%;margin-top:20px;"
-                @selection-change="handleSelectionChange">
+                @selection-change="handleSelectionChange"
+            >
             <el-table-column
                     type="selection"
                     width="55">
@@ -35,43 +36,58 @@
                     prop="id"
                     label="任务ID"
                     width="120">
+                <template slot-scope="scope">{{ scope.row.id }}</template>
             </el-table-column>
             <!--测试模块ID-->
             <el-table-column
                     prop="taskname"
                     label="任务名"
                     width="120">
+                <template slot-scope="scope">{{ scope.row.taskname }}</template>
             </el-table-column>
             <!--模块ID-->
             <el-table-column
                     prop="moudle_id"
                     label="模块ID"
                     show-overflow-tooltip>
+                <template slot-scope="scope">{{ scope.row.moudle_id }}</template>
             </el-table-column>
             <!--模块名字-->
             <el-table-column
                     prop="moudle_name"
                     label="模块名字"
                     show-overflow-tooltip>
+                <template slot-scope="scope">{{ scope.row.moudle_name }}</template>
             </el-table-column>
             <!--模块文件名-->
             <el-table-column
                     prop="task_id"
                     label="任务celery_ID"
                     show-overflow-tooltip>
+                 <template slot-scope="scope">{{ scope.row.task_id }}</template>
             </el-table-column>
-            <!--测试类-->
+            <!--任务类型-->
             <el-table-column
                     prop="task_type"
                     label="任务类型"
                     show-overflow-tooltip>
+                <template slot-scope="scope">{{ scope.row.task_type }}</template>
+            </el-table-column>
+                        <!--测试类-->
+            <el-table-column
+                    prop="task_context"
+                    label="运行详情"
+                    show-overflow-tooltip>
+                <template slot-scope="scope">{{ scope.row.task_context }}</template>
             </el-table-column>
             <!--      测试-->
             <el-table-column
               prop=""
               label="测试"
               show-overflow-tooltip>
-                <el-button @click="clickSelection()"  size="mini">运行</el-button>
+                 <template slot-scope="scope">
+                <el-button @click="clickSelection(scope.$index, scope.row)"  size="mini">停止任务</el-button>
+                </template>
             </el-table-column>
         </el-table>
         <div style="display: flex;justify-content: space-between">
@@ -99,10 +115,10 @@
                 v-model="visible">
             <el-form ref="form" :model="form" label-width="80px">
                 <el-form-item label="任务名称">
-                    <el-input v-model="form.taskname"></el-input>
+                    <el-input v-model="form.task_name"></el-input>
                 </el-form-item>
                 <el-form-item label="模块名">
-                    <el-select v-model="form.moudle_id" placeholder="请选择测试模块">
+                    <el-select v-model="form.moudleid" placeholder="请选择测试模块">
                         <el-option  v-for="item in from_initdata.moudle_list" :label="item.moudle_name" :value="item.id">
                         </el-option>
                     </el-select>
@@ -116,13 +132,22 @@
                 <el-form-item label="活动时间">
                     <el-col :span="11">
                         <el-date-picker type="date" placeholder="选择日期" v-model="form.date1"
-                                        style="width: 100%;"></el-date-picker>
+                                        style="width: 100%;" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"
+
+                        ></el-date-picker>
                     </el-col>
                     <el-col class="line" :span="2">-</el-col>
                     <el-col :span="11">
                         <el-time-picker type="fixed-time" placeholder="选择时间" v-model="form.date2"
-                                        style="width: 100%;"></el-time-picker>
+                                        style="width: 100%;" format="HH 时 mm 分 ss 秒" value-format="HH-mm-ss"
+                        ></el-time-picker>
                     </el-col>
+                </el-form-item>
+                <el-form-item label="模块名">
+                    <el-select v-model="form.date3" placeholder="请选择周期性任务间隔">
+                        <el-option  v-for="item in from_initdata.stepdate" :label="item" :value="item">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <div style="text-align: right; margin: 0">
@@ -142,14 +167,16 @@
                 visible: false,
                 from_initdata: {
                     moudle_list : [],
+                    stepdate:[1,5,10,30,60,300],
                     task_type_list : [{ 'type_task': '定时任务','taskid':1 },{ 'type_task': '周期性任务' ,'taskid':2 }],
                 },
                 form: {
-                    taskname: '',
-                    moudle_id: '',
+                    task_name: '',
+                    moudleid: '',
                     task_type: '',
                     date1: '',
                     date2: '',
+                    date3:'',
                 },
                 input: '',
                 tableData: [],
@@ -184,6 +211,12 @@
                         }
                     }
                 }
+            },
+            //
+            clickSelection(index, row){
+               console.log(index, row.id);
+               // console.log(row.taskid)
+               // this.request_excute(row.taskid)
             },
             //分页方法
             handleSizeChange(val) {
@@ -251,7 +284,17 @@
             confirm(){
                 this.visible = false;
                 console.log(this.form)
-
+                let url = '/api/testtask/?moudleid=' + this.form.moudleid + '&date1=' + this.form.date1 + '&date2=' + this.form.date2+ '&date3=' + this.form.date3 + '&task_name=' + this.form.task_name + '&task_type=' + this.form.task_type
+                console.log(url)
+                axis.get(url)//axis后面的.get可以省略；
+                            .then(
+                                (response) => {
+                                    console.log(response);
+                                })
+                            .catch(
+                                (error) => {
+                                    console.log(error);
+                        });
             },
             cancel(){
                  this.visible = false;
