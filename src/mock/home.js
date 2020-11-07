@@ -89,44 +89,6 @@ export default {
           date: ['20191001', '20191002', '20191003', '20191004', '20191005', '20191006', '20191007'],
           data: List
         },
-        tableData: [
-          {
-            name: 'ES6',
-            todayBuy: Mock.Random.float(100, 1000, 0, 2),
-            monthBuy: Mock.Random.float(3000, 5000, 0, 2),
-            totalBuy: Mock.Random.float(40000, 1000000, 0, 2)
-          },
-          {
-            name: '小程序',
-            todayBuy: Mock.Random.float(100, 1000, 0, 2),
-            monthBuy: Mock.Random.float(3000, 5000, 0, 2),
-            totalBuy: Mock.Random.float(40000, 1000000, 0, 2)
-          },
-          {
-            name: 'Vue',
-            todayBuy: Mock.Random.float(100, 1000, 0, 2),
-            monthBuy: Mock.Random.float(3000, 5000, 0, 2),
-            totalBuy: Mock.Random.float(40000, 1000000, 0, 2)
-          },
-          {
-            name: 'springboot',
-            todayBuy: Mock.Random.float(100, 1000, 0, 2),
-            monthBuy: Mock.Random.float(3000, 5000, 0, 2),
-            totalBuy: Mock.Random.float(40000, 1000000, 0, 2)
-          },
-          {
-            name: 'React',
-            todayBuy: Mock.Random.float(100, 1000, 0, 2),
-            monthBuy: Mock.Random.float(3000, 5000, 0, 2),
-            totalBuy: Mock.Random.float(40000, 1000000, 0, 2)
-          },
-          {
-            name: 'Redis',
-            todayBuy: Mock.Random.float(100, 1000, 0, 2),
-            monthBuy: Mock.Random.float(3000, 5000, 0, 2),
-            totalBuy: Mock.Random.float(40000, 1000000, 0, 2)
-          }
-        ]
       }
     }
   }

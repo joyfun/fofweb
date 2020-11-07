@@ -61,6 +61,36 @@ module.exports = {
                     '^/api/testtask/': '/api/testtask/'
                 }
             },
+
+
+
+            '/api/chartdata1/': {
+                target: 'http://127.0.0.1:8081/', //接口域名
+                changeOrigin: true,             //是否跨域
+                ws: true,                       //是否代理 websockets
+                secure: false,                   //是否https接口
+                pathRewrite: {                  //路径重置
+                    '^/api/chartdata1/': '/api/chartdata1/'
+                }
+            },
+             '/api/chartdata2/': {
+                target: 'http://127.0.0.1:8081/', //接口域名
+                changeOrigin: true,             //是否跨域
+                ws: true,                       //是否代理 websockets
+                secure: false,                   //是否https接口
+                pathRewrite: {                  //路径重置
+                    '^/api/chartdata2/': '/api/chartdata2/'
+                }
+            },
+            '/api/chartdata3/': {
+                target: 'http://127.0.0.1:8081/', //接口域名
+                changeOrigin: true,             //是否跨域
+                ws: true,                       //是否代理 websockets
+                secure: false,                   //是否https接口
+                pathRewrite: {                  //路径重置
+                    '^/api/chartdata3/': '/api/chartdata3/'
+                }
+            },
         },
     },
 }

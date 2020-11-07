@@ -80,7 +80,19 @@ export default {
                             label: '页面2',
                             name:'page2',
                             icon:'setting'
-                        }
+                        },
+                        {
+                            path: '/page3',
+                            label: '页面3',
+                            name:'page3',
+                            icon:'setting'
+                        },
+                        {
+                            path: '/page4',
+                            label: '页面4',
+                            name:'page4',
+                            icon:'setting'
+                        },
                     ]
                 },
             ]

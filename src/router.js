@@ -22,11 +22,6 @@ const routes = [
         name: 'home',
         component:() => import('@/views/Home/Home.vue')
       },
-      // {
-      //   path: '/info',
-      //   name: 'info',
-      //   component:() => import('@/views/testcaseManage/testcaseManage.vue')
-      // },
       {
         path: '/testcase',
         name: 'test-case',
@@ -51,6 +46,16 @@ const routes = [
         path: '/page2',
         name: 'page2',
         component:() => import('@/views/Other/PageTwo.vue')
+      },
+        {
+        path: '/page3',
+        name: 'page3',
+        component:() => import('@/views/Other/PageThree.vue')
+      },
+      {
+        path: '/page4',
+        name: 'page4',
+        component:() => import('@/views/Other/PageFour.vue')
       },
     ]
   }
