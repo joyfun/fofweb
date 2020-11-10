@@ -4,8 +4,8 @@ import router from './router'
 import store from './store'
 
 
-// import 'bootstrap'
-// import $ from 'jquery'
+import 'bootstrap'
+import $ from 'jquery'
 
 //全局配置
 import '@/assets/scss/reset.scss'

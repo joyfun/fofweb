@@ -58,7 +58,19 @@ const routes = [
         component:() => import('@/views/Other/PageFour.vue')
       },
     ]
-  }
+  },
+  {
+    path: '/login',
+    component:() => import('@/views/User/login.vue'),
+    children:[
+    ]
+  },
+  {
+    path: '/register',
+    component:() => import('@/views/User/register.vue'),
+    children:[
+    ]
+  },
 ]
 
 const router = new VueRouter({
