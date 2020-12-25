@@ -1,5 +1,5 @@
 {
-  "name": "base-learn",
+  "name": "WADDC-FIS",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -20,8 +20,7 @@
     "@vue/cli-service": "~4.5.0",
     "axios": "^0.20.0",
     "bootstrap": "^4.5.2",
-    "echarts": "^4.9.0",
-    "jquery": "^3.5.1",
+    "echarts": "5.0.0",
     "mockjs": "^1.1.0",
     "node-sass": "^4.14.1",
     "popper.js": "^1.16.1",

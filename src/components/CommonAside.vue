@@ -46,61 +46,118 @@ export default {
                     name:'home',
                     icon: 's-home'
                 },
-                {
-                    path: '/testcase',
-                    label: '测试用例',
-                    name:'test-case',
-                    icon: 's-operation'
-                },
-              {
-                    path: '/testexecute',
-                    label: '测试执行',
-                    name:'test-execute',
-                    icon: 's-promotion'
-                },
-                 {
-                    path: '/testresult',
-                    label: '测试结果',
-                    name:'test-result',
-                    icon: 's-order'
-                },
-                {
-                    label: '其他',
+               {
+                    label: '投资渠道',
                     icon: 'other',
-                    name:'other',
+                    name:'fof',
                     children:[
                         {
-                            path: '/page1',
-                            label: '页面1',
-                            name:'page1',
+                            path: '/fundinfo',
+                            label: '投资公司管理',
+                            name:'fund-info',
+                            params:{
+                                type:'1',
+                            },
                             icon:'setting'
-                        },
-                         {
-                            path: '/page2',
-                            label: '页面2',
-                            name:'page2',
+                        }, {
+                            path: '/fundinfo',
+                            label: '基金产品维护',
+                            name:'fund-info',
+                            params:{
+                                type:'1',
+                            },
                             icon:'setting'
-                        },
+                        }]},
+                                       {
+                    label: '尽职调查',
+                    icon: 'other',
+                    name:'fof',
+                    children:[
                         {
-                            path: '/page3',
-                            label: '页面3',
-                            name:'page3',
+                            path: '/fundinfo',
+                            label: '分类基金对比',
+                            name:'fund-info',
+                            params:{
+                                type:'1',
+                            },
                             icon:'setting'
-                        },
+                        }, {
+                            path: '/fundinfo',
+                            label: '已投对比',
+                            name:'fund-info',
+                            params:{
+                                type:'1',
+                            },
+                            icon:'setting'
+                        }
+                        , {
+                            path: '/fundinfo',
+                            label: '二选对比',
+                            name:'fund-info',
+                            params:{
+                                type:'1',
+                            },
+                            icon:'setting'
+                        }]},
+                        // {
+                        //     path: '/fundinfo',
+                        //     label: 'FOF子基金库',
+                        //     name:'fund-info',
+                        //     icon:'setting'
+                        // },
+                        //  {
+                        //     path: '/fundreprot',
+                        //     label: 'FOF产品一览表',
+                        //     name:'fund-info',
+                        //     icon:'setting'
+                        // },
+                        //  {
+                        //     path: '/fundreprot',
+                        //     label: '压力测试',
+                        //     name:'fund-info',
+                        //     icon:'setting'
+                        // },
+                        // ,
+                        //  {
+                        //     path: '/fundreprot',
+                        //     label: '组合优化',
+                        //     name:'fund-info',
+                        //     icon:'setting'
+                        // },
                         {
-                            path: '/page4',
-                            label: '页面4',
-                            name:'page4',
+                            path: '/fundreprot',
+                            label: '基金报告',
+                            name:'fund-report',
                             icon:'setting'
                         },
-                    ]
+                         
+                //     ]
+                // },
+                {
+                            path: '/fundouter',
+                            label: '外部基金',
+                            name:'fund-outer',
+                            params:{
+                                type:'2',
+                            },
+                            icon:'setting'
                 },
+                {
+                            path: '/fundpool',
+                            label: '基金备选池',
+                            name:'fund-pool',
+                            params:{
+                                tag:'备选池1',
+                            },
+                            icon:'setting'
+                }
             ]
         }
     },
   methods: {
     clickMenu(item) {
-      this.$router.push({name:item.name})
+      console.log(item)
+      this.$router.push({name:item.name,params:item.params})
       this.$store.commit('selectMenu',item);
     }
   },

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import echarts from 'echarts'
+var echarts = require('echarts');
 export default {
   props: {
     chartData: {
@@ -31,12 +31,12 @@ export default {
     }
   },
   watch: {
-    chartData: {
-      handler: function() {
-        this.initChart()
-      },
-      deep: true
-    },
+    // chartData: {
+    //   handler: function() {
+    //     this.initChart()
+    //   },
+    //   deep: true
+    // },
     isCollapse() {
       setTimeout(() => {
         this.resizeChart()
@@ -108,7 +108,6 @@ export default {
         tooltip: {
           trigger: 'item'
         },
-        color: ['#0f78f4', '#dd536b', '#9462e5', '#a6a6a6', '#e1bb22', '#39c362', '#3ed1cf'],
         series: []
       }
     }
@@ -116,19 +115,26 @@ export default {
   methods: {
     initChart() {
       this.initChartData()
+      console.log("emitchart")
+      console.log(this.options)
       if (this.echart) {
-        this.echart.setOption(this.options)
+        this.echart.setOption(this.options,true)
       } else {
         this.echart = echarts.init(this.$refs.echart)
-        this.echart.setOption(this.options)
+        this.echart.setOption(this.options,true)
       }
     },
     initChartData() {
       if (this.isAxisChart) {
+          console.log(this.chartData)
         this.axisOption.xAxis.data = this.chartData.xData
         this.axisOption.series = this.chartData.series
       } else {
         this.normalOption.series = this.chartData.series
+        if(this.chartData.legend){
+        this.normalOption.legend = this.chartData.legend
+
+        }
       }
     },
     resizeChart() {
@@ -136,6 +142,7 @@ export default {
     }
   },
   mounted() {
+    this.initChart()
     window.addEventListener('resize', this.resizeChart)
   },
   destroyed() {
