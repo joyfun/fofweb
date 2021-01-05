@@ -11,15 +11,18 @@ import '@/assets/scss/reset.scss'
 import 'element-ui/lib/theme-chalk/index.css';
 // import http from '@/api/config'
 // import './mock'
+var moment = require('moment');
 
 //第三方包
 import ElementUI from 'element-ui'
 import axios from 'axios'
+
 import tools from '@/store/tools.js'
 
 Vue.use(tools)
 
 Vue.prototype.$axios = axios
+Vue.prototype.$moment = moment
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)

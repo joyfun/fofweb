@@ -496,7 +496,11 @@ showResult(number,rate=100){
                     });
             },
         },
-
+    created(){
+        console.log(this.$moment().day(-7))
+        console.log(this.$moment().date(-7))
+        
+    }
     //   async mounted() {
     //         console.log(this.$route.params)
     //         this.getList(this.$route.params.type);

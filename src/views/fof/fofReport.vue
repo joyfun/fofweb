@@ -122,14 +122,14 @@
         <template slot-scope="scope">
                                 <span :style="'text-align:right;color:'+(scope.row['夏普比率']>=0?'red':'green') " >{{
 
-          showResult(scope.row["夏普比率"])
+          showResult(scope.row["夏普比率"],1)
         }}</span></template>
       </el-table-column>
       <el-table-column align="right" prop="卡玛比率" label="卡玛比率" show-overflow-tooltip>
         <template slot-scope="scope">
                  <span :style="'text-align:right;color:'+(scope.row['卡玛比率']>=0?'red':'green') " >{{
 
-          showResult(scope.row["卡玛比率"])
+          showResult(scope.row["卡玛比率"],1)
         }}</span></template>
       </el-table-column>
       <el-table-column align="right" prop="最大回撤" label="最大回撤" show-overflow-tooltip>

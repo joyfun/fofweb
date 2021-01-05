@@ -1,6 +1,13 @@
 <template>
 
+
   <div style="height:420px" ref="echart">
+      <!-- <el-button-group>
+  <el-button type="primary">7天</el-button>
+  <el-button type="primary">30天</el-button>
+  <el-button type="primary">90天</el-button>
+  <el-button type="primary">本年</el-button>
+</el-button-group> -->
     基金净值历史
   </div>
 </template>
@@ -79,6 +86,7 @@ export default {
     return {
       raw_data:{},
       startidx:0,
+      max_date:'',
     //   width: this.initWidth(),
       echart: null,
       chartData: {
@@ -109,6 +117,44 @@ export default {
                 //     this.rawData()
                 // }
             },
+            myday7: {
+                show: true,
+                title: '周对比',
+                icon: 'path://M958.976 27.136h-893.44c-36.352 0-65.536 29.696-65.536 65.536V793.6c0 36.352 29.696 65.536 65.536 65.536h893.44c36.352 0 65.536-29.696 65.536-65.536V92.16c0-35.84-29.696-65.024-65.536-65.024z m0 742.4h-0.512c0 12.288-10.24 22.528-22.528 22.528h-845.824c-12.288 0-22.528-10.24-22.528-23.04V116.224c0-12.288 10.24-22.528 22.528-22.528h846.336c12.288 0 22.528 10.24 22.528 22.528v653.312zM880.128 963.584c0 18.432-14.848 33.28-33.28 33.28h-669.184c-18.432 0-33.28-14.848-33.28-33.28s14.848-33.28 33.28-33.28h669.184c18.432 0.512 33.28 15.36 33.28 33.28z',
+                // onclick: function (){
+                //     this.rawData()
+                // }
+            },myday30: {
+                show: true,
+                title: '月对比',
+                icon: 'path://M958.976 27.136h-893.44c-36.352 0-65.536 29.696-65.536 65.536V793.6c0 36.352 29.696 65.536 65.536 65.536h893.44c36.352 0 65.536-29.696 65.536-65.536V92.16c0-35.84-29.696-65.024-65.536-65.024z m0 742.4h-0.512c0 12.288-10.24 22.528-22.528 22.528h-845.824c-12.288 0-22.528-10.24-22.528-23.04V116.224c0-12.288 10.24-22.528 22.528-22.528h846.336c12.288 0 22.528 10.24 22.528 22.528v653.312zM880.128 963.584c0 18.432-14.848 33.28-33.28 33.28h-669.184c-18.432 0-33.28-14.848-33.28-33.28s14.848-33.28 33.28-33.28h669.184c18.432 0.512 33.28 15.36 33.28 33.28z',
+                // onclick: function (){
+                //     this.rawData()
+                // }
+            },myday180: {
+                show: true,
+                title: '半年',
+                icon: 'path://M958.976 27.136h-893.44c-36.352 0-65.536 29.696-65.536 65.536V793.6c0 36.352 29.696 65.536 65.536 65.536h893.44c36.352 0 65.536-29.696 65.536-65.536V92.16c0-35.84-29.696-65.024-65.536-65.024z m0 742.4h-0.512c0 12.288-10.24 22.528-22.528 22.528h-845.824c-12.288 0-22.528-10.24-22.528-23.04V116.224c0-12.288 10.24-22.528 22.528-22.528h846.336c12.288 0 22.528 10.24 22.528 22.528v653.312zM880.128 963.584c0 18.432-14.848 33.28-33.28 33.28h-669.184c-18.432 0-33.28-14.848-33.28-33.28s14.848-33.28 33.28-33.28h669.184c18.432 0.512 33.28 15.36 33.28 33.28z',
+                // onclick: function (){
+                //     this.rawData()
+                // }
+            },
+            mydayyear: {
+                show: true,
+                title: '近一年',
+                icon: 'path://M958.976 27.136h-893.44c-36.352 0-65.536 29.696-65.536 65.536V793.6c0 36.352 29.696 65.536 65.536 65.536h893.44c36.352 0 65.536-29.696 65.536-65.536V92.16c0-35.84-29.696-65.024-65.536-65.024z m0 742.4h-0.512c0 12.288-10.24 22.528-22.528 22.528h-845.824c-12.288 0-22.528-10.24-22.528-23.04V116.224c0-12.288 10.24-22.528 22.528-22.528h846.336c12.288 0 22.528 10.24 22.528 22.528v653.312zM880.128 963.584c0 18.432-14.848 33.28-33.28 33.28h-669.184c-18.432 0-33.28-14.848-33.28-33.28s14.848-33.28 33.28-33.28h669.184c18.432 0.512 33.28 15.36 33.28 33.28z',
+                // onclick: function (){
+                //     this.rawData()
+                // }
+            },
+            mythisyear: {
+                show: true,
+                title: '本年',
+                icon: 'path://M958.976 27.136h-893.44c-36.352 0-65.536 29.696-65.536 65.536V793.6c0 36.352 29.696 65.536 65.536 65.536h893.44c36.352 0 65.536-29.696 65.536-65.536V92.16c0-35.84-29.696-65.024-65.536-65.024z m0 742.4h-0.512c0 12.288-10.24 22.528-22.528 22.528h-845.824c-12.288 0-22.528-10.24-22.528-23.04V116.224c0-12.288 10.24-22.528 22.528-22.528h846.336c12.288 0 22.528 10.24 22.528 22.528v653.312zM880.128 963.584c0 18.432-14.848 33.28-33.28 33.28h-669.184c-18.432 0-33.28-14.848-33.28-33.28s14.848-33.28 33.28-33.28h669.184c18.432 0.512 33.28 15.36 33.28 33.28z',
+                // onclick: function (){
+                //     this.rawData()
+                // }
+            },
                magicType: {
         type: ["line", "bar"]
       },
@@ -132,10 +178,10 @@ export default {
 // },
         {   zoomOnMouseWheel:false,
             type:"slider",
+            rangeMode: ['value', 'percent'],
             throttle :200,
             show: true,
             realtime: true,
-            start: 0,
             end: 100
         }
         ],
@@ -251,6 +297,10 @@ export default {
                                 $this.chartData.xData=[]
                                 $this.chartData.series=[]
                                 $this.chartData.xData=response.data['date']
+                                var len=$this.chartData.xData.length
+                                if(len){
+                                $this.max_date=$this.chartData.xData[len-1]
+                                }
                                 for(var idx in response.data["columns"]){
                                     var cname=response.data["columns"][idx]
                                     $this.chartData.series.push({data:response.data[cname].concat(),type:"line",name: cname}) 
@@ -266,7 +316,9 @@ export default {
       },
 
     divideBy(oneindex,params){
-      
+        console.log('-----data zoom-----')
+        console.log(oneindex)
+        console.log(params)
         this.startidx=oneindex
         this.chartData.xData=[]
         this.chartData.series=[]
@@ -289,7 +341,8 @@ export default {
         this.chartData.series.push({data:sdata,type:"line",name: cname})
         this.axisOption.yAxis.min=min
         }
-        this.axisOption.dataZoom[0].start=params.start
+        this.axisOption.dataZoom[0].start=this.chartData.xData[oneindex]
+        console.log(this.axisOption.dataZoom[0].start)
 
        // this.refreshData(params) 
     },
@@ -307,7 +360,7 @@ export default {
         }
         var rate=(lastIdx*100)/this.chartData.series[0].data.length
         this.axisOption.dataZoom[0].start=rate
-        this.divideBy(lastIdx,{end:100,start:rate})
+        this.divideBy(lastIdx,{end:100,startValue:this.chartData.xData[0]})
       this.initChartData()
       console.log(this.options)
       var $this=this
@@ -319,10 +372,52 @@ export default {
             console.log("rawData click")
             $this.divideBy(0,{start:0,end:100})   
             $this.refreshData({start:0,end:100}) 
+        }
+        this.axisOption.toolbox.feature.myday7.onclick = () => {
+            var arr=$this.echart.getModel().option.xAxis[0].data
+            var vday=$this.$moment($this.max_date).add(-7,"d").format("YYYYMMDD")
+            var sidx=$this.getstart(vday)
+            var datasize=arr.length
+
+            $this.divideBy(sidx,{start:arr[sidx],end:100})   
+            $this.refreshData({startValue:sidx,end:100}) 
     
+        }
+        this.axisOption.toolbox.feature.myday30.onclick = () => {
+              var vday=$this.$moment($this.max_date).add(-30,"d").format("YYYYMMDD")
+            var sidx=$this.getstart(vday)
+            var datasize=$this.echart.getModel().option.xAxis[0].data.length
+
+            $this.divideBy(sidx,{start:sidx*100/datasize,end:100})   
+            $this.refreshData({startValue:sidx,end:100}) 
+    
+        }
+        this.axisOption.toolbox.feature.myday180.onclick = () => {
+             var vday=$this.$moment($this.max_date).add(-180,"d").format("YYYYMMDD")
+            var sidx=$this.getstart(vday)
+            var datasize=$this.echart.getModel().option.xAxis[0].data.length
+            $this.divideBy(sidx,{start:sidx*100/datasize,end:100})   
+            $this.refreshData({startValue:sidx,end:100}) 
+    
+        }
+        this.axisOption.toolbox.feature.mydayyear.onclick = () => {
+              var vday=$this.$moment($this.max_date).add(-1,"y").format("YYYYMMDD")
+            var sidx=$this.getstart(vday)
+            var datasize=$this.echart.getModel().option.xAxis[0].data.length
+            $this.divideBy(sidx,{start:sidx*100/datasize,end:100})   
+            $this.refreshData({startValue:sidx,end:100}) 
+        }
+        this.axisOption.toolbox.feature.mythisyear.onclick = () => {
+            console.log($this.max_date)
+            var vday=$this.$moment($this.max_date).dayOfYear(1).format("YYYYMMDD")
+            var sidx=$this.getstart(vday)
+            var datasize=$this.echart.getModel().option.xAxis[0].data.length
+            $this.divideBy(sidx,{start:sidx*100/datasize,end:100})   
+            $this.refreshData({startValue:sidx,end:100}) 
         }
         this.echart.setOption(this.options)
         this.echart.on('datazoom',function(params){
+            console.log(params)
         var datasize=$this.echart.getModel().option.xAxis[0].data.length
         var startidx=Math.round(datasize*params.start/100)
         $this.divideBy(startidx,params)   
@@ -339,12 +434,21 @@ export default {
     refreshData(params){
         console.log(params)
         var option = this.echart.getOption();
-         option.dataZoom[0].start=params.start;
+         option.dataZoom[0].startValue=params.startValue;
          option.dataZoom[0].end=params.end;
          option.series= this.chartData.series;
         this.echart.setOption(option,true)
 
     },
+     getstart(vady){
+         console.log(vady)
+            var arr=this.echart.getModel().option.xAxis[0].data
+            for (var i=0;i<arr.length;i++){
+                if(arr[i]>vady&&i>0)
+                return i
+            }
+
+        },
     initChartData() {
       if (this.isAxisChart) {
         this.axisOption.xAxis.data = this.chartData.xData
