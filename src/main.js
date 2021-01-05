@@ -15,6 +15,10 @@ import 'element-ui/lib/theme-chalk/index.css';
 //第三方包
 import ElementUI from 'element-ui'
 import axios from 'axios'
+import tools from '@/store/tools.js'
+
+Vue.use(tools)
+
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 

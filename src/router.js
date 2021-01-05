@@ -34,6 +34,18 @@ const routes = [
         
       },
       {
+        path: '/fundext',
+        name: 'fund-ext',
+        component:() => import('@/views/fof/fofExternal.vue'),
+        
+      },
+      {
+        path: '/fundcomp',
+        name: 'fund-comp',
+        component:() => import('@/views/fof/fofCompany.vue'),
+        
+      },
+      {
         path: '/fundouter',
         name: 'fund-outer',
         component:() => import('@/views/fof/fofManage.vue'),
@@ -43,9 +55,55 @@ const routes = [
   
       },
       {
+        path: '/fundinfo1',
+        name: 'fund-info1',
+        component:() => import('@/views/fof/fofManage.vue'),
+        params:{
+            class_type:'CTA',
+       }
+      },
+      {
+        path: '/fundinfo2',
+        name: 'fund-info2',
+        component:() => import('@/views/fof/fofManage.vue'),
+        params:{
+            class_type:'指增',
+       }
+      },
+      {
+        path: '/fundinfo3',
+        name: 'fund-info3',
+        component:() => import('@/views/fof/fofManage.vue'),
+        params:{
+            class_type:'套利',
+       }
+      },
+      {
+        path: '/fundinfo4',
+        name: 'fund-info4',
+        component:() => import('@/views/fof/fofManage.vue'),
+        params:{
+            class_type:'中性',
+       }
+      },
+
+      ,
+      {
         path: '/fundreport',
         name: 'fund-report',
         component:() => import('@/views/fof/fofReport.vue')
+      }
+      ,
+      {
+        path: '/sysparam',
+        name: 'sys-param',
+        component:() => import('@/views/sys/sysParam.vue')
+      }
+      ,
+      {
+        path: '/syscfg',
+        name: 'sys-cfg',
+        component:() => import('@/views/sys/sysParam.vue')
       }
       ,
         {

@@ -7,17 +7,7 @@
            <el-button  size="small" @click="delSelection()">删除</el-button>
         <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
         <el-button  size="small" @click="allrun()">对比</el-button>
-        <el-button  size="small" @click="compare()">业绩对标</el-button>
-
-        <el-select v-model="stage" @change="getList"  placeholder="阶段">
-    <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select>
-        <el-button  size="small" @click="downFile()">下载</el-button>
+        <el-button  size="small" @click="downFile()">下载业绩对比</el-button>
         <el-input v-model="input" placeholder="请输入名称"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
         </div>
@@ -56,13 +46,19 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.short_name }}</template>
     </el-table-column>
+    <el-table-column
+      prop="company"
+      label="公司名称"
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.company }}</template>
+    </el-table-column>
 <!--      测试用例是否关联-->
     <el-table-column
-      prop="buy_date"
-      label="建仓日期"
+      prop="source"
+      label="来源"
       sortable
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.buy_date }}</template>
+     <template slot-scope="scope">{{ scope.row.source }}</template>
     </el-table-column>
 <!--      测试输入-->
     <el-table-column
@@ -98,146 +94,6 @@
   >
     <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
     </el-dialog>
-    <el-dialog
-    width="80%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="tableVisible"
-  >
-<el-table
-      ref="compTable"
-      :data="compData"
-      tooltip-effect="dark"
-      @selection-change="handleSelectionChange" 
-      style="width: 100%; margin-top: 20px"
-    >
-      <!--    @row-click = "Selection"-->
-
-      <el-table-column type="selection" width="55"> </el-table-column>
-      <!--      测试ID-->
-     <!--  <el-table-column
-      prop="基金代码"
-      label="基金代码"
-      width="100">
-      <template slot-scope="scope">{{ scope.row["基金代码"]}}</a></template>
-    </el-table-column>
-      用例编号-->
-      <el-table-column
-        prop="基金名称"
-        width="160"
-        label="基金名称"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope"
-          ><a href="javascript:;" @click="showHis(scope.row)">{{
-            scope.row["基金名称"]
-          }}</a></template
-        >
-      </el-table-column>
-       <el-table-column
-        prop="类型"
-        width="80"
-        label="类型"
-        show-overflow-tooltip
-      >
-             <template slot-scope="scope">{{ scope.row['类型'] }}</template>
-
-      </el-table-column>
-      <!--      测试项目-->
-      <!--      测试用例是否关联-->
-      <!--      测试输入-->
-      <el-table-column
-        prop="当月收益"
-        label="当月收益"
-        align="right" 
-        width="80"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope">
-              <span :style="'text-align:right;color:'+(scope.row['当月收益']>=0?'red':'green') " >
-                    {{showResult(scope.row["当月收益"])}}</span>
-
-        </template>
-      </el-table-column>
-      <el-table-column prop="当年收益" label="当年收益" align="right"  show-overflow-tooltip>
-        <template slot-scope="scope">
-                          <span :style="'text-align:right;color:'+(scope.row['当年收益']>=0?'red':'green') " >
-{{
-          showResult(scope.row["当年收益"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="近6月收益" label="近6月收益" show-overflow-tooltip>
-        <template slot-scope="scope">
-                         <span :style="'text-align:right;color:'+(scope.row['近6月收益']>=0?'red':'green') " >
-{{
-          showResult(scope.row["近6月收益"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column
-      align="right" 
-        prop="近12月收益"
-        label="近12月收益"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope"><span :style="'text-align:right;color:'+(scope.row['近12月收益']>=0?'red':'green') " >{{
-          showResult(scope.row["近12月收益"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="2019" label="2019" show-overflow-tooltip>
-        <template slot-scope="scope">
-                <span :style="'text-align:right;color:'+(scope.row['2019']>=0?'red':'green') " >
-{{
-          showResult(scope.row["2019"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="2018" label="2018" show-overflow-tooltip>
-        <template slot-scope="scope">
-            <span :style="'text-align:right;color:'+(scope.row['2018']>=0?'red':'green') " >{{
-          showResult(scope.row["2018"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="2017" label="2017" show-overflow-tooltip>
-        <template slot-scope="scope">
-            <span :style="'text-align:right;color:'+(scope.row['2017']>=0?'red':'green') " >{{
-          showResult(scope.row["2017"])
-        }}</span></template>
-      </el-table-column>
-      <!--过去3年年均收益	夏普比率	卡玛比率	最大回撤-->
-      <el-table-column
-      align="right" 
-        prop="过去3年年均收益"
-        label="过去3年年均收益"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope">
-                    <span :style="'text-align:right;color:'+(scope.row['过去3年年均收益']>=0?'red':'green') " >{{
-          showResult(scope.row["过去3年年均收益"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="夏普比率" label="夏普比率" show-overflow-tooltip>
-        <template slot-scope="scope">
-                                <span :style="'text-align:right;color:'+(scope.row['夏普比率']>=0?'red':'green') " >{{
-
-          showResult(scope.row["夏普比率"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="卡玛比率" label="卡玛比率" show-overflow-tooltip>
-        <template slot-scope="scope">
-                 <span :style="'text-align:right;color:'+(scope.row['卡玛比率']>=0?'red':'green') " >{{
-
-          showResult(scope.row["卡玛比率"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="最大回撤" label="最大回撤" show-overflow-tooltip>
-        <template slot-scope="scope">
-                 <span :style="'text-align:right;color:'+(scope.row['最大回撤']>=0?'red':'green') " >{{
-
-          showResult(scope.row["最大回撤"])
-        }}</span></template>
-      </el-table-column>
-    </el-table>
-        </el-dialog>
   </div>
   
 </template>
@@ -260,26 +116,10 @@
         },
     data() {
       return {
-          stage:'',
-          options: [{
-          value: '初选',
-          label: '初选'
-        }, {
-          value: '二选',
-          label: '二选'
-        }, {
-          value: '备投',
-          label: '备投'
-        }, {
-          value: '已投',
-          label: '已投'
-        }],
         multipleSelection: [],
         current:{},
         cur_code:"",
         dialogVisible: false,
-        tableVisible: false,
-        compData:[],
         rowdata: '',
         value2: '',
         PageSize:30,
@@ -301,7 +141,7 @@
     watch: {
     $route:{
       handler(n){
-          this.getList(n.params)
+          this.getList(n.params.type)
 		// 初始化操作
       },
       immediate: true,
@@ -322,15 +162,9 @@
               selcode+=","+this.multipleSelection[i].code;
         }
         const options = {code:selcode}
-            this.$tools.exportExcel(url,options)
+            exportExcel(url,options)
         },
-showResult(number,rate=100){
-       if (null == number)
-          return '' 
-        var color=number>=0?"red":"green"
-        //return '<span style="text-align:right;color='+color+'">'+this.formatMoney(number,4)+'</span>'
-        return this.$tools.formatMoney(number*rate,3)
-    },
+
       showHis(row){
           this.cur_code=""
           this.current=row
@@ -372,31 +206,6 @@ showResult(number,rate=100){
           this.current=this.multipleSelection[0]
           this.dialogVisible=true
           this.cur_code=selcode
-        //   this.$refs.hischart.$emit("getChart",selcode)  
-      },
-      compare() {
-        this.tableVisible=true
-        // console.log(this.multipleSelection)
-        if(this.multipleSelection.length<1){
-            return
-        }
-        var selcode=""
-        console.log(this.multipleSelection)
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-              selcode+=this.multipleSelection[i].code+",";
-        }
-          axis( {
-                url: '/fof/jreport',
-                method: 'GET',
-                params: {code:selcode}
-                })//axis后面的.get可以省略；
-        .then((response) => {
-          this.compData = this.$tools.pandasToJson(response.data);
-          //this.tableData = this.totaltableData;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
         //   this.$refs.hischart.$emit("getChart",selcode)  
       },
       // 选中
@@ -454,26 +263,23 @@ showResult(number,rate=100){
         console.log(this.value2[1]);
       },
       //
-     getList(param){
-            console.log(param)
+     getList(type){
+            console.log(type)
              var $this=this
              var data={}
-             if(param && typeof(param)=='object'){
-                 data=param
+             if(type){
+                 data.type=type
              }
              if(this.input)
-             data["name"]=this.input
-             console.log(this)
-             if(this.stage)
-             data["stage"]=this.stage
+             data={"name":this.input}
             //   axis.get('/fof/list')//axis后面的.get可以省略；
             axis( {
-                url: '/fof/list',
+                url: '/fof/external',
                 method: 'GET',
                 params: data
                 }).then((response) => {
                                 console.log(response);
-                                this.totaltableData = response.data;
+                                this.totaltableData = response.data.datas;
                                 this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
                             })
                         .catch(
@@ -502,5 +308,40 @@ showResult(number,rate=100){
     //         this.getList(this.$route.params.type);
     //   }
   }
-  
+  export function exportExcel(url, options = {}) {
+  return new Promise((resolve, reject) => {
+    console.log(`${url} 请求数据，参数=>`, JSON.stringify(options))
+    axis.defaults.headers['content-type'] = 'application/json;charset=UTF-8'
+    axis({
+      method: 'post',
+      url: url, // 请求地址
+      data: options, // 参数
+      responseType: 'blob' // 表明返回服务器返回的数据类型
+    }).then(
+      response => {
+        resolve(response.data)
+        let blob = new Blob([response.data], {
+          type: 'application/vnd.ms-excel'
+        })
+        console.log(blob)
+        let fileName = Date.parse(new Date()) + '.xlsx'
+        if (window.navigator.msSaveOrOpenBlob) {
+          // console.log(2)
+          navigator.msSaveBlob(blob, fileName)
+        } else {
+          // console.log(3)
+          var link = document.createElement('a')
+          link.href = window.URL.createObjectURL(blob)
+          link.download = fileName
+          link.click()
+          //释放内存
+          window.URL.revokeObjectURL(link.href)
+        }
+      },
+      err => {
+        reject(err)
+      }
+    )
+  })
+}
 </script>

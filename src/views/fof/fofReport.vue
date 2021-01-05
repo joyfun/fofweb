@@ -1,17 +1,18 @@
 <template>
   <div>
     <div class="block" style="display: flex; justify-content: space-between">
-      <div style="display: flex; justify-content: space-between">
-        <el-input v-model="input" placeholder="请输入名称"></el-input>
-        <el-button type="primary" @click="getList" style="margin-left: 10px"
-          >搜索</el-button
-        >
+      <div style=" width: 480px;">
+        <el-button size="small" @click="delSelection()">删除</el-button>
+        <el-button size="small" @click="toggleSelection()">取消选择</el-button>
+        <el-button size="small" @click="compare()">对比</el-button>
+        <el-button size="small" @click="downFile()">下载业绩对比</el-button>
       </div>
     </div>
     <el-table
       ref="multipleTable"
       :data="tableData"
       tooltip-effect="dark"
+      @selection-change="handleSelectionChange" 
       style="width: 100%; margin-top: 20px"
     >
       <!--    @row-click = "Selection"-->
@@ -36,6 +37,15 @@
             scope.row["基金名称"]
           }}</a></template
         >
+      </el-table-column>
+       <el-table-column
+        prop="类型"
+        width="80"
+        label="类型"
+        show-overflow-tooltip
+      >
+             <template slot-scope="scope">{{ scope.row['类型'] }}</template>
+
       </el-table-column>
       <!--      测试项目-->
       <!--      测试用例是否关联-->
@@ -131,12 +141,7 @@
       </el-table-column>
     </el-table>
     <div style="display: flex; justify-content: space-between">
-      <div style="margin-top: 20px; width: 250px; height: 120px">
-        <el-button size="small" @click="delSelection()">删除</el-button>
-        <el-button size="small" @click="toggleSelection()">取消选择</el-button>
-        <el-button size="small" @click="allrun()">对比</el-button>
-        <el-button size="small" @click="downFile()">下载业绩对比</el-button>
-      </div>
+     
       <div class="block" style="margin-top: 25px; height: 120px">
         <el-pagination
           @size-change="handleSizeChange"
@@ -151,14 +156,15 @@
       </div>
     </div>
 
-    <fund-echart
-      @close="editClose"
-      ref="hischart"
-      :titles="current.name"
-      style="height: 600px"
-      :code="cur_code"
-      :visable="dialogVisible"
-    ></fund-echart>
+     <el-dialog
+    width="80%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="dialogVisible"
+  >
+    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
+    </el-dialog>
   </div>
 </template>
 
@@ -209,46 +215,22 @@ export default {
     downFile() {
       axis.post("/fof/report", {}, { responseType: "blob" });
     },
-    showResult(number){
+    showResult(number,rate=100){
        if (null == number)
           return '' 
         var color=number>=0?"red":"green"
         //return '<span style="text-align:right;color='+color+'">'+this.formatMoney(number,4)+'</span>'
-        return this.formatMoney(number,4)
+        return this.$tools.formatMoney(number*rate,3)
     },
-    formatMoney(number, decimals = 0, decPoint = ".", thousandsSep = ",") {
-          if (null == number)
-          return '' 
+    
 
-      number = (number + "").replace(/[^0-9+-Ee.]/g, "");
-      let n = !isFinite(+number) ? 0 : +number;
-      let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
-      let sep = typeof thousandsSep === "undefined" ? "," : thousandsSep;
-      let dec = typeof decPoint === "undefined" ? "." : decPoint;
-      let s = "";
-      let toFixedFix = function (n, prec) {
-        let k = Math.pow(10, prec);
-        return "" + Math.ceil(n * k) / k;
-      };
-      s = (prec ? toFixedFix(n, prec) : "" + Math.round(n)).split(".");
-      let re = /(-?\d+)(\d{3})/;
-      while (re.test(s[0])) {
-        s[0] = s[0].replace(re, "$1" + sep + "$2");
-      }
-      if ((s[1] || "").length < prec) {
-        s[1] = s[1] || "";
-        s[1] += new Array(prec - s[1].length + 1).join("0");
-      }
-      return s.join(dec);
-    },
-
-    showHis(row) {
-      this.cur_code = "";
-      this.current = row;
-      this.dialogVisible = true;
-      this.cur_code = row["基金代码"];
-      this.$refs.hischart.$emit("getChart", row.code); //子组件$on中的名字
-    },
+    showHis(row){
+          this.cur_code=""
+          this.current=row
+          this.dialogVisible=true
+          this.cur_code=row.code
+        //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
+      },
     handleClose(done) {
       done();
       // this.$confirm('确认关闭？')
@@ -268,17 +250,32 @@ export default {
       }
     },
     //
-    allrun() {
-      // console.log(this.multipleSelection)
-      for (let i = 0; i < this.multipleSelection.length; i++) {
-        console.log(this.multipleSelection[i].test_id);
-        this.request_excute(this.multipleSelection[i].test_id);
-      }
-    },
+    compare() {
+        // console.log(this.multipleSelection)
+        if(this.multipleSelection.length<1){
+            return
+        }
+        var selcode=""
+        console.log(this.multipleSelection)
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+              selcode+=","+this.multipleSelection[i].code;
+        }
+          this.cur_code=""
+          this.current=this.multipleSelection[0]
+          this.dialogVisible=true
+          this.cur_code=selcode
+        //   this.$refs.hischart.$emit("getChart",selcode)  
+      },
     // 选中
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+    downFile(){
+        var url="/fof/down_jreport"
+      
+        const options = {}
+        this.$tools.exportExcel(url,options)
+        },
     delSelection() {
       for (let i = 0; i < this.multipleSelection.length; i++) {
         console.log(this.multipleSelection[i].id);
@@ -328,26 +325,14 @@ export default {
       console.log(this.value2[0]);
       console.log(this.value2[1]);
     },
-    pandasToJson(pd) {
-      var result = [];
-      for (var idx in pd.data) {
-        var dv = pd.data[idx];
-        var row = {};
-        for (var ci in pd.columns) {
-          row[pd.columns[ci]] = dv[ci];
-        }
-        result.push(row);
-      }
-      console.log(result);
-      return result;
-    },
+    
     //
     getList() {
       axis
         .get("/fof/jreport") //axis后面的.get可以省略；
         .then((response) => {
           console.log(response);
-          this.tableData = this.pandasToJson(response.data);
+          this.tableData = this.$tools.pandasToJson(response.data);
           //this.tableData = this.totaltableData;
         })
         .catch((error) => {

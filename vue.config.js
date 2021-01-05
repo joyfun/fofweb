@@ -13,6 +13,12 @@ module.exports = {
                 ws: true,                       //是否代理 websockets
                 secure: false                  //是否https接口
             },
+            '/sys': {
+                target: 'http://127.0.0.1:3002/', //接口域名
+                changeOrigin: true,             //是否跨域
+                ws: true,                       //是否代理 websockets
+                secure: false                  //是否https接口
+            },
             '/api/testcase/': {
                 target: 'http://127.0.0.1:8081/', //接口域名
                 changeOrigin: true,             //是否跨域
