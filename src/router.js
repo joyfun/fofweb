@@ -86,7 +86,14 @@ const routes = [
             class_type:'中性',
        }
       },
-
+      {
+        path: '/fundinfo5',
+        name: 'fund-info5',
+        component:() => import('@/views/fof/fofManage.vue'),
+        params:{
+            class_type:'期权',
+       }
+      },
       ,
       {
         path: '/fundreport',

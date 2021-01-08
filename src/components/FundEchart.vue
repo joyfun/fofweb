@@ -316,9 +316,7 @@ export default {
       },
 
     divideBy(oneindex,params){
-        console.log('-----data zoom-----')
-        console.log(oneindex)
-        console.log(params)
+        console.log("re draw chart by 1 at idx:"+oneindex)
         this.startidx=oneindex
         this.chartData.xData=[]
         this.chartData.series=[]
@@ -328,9 +326,12 @@ export default {
         var cname=this.raw_data["columns"][idx]
         var sdata=[...this.raw_data[cname]]
         var oneval=this.raw_data[cname][oneindex]
-        if(!oneval){
-            oneval=1;
+        var idx=oneindex
+        while(!oneval&&idx<this.raw_data[cname].length){
+            oneval=this.raw_data[cname][idx];
+            idx++
         }
+
         for(var i=0;i<this.raw_data[cname].length;i++){
             sdata[i]=(this.raw_data[cname][i]/oneval).toFixed(4)
             min=sdata[i]>min?min:sdata[i]
@@ -341,8 +342,7 @@ export default {
         this.chartData.series.push({data:sdata,type:"line",name: cname})
         this.axisOption.yAxis.min=min
         }
-        this.axisOption.dataZoom[0].start=this.chartData.xData[oneindex]
-        console.log(this.axisOption.dataZoom[0].start)
+        this.axisOption.dataZoom[0].startValue=oneindex
 
        // this.refreshData(params) 
     },
@@ -353,14 +353,15 @@ export default {
     initChart() {
          var lastIdx=0;
         for (var sidx in this.chartData.series){
-            console.log(this.chartData.series[sidx])
-            var max=this.getLastIndex(this.chartData.series[sidx].data)
-            console.log(max)
-            lastIdx=max>lastIdx?max:lastIdx
+            // console.log(this.chartData.series[sidx])
+            var max=parseInt(this.getLastIndex(this.chartData.series[sidx].data))
+            if(max>lastIdx)
+            lastIdx=max
         }
-        var rate=(lastIdx*100)/this.chartData.series[0].data.length
-        this.axisOption.dataZoom[0].start=rate
-        this.divideBy(lastIdx,{end:100,startValue:this.chartData.xData[0]})
+        // console.log(typeof(lastIdx))
+        lastIdx=lastIdx
+        // var rate=(lastIdx*100)/this.chartData.series[0].data.length
+        this.divideBy(lastIdx,{end:100,startValue:lastIdx})
       this.initChartData()
       console.log(this.options)
       var $this=this
@@ -370,8 +371,8 @@ export default {
         this.echart = echarts.init(this.$refs.echart)
         this.axisOption.toolbox.feature.myTool1.onclick = () => {
             console.log("rawData click")
-            $this.divideBy(0,{start:0,end:100})   
-            $this.refreshData({start:0,end:100}) 
+            $this.divideBy(0,{startValue:0,end:100})   
+            $this.refreshData({startValue:0,end:100}) 
         }
         this.axisOption.toolbox.feature.myday7.onclick = () => {
             var arr=$this.echart.getModel().option.xAxis[0].data
@@ -432,7 +433,6 @@ export default {
         
     },
     refreshData(params){
-        console.log(params)
         var option = this.echart.getOption();
          option.dataZoom[0].startValue=params.startValue;
          option.dataZoom[0].end=params.end;

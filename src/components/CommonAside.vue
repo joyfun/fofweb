@@ -107,6 +107,14 @@ export default {
                                 class_type:'中性',
                             },
                             icon:'setting'
+                        }, {
+                            path: '/fundinfo5',
+                            label: '期权',
+                            name:'fund-info5',
+                            params:{
+                                class_type:'期权',
+                            },
+                            icon:'setting'
                         }],
                          "decision":[
                         {

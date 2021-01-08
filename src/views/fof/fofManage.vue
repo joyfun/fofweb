@@ -4,12 +4,12 @@
         
 
         <div style="display: flex;justify-content: space-between">
-           <el-button  size="small" @click="delSelection()">删除</el-button>
+           <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
         <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
         <el-button  size="small" @click="allrun()">对比</el-button>
         <el-button  size="small" @click="compare()">业绩对标</el-button>
 
-        <el-select v-model="stage" @change="getList"  placeholder="阶段">
+        <el-select v-model="filter.stage" @change="getList"  clearable placeholder="阶段">
     <el-option
       v-for="item in options"
       :key="item.value"
@@ -17,8 +17,16 @@
       :value="item.value">
     </el-option>
   </el-select>
+  <el-select v-model="filter.class_type" @change="getList"  clearable placeholder="类型">
+    <el-option
+      v-for="item in class_types"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
         <el-button  size="small" @click="downFile()">下载</el-button>
-        <el-input v-model="input" placeholder="请输入名称"></el-input>
+        <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
         </div>
       </div>
@@ -36,27 +44,30 @@
       width="55">
     </el-table-column>
 <!--      测试ID-->
-    <el-table-column
+    <!-- <el-table-column
       prop="code"
       label="基金编号"
       width="120">
       <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.code }}</a></template>
-    </el-table-column>
+    </el-table-column> -->
 <!--      用例编号-->
-     <el-table-column
-      prop="name"
-      label="基金名称"
-      show-overflow-tooltip>
-      <template slot-scope="scope">{{ scope.row.name }}</template>
-    </el-table-column>
+    
 <!--      测试项目-->
     <el-table-column
+      fixed
       prop="short_name"
-      label="基金简称"
+      label="基金"
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.short_name }}</template>
+     <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
     </el-table-column>
 <!--      测试用例是否关联-->
+   <el-table-column
+      prop="class_type"
+      label="类型"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.class_type }}</template>
+    </el-table-column>
     <el-table-column
       prop="buy_date"
       label="建仓日期"
@@ -64,15 +75,39 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.buy_date }}</template>
     </el-table-column>
-<!--      测试输入-->
-    <el-table-column
-      prop="class_type"
-      label="类型"
+     <el-table-column
+      prop="stage"
+      label="状态"
       sortable
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.class_type }}</template>
+     <template slot-scope="scope">{{ scope.row.stage }}</template>
     </el-table-column>
-
+<!--      测试输入-->
+    
+ <el-table-column
+      prop="name"
+      label="基金名称"
+      show-overflow-tooltip>
+      <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.name }}</a></template>
+    </el-table-column>
+<el-table-column
+      prop="company"
+      label="公司"
+      show-overflow-tooltip>
+      <template slot-scope="scope">{{ scope.row.company }}</template>
+    </el-table-column>
+<el-table-column
+      label="操作"
+      sortable
+            fixed="right"
+      show-overflow-tooltip>
+        <template slot-scope="scope">
+            <el-button @click.native.prevent="viewHis(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看净值历史" placement="left-start">
+<i class="el-icon-info"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
+        </template>
+    </el-table-column>
 
   </el-table>
       <div style="display: flex;justify-content: space-between">
@@ -238,6 +273,50 @@
       </el-table-column>
     </el-table>
         </el-dialog>
+
+        <el-dialog
+    width="80%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="hisVisible">
+    <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  :visable="dialogVisible"></his-table>
+    </el-dialog>
+    <el-dialog
+    width="80%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="editVisible">
+    <el-form ref="form" :model="current" label-width="80px">
+  <el-form-item label="基金名称">
+    <label >{{current.name}}</label>
+  </el-form-item>
+  <!-- <el-form-item label="即时配送">
+    <el-switch v-model="current.delivery"></el-switch>
+  </el-form-item> -->
+  <el-form-item label="决策级别">
+     <el-radio-group v-model="current.stage">
+    <el-radio label="初选"></el-radio>
+    <el-radio label="二选"></el-radio>
+    <el-radio label="备投"></el-radio>
+    <el-radio label="已投"></el-radio>
+  </el-radio-group>
+  </el-form-item>
+  <el-form-item label="投资份额">
+    <el-input-number style="width:200px"
+    placeholder="份额"
+    v-model="current.amount">
+  </el-input-number>
+  </el-form-item>
+  <el-form-item label="评审意见">
+    <el-input type="textarea" v-model="current.remark"></el-input>
+  </el-form-item>
+  <el-form-item>
+    <el-button type="primary" @click="onSubmit">确认提交</el-button>
+  </el-form-item>
+</el-form>
+    </el-dialog>
   </div>
   
 </template>
@@ -253,14 +332,18 @@
 <script>
     import axis from 'axios'
     import FundEchart from '../../components/FundEchart.vue';
+    import HisTable from '../../components/HisTable.vue';
 
   export default {
       components: {
-            FundEchart
+            FundEchart,
+            HisTable
         },
     data() {
       return {
-          stage:'',
+          temp:-1,
+          origin:{},
+          filter:{},
           options: [{
           value: '初选',
           label: '初选'
@@ -274,11 +357,26 @@
           value: '已投',
           label: '已投'
         }],
+        class_types: [{
+          value: 'CTA',
+          label: 'CTA'
+        }, {
+          value: '指增',
+          label: '指增'
+        }, {
+          value: '套利',
+          label: '套利'
+        }, {
+          value: '混合',
+          label: '混合'
+        }],
         multipleSelection: [],
         current:{},
         cur_code:"",
         dialogVisible: false,
         tableVisible: false,
+        hisVisible:false,
+        editVisible:false,
         compData:[],
         rowdata: '',
         value2: '',
@@ -338,6 +436,31 @@ showResult(number,rate=100){
           this.cur_code=row.code
         //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
       },
+      onSubmit(){
+          
+          var ret=this.$tools.checkModi(this.current,this.origin)
+          var $this=this
+          ret['code']=this.origin.code
+          axis({
+        method: 'post',
+        url: "/fof/updateinfo", // 请求地址
+        data: ret, // 参数
+        responseType: 'json' // 表明返回服务器返回的数据类型
+      }).then(
+        response => {
+            if(response.data.status=="success"){
+                $this.getList()
+                this.editVisible=false
+                this.$message({
+                message: '保存成功',
+                type: 'success',
+                center: true
+        });
+                                        }
+
+        })
+
+      },
       handleClose(done) {
           done()
         // this.$confirm('确认关闭？')
@@ -373,6 +496,30 @@ showResult(number,rate=100){
           this.dialogVisible=true
           this.cur_code=selcode
         //   this.$refs.hischart.$emit("getChart",selcode)  
+      },
+      viewHis(row){
+          this.temp=-1
+          this.cur_code=""
+          this.current=row
+          this.hisVisible=true
+          this.cur_code=row.code
+
+      },
+      viewHisTemp(row){
+          this.temp=1
+          this.cur_code=""
+          this.current=row
+          this.hisVisible=true
+          this.cur_code=row.code
+
+      },
+       editStatus(row){
+          this.cur_code=""
+          this.current=JSON.parse(JSON.stringify(row))  
+          this.origin=row
+          this.editVisible=true
+          this.cur_code=row.code
+
       },
       compare() {
         this.tableVisible=true
@@ -455,17 +602,17 @@ showResult(number,rate=100){
       },
       //
      getList(param){
-            console.log(param)
              var $this=this
-             var data={}
-             if(param && typeof(param)=='object'){
-                 data=param
+             if(param && typeof(param)=='object' && "click"!=param.type){
+                 this.filter=param
              }
-             if(this.input)
-             data["name"]=this.input
-             console.log(this)
-             if(this.stage)
-             data["stage"]=this.stage
+             var data=this.filter
+             console.log(data)
+            //  if(this.input)
+            //  data["name"]=this.input
+            //  console.log(this)
+            //  if(this.stage)
+            //  data["stage"]=this.stage
             //   axis.get('/fof/list')//axis后面的.get可以省略；
             axis( {
                 url: '/fof/list',

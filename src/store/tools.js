@@ -38,7 +38,21 @@ tools.pandasToJson=(pd)=>{
     console.log(result);
     return result;
   },
-tools.exportExcel = (url, options = {})=>{
+tools.checkModi= (modi,orig)=>{
+    console.log(modi)
+    console.log(orig)
+    var result={}
+    for(var i in  modi){
+        console.log(modi[i])
+        if(modi[i]!=orig[i])
+        {
+            console.log(i)
+            result[i]=modi[i]
+        }
+    }
+    return result
+}
+tools.exportExcel = (url, options)=>{
     return new Promise((resolve, reject) => {
       console.log(`${url} 请求数据，参数=>`, JSON.stringify(options))
       axis.defaults.headers['content-type'] = 'application/json;charset=UTF-8'

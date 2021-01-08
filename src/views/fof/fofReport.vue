@@ -42,6 +42,7 @@
         prop="类型"
         width="80"
         label="类型"
+        sortable
         show-overflow-tooltip
       >
              <template slot-scope="scope">{{ scope.row['类型'] }}</template>
