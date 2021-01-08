@@ -183,6 +183,19 @@
       <!--      测试用例是否关联-->
       <!--      测试输入-->
       <el-table-column
+        prop="本周收益"
+        label="本周收益"
+        align="right" 
+        width="80"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+              <span :style="'text-align:right;color:'+(scope.row['本周收益']>=0?'red':'green') " >
+                    {{showResult(scope.row["本周收益"])}}</span>
+
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="当月收益"
         label="当月收益"
         align="right" 
