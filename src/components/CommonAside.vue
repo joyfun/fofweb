@@ -115,7 +115,29 @@ export default {
                                 class_type:'期权',
                             },
                             icon:'setting'
-                        }],
+                        }, {
+                            path: '/fundcompare1',
+                            label: '分类基金对比',
+                            name:'fund-compare',
+                            children:[{
+                            path: '/fundcompare1',
+                            label: '已投对比',
+                            name:'fund-compare1',
+                            params:{
+                                left:'已投',
+                                right:'预选'
+                            },
+                            icon:'setting'
+                        },{
+                            path: '/fundcompare2',
+                            label: '二选对比',
+                            name:'fund-compare2',
+                            params:{
+                                left:'已投',
+                                right:'二选'
+                            },
+                            icon:'setting'
+                        }]}],
                          "decision":[
                         {
                             path: '/fundinfo',

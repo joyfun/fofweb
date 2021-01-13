@@ -32,6 +32,14 @@ export default {
       type: String,
       default: ""
     },
+    compares:{
+      type: String,
+      default: ""
+    },
+    filter:{
+      type: Object,
+      default:null
+    },
      title: {
       type: String,
       default: ''
@@ -67,10 +75,19 @@ export default {
                 his.getChart(val)
               }
     },
+    filter:{
+    handler: function(val) {
+                console.log("watch filter by")
+                his.getChart()
+              }
+    },
+    compares:{
+    handler: function(val) {
+                this.getChart(val)
+              }
+    },
     isVisible: {
       handler: function(val) {
-          console.log(val)
-          console.log(this)
           if(val){
         this.getChart(this.code)
           }
@@ -287,10 +304,20 @@ export default {
         return 0
     },
          getChart(code){
-                   if(code&&code.length>2){
-              console.log("refresh chart:"+code)
-              var $this=this
-              axis.get('/fof/hisdata',{params:{"code":code}})//axis后面的.get可以省略；
+             var charturl=""
+             var $this=this
+             var data=this.filter
+             if(this.filter){
+                 charturl='/fof/hiscompare'
+                 console.log("get compare url:")
+
+             }
+            else if(code&&code.length>2){
+                    charturl='/fof/hisdata'
+                    data.code=code
+              
+          }
+          axis.get(charturl,{params:data})//axis后面的.get可以省略；
                         .then(
                             (response) => {
                                 $this.raw_data=response.data
@@ -311,7 +338,6 @@ export default {
                             (error) => {
                                 console.log(error);
                     });
-          }
 
       },
 

@@ -9,7 +9,7 @@
         <el-button  size="small" @click="allrun()">对比</el-button>
         <el-button  size="small" @click="compare()">业绩对标</el-button>
 
-        <el-select v-model="filter.stage" @change="getList"  clearable placeholder="阶段">
+        <el-select v-model="filter.stage" @change="getList" style="width:80px"  clearable placeholder="阶段">
     <el-option
       v-for="item in options"
       :key="item.value"
@@ -17,7 +17,7 @@
       :value="item.value">
     </el-option>
   </el-select>
-  <el-select v-model="filter.class_type" @change="getList"  clearable placeholder="类型">
+  <el-select v-model="filter.class_type" @change="getList"  style="width:80px"  clearable placeholder="类型">
     <el-option
       v-for="item in class_types"
       :key="item.value"
@@ -308,9 +308,9 @@
   <!-- <el-form-item label="即时配送">
     <el-switch v-model="current.delivery"></el-switch>
   </el-form-item> -->
-  <el-form-item label="决策级别">
+  <el-form-item label="决策阶段">
      <el-radio-group v-model="current.stage">
-    <el-radio label="初选"></el-radio>
+    <el-radio label="预选"></el-radio>
     <el-radio label="二选"></el-radio>
     <el-radio label="备投"></el-radio>
     <el-radio label="已投"></el-radio>
@@ -358,8 +358,8 @@
           origin:{},
           filter:{},
           options: [{
-          value: '初选',
-          label: '初选'
+          value: '预选',
+          label: '预选'
         }, {
           value: '二选',
           label: '二选'

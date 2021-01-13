@@ -94,6 +94,29 @@ const routes = [
             class_type:'期权',
        }
       },
+      {
+        path: '/fundcompare1',
+        name: 'fund-compare1',
+        component:() => import('@/views/fof/fofCompare.vue')
+      }
+      ,
+      {
+        path: '/fundcompare2',
+        name: 'fund-compare2',
+        component:() => import('@/views/fof/fofCompare.vue')
+      }
+      ,
+      {
+        path: '/fundcompare3',
+        name: 'fund-compare3',
+        component:() => import('@/views/fof/fofCompare.vue')
+      }
+      ,
+      {
+        path: '/fundcompare4',
+        name: 'fund-compare4',
+        component:() => import('@/views/fof/fofCompare.vue')
+      }
       ,
       {
         path: '/fundreport',
