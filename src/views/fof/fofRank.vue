@@ -7,12 +7,12 @@
   <el-button type="primary" @click="changeDate(-365)">近365天</el-button>
 {{"自" + startDate +"开始"}}
 </el-button-group>
-  <echart
-    ref="piechart"
-    :chartData="pieData"
+  <!-- <echart
+    ref="barchart"
+    :chartData="barData"
     style="height: 480px"
     :isAxisChart="false"
-  ></echart>
+  ></echart> -->
 <el-card>
   <el-table
           :data="tableData"
@@ -25,8 +25,8 @@
           <el-table-column prop="short_name" label="名称">      <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
 </el-table-column>
           <!-- <el-table-column hide="true" prop="amount" label="份额"> </el-table-column> -->
-          <el-table-column align="right"  :formatter	="formatterNum" prop="netval" label="净值"> </el-table-column>
-          <el-table-column  align="right" :formatter	="formatterNum" prop="profit" label="盈利"> </el-table-column>
+          <el-table-column align="right"  :formatter	="formatterNum" prop="netval" label="当前净值"> </el-table-column>
+          <el-table-column  align="right" :formatter	="formatterNum" prop="rate" label="增长%"> </el-table-column>
 
         </el-table>
 </el-card>
@@ -37,7 +37,7 @@
     :close-on-press-escape="false"
     :visible.sync="dialogVisible"
   >
-    <fund-echart        ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
+    <fund-echart       ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
     </el-dialog>
 </div>
 </template>
@@ -60,38 +60,19 @@ export default {
       current:{},
       cur_code:"",
       dialogVisible: false,
-      pieData: {
-        legend: { type: "scroll", top: 2, data: [] },
-        series: [{
-          name: "资金占比",
-          type: "pie",
-          radius: ["0%", "40%"],
-          avoidLabelOverlap: false,
-
-          label: {
-            formatter: "{b} : {c} ({d}%)",
-          },
-          tooltip: {
-            trigger: "item",
-            formatter: "{a} <br/>{b} : {c} ({d}%)",
-          },
-          data: [],
-        },{
-          name: "资金占比",
-          type: "pie",
-          radius: ["45%", "60%"],
-          avoidLabelOverlap: false,
-
-          label: {
-            formatter: "{b} : {c} ({d}%)",
-          },
-          tooltip: {
-            trigger: "item",
-            formatter: "{a} <br/>{b} : {c} ({d}%)",
-          },
-          data: [],
-        }]
-      },
+      barData:  {
+    xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+        data: [120, 200, 150, 80, 70, 110, 130],
+        type: 'bar'
+    }]
+},
     };
   },
     methods: {
@@ -141,6 +122,8 @@ export default {
         for(var idx in data){
             var row=data[idx]
             row["profit"]=row.amount*(row.n_sumval-row.s_sumval)
+            row["rate"]=row.n_sumval/row.s_sumval
+
             ret.push({name:row.name,value:row["profit"]})
         }
         return ret;
@@ -180,14 +163,24 @@ getTableData(param) {
         .then((response) => {
           this.startDate=response.data.start
           this.tableData = response.data.datas;
-          this.pieData.series[1].data=this.getPieDataOuter(this.tableData)
-          this.pieData.series[0].data=this.getPieData(this.tableData)
-
-          this.pieData.legend.data=this.getLegend(this.pieData.series.data)
-          console.log(this.pieData.legend)
-          this.$refs.piechart.initChart() 
+          this.getPieDataOuter(this.tableData)
+          this.tableData=this.tableData.sort((a,b)=>{
+              return b.rate-a.rate
+            //   if(a.class_type>b.class_type )
+            //   return true
+            //   else if(a.class_type==b.class_type &&a.rate>b.rate)
+            //   return true
+            //   return false
+          })
           console.log(this.tableData)
-            //子组件$on中的名字
+        //   this.pieData.series[1].data=this.getPieDataOuter(this.tableData)
+        //   this.pieData.series[0].data=this.getPieData(this.tableData)
+
+        //   this.pieData.legend.data=this.getLegend(this.pieData.series.data)
+        //   console.log(this.pieData.legend)
+        //   this.$refs.barchart.initChart() 
+        //   console.log(this.tableData)
+        //     //子组件$on中的名字
           this.getSpanArr(this.tableData)
 
         })

@@ -206,7 +206,17 @@ export default {
                                 type:'1',
                             },
                             icon:'setting'
-                        }, {
+                        },
+                        {
+                            path: '/fundrank',
+                            label: '排名',
+                            name:'fund-rank',
+                            params:{
+                                type:'1',
+                            },
+                            icon:'setting'
+                        },
+                         {
                             path: '/fundinfo',
                             label: '业绩预警',
                             name:'fund-info',

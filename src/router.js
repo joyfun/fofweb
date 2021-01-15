@@ -127,6 +127,11 @@ const routes = [
         path: '/fundreason',
         name: 'fund-reason',
         component:() => import('@/views/fof/fofReason.vue')
+      },
+      {
+        path: '/fundrank',
+        name: 'fund-rank',
+        component:() => import('@/views/fof/fofRank.vue')
       }
       ,
       {
