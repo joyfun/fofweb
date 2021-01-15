@@ -34,6 +34,7 @@
       <el-table
     ref="multipleTable"
     :data="tableData"
+    :row-key="(row)=>{ return row.code}"
     tooltip-effect="dark"
     style="width: 100%;margin-top:20px;"
     @selection-change="handleSelectionChange"      >
@@ -41,6 +42,7 @@
 
     <el-table-column
       type="selection"
+      :reserve-selection="true"
       width="55">
     </el-table-column>
 <!--      测试ID-->
@@ -106,10 +108,27 @@
 <i class="el-icon-info"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
+            <el-button v-show="scope.row.filename"  type="text" size="small"><el-tooltip class="item" effect="dark" content="下载报告" placement="left-start"><a :href=" '/fof/downfile?code='+scope.row.code "><i class="el-icon-download"></i></a></el-tooltip></el-button>
+
+            <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
+
         </template>
     </el-table-column>
 
   </el-table>
+  <el-upload
+              class="upload-demo"
+              style="display:none"
+              accept=".doc,.dot,.DOC,.DOT.pdf,.PDF"
+              action="/fof/upload"
+              :data="{code:cur_code}"
+
+              :before-upload="(file)=>loadModel(file)"
+              auto-upload
+            >
+              <el-button id="uploadButton" size="small" type="primary">点击上传</el-button>
+            </el-upload>
       <div style="display: flex;justify-content: space-between">
       
       <div class="block" style=" margin-top: 25px; height: 120px; ">
@@ -140,6 +159,8 @@
     :close-on-press-escape="false"
     :visible.sync="tableVisible"
   >
+    <el-button  @click="downFile">下载数据</el-button>
+
 <el-table
       ref="compTable"
       :data="compData"
@@ -382,6 +403,9 @@
         }, {
           value: '混合',
           label: '混合'
+        }, {
+          value: '期权',
+          label: '期权'
         }],
         multipleSelection: [],
         current:{},
@@ -395,9 +419,9 @@
         value2: '',
         PageSize:30,
         chartData: {
-                        xData: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        xData: [],
                         series: [{
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
+        data: [],
         type: 'line',
         smooth: true
     }]
@@ -406,7 +430,6 @@
           tableData:[],
           totaltableData: [],
           currentPage: 1,
-          multipleSelection: []
       }
     },
     watch: {
@@ -420,9 +443,17 @@
     }
   },
     methods: {
+        loadModel(file){
+            console.log(file.name)
+        },
+        uploadFile(row){
+            this.cur_code=row.code
+            document.getElementById('uploadButton').click()
+        },
          editClose() {
         this.dialogVisible = false
         },
+        
         downFile(){
         var url="/fof/report"
         if(this.multipleSelection.length<1){
@@ -534,10 +565,14 @@ showResult(number,rate=100){
           this.cur_code=row.code
 
       },
-      compare() {
-        this.tableVisible=true
-        // console.log(this.multipleSelection)
-        if(this.multipleSelection.length<1){
+      downInvest(row){
+        var url="/fof/downfile"
+        const options = {"code":row.code}
+        this.$tools.exportExcel(url,options)
+
+      },
+       downFile(){
+            if(this.multipleSelection.length<1){
             return
         }
         var selcode=""
@@ -545,6 +580,17 @@ showResult(number,rate=100){
         for (let i = 0; i < this.multipleSelection.length; i++) {
               selcode+=this.multipleSelection[i].code+",";
         }
+        var url="/fof/down_jreport"
+      
+        const options = {"code":selcode}
+        this.$tools.exportExcel(url,options)
+        },
+      vcompare(row){
+          this.showcomapre(row.code+","+row.compare)
+      },
+      showcomapre(selcode){
+        this.tableVisible=true
+        // console.log(this.multipleSelection)
           axis( {
                 url: '/fof/jreport',
                 method: 'GET',
@@ -557,12 +603,38 @@ showResult(number,rate=100){
         .catch((error) => {
           console.log(error);
         });
+      },
+      compare() {
+        // console.log(this.multipleSelection)
+        if(this.multipleSelection.length<1){
+            return
+        }
+        var selcode=""
+        console.log(this.multipleSelection)
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+              selcode+=this.multipleSelection[i].code+",";
+        }
+        this.showcomapre(selcode)
         //   this.$refs.hischart.$emit("getChart",selcode)  
       },
       // 选中
       handleSelectionChange(val) {
           console.log(val)
+          console.log(this.multipleSelection)
+
         this.multipleSelection = val;
+    //         if (this.multipleSelection.length > 0) {
+    //     this.multipleSelection.forEach((item, index) => {
+    //         if (item.code == row.code) {
+    //             this.multipleSelection.splice(index,1)
+    //         } else {
+    //             this.multipleSelection.push(row)
+    //         }
+    //     })
+    // } else {
+    //     this.multipleSelection.push(row)
+    // }
+
       },
       delSelection(){
         for (let i = 0; i < this.multipleSelection.length; i++) {
@@ -589,6 +661,7 @@ showResult(number,rate=100){
       },
       // 跳转
       handleCurrentChange(val) {
+        console.log(this.multipleSelection)
         console.log(`当前页: ${val}`);
         this.currentPage = val;
         //页面每页大小

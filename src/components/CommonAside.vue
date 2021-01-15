@@ -133,8 +133,8 @@ export default {
                             label: '二选对比',
                             name:'fund-compare2',
                             params:{
-                                left:'已投',
-                                right:'二选'
+                                left:'二选',
+                                right:'预选'
                             },
                             icon:'setting'
                         }]}],
@@ -149,14 +149,36 @@ export default {
                             icon:'setting'
                         }
                         , {
-                            path: '/fundinfo4',
+                            path: '/fundinfo6',
                             label: '相关性分析',
                             name:'fund-info4',
                             params:{
                                 class_type:'中性',
                             },
                             icon:'setting'
-                        }
+                        },, {
+                            path: '/fundcompare1',
+                            label: '分类基金对比',
+                            name:'fund-compare',
+                            children:[{
+                            path: '/fundcompare1',
+                            label: '已投对比',
+                            name:'fund-compare1',
+                            params:{
+                                left:'已投',
+                                right:'预选'
+                            },
+                            icon:'setting'
+                        },{
+                            path: '/fundcompare2',
+                            label: '二选对比',
+                            name:'fund-compare2',
+                            params:{
+                                left:'二选',
+                                right:'预选'
+                            },
+                            icon:'setting'
+                        }]}
                         , {
                             path: '/fundinfo4',
                             label: '组合配置',
@@ -177,9 +199,9 @@ export default {
                             icon:'setting'
                         },
                         {
-                            path: '/fundext',
+                            path: '/fundreason',
                             label: '归因',
-                            name:'fund-ext',
+                            name:'fund-reason',
                             params:{
                                 type:'1',
                             },

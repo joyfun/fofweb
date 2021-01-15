@@ -287,7 +287,7 @@ export default {
     downFile(){
         var url="/fof/down_jreport"
       
-        const options = {}
+        const options = {"cache":1}
         this.$tools.exportExcel(url,options)
         },
     delSelection() {

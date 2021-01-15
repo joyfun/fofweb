@@ -63,9 +63,10 @@ tools.exportExcel = (url, options)=>{
         responseType: 'blob' // 表明返回服务器返回的数据类型
       }).then(
         response => {
+          console.log(response)
           resolve(response.data)
           let blob = new Blob([response.data], {
-            type: 'application/vnd.ms-excel'
+            type: response.data.type
           })
           console.log(blob)
           let fileName = Date.parse(new Date()) + '.xlsx'

@@ -307,14 +307,12 @@ export default {
              var charturl=""
              var $this=this
              var data=this.filter
-             if(this.filter){
+             if(data){
                  charturl='/fof/hiscompare'
                  console.log("get compare url:")
-
-             }
-            else if(code&&code.length>2){
+             }else if(code&&code.length>2){
                     charturl='/fof/hisdata'
-                    data.code=code
+                    data={"code":code}
               
           }
           axis.get(charturl,{params:data})//axis后面的.get可以省略；

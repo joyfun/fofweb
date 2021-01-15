@@ -122,6 +122,11 @@ const routes = [
         path: '/fundreport',
         name: 'fund-report',
         component:() => import('@/views/fof/fofReport.vue')
+      },
+      {
+        path: '/fundreason',
+        name: 'fund-reason',
+        component:() => import('@/views/fof/fofReason.vue')
       }
       ,
       {
