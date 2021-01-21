@@ -200,6 +200,15 @@
              <template slot-scope="scope">{{ scope.row['类型'] }}</template>
 
       </el-table-column>
+       <el-table-column
+        prop="子类型"
+        width="120"
+        label="子类型"
+        show-overflow-tooltip
+      >
+             <template slot-scope="scope">{{ scope.row['子类型'] }}</template>
+
+      </el-table-column>
       <!--      测试项目-->
       <!--      测试用例是否关联-->
       <!--      测试输入-->
@@ -253,10 +262,16 @@
           showResult(scope.row["近12月收益"])
         }}</span></template>
       </el-table-column>
+      <el-table-column align="right" prop="2020" label="2020" show-overflow-tooltip>
+        <template slot-scope="scope">
+                <span :style="'text-align:right;color:'+(scope.row['2020']>=0?'red':'green') " >
+{{
+          showResult(scope.row["2020"])
+        }}</span></template>
+      </el-table-column>
       <el-table-column align="right" prop="2019" label="2019" show-overflow-tooltip>
         <template slot-scope="scope">
-                <span :style="'text-align:right;color:'+(scope.row['2019']>=0?'red':'green') " >
-{{
+            <span :style="'text-align:right;color:'+(scope.row['2019']>=0?'red':'green') " >{{
           showResult(scope.row["2019"])
         }}</span></template>
       </el-table-column>
@@ -264,12 +279,6 @@
         <template slot-scope="scope">
             <span :style="'text-align:right;color:'+(scope.row['2018']>=0?'red':'green') " >{{
           showResult(scope.row["2018"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="2017" label="2017" show-overflow-tooltip>
-        <template slot-scope="scope">
-            <span :style="'text-align:right;color:'+(scope.row['2017']>=0?'red':'green') " >{{
-          showResult(scope.row["2017"])
         }}</span></template>
       </el-table-column>
       <!--过去3年年均收益	夏普比率	卡玛比率	最大回撤-->
@@ -306,6 +315,8 @@
         }}</span></template>
       </el-table-column>
     </el-table>
+        <fund-echart    ref="hischart1"  :titles="current.name"  style="height: 600px" :code="selcode"  ></fund-echart>
+
         </el-dialog>
 
         <el-dialog
@@ -586,13 +597,17 @@ showResult(number,rate=100){
         this.$tools.exportExcel(url,options)
         },
       vcompare(row){
-          this.showcomapre(row.code+","+row.compare)
+          this.showcomapre(row.code,'/fof/jcompare')
       },
-      showcomapre(selcode){
+      showcomapre(selcode,vcomp){
+        let curl='/fof/jreport'
+        if(vcomp)
+            curl=vcomp
         this.tableVisible=true
+        this.selcode=selcode
         // console.log(this.multipleSelection)
           axis( {
-                url: '/fof/jreport',
+                url: curl,
                 method: 'GET',
                 params: {code:selcode}
                 })//axis后面的.get可以省略；

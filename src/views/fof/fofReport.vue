@@ -101,10 +101,16 @@
           showResult(scope.row["近12月收益"])
         }}</span></template>
       </el-table-column>
+      <el-table-column align="right" prop="2020" label="2020" show-overflow-tooltip>
+        <template slot-scope="scope">
+                <span :style="'text-align:right;color:'+(scope.row['2020']>=0?'red':'green') " >
+{{
+          showResult(scope.row["2020"])
+        }}</span></template>
+      </el-table-column>
       <el-table-column align="right" prop="2019" label="2019" show-overflow-tooltip>
         <template slot-scope="scope">
-                <span :style="'text-align:right;color:'+(scope.row['2019']>=0?'red':'green') " >
-{{
+            <span :style="'text-align:right;color:'+(scope.row['2019']>=0?'red':'green') " >{{
           showResult(scope.row["2019"])
         }}</span></template>
       </el-table-column>
@@ -112,12 +118,6 @@
         <template slot-scope="scope">
             <span :style="'text-align:right;color:'+(scope.row['2018']>=0?'red':'green') " >{{
           showResult(scope.row["2018"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="2017" label="2017" show-overflow-tooltip>
-        <template slot-scope="scope">
-            <span :style="'text-align:right;color:'+(scope.row['2017']>=0?'red':'green') " >{{
-          showResult(scope.row["2017"])
         }}</span></template>
       </el-table-column>
       <!--过去3年年均收益	夏普比率	卡玛比率	最大回撤-->

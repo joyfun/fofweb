@@ -72,13 +72,13 @@ export default {
   watch: {
     code:{
     handler: function(val) {
-                his.getChart(val)
+                this.getChart(val)
               }
     },
     filter:{
     handler: function(val) {
                 console.log("watch filter by")
-                his.getChart()
+                this.getChart()
               }
     },
     compares:{
@@ -370,10 +370,6 @@ export default {
 
        // this.refreshData(params) 
     },
-    rawData(){
-        alter("raw click")
-    },
-
     initChart() {
          var lastIdx=0;
         for (var sidx in this.chartData.series){
@@ -489,7 +485,7 @@ export default {
     window.addEventListener('resize', this.resizeChart)
     this.getChart(this.code)
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener('resize', this.resizeChart)
   }
 }

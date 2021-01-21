@@ -120,14 +120,23 @@ export default {
       }
       console.log(this.spanArr)
     },
+    getPieDataOuter(data){
+        var ret=[]
+        for(var idx in data){
+            var row=data[idx]
+            row["profit"]=row.amount*(row["n_netval"])
+            ret.push({name:row.name,value:row["profit"]})
+        }
+        return ret;
+    },
     getPieData(data){
         var dict={};
         for(var idx in data){
             var row=data[idx]
             if(dict[row.class_type]){
-                dict[row.class_type]+=row.val
+                dict[row.class_type]+=row["profit"]
             }else{
-                dict[row.class_type]=row.val
+                dict[row.class_type]=row["profit"]
             }
         }
         var ret=[]
@@ -160,6 +169,7 @@ export default {
       })
         .then((response) => {
           this.tableData = response.data.datas;
+          this.getPieDataOuter(this.tableData)
           this.pieData.series.data=this.getPieData(this.tableData)
           this.pieData.legend.data=this.getLegend(this.pieData.series.data)
           console.log(this.pieData.legend)

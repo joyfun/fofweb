@@ -122,7 +122,7 @@ export default {
         for(var idx in data){
             var row=data[idx]
             row["profit"]=row.amount*(row.n_sumval-row.s_sumval)
-            row["rate"]=row.n_sumval/row.s_sumval
+            row["rate"]=(row.n_sumval/row.s_sumval-1)*100
 
             ret.push({name:row.name,value:row["profit"]})
         }
@@ -165,7 +165,11 @@ getTableData(param) {
           this.tableData = response.data.datas;
           this.getPieDataOuter(this.tableData)
           this.tableData=this.tableData.sort((a,b)=>{
+                if(a.class_type>b.class_type )
+              return 1
+              else if(a.class_type==b.class_type)
               return b.rate-a.rate
+              else return -1
             //   if(a.class_type>b.class_type )
             //   return true
             //   else if(a.class_type==b.class_type &&a.rate>b.rate)
