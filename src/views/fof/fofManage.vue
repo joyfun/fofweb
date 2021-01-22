@@ -6,6 +6,7 @@
         <div style="display: flex;justify-content: space-between">
            <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
         <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
+        <el-button  size="small" @click="addInfo()">添加</el-button>
         <el-button  size="small" @click="allrun()">对比</el-button>
         <el-button  size="small" @click="compare()">业绩对标</el-button>
 
@@ -100,18 +101,19 @@
     </el-table-column>
 <el-table-column
       label="操作"
-      sortable
             fixed="right"
-      show-overflow-tooltip>
+      width="160">
         <template slot-scope="scope">
             <el-button @click.native.prevent="viewHis(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看净值历史" placement="left-start">
 <i class="el-icon-info"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.filename"  type="text" size="small"><el-tooltip class="item" effect="dark" content="下载报告" placement="left-start"><a :href=" '/fof/downfile?code='+scope.row.code "><i class="el-icon-download"></i></a></el-tooltip></el-button>
 
             <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
 
         </template>
     </el-table-column>
@@ -341,11 +343,8 @@
     <el-switch v-model="current.delivery"></el-switch>
   </el-form-item> -->
   <el-form-item label="决策阶段">
-     <el-radio-group v-model="current.stage">
-    <el-radio label="预选"></el-radio>
-    <el-radio label="二选"></el-radio>
-    <el-radio label="备投"></el-radio>
-    <el-radio label="已投"></el-radio>
+     <el-radio-group v-model="current.stage">    
+    <el-radio :key="idx" v-for="(item,idx) in options" :label="item.label"></el-radio>
   </el-radio-group>
   </el-form-item>
   <el-form-item label="投资份额">
@@ -362,6 +361,45 @@
   </el-form-item>
 </el-form>
     </el-dialog>
+ <el-dialog
+    width="80%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="formVisible"
+  >
+<el-form :model="current" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
+    <template v-for="(row,index)  in cForm" >
+
+     <el-row  :key="index"   v-show="index%2==0">
+      <el-col :span="12">              
+      <el-form-item v-if="index<cForm.length-1"  :prop="row.dataIndex"      :label=" row.tilte"><el-input v-model="current[row.dataIndex]"></el-input>
+      </el-form-item>
+      </el-col>
+      <el-col :span="12">              
+      <el-form-item v-if="index+1<cForm.length-1"  :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte"><el-input v-model="current[cForm[index+1].dataIndex]"></el-input>
+      </el-form-item>
+      </el-col>
+    </el-row >
+    </template>
+<el-form-item>
+    <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+    <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+  </el-form-item>
+</el-form>
+    </el-dialog>
+
+    <el-dialog
+  title="提示"
+  :visible.sync="confirmVisible"
+  width="30%"
+  :before-close="handleClose">
+  <span>确认删除{{current.name}}?</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="confirmVisible = false">取 消</el-button>
+    <el-button type="primary" @click="delFund()">确 定</el-button>
+  </span>
+</el-dialog>
   </div>
   
 </template>
@@ -378,7 +416,27 @@
     import axis from 'axios'
     import FundEchart from '../../components/FundEchart.vue';
     import HisTable from '../../components/HisTable.vue';
-
+   const cForm=[
+    {"tilte":"编号","dataIndex":"code"},
+    {"tilte":"名称","dataIndex":"name"},
+    {"tilte":"简称","dataIndex":"short_name"},
+    {"tilte":"基金类型","dataIndex":"class_type"},
+    {"tilte":"文件匹配条件","dataIndex":"regex"},
+    {"tilte":"购买时净值","dataIndex":"buy_price"},
+    {"tilte":"子类型","dataIndex":"sub_type"},
+    {"tilte":"购买时间","dataIndex":"buy_date"},
+    {"tilte":"份额","dataIndex":"amount"},
+    {"tilte":"所属公司","dataIndex":"company"},
+    {"tilte":"类型","dataIndex":"type"},
+    {"tilte":"基金成立时间","dataIndex":"founded"},
+    {"tilte":"状态","dataIndex":"stage"},
+    {"tilte":"预选状态时间","dataIndex":"stage1_time"},
+    {"tilte":"二选状态时间","dataIndex":"stage2_time"},
+    {"tilte":"倍投状态时间","dataIndex":"stage3_time"},
+    {"tilte":"已投状态时间","dataIndex":"stage4_time"},
+    {"tilte":"子基金对标","dataIndex":"compare"},
+    {"tilte":"市值","dataIndex":"cost"}
+]
   export default {
       components: {
             FundEchart,
@@ -386,10 +444,16 @@
         },
     data() {
       return {
+          cForm,
+          selcode:"",
           temp:-1,
           origin:{},
           filter:{},
-          options: [{
+          options: [
+              {
+          value: '无',
+          label: '无'
+        },{
           value: '预选',
           label: '预选'
         }, {
@@ -422,6 +486,8 @@
         current:{},
         cur_code:"",
         dialogVisible: false,
+        confirmVisible:false,
+        formVisible:false,
         tableVisible: false,
         hisVisible:false,
         editVisible:false,
@@ -454,6 +520,63 @@
     }
   },
     methods: {
+          editInfo(row){
+        //   this.cur_id=row.id
+        //   this.current=JSON.parse(JSON.stringify(row))  
+          this.current=row
+          this.formVisible=true
+      },
+      submitForm(formName) {
+          console.log(this.$refs[formName].model)
+          axis({
+      method: 'post',
+      url: "/fof/saveinfo", // 请求地址
+      data: this.current, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then(
+      response => {
+          if(response.data["status"]=="success"){
+              this.getList(this.filter)
+            this.formVisible = false
+          }
+
+      },
+      err => {
+        reject(err)
+      }
+    )
+      },
+      delFund0(row){
+          this.confirmVisible=true
+          this.current=row
+      },
+      delFund(row) {
+          if(!row){
+              row=this.current
+          }
+          console.log(row)
+          axis({
+      method: 'post',
+      url: "/fof/delfund", // 请求地址
+      data: {code:row.code}, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then(
+      response => {
+          if(response.data["status"]=="success"){
+              this.confirmVisible=false
+              this.getList(this.filter)
+          }
+
+      },
+      err => {
+        reject(err)
+      }
+    )
+      },
+      addInfo(){
+          this.current={}
+          this.formVisible=true
+      },
         loadModel(file){
             console.log(file.name)
         },

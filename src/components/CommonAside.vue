@@ -65,7 +65,7 @@ export default {
                             icon:'setting'
                         }, {
                             path: '/fundinfo',
-                            label: '基金产品维护',
+                            label: '初选基金管理',
                             name:'fund-info',
                             params:{
                                 type:'1',
@@ -195,6 +195,15 @@ export default {
                             name:'fund-report',
                             params:{
                                 class_type:'1',
+                            },
+                            icon:'setting'
+                        },
+                        {
+                            path: '/fund-jcomp',
+                            label: '对标差',
+                            name:'fund-jcomp',
+                            params:{
+                                url:'jcompare',
                             },
                             icon:'setting'
                         },

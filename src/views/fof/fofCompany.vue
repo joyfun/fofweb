@@ -4,9 +4,8 @@
         
 
         <div style="display: flex;justify-content: space-between">
-           <el-button  size="small" @click="delSelection()">删除</el-button>
-        <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
-        
+            <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
+            <el-button  size="small" @click="addCompany()">添加</el-button>
         <el-input v-model="input" placeholder="请输入名称"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
         </div>
@@ -92,7 +91,17 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.alarm }}</template>
     </el-table-column>
+<el-table-column
+      label="操作"
+      sortable
+            fixed="right"
+      show-overflow-tooltip>
+        <template slot-scope="scope">
+            <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="delCompany0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
 
+        </template>
+    </el-table-column>
   </el-table>
       <div style="display: flex;justify-content: space-between">
       
@@ -115,8 +124,39 @@
     :close-on-press-escape="false"
     :visible.sync="dialogVisible"
   >
-    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
+<el-form :model="curCompany" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
+    <template v-for="(row,index)  in cForm" >
+
+     <el-row  :key="index"   v-show="index%2==0">
+      <el-col :span="12">              
+      <el-form-item v-if="index<cForm.length-1"  :prop="row.dataIndex"      :label=" row.tilte"><el-input v-model="curCompany[row.dataIndex]"></el-input>
+      </el-form-item>
+      </el-col>
+      <el-col :span="12">              
+      <el-form-item v-if="index+1<cForm.length-1"  :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte"><el-input v-model="curCompany[cForm[index+1].dataIndex]"></el-input>
+      </el-form-item>
+      </el-col>
+    </el-row >
+    </template>
+<el-form-item>
+    <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+    <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+  </el-form-item>
+</el-form>
     </el-dialog>
+
+
+    <el-dialog
+  title="提示"
+  :visible.sync="confirmVisible"
+  width="30%"
+  :before-close="handleClose">
+  <span>确认删除{{curCompany.name}}?</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="confirmVisible = false">取 消</el-button>
+    <el-button type="primary" @click="delCompany()">确 定</el-button>
+  </span>
+</el-dialog>
   </div>
   
 </template>
@@ -132,16 +172,35 @@
 <script>
     import axis from 'axios'
     import FundEchart from '../../components/FundEchart.vue';
-
+  const cForm=[
+ {"tilte":"名称","dataIndex":"name"},
+ {"tilte":"状态","dataIndex":"status"},
+ {"tilte":"简称","dataIndex":"short_name"}, 
+ {"tilte":"负责人","dataIndex":"manager"},
+ {"tilte":"投资规模（万元）","dataIndex":"scope"},
+ {"tilte":"商务经理","dataIndex":"business_man"},
+ {"tilte":"联系方式","dataIndex":"contact"},
+ {"tilte":"管理费","dataIndex":"fee"},
+ {"tilte":"carry","dataIndex":"carry"},
+ {"tilte":"业绩报酬计提方式","dataIndex":"perf_comp"},
+ {"tilte":"止损","dataIndex":"lost"},
+ {"tilte":"预警","dataIndex":"alarm"},
+ {"tilte":"其他关键条款","dataIndex":"other"},
+ {"tilte":"渠道","dataIndex":"channel"},
+ {"tilte":"渠道联系人","dataIndex":"channel_man"},
+ {"tilte":"渠道联系方式","dataIndex":"channel_contact"} 
+]
   export default {
       components: {
             FundEchart
         },
     data() {
       return {
+        cForm,
         multipleSelection: [],
-        current:{},
-        cur_code:"",
+        curCompany:{},
+        confirmVisible:false,
+        cur_id:0,
         dialogVisible: false,
         rowdata: '',
         value2: '',
@@ -174,7 +233,61 @@
     methods: {
          editClose() {
         this.dialogVisible = false
+        this.resetForm('dynamicValidateForm')
         },
+      submitForm(formName) {
+          console.log(this.$refs[formName].model)
+          axis({
+      method: 'post',
+      url: "/fof/savecompany", // 请求地址
+      data: this.curCompany, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then(
+      response => {
+          if(response.data["status"]=="success"){
+            this.dialogVisible = false
+             this.getList()
+          }
+
+      },
+      err => {
+        reject(err)
+      }
+    )
+      },
+      delCompany0(row){
+          this.curCompany=row
+          this.confirmVisible=true
+
+      },
+      delCompany(row) {
+          if(!row){
+              row=this.curCompany
+          }
+          axis({
+      method: 'post',
+      url: "/fof/delcompany", // 请求地址
+      data: {"id":row.id}, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then(
+      response => {
+          console.log(response)
+          if(response.data["status"]=="success"){
+              this.confirmVisible=false
+            this.getList()
+          }
+
+      },
+      err => {
+        reject(err)
+      }
+    )
+      },
+      resetForm(formName) {
+          console.log(formName)
+        this.$refs[formName].resetFields();
+      },
+
         downFile(){
         var url="/fof/report"
         if(this.multipleSelection.length<1){
@@ -188,12 +301,15 @@
             exportExcel(url,options)
         },
 
-      showHis(row){
-          this.cur_code=""
-          this.current=row
+       editStatus(row){
+          this.cur_id=row.id
+          this.current=JSON.parse(JSON.stringify(row))  
+          this.curCompany=row
           this.dialogVisible=true
-          this.cur_code=row.code
-        //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
+      },
+      addCompany(){
+          this.curCompany={}
+          this.dialogVisible=true
       },
       handleClose(done) {
           done()

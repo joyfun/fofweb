@@ -199,6 +199,7 @@ export default {
   },
   data() {
     return {
+      curl:"/fof/jreport",
       current: {},
       cur_code: "",
       dialogVisible: false,
@@ -221,6 +222,20 @@ export default {
       PageSize: 10,
       multipleSelection: [],
     };
+  },
+  watch: {
+    $route:{
+      handler(n){
+          console.log(n)
+          if(n.params['url']){
+              this.curl="/fof/"+n.params['url']
+          }
+          this.getList()
+		// 初始化操作
+      },
+      immediate: true,
+      deep: true,
+    }
   },
   methods: {
     editClose() {
@@ -285,7 +300,7 @@ export default {
       this.multipleSelection = val;
     },
     downFile(){
-        var url="/fof/down_jreport"
+        var url=this.curl
       
         const options = {"cache":1}
         this.$tools.exportExcel(url,options)
@@ -343,7 +358,7 @@ export default {
     //
     getList() {
       axis
-        .get("/fof/jreport") //axis后面的.get可以省略；
+        .get(this.curl) //axis后面的.get可以省略；
         .then((response) => {
           console.log(response);
           this.tableData = this.$tools.pandasToJson(response.data);
@@ -354,18 +369,6 @@ export default {
         });
     },
     //
-    request_excute(test_id) {
-      let url = "/api/testcase/case/?testid=" + test_id;
-      // console.log(url)
-      axis
-        .get(url) //axis后面的.get可以省略；
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
   },
 
   async created() {
