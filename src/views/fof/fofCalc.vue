@@ -1,9 +1,10 @@
 <template>
+<div>
   <el-row class="home" :gutter="20">
     <!-- <el-col :span="8">
       
     </el-col> -->
-    <el-col :span="24">
+    <el-col :span="8">
       <!-- <div class="num">
                 <el-card shadow="hover" v-for="item in countData" :key="item.name"
                          :body-style="{ display: 'flex', padding: 0 }">
@@ -14,22 +15,46 @@
                     </div>
                 </el-card>
             </div> -->
+                
 
       <el-card shadow="hover">
-        <fund-echart
-          ref="hischart"
-          style="height: 500px"
-          :code="code"
-        ></fund-echart>
+        <el-form ref="form" label-width="160px">
+                        <el-col :span="11">
+                    <el-form-item :key="row.code" v-for="row in preInvest "  :prop="row.dataIndex"      :label=" row.short_name"><el-input-number @change = "((val)=>{handleChange(val, row)})" v-model="row.cost"></el-input-number>
+            
+                </el-form-item>
+                        </el-col>
+
+                        <!-- <template v-for="(row,index)  in preInvest" >
+
+     <el-row  :key="index"   v-show="index%2==0">
+      <el-col :span="12">              
+      <el-form-item v-if="index<preInvest.length-1"  :prop="row.cost"      :label=" row.short_name"><el-input v-model="row.cost"></el-input>
+      </el-form-item>
+      </el-col>
+      <el-col :span="12">              
+      <el-form-item v-if="index+1<=preInvest.length-1"  :prop="preInvest[index+1].cost"   :label=" preInvest[index+1].short_name"><el-input-number v-model="preInvest[index+1].cost"></el-input-number>
+      </el-form-item>
+      </el-col>
+    </el-row >
+    </template> -->
+                </el-form>
       </el-card>
+    </el-col>
+    <el-col :span="16">
       <el-card shadow="hover">
         <echart           ref="piechart"
 :chartData="pieData"  style="height: 260px" :isAxisChart="false"></echart>
       </el-card>
+    </el-col>
+  </el-row>
+    <el-row>
+        <el-col :span="24">
       <el-card shadow="hover">
         <el-table
           :data="tableData"
           :span-method="cellMerge"
+
           show-summary
           border
           style="width: 100%; margin-top: 20px"
@@ -50,6 +75,7 @@
             </div> -->
     </el-col>
   </el-row>
+</div>
 </template>
 
 <script>
@@ -66,6 +92,7 @@ export default {
     return {
       code: "",
       tableData: [],
+      preInvest:[],
       pieData:{
            legend: {type: 'scroll',
         top: 2,
@@ -98,6 +125,17 @@ export default {
     };
   },
   methods: {
+      handleChange(val,row){
+          console.log(val)
+          row.amount=val*10000
+          row.net_val=1
+          this.getPieDataOuter(this.tableData)
+          this.pieData.series.data=this.getPieData(this.tableData)
+          this.pieData.legend.data=this.getLegend(this.pieData.series.data)
+          this.$refs.piechart.initChart()  
+          console.log(this.tableData)
+
+      },
       formatterNum(row, column, value) {
       if (!value) return "0.00";
       return this.$tools.formatMoney(value,2)
@@ -124,7 +162,8 @@ export default {
         var ret=[]
         for(var idx in data){
             var row=data[idx]
-            row["profit"]=row.amount*(row["n_netval"])
+            this.$set(row,"profit",row.amount*(row["netval"]))
+            // row["profit"]=row.amount*(row["netval"])
             ret.push({name:row.name,value:row["profit"]})
         }
         return ret;
@@ -168,11 +207,10 @@ export default {
         params: {},
       })
         .then((response) => {
-          this.tableData = response.data.datas;
+          this.tableData = response.data.datas.concat(this.preInvest);
           this.getPieDataOuter(this.tableData)
           this.pieData.series.data=this.getPieData(this.tableData)
           this.pieData.legend.data=this.getLegend(this.pieData.series.data)
-          console.log(this.pieData.legend)
           this.$refs.piechart.initChart()   //子组件$on中的名字
 
           this.getSpanArr(this.tableData)
@@ -180,11 +218,27 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+        axis( {
+                url: '/fof/list',
+                method: 'GET',
+                params: {"stage":"备投"}
+                }).then((response) => {
+                                this.preInvest = response.data;
+                                for(var  row in this.preInvest){
+                                    this.preInvest[row].amount=0
+                                    this.preInvest[row].netval=1
+                                    // console.log(val)
+                                }
+                            })
+                        .catch(
+                            (error) => {
+                                console.log(error);
+                    });
     },
   },
   created() {
     this.getTableData();
-    this.code = "FOF,000300.SH,000905.SH";
+    //this.code = "FOF,000300.SH,000905.SH";
   },
 };
 </script>

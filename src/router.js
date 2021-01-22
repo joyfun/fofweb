@@ -49,7 +49,7 @@ const routes = [
         path: '/fundouter',
         name: 'fund-outer',
         component:() => import('@/views/fof/fofManage.vue'),
-        params:{
+        props:{
             type:'0',
        }
   
@@ -58,52 +58,75 @@ const routes = [
         path: '/fundinfo1',
         name: 'fund-info1',
         component:() => import('@/views/fof/fofManage.vue'),
-        params:{
-            class_type:'CTA',
+        props:{
+            filters:{class_type:'CTA'}
        }
       },
       {
         path: '/fundinfo2',
         name: 'fund-info2',
         component:() => import('@/views/fof/fofManage.vue'),
-        params:{
-            class_type:'指增',
+        props:{
+            filters:{class_type:'指增'}
        }
       },
       {
         path: '/fundinfo3',
         name: 'fund-info3',
         component:() => import('@/views/fof/fofManage.vue'),
-        params:{
-            class_type:'套利',
+        props:{
+            filters:{class_type:'套利'}
        }
       },
       {
         path: '/fundinfo4',
         name: 'fund-info4',
         component:() => import('@/views/fof/fofManage.vue'),
-        params:{
-            class_type:'中性',
+        props:{
+            filters:{class_type:'中性'}
        }
       },
       {
         path: '/fundinfo5',
         name: 'fund-info5',
         component:() => import('@/views/fof/fofManage.vue'),
-        params:{
-            class_type:'期权',
+        props:{
+            filters:{class_type:'期权'}
        }
+      },
+      {
+        path: '/fundinfo6',
+        name: 'fund-info6',
+        component:() => import('@/views/fof/fofManage.vue'),
+        props:{
+            filters:{class_type:'混合'}
+       }
+      },
+      {
+        path: '/fundcalc',
+        name: 'fund-calc',
+        component:() => import('@/views/fof/fofCalc.vue'),
+      
       },
       {
         path: '/fundcompare1',
         name: 'fund-compare1',
-        component:() => import('@/views/fof/fofCompare.vue')
+        component:() => import('@/views/fof/fofCompare.vue'),
+        props:
+        {
+            filters:{left:'已投',
+            right:'预选'}
+        }
       }
       ,
       {
         path: '/fundcompare2',
         name: 'fund-compare2',
-        component:() => import('@/views/fof/fofCompare.vue')
+        component:() => import('@/views/fof/fofCompare.vue'),
+        props:{
+            filters:{left:'二选',
+            right:'预选'}
+        },
       }
       ,
       {

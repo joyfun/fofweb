@@ -59,10 +59,15 @@ import axis from 'axios'
         computed:{
              compares:{
           get() {
+              console.log(this.filter.class_type)
         return this.filter.class_type+","+this.filter.left+","+this.filter.right
       }
       }
         },
+        props: {filters:{
+      type: Object,
+      default:null
+    },},
      data() {
       return {
           temp:-1,
@@ -94,6 +99,9 @@ import axis from 'axios'
           value: '指增',
           label: '指增'
         }, {
+          value: '中性',
+          label: '中性'
+        }, {
           value: '套利',
           label: '套利'
         }, {
@@ -105,10 +113,19 @@ import axis from 'axios'
             watch: {
     $route:{
       handler(n){
-          console.log(n)
-          console.log(this.filter)
-          this.filter.left=n.params.left
-          this.filter.right=n.params.right
+          if(this.filters){
+              console.log("route init ")
+              console.log(this.filter)
+              var jobj=JSON.parse(JSON.stringify(this.filters))
+              for(var key in jobj){
+                this.filter[key]=  jobj[key]
+              }
+
+            //   this.filter=JSON.parse(JSON.stringify(this.filters));
+            //   this.filter["class_type"]="CTA"
+          }else{
+          this.filter=n.params
+          }
 		// 初始化操作
       },
       immediate: true,
@@ -117,6 +134,7 @@ import axis from 'axios'
   },
         methods: {
             getList() {
+                console.log(this.filter)
         },
         }
 }

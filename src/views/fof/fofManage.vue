@@ -108,7 +108,7 @@
 <i class="el-icon-info"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.filename"  type="text" size="small"><el-tooltip class="item" effect="dark" content="下载报告" placement="left-start"><a :href=" '/fof/downfile?code='+scope.row.code "><i class="el-icon-download"></i></a></el-tooltip></el-button>
 
@@ -442,13 +442,17 @@
             FundEchart,
             HisTable
         },
+        props: {filters:{
+      type: Object,
+      default:null
+    },},
     data() {
       return {
           cForm,
           selcode:"",
+          filter:{},
           temp:-1,
           origin:{},
-          filter:{},
           options: [
               {
           value: '无',
@@ -472,6 +476,10 @@
         }, {
           value: '指增',
           label: '指增'
+        }
+        , {
+          value: '中性',
+          label: '中性'
         }, {
           value: '套利',
           label: '套利'
@@ -512,7 +520,12 @@
     watch: {
     $route:{
       handler(n){
-          this.getList(n.params)
+          console.log(n)
+          let params=n.params
+          if(this.filters){
+              params=this.filters
+          }
+          this.getList(params)
 		// 初始化操作
       },
       immediate: true,

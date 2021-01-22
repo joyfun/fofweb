@@ -77,43 +77,33 @@ export default {
                             path: '/fundinfo1',
                             label: 'CTA',
                             name:'fund-info1',
-                            params:{
-                                class_type:'CTA',
-                            },
                             icon:'setting'
                         },
                         {
                             path: '/fundinfo2',
                             label: '指数增强',
                             name:'fund-info2',
-                            params:{
-                                class_type:'指增',
-                            },
                             icon:'setting'
                         },, {
                             path: '/fundinfo3',
                             label: '套利',
                             name:'fund-info3',
-                            params:{
-                                class_type:'套利',
-                            },
                             icon:'setting'
                         }
                         , {
                             path: '/fundinfo4',
                             label: '中性',
                             name:'fund-info4',
-                            params:{
-                                class_type:'中性',
-                            },
                             icon:'setting'
                         }, {
                             path: '/fundinfo5',
                             label: '期权',
                             name:'fund-info5',
-                            params:{
-                                class_type:'期权',
-                            },
+                            icon:'setting'
+                        },{
+                            path: '/fundinfo6',
+                            label: '混合',
+                            name:'fund-info6',
                             icon:'setting'
                         }, {
                             path: '/fundcompare1',
@@ -156,7 +146,12 @@ export default {
                                 class_type:'中性',
                             },
                             icon:'setting'
-                        },, {
+                        }, {
+                            path: '/fundcalc',
+                            label: '组合配置',
+                            name:'fund-calc',
+                            icon:'setting'
+                        }, {
                             path: '/fundcompare1',
                             label: '分类基金对比',
                             name:'fund-compare',
@@ -179,15 +174,7 @@ export default {
                             },
                             icon:'setting'
                         }]}
-                        , {
-                            path: '/fundinfo4',
-                            label: '组合配置',
-                            name:'fund-info4',
-                            params:{
-                                class_type:'中性',
-                            },
-                            icon:'setting'
-                        }],
+                        ],
                         "after":[
                         {
                             path: '/fund-report',
