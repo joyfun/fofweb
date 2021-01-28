@@ -77,11 +77,6 @@ export default {
       pieData: {
         legend: { type: "scroll", top: 2, data: [] },
         action:{},
-        // action:{"click":function(params){
-        //     this.$emit("pieClick",params)
-        //     console.log(params)
-        // }
-        // },
         series: [{
           name: "资金占比",
           type: "pie",
@@ -89,7 +84,9 @@ export default {
           avoidLabelOverlap: false,
 
           label: {
-            formatter: "{b} : {c} ({d}%)",
+            formatter:(params) => {  //格式化数据的函数
+            return params.name+":\n"+(params.value/10000).toFixed(1)+"万 "+params.percent+"%" 
+              },
           },
           tooltip: {
             trigger: "item",
@@ -107,8 +104,9 @@ export default {
           avoidLabelOverlap: false,
 
           label: {
-            formatter: "{b} : {c} ({d}%)",
-          },
+            formatter:(params) => {  //格式化数据的函数
+            return params.name+":\n"+(params.value/10000).toFixed(1)+"万 "+params.percent+"%" 
+              }          },
           tooltip: {
             trigger: "item",
             formatter: "{a} <br/>{b} : {c} ({d}%)",

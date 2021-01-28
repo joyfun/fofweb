@@ -23,8 +23,26 @@
         ></fund-echart>
       </el-card>
       <el-card shadow="hover">
-        <echart           ref="piechart"
-:chartData="pieData"  style="height: 260px" :isAxisChart="false"></echart>
+        <!-- <echart           ref="piechart"
+:chartData="pieData"  style="height: 260px" :isAxisChart="false"></echart> -->
+<el-row>
+    <el-col :span="12">
+  <echart
+    ref="piechart"
+    :chartData="pieData"
+    style="height: 480px"
+    :isAxisChart="false"
+  ></echart>
+    </el-col>
+     <el-col :span="12">
+  <echart
+    ref="subPie"
+    :chartData="subData"
+    style="height: 480px"
+    :isAxisChart="false"
+  ></echart>
+    </el-col>
+</el-row>
       </el-card>
       <el-card shadow="hover">
         <el-table
@@ -65,17 +83,21 @@ export default {
   data() {
     return {
       code: "",
+      subtype:"",
       tableData: [],
       pieData:{
+          action:{},
            legend: {type: 'scroll',
         top: 2,
         data: []},
           series:{     name:"资金占比",       type: 'pie',
-                  radius: ['50%', '70%'],
+                //   radius: ['50%', '70%'],
             avoidLabelOverlap: false,
 
             label: {
-                formatter: '{b} : {c} ({d}%)',
+                formatter:(params) => {  //格式化数据的函数
+            return params.name+":\n"+(params.value/10000).toFixed(1)+"万 "+params.percent+"%" 
+              },
             },
     tooltip: {
         trigger: 'item',
@@ -84,6 +106,25 @@ export default {
                     data:[
             
             ]}},
+    subData: {
+        legend: { type: "scroll", top: 2, data: [] },
+        series: [{
+          name: "资金占比",
+          type: "pie",
+        //   radius: ["0%", "60%"],
+          avoidLabelOverlap: false,
+
+          label: {
+            formatter:(params) => {  //格式化数据的函数
+            return params.name+":\n"+(params.value/10000).toFixed(1)+"万 "+params.percent+"%" 
+              }          },
+          tooltip: {
+            trigger: "item",
+            formatter: "{a} <br/>{b} : {c} ({d}%)",
+          },
+          data: [],
+        }]
+      },
       spanArr:[],
       curId: 0,
 
@@ -124,6 +165,12 @@ export default {
         var ret=[]
         for(var idx in data){
             var row=data[idx]
+            if(this.subtype){
+                if(row.class_type!=this.subtype)
+                {
+                    continue;
+                }
+            }
             row["profit"]=row.amount*(row["n_netval"])
             ret.push({name:row.name,value:row["profit"]})
         }
@@ -169,11 +216,14 @@ export default {
       })
         .then((response) => {
           this.tableData = response.data.datas;
-          this.getPieDataOuter(this.tableData)
+          this.subData.series[0].data=this.getPieDataOuter(this.tableData)
           this.pieData.series.data=this.getPieData(this.tableData)
           this.pieData.legend.data=this.getLegend(this.pieData.series.data)
           console.log(this.pieData.legend)
           this.$refs.piechart.initChart()   //子组件$on中的名字
+
+          this.subData.legend.data=this.getLegend(this.subData.series.data)
+          this.$refs.subPie.initChart()   //子组件$on中的名字
 
           this.getSpanArr(this.tableData)
         })
@@ -183,7 +233,17 @@ export default {
     },
   },
   created() {
+this.pieData.action["click"]=(params)=>{
+            this.$emit("mainpieClick",params)
+        }
     this.getTableData();
+    this.$on('mainpieClick',(arg)=> {
+        this.subtype=arg.name
+        this.subData.series[0].data=this.getPieDataOuter(this.tableData)
+        this.subData.legend.data=this.getLegend(this.subData.series.data)
+        this.$refs.subPie.initChart() 
+
+      })
     this.code = "FOF,000300.SH,000905.SH";
   },
 };
