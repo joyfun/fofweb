@@ -172,7 +172,7 @@ export default {
                 }
             }
             row["profit"]=row.amount*(row["n_netval"])
-            ret.push({name:row.name,value:row["profit"]})
+            ret.push({name:row.short_name,value:row["profit"]})
         }
         return ret;
     },

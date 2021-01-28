@@ -148,6 +148,13 @@ export default {
                 // onclick: function (){
                 //     this.rawData()
                 // }
+            },myday90: {
+                show: true,
+                title: '90天',
+                icon: 'path://M958.976 27.136h-893.44c-36.352 0-65.536 29.696-65.536 65.536V793.6c0 36.352 29.696 65.536 65.536 65.536h893.44c36.352 0 65.536-29.696 65.536-65.536V92.16c0-35.84-29.696-65.024-65.536-65.024z m0 742.4h-0.512c0 12.288-10.24 22.528-22.528 22.528h-845.824c-12.288 0-22.528-10.24-22.528-23.04V116.224c0-12.288 10.24-22.528 22.528-22.528h846.336c12.288 0 22.528 10.24 22.528 22.528v653.312zM880.128 963.584c0 18.432-14.848 33.28-33.28 33.28h-669.184c-18.432 0-33.28-14.848-33.28-33.28s14.848-33.28 33.28-33.28h669.184c18.432 0.512 33.28 15.36 33.28 33.28z',
+                // onclick: function (){
+                //     this.rawData()
+                // }
             },myday180: {
                 show: true,
                 title: '半年',
@@ -409,6 +416,14 @@ export default {
             var sidx=$this.getstart(vday)
             var datasize=$this.echart.getModel().option.xAxis[0].data.length
 
+            $this.divideBy(sidx,{start:sidx*100/datasize,end:100})   
+            $this.refreshData({startValue:sidx,end:100}) 
+    
+        }
+        this.axisOption.toolbox.feature.myday90.onclick = () => {
+             var vday=$this.$moment($this.max_date).add(-90,"d").format("YYYYMMDD")
+            var sidx=$this.getstart(vday)
+            var datasize=$this.echart.getModel().option.xAxis[0].data.length
             $this.divideBy(sidx,{start:sidx*100/datasize,end:100})   
             $this.refreshData({startValue:sidx,end:100}) 
     

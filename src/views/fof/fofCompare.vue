@@ -30,6 +30,21 @@
       :value="item.value">
     </el-option>
   </el-select>
+  <el-select
+    v-model="value"
+    multiple
+    filterable
+    remote
+    reserve-keyword
+    placeholder="名称"
+    :loading="loading">
+    <el-option
+      v-for="item in foflist"
+      :key="item.code"
+      :label="item.name"
+      :value="item.code">
+    </el-option>
+  </el-select>
   
         <!-- <el-button  size="small" @click="downFile()">下载</el-button>
         <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
@@ -74,6 +89,7 @@ import axis from 'axios'
           dialogVisible:true,
           origin:{},
           current:{},
+          foflist:[],
           filter:{
               class_type:"CTA",
               left:"",
@@ -132,7 +148,21 @@ import axis from 'axios'
       deep: true,
     }
   },
+    created() {
+        this.remoteMethod();
+    },
         methods: {
+            remoteMethod(query){
+                this.$axios({
+        url: "/fof/foflist",
+        method: "GET",
+        params: {},
+      })
+        .then((response) => {
+            this.foflist=response.data
+
+        })
+            },
             getList() {
                 console.log(this.filter)
         },
