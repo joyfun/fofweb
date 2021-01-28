@@ -123,6 +123,7 @@ export default {
         this.echart = echarts.init(this.$refs.echart)
         if(this.chartData.action){
             for(var aname in this.chartData.action){
+                console.log(aname)
                 this.echart.on(aname,this.chartData.action[aname])
             }
         }

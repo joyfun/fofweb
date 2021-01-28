@@ -76,10 +76,12 @@ export default {
       dialogVisible: false,
       pieData: {
         legend: { type: "scroll", top: 2, data: [] },
-        action:{"click":function(params){
-            console.log(params)
-        }
-        },
+        action:{},
+        // action:{"click":function(params){
+        //     this.$emit("pieClick",params)
+        //     console.log(params)
+        // }
+        // },
         series: [{
           name: "资金占比",
           type: "pie",
@@ -117,11 +119,12 @@ export default {
     };
   },
   watch: {
-    subtype:{
-    handler: function(subtype) {
-                this.getTable(val)
-              }
-    }},
+    // subtype:{
+    // handler: function(subtype) {
+    //             this.getTable(val)
+    //           }
+    // }
+    },
     methods: {
          showHis(row){
           this.current=row
@@ -150,6 +153,8 @@ export default {
       }
     },
          getPieData(data){
+             
+
         this.dict={};
         for(var idx in data){
             var row=data[idx]
@@ -179,9 +184,11 @@ export default {
         }
         return ret;
     },
-     getLegend(data){
+     getLegend(data,class_type){
         var ret=[]
+
         for (var idx in data){
+            // if(!class_type||data[idx]['class_type']==class_type)
             ret.push(data[idx].name)
         }
     },
@@ -215,10 +222,12 @@ getTableData(param) {
           this.startDate=response.data.start
           this.tableData = response.data.datas;
           this.subData.series[0].data=this.getPieDataOuter(this.tableData)
+          this.subData.legend.data=this.getLegend(this.subData.series.data)
           this.pieData.series[0].data=this.getPieData(this.tableData)
 
           this.pieData.legend.data=this.getLegend(this.pieData.series.data)
         //   console.log(this.pieData.legend)
+          console.log(this.pieData.action)
           this.$refs.piechart.initChart() 
           this.$refs.subPie.initChart() 
         //   console.log(this.tableData)
@@ -232,8 +241,21 @@ getTableData(param) {
     },
   },
   created() {
+      this.pieData.action["click"]=(params)=>{
+            this.$emit("pieClick",params)
+        }
     this.getTableData();
-    
+    this.$on('pieClick',(arg)=> {
+          console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
+        this.subtype=arg.name
+        // console.log(this.getPieDataOuter(this.tableData))
+        this.subData.series[0].data=this.getPieDataOuter(this.tableData)
+        this.subData.legend.data=this.getLegend(this.subData.series.data)
+
+          this.$refs.subPie.initChart() 
+
+      })
+
     this.code = "FOF,000300.SH,000905.SH";
   },
 };
