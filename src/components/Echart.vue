@@ -121,6 +121,12 @@ export default {
         this.echart.setOption(this.options,true)
       } else {
         this.echart = echarts.init(this.$refs.echart)
+        if(this.chartData.action){
+            for(var aname in this.chartData.action){
+                this.echart.on(aname,this.chartData.action[aname])
+            }
+        }
+         
         this.echart.setOption(this.options,true)
       }
     },

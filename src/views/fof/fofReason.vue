@@ -7,12 +7,24 @@
   <el-button type="primary" @click="changeDate(-365)">近365天</el-button>
 {{"自" + startDate +"开始"}}
 </el-button-group>
+<el-row>
+    <el-col :span="12">
   <echart
     ref="piechart"
     :chartData="pieData"
     style="height: 480px"
     :isAxisChart="false"
   ></echart>
+    </el-col>
+     <el-col :span="12">
+  <echart
+    ref="subPie"
+    :chartData="subData"
+    style="height: 480px"
+    :isAxisChart="false"
+  ></echart>
+    </el-col>
+</el-row>
 <el-card>
   <el-table
           :data="tableData"
@@ -57,29 +69,21 @@ export default {
       tableData: [],
       startDate:"",
       spanArr:[],
+      dict:{},
       current:{},
+      subtype:"",
       cur_code:"",
       dialogVisible: false,
       pieData: {
         legend: { type: "scroll", top: 2, data: [] },
+        action:{"click":function(params){
+            console.log(params)
+        }
+        },
         series: [{
           name: "资金占比",
           type: "pie",
-          radius: ["0%", "40%"],
-          avoidLabelOverlap: false,
-
-          label: {
-            formatter: "{b} : {c} ({d}%)",
-          },
-          tooltip: {
-            trigger: "item",
-            formatter: "{a} <br/>{b} : {c} ({d}%)",
-          },
-          data: [],
-        },{
-          name: "资金占比",
-          type: "pie",
-          radius: ["45%", "60%"],
+        //   radius: ["0%", "100%"],
           avoidLabelOverlap: false,
 
           label: {
@@ -92,8 +96,32 @@ export default {
           data: [],
         }]
       },
+      subData: {
+        legend: { type: "scroll", top: 2, data: [] },
+        series: [{
+          name: "资金占比",
+          type: "pie",
+        //   radius: ["0%", "60%"],
+          avoidLabelOverlap: false,
+
+          label: {
+            formatter: "{b} : {c} ({d}%)",
+          },
+          tooltip: {
+            trigger: "item",
+            formatter: "{a} <br/>{b} : {c} ({d}%)",
+          },
+          data: [],
+        }]
+      }
     };
   },
+  watch: {
+    subtype:{
+    handler: function(subtype) {
+                this.getTable(val)
+              }
+    }},
     methods: {
          showHis(row){
           this.current=row
@@ -122,24 +150,30 @@ export default {
       }
     },
          getPieData(data){
-        var dict={};
+        this.dict={};
         for(var idx in data){
             var row=data[idx]
-            if(dict[row.class_type]){
-                dict[row.class_type]+=row["profit"]
+            if(this.dict[row.class_type]){
+                this.dict[row.class_type]+=row["profit"]
             }else{
-                dict[row.class_type]=row["profit"]
+                this.dict[row.class_type]=row["profit"]
             }
         }
         var ret=[]
-        for(var cls in dict){
-            ret.push({name:cls,value:dict[cls]})
+        for(var cls in this.dict){
+            ret.push({name:cls,value:this.dict[cls]})
         }
         return ret;
     },getPieDataOuter(data){
         var ret=[]
         for(var idx in data){
             var row=data[idx]
+            if(this.subtype){
+                if(row.class_type!=this.subtype)
+                {
+                    continue;
+                }
+            }
             row["profit"]=row.amount*(row.n_sumval-row.s_sumval)
             ret.push({name:row.name,value:row["profit"]})
         }
@@ -180,13 +214,14 @@ getTableData(param) {
         .then((response) => {
           this.startDate=response.data.start
           this.tableData = response.data.datas;
-          this.pieData.series[1].data=this.getPieDataOuter(this.tableData)
+          this.subData.series[0].data=this.getPieDataOuter(this.tableData)
           this.pieData.series[0].data=this.getPieData(this.tableData)
 
           this.pieData.legend.data=this.getLegend(this.pieData.series.data)
-          console.log(this.pieData.legend)
+        //   console.log(this.pieData.legend)
           this.$refs.piechart.initChart() 
-          console.log(this.tableData)
+          this.$refs.subPie.initChart() 
+        //   console.log(this.tableData)
             //子组件$on中的名字
           this.getSpanArr(this.tableData)
 
@@ -198,6 +233,7 @@ getTableData(param) {
   },
   created() {
     this.getTableData();
+    
     this.code = "FOF,000300.SH,000905.SH";
   },
 };

@@ -197,9 +197,14 @@ export default {
   components: {
     FundEchart,
   },
+    props: {
+      url:{
+      type: String,
+      default: "/fof/jreport"
+    },
+    },
   data() {
     return {
-      curl:"/fof/jreport",
       current: {},
       cur_code: "",
       dialogVisible: false,
@@ -230,19 +235,22 @@ export default {
           if(n.params['url']){
               this.curl="/fof/"+n.params['url']
           }
-          this.getList()
+          console.log(this.curl)
+        //   this.getList()
 		// 初始化操作
       },
       immediate: true,
       deep: true,
+    },
+    url:{
+              handler(n){
+                  this.getList()
+              }
     }
   },
   methods: {
     editClose() {
       this.dialogVisible = false;
-    },
-    downFile() {
-      axis.post("/fof/report", {}, { responseType: "blob" });
     },
     showResult(number,rate=100){
        if (null == number)
@@ -299,11 +307,9 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    downFile(){
-        var url=this.curl
-      
+    downFile(){      
         const options = {"cache":1}
-        this.$tools.exportExcel(url,options)
+        this.$tools.exportExcel(this.url+"_down",options)
         },
     delSelection() {
       for (let i = 0; i < this.multipleSelection.length; i++) {
@@ -358,7 +364,7 @@ export default {
     //
     getList() {
       axis
-        .get(this.curl) //axis后面的.get可以省略；
+        .get(this.url) //axis后面的.get可以省略；
         .then((response) => {
           console.log(response);
           this.tableData = this.$tools.pandasToJson(response.data);

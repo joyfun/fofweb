@@ -149,7 +149,10 @@ const routes = [
       {
         path: '/fundjcomp',
         name: 'fund-jcomp',
-        component:() => import('@/views/fof/fofReport.vue')
+        component:() => import('@/views/fof/fofReport.vue'),
+        props:{
+            url:"/fof/jcompare"
+        },
       },
       {
         path: '/fundreason',
