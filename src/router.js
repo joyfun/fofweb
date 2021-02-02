@@ -160,6 +160,11 @@ const routes = [
         component:() => import('@/views/fof/fofReason.vue')
       },
       {
+        path: '/fundpressure',
+        name: 'fund-pressure',
+        component:() => import('@/views/fof/fofPressure.vue')
+      },
+      {
         path: '/fundrank',
         name: 'fund-rank',
         component:() => import('@/views/fof/fofRank.vue')

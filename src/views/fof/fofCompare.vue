@@ -31,11 +31,8 @@
     </el-option>
   </el-select>
   <el-select
-    v-model="value"
-    multiple
+    v-model="addition"
     filterable
-    remote
-    reserve-keyword
     placeholder="名称"
     :loading="loading">
     <el-option
@@ -54,7 +51,7 @@
        
      
     
-    <fund-echart       ref="hischart"  :titles="current.name"  style="height: 600px" :code="current.cur_code" :filter="filter" :compares="compares"   :visable="dialogVisible"></fund-echart>
+    <fund-echart       ref="hischart"  :titles="current.name"  style="height: 600px" :code="addition" :filter="filter" :compares="compares"   :visable="dialogVisible"></fund-echart>
    
 
 
@@ -65,6 +62,7 @@
 import axis from 'axios'
     import FundEchart from '../../components/FundEchart.vue';
     import HisTable from '../../components/HisTable.vue';
+    import FundCorr from '../../components/FundCorr.vue';
 
   export default {
       components: {
@@ -75,7 +73,8 @@ import axis from 'axios'
              compares:{
           get() {
               console.log(this.filter.class_type)
-        return this.filter.class_type+","+this.filter.left+","+this.filter.right
+              console.log(this.addition)
+        return this.filter.class_type+","+this.filter.left+","+this.filter.right+","+this.addition
       }
       }
         },
@@ -86,6 +85,7 @@ import axis from 'axios'
      data() {
       return {
           temp:-1,
+          addition:"",
           dialogVisible:true,
           origin:{},
           current:{},

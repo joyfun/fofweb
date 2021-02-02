@@ -101,9 +101,11 @@ export default {
                   radius: ['50%', '70%'],
             avoidLabelOverlap: false,
 
-            label: {
-                formatter: '{b} : {c} ({d}%)',
-            },
+             label: {
+            formatter:(params) => {  //格式化数据的函数
+            return params.name+":\n"+(params.value/10000).toFixed(1)+"万 "+params.percent+"%" 
+              },
+          },
     tooltip: {
         trigger: 'item',
         formatter: '{a} <br/>{b} : {c} ({d}%)'

@@ -8,6 +8,7 @@
         <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
         <el-button  size="small" @click="addInfo()">添加</el-button>
         <el-button  size="small" @click="allrun()">对比</el-button>
+        <el-button  size="small" @click="showcorr()">相关性</el-button>
         <el-button  size="small" @click="compare()">业绩对标</el-button>
 
         <el-select v-model="filter.stage" @change="getList" style="width:80px"  clearable placeholder="阶段">
@@ -302,6 +303,13 @@
           showResult(scope.row["夏普比率"])
         }}</span></template>
       </el-table-column>
+      <el-table-column align="right" prop="波动率" label="波动率" show-overflow-tooltip>
+        <template slot-scope="scope">
+                                <span :style="'text-align:right;color:'+(scope.row['波动率']>=0?'red':'green') " >{{
+
+          showResult(scope.row["波动率"])
+        }}</span></template>
+      </el-table-column>
       <el-table-column align="right" prop="卡玛比率" label="卡玛比率" show-overflow-tooltip>
         <template slot-scope="scope">
                  <span :style="'text-align:right;color:'+(scope.row['卡玛比率']>=0?'red':'green') " >{{
@@ -328,6 +336,14 @@
     :close-on-press-escape="false"
     :visible.sync="hisVisible">
     <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  :visable="dialogVisible"></his-table>
+    </el-dialog>
+    <el-dialog
+    width="80%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="corrVisible">
+    <fund-corr       @close="editClose" ref="corrtable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="selcode"  ></fund-corr >
     </el-dialog>
     <el-dialog
     width="80%"
@@ -416,6 +432,7 @@
     import axis from 'axios'
     import FundEchart from '../../components/FundEchart.vue';
     import HisTable from '../../components/HisTable.vue';
+    import FundCorr from '../../components/FundCorr.vue';
    const cForm=[
     {"tilte":"编号","dataIndex":"code"},
     {"tilte":"名称","dataIndex":"name"},
@@ -440,7 +457,8 @@
   export default {
       components: {
             FundEchart,
-            HisTable
+            HisTable,
+            FundCorr
         },
         props: {filters:{
       type: Object,
@@ -495,6 +513,7 @@
         cur_code:"",
         dialogVisible: false,
         confirmVisible:false,
+        corrVisible:false,
         formVisible:false,
         tableVisible: false,
         hisVisible:false,
@@ -696,6 +715,7 @@ showResult(number,rate=100){
           this.cur_code=row.code
 
       },
+      
       viewHisTemp(row){
           this.temp=1
           this.cur_code=""
@@ -766,6 +786,20 @@ showResult(number,rate=100){
               selcode+=this.multipleSelection[i].code+",";
         }
         this.showcomapre(selcode)
+        //   this.$refs.hischart.$emit("getChart",selcode)  
+      },
+      showcorr() {
+        // console.log(this.multipleSelection)
+        if(this.multipleSelection.length<1){
+            return
+        }
+        var selcode=""
+        console.log(this.multipleSelection)
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+              selcode+=this.multipleSelection[i].code+",";
+        }
+        this.selcode=selcode
+        this.corrVisible=true
         //   this.$refs.hischart.$emit("getChart",selcode)  
       },
       // 选中

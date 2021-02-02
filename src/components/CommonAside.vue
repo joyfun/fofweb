@@ -152,6 +152,11 @@ export default {
                             name:'fund-calc',
                             icon:'setting'
                         }, {
+                            path: '/fundpressure',
+                            label: '压力测试',
+                            name:'fund-pressure',
+                            icon:'setting'
+                        }, {
                             path: '/fundcompare1',
                             label: '分类基金对比',
                             name:'fund-compare',

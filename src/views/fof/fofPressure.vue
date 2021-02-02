@@ -1,14 +1,140 @@
 <template>
   <div>
     <div class="block" style="display: flex; justify-content: space-between">
-      <div style=" width: 480px;">
-        <el-button size="small" @click="delSelection()">删除</el-button>
+      <div style=" width: 800px;">
+        <!-- <el-button size="small" @click="delSelection()">删除</el-button>
         <el-button size="small" @click="toggleSelection()">取消选择</el-button>
         <el-button size="small" @click="compare()">对比</el-button>
-        <el-button size="small" @click="downFile()">下载业绩对比</el-button>
+        <el-button size="small" @click="downFile()">下载业绩对比</el-button> -->
+    预测中证500<el-input-number style="width:200px" @change="changeNum"
+    placeholder="中证500"
+    v-model="zz500"></el-input-number>
+    预测中证回撤<el-input-number style="width:200px"
+    placeholder="中证500回撤"
+    v-model="zz500back"></el-input-number>
+
       </div>
     </div>
     <el-table
+      :data="pressdata"
+      show-summary
+          :summary-method="getSummaries"
+      tooltip-effect="dark"
+      @selection-change="handleSelectionChange" 
+      style="width: 100%; margin-top: 20px">
+       <el-table-column
+        width="120"
+        label="类型"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope"
+          >{{
+            scope.row["类型"]
+          }}</template
+        >
+      </el-table-column>
+      <el-table-column
+        width="120"
+        label="预期收益"
+        show-overflow-tooltip
+      >
+              <template slot-scope="scope">
+
+        <span :style="'text-align:right;color:'+(scope.row['过去3年年均收益']>=0?'red':'green') " >
+                    {{showResult(scope.row["过去3年年均收益"]/scope.row["count"],100)}}</span>
+              </template>
+      </el-table-column>
+    <el-table-column
+        width="120"
+        label="预期回撤"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+
+        <span :style="'text-align:right;color:'+(scope.row['预期回撤']>=0?'red':'green') " >
+                    {{showResult(scope.row["预期回撤"]/scope.row["count"])}}</span>
+              </template>
+      </el-table-column>
+      <el-table-column
+        width="120"
+        label="悲观收益"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+
+        <span :style="'text-align:right;color:'+(scope.row['悲观收益']>=0?'red':'green') " >
+                    {{showResult(scope.row["悲观收益"]/scope.row["count"])}}</span>
+              </template>
+      </el-table-column>
+     <el-table-column
+        width="160"
+        label="当前额度"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+
+        <span :style="'text-align:right;color:'+(scope.row['当前额度']>=0?'red':'green') " >
+                    {{showResult(scope.row["当前额度"]+scope.row.change*10000)}}</span>
+              </template>
+      </el-table-column> 
+                <!-- <el-table-column align="right"  :formatter	="formatterNum" prop="当前额度" label="当前额度"> </el-table-column> -->
+
+      <el-table-column
+        width="80"
+        label="权重%"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+                    {{showResult((scope.row["当前额度"]+scope.row.change*10000)/all,100)}}
+              </template>
+      </el-table-column>
+      
+      <el-table-column
+        width="180"
+        label="调整额度(万)"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+    <el-input-number style="width:150px" @input="changeNum"
+    placeholder="调整额度(万)"
+    v-model="scope.row.change"></el-input-number>
+       
+              </template>
+      </el-table-column>
+      <el-table-column
+        width="80"
+        label="预期收益贡献"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+
+        <!-- <span :style="'text-align:right;color:'+(scope.row['当前额度']>=0?'red':'green') " > -->
+                    {{showResult((scope.row["当前额度"]+scope.row.change*10000)/all*(scope.row["过去3年年均收益"]/scope.row.count+(scope.row["类型"]=="超额")*zz500))}}
+                    <!-- </span> -->
+              </template>
+      </el-table-column>
+ <el-table-column
+        width="100"
+        label="悲观收益"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+
+                    {{showResult((scope.row["当前额度"]+scope.row.change*10000)/all*(scope.row["悲观收益"]+(scope.row["类型"]=="超额")*zz500))}}
+              </template>
+      </el-table-column>
+      <el-table-column
+        width="80"
+        label="预期回撤"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+
+                    {{showResult((scope.row["当前额度"]+scope.row.change*10000)/all*(scope.row["预期回撤"]/scope.row.count+(scope.row["类型"]=="超额")*zz500back))}}
+              </template>
+      </el-table-column>
+    </el-table>
+     <el-table
       ref="multipleTable"
       :data="tableData"
       tooltip-effect="dark"
@@ -213,6 +339,12 @@ export default {
   data() {
     return {
       current: {},
+      all:0,
+      sum:0,
+      pressdata:[],
+      expectret:0,
+      zz500:0,
+      zz500back:-0.1,
       cur_code: "",
       dialogVisible: false,
       rowdata: "",
@@ -256,6 +388,53 @@ export default {
     }
   },
   methods: {
+      getSummaries(param) {
+        const { columns, data } = param;
+        const sums = [];
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '合计';
+            return;
+          }
+          sums[4]=this.all
+          sums[7]=this.$tools.formatMoney(this.expectret*100,2)
+        //   console.log(this.expectret)
+        //   const values = data.map(item => Number(item[column.property]));
+        //   if (!values.every(value => isNaN(value))) {
+        //     sums[index] = values.reduce((prev, curr) => {
+        //       const value = Number(curr);
+        //       if (!isNaN(value)) {
+        //         return prev + curr;
+        //       } else {
+        //         return prev;
+        //       }
+        //     }, 0);
+        //     sums[index] += ' 元';
+        //   } else {
+        //     sums[index] = 'N/A';
+        //   }
+        });
+
+        return sums;
+      },
+        formatterNum(row, column, value) {
+      if (!value) return "0.00";
+      return this.$tools.formatMoney(value,2)
+    },
+      changeNum(nval){
+          this.all=this.sum
+        for(var i in this.pressdata){
+            this.all+=this.pressdata[i].change*10000
+            //         {{showResult((scope.row["当前额度"]+scope.row.change*10000)/all*(scope.row["过去3年年均收益"]/scope.row.count+(scope.row["类型"]=="超额")*zz500))}}
+
+            //*(this.pressdata[i]["过去3年年均收益"]/this.pressdata[i].count+(this.pressdata[i]["类型"]=="超额")*this.zz500)
+        }
+        this.expectret=0
+        for(var i in this.pressdata){
+            this.expectret=this.expectret+(this.pressdata[i]["当前额度"]+this.pressdata[i]["change"]*10000)/this.all*(this.pressdata[i]["过去3年年均收益"]/this.pressdata[i].count+(this.pressdata[i]["类型"]=="超额")*this.zz500)
+        }
+        console.log(this.all)
+      },
     editClose() {
       this.dialogVisible = false;
     },
@@ -264,7 +443,7 @@ export default {
           return '' 
         var color=number>=0?"red":"green"
         //return '<span style="text-align:right;color='+color+'">'+this.formatMoney(number,4)+'</span>'
-        return this.$tools.formatMoney(number*rate,3)
+        return this.$tools.formatMoney(number*rate,2)
     },
     
 
@@ -375,6 +554,33 @@ export default {
         .then((response) => {
           console.log(response);
           this.tableData = this.$tools.pandasToJson(response.data);
+          console.log(this.tableData)
+          var that=this
+          var dict={};
+          var minReduce = function (a, b) { return (that.$tools.isNull(b) || b > a) ? a : b }
+         // var smallest = arrayOfNumbers.reduce(minReduce, Number.MAX_VALUE)
+        for(var idx in this.tableData){
+            var row=this.tableData[idx]
+            var class_type=row["类型"]
+            this.sum+=row["份额"]*row["当前净值"]
+            row["low"]=[row["2020"],row["2019"],row["2018"]].reduce(minReduce, Number.MAX_VALUE)
+            if(dict[class_type]){
+                var aclas=dict[class_type]
+                aclas={change:0,"类型":class_type,"count":aclas["count"]+1,"悲观收益":[aclas["悲观收益"],row["low"]].reduce(minReduce, Number.MAX_VALUE),"当前额度":aclas["当前额度"]+row["份额"]*row["当前净值"],"预期回撤":aclas["预期回撤"]+row["最大回撤"],"过去3年年均收益":aclas["过去3年年均收益"]+row["过去3年年均收益"]}
+                dict[class_type]=aclas
+            }else{
+                dict[class_type]={"类型":class_type,"count":1,"悲观收益":row["low"],"当前额度":row["份额"]*row["当前净值"],"过去3年年均收益":row["过去3年年均收益"],"预期回撤":row["最大回撤"],"change":1}
+            }
+            this.all=this.sum
+        }
+         var ret=[]
+         dict["超额"]["当前额度"]=dict["指增"]["当前额度"]
+        for(var cls in dict){
+            if(dict[cls]["类型"]!="指增")
+            ret.push(dict[cls])
+        }
+        this.pressdata=ret
+        console.log(this.pressdata)
           //this.tableData = this.totaltableData;
         })
         .catch((error) => {

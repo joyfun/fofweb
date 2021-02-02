@@ -52,6 +52,13 @@ tools.checkModi= (modi,orig)=>{
     }
     return result
 }
+tools.isNull=(value)=>{
+    if (!value && typeof value != "undefined" && value != 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
 tools.exportExcel = (url, options)=>{
     return new Promise((resolve, reject) => {
       console.log(`${url} 请求数据，参数=>`, JSON.stringify(options))

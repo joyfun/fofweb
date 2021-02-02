@@ -72,6 +72,7 @@ export default {
   watch: {
     code:{
     handler: function(val) {
+        if(!this.compares)
                 this.getChart(val)
               }
     },
@@ -317,6 +318,9 @@ export default {
              if(data){
                  charturl='/fof/hiscompare'
                  console.log("get compare url:")
+                 if(this.code){
+                     data["code"]=this.code
+                 }
              }else if(code&&code.length>2){
                     charturl='/fof/hisdata'
                     data={"code":code}
@@ -335,7 +339,7 @@ export default {
                                 }
                                 for(var idx in response.data["columns"]){
                                     var cname=response.data["columns"][idx]
-                                    $this.chartData.series.push({data:response.data[cname].concat(),type:"line",name: cname}) 
+                                    $this.chartData.series.push({data:response.data[cname].concat(),type:"line",selectedMode:'single',name: cname}) 
                                 }
                                 this.initChart()
                             })
