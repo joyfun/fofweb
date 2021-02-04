@@ -33,7 +33,7 @@
       :label="name"
       sortable
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row[fund] }}</template>
+     <template slot-scope="scope">{{ showResult(scope.row[fund]) }}</template>
     </el-table-column>
 
     </el-table>
@@ -129,6 +129,13 @@ export default {
                  return "color:#08AD2B";
             }
         },
+    showResult(number,rate=1){
+       if (null == number)
+          return '' 
+        var color=number>=0?"red":"green"
+        //return '<span style="text-align:right;color='+color+'">'+this.formatMoney(number,4)+'</span>'
+        return this.$tools.formatMoney(number*rate,3)
+    },
     downCorr(){
     var url="/fof/down_corr"
         const options = {"code":this.code}

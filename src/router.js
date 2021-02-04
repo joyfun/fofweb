@@ -155,6 +155,14 @@ const routes = [
         },
       },
       {
+        path: '/fundcomb',
+        name: 'fund-comb',
+        component:() => import('@/views/fof/fofCombine.vue'),
+        props:{
+            url:"/fof/jcompare"
+        },
+      },
+      {
         path: '/fundreason',
         name: 'fund-reason',
         component:() => import('@/views/fof/fofReason.vue')

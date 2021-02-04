@@ -164,168 +164,9 @@
   >
     <el-button  @click="downFile">下载数据</el-button>
 
-<el-table
-      ref="compTable"
-      :data="compData"
-      tooltip-effect="dark"
-      @selection-change="handleSelectionChange" 
-      style="width: 100%; margin-top: 20px"
-    >
-      <!--    @row-click = "Selection"-->
+    <report-table    ref="compdata"  :titles="current.name"   :tableData="compData"  ></report-table>
 
-      <el-table-column type="selection" width="55"> </el-table-column>
-      <!--      测试ID-->
-     <!--  <el-table-column
-      prop="基金代码"
-      label="基金代码"
-      width="100">
-      <template slot-scope="scope">{{ scope.row["基金代码"]}}</a></template>
-    </el-table-column>
-      用例编号-->
-      <el-table-column
-        prop="基金名称"
-        width="160"
-        label="基金名称"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope"
-          ><a href="javascript:;" @click="showHis(scope.row)">{{
-            scope.row["基金名称"]
-          }}</a></template
-        >
-      </el-table-column>
-       <el-table-column
-        prop="类型"
-        width="80"
-        label="类型"
-        show-overflow-tooltip
-      >
-             <template slot-scope="scope">{{ scope.row['类型'] }}</template>
-
-      </el-table-column>
-       <el-table-column
-        prop="子类型"
-        width="120"
-        label="子类型"
-        show-overflow-tooltip
-      >
-             <template slot-scope="scope">{{ scope.row['子类型'] }}</template>
-
-      </el-table-column>
-      <!--      测试项目-->
-      <!--      测试用例是否关联-->
-      <!--      测试输入-->
-      <el-table-column
-        prop="本周收益"
-        label="本周收益"
-        align="right" 
-        width="80"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope">
-              <span :style="'text-align:right;color:'+(scope.row['本周收益']>=0?'red':'green') " >
-                    {{showResult(scope.row["本周收益"])}}</span>
-
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="当月收益"
-        label="当月收益"
-        align="right" 
-        width="80"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope">
-              <span :style="'text-align:right;color:'+(scope.row['当月收益']>=0?'red':'green') " >
-                    {{showResult(scope.row["当月收益"])}}</span>
-
-        </template>
-      </el-table-column>
-      <el-table-column prop="当年收益" label="当年收益" align="right"  show-overflow-tooltip>
-        <template slot-scope="scope">
-                          <span :style="'text-align:right;color:'+(scope.row['当年收益']>=0?'red':'green') " >
-{{
-          showResult(scope.row["当年收益"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="近6月收益" label="近6月收益" show-overflow-tooltip>
-        <template slot-scope="scope">
-                         <span :style="'text-align:right;color:'+(scope.row['近6月收益']>=0?'red':'green') " >
-{{
-          showResult(scope.row["近6月收益"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column
-      align="right" 
-        prop="近12月收益"
-        label="近12月收益"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope"><span :style="'text-align:right;color:'+(scope.row['近12月收益']>=0?'red':'green') " >{{
-          showResult(scope.row["近12月收益"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="2020" label="2020" show-overflow-tooltip>
-        <template slot-scope="scope">
-                <span :style="'text-align:right;color:'+(scope.row['2020']>=0?'red':'green') " >
-{{
-          showResult(scope.row["2020"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="2019" label="2019" show-overflow-tooltip>
-        <template slot-scope="scope">
-            <span :style="'text-align:right;color:'+(scope.row['2019']>=0?'red':'green') " >{{
-          showResult(scope.row["2019"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="2018" label="2018" show-overflow-tooltip>
-        <template slot-scope="scope">
-            <span :style="'text-align:right;color:'+(scope.row['2018']>=0?'red':'green') " >{{
-          showResult(scope.row["2018"])
-        }}</span></template>
-      </el-table-column>
-      <!--过去3年年均收益	夏普比率	卡玛比率	最大回撤-->
-      <el-table-column
-      align="right" 
-        prop="过去3年年均收益"
-        label="过去3年年均收益"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope">
-                    <span :style="'text-align:right;color:'+(scope.row['过去3年年均收益']>=0?'red':'green') " >{{
-          showResult(scope.row["过去3年年均收益"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="夏普比率" label="夏普比率" show-overflow-tooltip>
-        <template slot-scope="scope">
-                                <span :style="'text-align:right;color:'+(scope.row['夏普比率']>=0?'red':'green') " >{{
-
-          showResult(scope.row["夏普比率"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="波动率" label="波动率" show-overflow-tooltip>
-        <template slot-scope="scope">
-                                <span :style="'text-align:right;color:'+(scope.row['波动率']>=0?'red':'green') " >{{
-
-          showResult(scope.row["波动率"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="卡玛比率" label="卡玛比率" show-overflow-tooltip>
-        <template slot-scope="scope">
-                 <span :style="'text-align:right;color:'+(scope.row['卡玛比率']>=0?'red':'green') " >{{
-
-          showResult(scope.row["卡玛比率"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="最大回撤" label="最大回撤" show-overflow-tooltip>
-        <template slot-scope="scope">
-                 <span :style="'text-align:right;color:'+(scope.row['最大回撤']>=0?'red':'green') " >{{
-
-          showResult(scope.row["最大回撤"])
-        }}</span></template>
-      </el-table-column>
-    </el-table>
-        <fund-echart    ref="hischart1"  :titles="current.name"  style="height: 600px" :code="selcode"  ></fund-echart>
+     <fund-echart    ref="hischart1"  :titles="current.name"  style="height: 600px" :code="selcode"  ></fund-echart>
 
         </el-dialog>
 
@@ -432,6 +273,8 @@
     import axis from 'axios'
     import FundEchart from '../../components/FundEchart.vue';
     import HisTable from '../../components/HisTable.vue';
+    import ReportTable from '../../components/ReportTable.vue';
+
     import FundCorr from '../../components/FundCorr.vue';
    const cForm=[
     {"tilte":"编号","dataIndex":"code"},
@@ -458,6 +301,7 @@
       components: {
             FundEchart,
             HisTable,
+            ReportTable,
             FundCorr
         },
         props: {filters:{
@@ -629,6 +473,7 @@
         for (let i = 0; i < this.multipleSelection.length; i++) {
               selcode+=","+this.multipleSelection[i].code;
         }
+        console.log(url)
         const options = {code:selcode}
             this.$tools.exportExcel(url,options)
         },
@@ -738,20 +583,20 @@ showResult(number,rate=100){
         this.$tools.exportExcel(url,options)
 
       },
-       downFile(){
-            if(this.multipleSelection.length<1){
-            return
-        }
-        var selcode=""
-        console.log(this.multipleSelection)
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-              selcode+=this.multipleSelection[i].code+",";
-        }
-        var url="/fof/down_jreport"
+    //    downFile(){
+    //         if(this.multipleSelection.length<1){
+    //         return
+    //     }
+    //     var selcode=""
+    //     console.log(this.multipleSelection)
+    //     for (let i = 0; i < this.multipleSelection.length; i++) {
+    //           selcode+=this.multipleSelection[i].code+",";
+    //     }
+    //     var url="/fof/down_jreport"
       
-        const options = {"code":selcode}
-        this.$tools.exportExcel(url,options)
-        },
+    //     const options = {"code":selcode}
+    //     this.$tools.exportExcel(url,options)
+    //     },
       vcompare(row){
           this.showcomapre(row.code,'/fof/jcompare')
       },
