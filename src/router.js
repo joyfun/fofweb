@@ -181,9 +181,26 @@ const routes = [
         component:() => import('@/views/fof/fofPressure.vue')
       },
       {
-        path: '/fundrank',
-        name: 'fund-rank',
-        component:() => import('@/views/fof/fofRank.vue')
+        path: '/fundrank1',
+        name: 'fund-rank1',
+        component:() => import('@/views/fof/fofRank.vue'),
+        props:{
+            pfilter:{
+            left:"已投",
+            right:"二选",
+            class_type:"CTA"
+            }
+        },
+      },{
+        path: '/fundrank2',
+        name: 'fund-rank2',
+        component:() => import('@/views/fof/fofRank.vue'),
+        props:{
+            pfilter:{
+            left:"已投",
+            right:"备投",
+            class_type:"CTA"}
+        },
       }
       ,
       {

@@ -21,7 +21,7 @@
           >
           </el-option>
         </el-select>
-     <el-button type="primary"  @click="doload" style="margin-left: 10px;">合并</el-button>
+     <el-button type="primary"  @click="doload" style="margin-left: 10px;">拼接</el-button>
 
       </div>
     </div>

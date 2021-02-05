@@ -1,8 +1,8 @@
 <template>
 <div>
     <el-button-group>
-  <el-button type="primary" @click="changeDate(-7)" >近7天</el-button>
   <el-button type="primary" @click="changeDate(-30)">近30天</el-button>
+  <el-button type="primary" @click="changeDate(-90)">近3月</el-button>
   <el-button type="primary" @click="changeDate(-180)">近180天</el-button>
   <el-button type="primary" @click="changeDate(-365)">近365天</el-button>
 {{"自" + startDate +"开始"}}
@@ -38,6 +38,8 @@
 </el-table-column>
           <!-- <el-table-column hide="true" prop="amount" label="份额"> </el-table-column> -->
           <el-table-column align="right"  :formatter	="formatterNum" prop="netval" label="净值"> </el-table-column>
+          <el-table-column  align="right"      sortable :formatter 	="formatterNum" prop="rate" label="收益率"> </el-table-column>
+
           <el-table-column  align="right" :formatter	="formatterNum" prop="profit" label="盈利"> </el-table-column>
 
         </el-table>
@@ -178,6 +180,8 @@ export default {
                 }
             }
             row["profit"]=row.amount*(row.n_sumval-row.s_sumval)
+            row["rate"]=(row.n_sumval-row.s_sumval)/row.s_sumval
+
             ret.push({name:row.name,value:row["profit"]})
         }
         return ret;

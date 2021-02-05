@@ -216,12 +216,15 @@ export default {
                             icon:'setting'
                         },
                         {
-                            path: '/fundrank',
-                            label: '排名',
-                            name:'fund-rank',
-                            params:{
-                                type:'1',
-                            },
+                            path: '/fundrank1',
+                            label: '已投二选排名',
+                            name:'fund-rank1',
+                            icon:'setting'
+                        },
+                        {
+                            path: '/fundrank2',
+                            label: '已投备投排名',
+                            name:'fund-rank2',
                             icon:'setting'
                         },
                          {
