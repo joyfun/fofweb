@@ -78,7 +78,7 @@ export default {
     handler: function(val) {
         if(!this.compares)
                 this.getChart(val)
-              }
+        }
     },
     combine:{
         handler: function(val) {

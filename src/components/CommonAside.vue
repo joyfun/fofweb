@@ -252,7 +252,13 @@ export default {
                                 cfg:'1',
                             },
                             icon:'setting'
-                        }
+                        },
+                        {
+                            path: '/fundconcat',
+                            label: '基金拼接',
+                            name:'fund-concat',
+                            icon:'setting'
+                        }, 
                         ]
                         
             },

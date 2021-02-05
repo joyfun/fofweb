@@ -163,6 +163,14 @@ const routes = [
         },
       },
       {
+        path: '/fundconcat',
+        name: 'fund-concat',
+        component:() => import('@/views/fof/fofConcat.vue'),
+        props:{
+            url:"/fof/jcompare"
+        },
+      },
+      {
         path: '/fundreason',
         name: 'fund-reason',
         component:() => import('@/views/fof/fofReason.vue')
