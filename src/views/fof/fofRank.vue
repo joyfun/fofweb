@@ -60,6 +60,8 @@
 
           <el-table-column prop="short_name" label="名称">      <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
 </el-table-column>
+<el-table-column prop="class_type" label="类型"> </el-table-column>
+
 <el-table-column prop="sub_type" label="子类型"> </el-table-column>
           <el-table-column prop="stage" label="阶段"> </el-table-column>
           <!-- <el-table-column hide="true" prop="amount" label="份额"> </el-table-column> -->
@@ -178,12 +180,7 @@ export default {
         var ret=[]
         for(var idx in data){
             var row=data[idx]
-            if(this.subtype){
-                if(row.class_type!=this.subtype)
-                {
-                    continue;
-                }
-            }
+            console.log(row)
             row["profit"]=row.amount*(row.n_sumval-row.s_sumval)
             row["rate"]=(row.n_sumval-row.s_sumval)/row.s_sumval
 
@@ -233,7 +230,7 @@ getTableData(param) {
 
         //   console.log(this.tableData)
             //子组件$on中的名字
-          this.getSpanArr(this.tableData)
+        //   this.getSpanArr(this.tableData)
 
         })
         .catch((error) => {

@@ -4,7 +4,7 @@
         
 
         <div style="display: flex;justify-content: space-between">
-        <el-button  size="small" @click="delSelection()">删除</el-button>
+        <el-button  size="small" @click="addInfo()">添加</el-button>
         <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
 
 
@@ -61,6 +61,7 @@
     :close-on-press-escape="false"
     :visible.sync="dialogVisible"
   >
+ <el-button  size="small" @click="addInfo()">添加</el-button>
 <el-table
     ref="subTable"
     :data="subData"
@@ -91,6 +92,35 @@
 
   </el-table>
       </el-dialog>
+      <el-dialog
+    width="80%"
+    top="50px"
+    @close="saveClose"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="formVisible"
+  >
+<el-form :model="current" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
+    <template v-for="(row,index)  in cForm" >
+    <el-form-item  :key="index" :prop="row.dataIndex"      :label=" row.tilte"><el-input v-model="current[row.dataIndex]"></el-input>
+      </el-form-item>
+     <!-- <el-row  :key="index"   v-show="index%2==0">
+      <el-col :span="12">              
+      <el-form-item v-if="index<cForm.length-1"  :prop="row.dataIndex"      :label=" row.tilte"><el-input v-model="current[row.dataIndex]"></el-input>
+      </el-form-item>
+      </el-col>
+      <el-col :span="12">               -->
+      <!-- <el-form-item :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte"><el-input v-model="current[cForm[index+1].dataIndex]"></el-input>
+      </el-form-item> -->
+      <!-- </el-col>
+    </el-row > -->
+    </template>
+<el-form-item>
+    <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+    <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+  </el-form-item>
+</el-form>
+    </el-dialog>
   </div>
   
 </template>
@@ -106,7 +136,9 @@
 <script>
     import axis from 'axios'
     import FundEchart from '../../components/FundEchart.vue';
-
+const cForm=[
+    {"tilte":"编号","dataIndex":"code"},
+    {"tilte":"名称","dataIndex":"value"}]
   export default {
       components: {
             FundEchart
@@ -114,6 +146,9 @@
     data() {
       return {
           stage:'',
+          cForm:cForm,
+          formVisible:false,
+          parent:0,
           subData: [],
         multipleSelection: [],
         current:{},
@@ -122,14 +157,6 @@
         rowdata: '',
         value2: '',
         PageSize:30,
-        chartData: {
-                        xData: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                        series: [{
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
-        type: 'line',
-        smooth: true
-    }]
-                    },
         input: '',
           tableData:[],
           totaltableData: [],
@@ -148,24 +175,43 @@
     }
   },
     methods: {
+         addInfo(){
+          this.current={}
+          this.formVisible=true
+      },
          editClose() {
         this.dialogVisible = false
+        this.parent=0
         },
-        downFile(){
-        var url="/fof/report"
-        if(this.multipleSelection.length<1){
-            return
-        }
-        var selcode=""
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-              selcode+=","+this.multipleSelection[i].code;
-        }
-        const options = {code:selcode}
-            this.$tools.exportExcel(url,options)
+        saveClose(){
+            this.formVisible=false
+            this.getList()
         },
+        submitForm(formName) {
+          console.log(this.$refs[formName].model)
+          this.current.parent=this.parent
+          axis({
+      method: 'post',
+      url: "/sys/saveparam", // 请求地址
+      data: this.current, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then(
+      response => {
+          if(response.data["status"]=="success"){
+              this.getList(this.filter)
+            this.formVisible = false
+          }
+
+      },
+      err => {
+        reject(err)
+      }
+    )
+      },
 
       showHis(row){
           this.cur_code=""
+          this.parent=row.id
           this.current=row
           this.dialogVisible=true
           this.cur_code=row.code
