@@ -25,8 +25,13 @@
         <el-input-number  v-model="expect" :precision="3" :step="0.1" :min="0" :max="10" placeholder="预期波动性"></el-input-number>
 
         <el-button type="primary" @click="docalc">计算</el-button>
-        <table width="800">
-            <tr><td>相关性</td><td>{{$tools.formatMoney(corr,4)}}</td><td>组合收益</td><td>{{$tools.formatMoney(cret,4)}}</td><td>组合预期收益</td><td>{{$tools.formatMoney(eret,4)}}</td></tr>
+
+        <table class="ctable" cellspacing="0" cellpadding="0" width="300">
+            <tr><td></td><td>收益</td><td>风险</td></tr>
+            <tr><td>历史</td><td>{{$tools.formatMoney(cret,4)}}</td><td>{{$tools.formatMoney(cvola,4)}}</td></tr>
+            <tr><td>预期</td><td>{{$tools.formatMoney(eret,4)}}</td><td>{{$tools.formatMoney(evola,4)}}</td></tr>
+
+            <!-- <tr><td class="ctd">相关性</td><td>{{$tools.formatMoney(corr,4)}}</td><td>组合收益</td><td>{{$tools.formatMoney(cret,4)}}</td><td>组合预期收益</td><td>{{$tools.formatMoney(eret,4)}}</td><td>{{goal0}}</td></tr> -->
         </table>
       </div>
     </div>
@@ -39,9 +44,8 @@
           style="width: 100%; margin-top: 20px"
         >
           <el-table-column prop="基金名称" label="名称"> </el-table-column>
-          <el-table-column prop="近12月收益" :formatter	="formatterNum"  label="近12月收益" width="100"> </el-table-column>
+          <el-table-column prop="过去3年年均收益" :formatter	="formatterNum"  label="过去3年年均收益" width="100"> </el-table-column>
           <el-table-column prop="波动率" :formatter	="formatterNum" label="波动率" width="80"> </el-table-column>
-          <el-table-column prop="percent" :formatter	="formatterNum" label="比例" width="80"> </el-table-column>
 
           <el-table-column prop="vola"  width="180" label="预期波动性"><el-input-number></el-input-number>
           <template slot-scope="scope">
@@ -49,8 +53,14 @@
             <span></span>
           </template>
            </el-table-column>
+          <el-table-column prop="percent" :formatter	="formatterNum" label="比例" width="80"> </el-table-column>
           <el-table-column prop="epercent" :formatter	="formatterNum" label="预期比例" width="80"> </el-table-column>
-
+          <el-table-column prop="mpercent"  width="180" label="调整比例"><el-input-number></el-input-number>
+          <template slot-scope="scope">
+            <el-input-number  v-model="scope.row.mpercent" @change="changePercent" :precision="2" :step="0.1" :min="0" :max="10" placeholder="调整比例"></el-input-number>
+            <span></span>
+          </template>
+           </el-table-column>
           <el-table-column prop="预期收益率" width="180"  label="预期收益率">
           <template slot-scope="scope">
               <el-input-number  v-model="scope.row.eret" @change="docalc" :precision="2" :step="0.1" :min="0" :max="10" placeholder="预期收益率"></el-input-number>
@@ -72,6 +82,7 @@
       ref="hischart"
       :titles="current.name"
       style="height: 600px"
+      :combine="combine"
       :code="compares"
       :compares="compares"
       :visable="dialogVisible"
@@ -110,10 +121,14 @@ export default {
       temp: -1,
       comb1: "",
       comb2: "",
+      combine:null,
       corr:0,
+      goal0:0,
       expect:0.2,
       cret:0,
       eret:0,
+      cvola:0,
+      evola:0,
       compData:[],
       dialogVisible: true,
       origin: {},
@@ -205,7 +220,11 @@ export default {
     this.remoteMethod();
   },
   methods: {
-     formatterNum(row, column, value) {
+    dochange(row){
+      //calcvola(row[""],v1,w2,v2,corr)
+
+    },
+    formatterNum(row, column, value) {
       if (!value) return "0";
       return this.$tools.formatMoney(value,4)
     },
@@ -234,13 +253,17 @@ export default {
     console.log(fund1)
     console.log(fund2)
     },
-
+      calcvola(w1,v1,w2,v2,corr){
+          var ret= Math.sqrt(w1**2*v1**2+w2**2*v2**2+2*corr*w1*v1*w2*v2)
+          return ret
+      },
       docalc(){
+
           var ret=[]
           for (var i in this.compData){
               var row=this.compData[i]
               if(row["vola"])
-              ret.push({"code":row["code"].replace("_extra",""),"vola":row["vola"],"波动率":row["波动率"]})
+              ret.push({"name":row["基金名称"],"code":row["code"].replace("_extra",""),"vola":row["vola"],"波动率":row["波动率"]})
           }
           if(ret.length==2){
               var param={"corr":this.corr,"goal":this.expect}
@@ -249,29 +272,61 @@ export default {
         this.calc_amount(fund1,fund2,param,"波动率")
 
         this.calc_amount(fund1,fund2,param,"vola")
-            this.cret=0
-            this.eret=0
+           
             for(var i in this.compData){
                 var row=this.compData[i]
                 if(row.code==fund1.code)
                 {
                     Vue.set(this.compData[i], 'epercent', fund1.epercent)
+                    if(this.compData[i]['mpercent']){}
+                    else{
+                    Vue.set(this.compData[i], 'mpercent', fund1.epercent)
+
+                    }
                     Vue.set(this.compData[i], 'percent', fund1.percent)
-                    this.cret+=row['近12月收益']*fund1.percent
+
+                    this.cret+=row['过去3年年均收益']*fund1.percent
                     this.eret+=row['eret']*fund1.epercent
 
                 }
                 if(row.code==fund2.code)
                 {
-                    Vue.set(this.compData[i], 'epercent', fund2.percent)
+                    Vue.set(this.compData[i], 'epercent', fund2.epercent)
+                    if(this.compData[i]['mpercent']){}
+                    else{
+                    Vue.set(this.compData[i], 'mpercent', fund2.epercent)  
+                    }
                     Vue.set(this.compData[i], 'percent', fund2.percent)
-                    this.cret+=row['近12月收益']*fund2.percent
-                    this.eret+=row['eret']*fund2.epercent
+                  
 
                 }
             }
+            this.changePercent()
+            this.goal0=this.calcvola(fund1["percent"],fund1["波动率"],fund2["percent"],fund2["波动率"],this.corr)
           }
 
+      },
+      changePercent(){
+           this.cret=0
+            this.eret=0
+          var ret={}
+          var funds=[]
+          for(var i in this.compData){
+              
+                var row=this.compData[i]
+                if(row['code'].endsWith("_extra")){
+                    continue
+                }
+                console.log(row)
+            ret[row["基金名称"]]=row["mpercent"]
+             this.cret+=row['过去3年年均收益']*row["mpercent"]
+             this.eret+=row['eret']*row["mpercent"]
+             funds.push(row)
+          }
+          this.cvola=this.calcvola(funds[0]["mpercent"],funds[0]["波动率"],funds[1]["mpercent"],funds[1]["波动率"],this.corr)
+          this.evola=this.calcvola(funds[0]["mpercent"],funds[0]["波动率"],funds[1]["mpercent"],funds[1]["波动率"],this.corr)
+
+            Vue.set(this,"combine",{"组合":ret})
       },
     doload() {
        this.$axios({
@@ -314,3 +369,16 @@ export default {
   },
 };
 </script>
+<style scoped>
+.ctable{
+  position:relative;
+  border:1px solid #000;
+  overflow-X:scroll;
+}
+td{
+    border:solid #000;
+    width:120px;
+     border-width:0px 1px 1px 0px;
+}
+
+</style>

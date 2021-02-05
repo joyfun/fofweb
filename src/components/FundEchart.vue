@@ -40,6 +40,10 @@ export default {
       type: Object,
       default:null
     },
+    combine:{
+      type: Object,
+      default:null
+    },
      title: {
       type: String,
       default: ''
@@ -76,6 +80,36 @@ export default {
                 this.getChart(val)
               }
     },
+    combine:{
+        handler: function(val) {
+        if(val){
+            console.log(val)
+            for (var key in val){
+                if(this.raw_data.columns.indexOf(key)<0)
+                this.raw_data.columns.push(key)
+                this.raw_data[key]=[]
+                for (var i=0;i<this.raw_data.date.length;i++){
+                    var ret=0
+                    for(var skey in val[key]){
+                        ret+=this.raw_data[skey][i]*val[key][skey]
+                    }
+                    this.raw_data[key].push(ret)
+                }
+        }
+            this.chartData.xData=[]
+                                this.chartData.series=[]
+                                this.chartData.xData=this.raw_data['date']
+                                var len=this.chartData.xData.length
+                                if(len){
+                                this.max_date=this.chartData.xData[len-1]
+                                }
+                                for(var idx in this.raw_data["columns"]){
+                                    var cname=this.raw_data["columns"][idx]
+                                    this.chartData.series.push({data:this.raw_data[cname].concat(),type:"line",selectedMode:'single',name: cname}) 
+                                }
+                                this.initChart()
+              }
+    }},
     filter:{
     handler: function(val) {
                 console.log("watch filter by")

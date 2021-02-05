@@ -123,7 +123,7 @@
   <el-upload
               class="upload-demo"
               style="display:none"
-              accept=".doc,.dot,.DOC,.DOT.pdf,.PDF"
+              accept=".doc,.dot,.DOC,.DOT,DOCX,docx,.pdf,.PDF"
               action="/fof/upload"
               :data="{code:cur_code}"
 
