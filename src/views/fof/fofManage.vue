@@ -290,10 +290,10 @@
     {"tilte":"类型","dataIndex":"type"},
     {"tilte":"基金成立时间","dataIndex":"founded"},
     {"tilte":"状态","dataIndex":"stage"},
-    {"tilte":"预选状态时间","dataIndex":"stage1_time"},
-    {"tilte":"二选状态时间","dataIndex":"stage2_time"},
-    {"tilte":"倍投状态时间","dataIndex":"stage3_time"},
-    {"tilte":"已投状态时间","dataIndex":"stage4_time"},
+    {"tilte":"预选时间","dataIndex":"stage1_time"},
+    {"tilte":"二选时间","dataIndex":"stage2_time"},
+    {"tilte":"备投时间","dataIndex":"stage3_time"},
+    {"tilte":"已投时间","dataIndex":"stage4_time"},
     {"tilte":"子基金对标","dataIndex":"compare"},
     {"tilte":"市值","dataIndex":"cost"}
 ]

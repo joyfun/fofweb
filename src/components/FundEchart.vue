@@ -90,7 +90,12 @@ export default {
                 this.raw_data[key]=[]
                 for (var i=0;i<this.raw_data.date.length;i++){
                     var ret=0
+                
                     for(var skey in val[key]){
+                        if(!this.raw_data[skey][i]){
+                            ret=null 
+                            break
+                        }
                         ret+=this.raw_data[skey][i]*val[key][skey]
                     }
                     this.raw_data[key].push(ret)

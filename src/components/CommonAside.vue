@@ -105,11 +105,6 @@ export default {
                             label: '混合',
                             name:'fund-info6',
                             icon:'setting'
-                        },{
-                            path: '/fundcomb',
-                            label: '虚拟配置',
-                            name:'fund-comb',
-                            icon:'setting'
                         },
                          {
                             path: '/fundcompare1',
@@ -156,6 +151,12 @@ export default {
                             path: '/fundcalc',
                             label: '组合配置',
                             name:'fund-calc',
+                            icon:'setting'
+                        },
+                        {
+                            path: '/fundcomb',
+                            label: '虚拟配置',
+                            name:'fund-comb',
                             icon:'setting'
                         }, {
                             path: '/fundpressure',

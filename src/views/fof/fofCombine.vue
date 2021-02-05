@@ -27,7 +27,7 @@
         <el-button type="primary" @click="docalc">计算</el-button>
 
         <table class="ctable" cellspacing="0" cellpadding="0" width="300">
-            <tr><td></td><td>收益</td><td>风险</td></tr>
+            <tr><td></td><td>收益</td><td>波动率</td></tr>
             <tr><td>历史</td><td>{{$tools.formatMoney(cret,4)}}</td><td>{{$tools.formatMoney(cvola,4)}}</td></tr>
             <tr><td>预期</td><td>{{$tools.formatMoney(eret,4)}}</td><td>{{$tools.formatMoney(evola,4)}}</td></tr>
 
@@ -324,7 +324,7 @@ export default {
              funds.push(row)
           }
           this.cvola=this.calcvola(funds[0]["mpercent"],funds[0]["波动率"],funds[1]["mpercent"],funds[1]["波动率"],this.corr)
-          this.evola=this.calcvola(funds[0]["mpercent"],funds[0]["波动率"],funds[1]["mpercent"],funds[1]["波动率"],this.corr)
+          this.evola=this.calcvola(funds[0]["mpercent"],funds[0]["vola"],funds[1]["mpercent"],funds[1]["vola"],this.corr)
 
             Vue.set(this,"combine",{"组合":ret})
       },
