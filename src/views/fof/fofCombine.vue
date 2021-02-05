@@ -1,34 +1,8 @@
 <template>
   <div>
     <div class="block" style="display: flex; justify-content: space-between">
-        <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
-        <!-- <el-select v-model="filter.class_type" @change="getList"  style="width:100px"   placeholder="类型">
-    <el-option
-      v-for="item in class_types"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select>     -->
+      <div style=" width: 1200px;">
 
-        <!-- <el-select v-model="filter.left" @change="getList" style="width:100px"   placeholder="阶段一">
-    <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select>
-   <el-select v-model="filter.right" @change="getList" style="width:100px"   placeholder="阶段二">
-    <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select> -->
-  <el-row>
-      <el-col :span="10">
         <el-select v-model="comb1" filterable placeholder="名称">
           <el-option
             v-for="item in foflist"
@@ -38,9 +12,7 @@
           >
           </el-option>
         </el-select>
-      </el-col>
-      <el-col :span="10">
-        <el-select v-model="comb2" filterable placeholder="名称">
+           <el-select v-model="comb2" filterable placeholder="名称">
           <el-option
             v-for="item in foflist"
             :key="item.code"
@@ -49,37 +21,39 @@
           >
           </el-option>
         </el-select>
-      </el-col>
-      <el-col :span="2">
-        <el-input v-model="expect"></el-input>
-        </el-col>
-        <el-col :span="2">
+         目标波动性
+        <el-input-number  v-model="expect" :precision="3" :step="0.1" :min="0" :max="10" placeholder="预期波动性"></el-input-number>
+
         <el-button type="primary" @click="docalc">计算</el-button>
-        </el-col>
-  </el-row>
+        <table width="800">
+            <tr><td>相关性</td><td>{{$tools.formatMoney(corr,4)}}</td><td>组合收益</td><td>{{$tools.formatMoney(cret,4)}}</td><td>组合预期收益</td><td>{{$tools.formatMoney(eret,4)}}</td></tr>
+        </table>
+      </div>
     </div>
   <el-row>
               <el-col :span="24">
 
  <el-table
           :data="compData"
-          show-summary
           border
           style="width: 100%; margin-top: 20px"
         >
           <el-table-column prop="基金名称" label="名称"> </el-table-column>
-          <el-table-column prop="近12月收益" label="近12月收益"> </el-table-column>
-          <el-table-column prop="波动率" label="波动率"> </el-table-column>
-          <el-table-column prop="vola" label="预期波动性"><el-input-number></el-input-number>
-          <template slot-scope="scope">
-            <el-input-number  v-model="scope.row.vola" :precision="2" :step="0.1" :min="0" :max="10" placeholder="预期波动性"></el-input-number>
+          <el-table-column prop="近12月收益" :formatter	="formatterNum"  label="近12月收益" width="100"> </el-table-column>
+          <el-table-column prop="波动率" :formatter	="formatterNum" label="波动率" width="80"> </el-table-column>
+          <el-table-column prop="percent" :formatter	="formatterNum" label="比例" width="80"> </el-table-column>
 
+          <el-table-column prop="vola"  width="180" label="预期波动性"><el-input-number></el-input-number>
+          <template slot-scope="scope">
+            <el-input-number  v-model="scope.row.vola" @change="docalc" :precision="2" :step="0.1" :min="0" :max="10" placeholder="预期波动性"></el-input-number>
             <span></span>
           </template>
            </el-table-column>
-          <el-table-column prop="预期收益率" label="预期收益率"><el-input-number></el-input-number>
+          <el-table-column prop="epercent" :formatter	="formatterNum" label="预期比例" width="80"> </el-table-column>
+
+          <el-table-column prop="预期收益率" width="180"  label="预期收益率">
           <template slot-scope="scope">
-              <el-input-number  v-model="scope.row.ret" :precision="2" :step="0.1" :min="0" :max="10" placeholder="预期收益率"></el-input-number>
+              <el-input-number  v-model="scope.row.eret" @change="docalc" :precision="2" :step="0.1" :min="0" :max="10" placeholder="预期收益率"></el-input-number>
             <span></span>
           </template>
            </el-table-column>
@@ -106,15 +80,14 @@
 </template>
 <script>
 import axis from "axios";
-import FundEchart from "../../components/FundEchart.vue";
-import HisTable from "../../components/HisTable.vue";
-import Treeselect from "@riophae/vue-treeselect";
+import FundEchart from "../../components/FundEchart.vue"
+import HisTable from "../../components/HisTable.vue"
+import Vue from 'vue'
+
 // import the styles
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
   components: {
     FundEchart,
-    Treeselect,
     HisTable,
   },
   computed: {
@@ -137,7 +110,10 @@ export default {
       temp: -1,
       comb1: "",
       comb2: "",
+      corr:0,
       expect:0.2,
+      cret:0,
+      eret:0,
       compData:[],
       dialogVisible: true,
       origin: {},
@@ -229,27 +205,90 @@ export default {
     this.remoteMethod();
   },
   methods: {
+     formatterNum(row, column, value) {
+      if (!value) return "0";
+      return this.$tools.formatMoney(value,4)
+    },
+    calc_amount(fund1,fund2,param,idx="vola"){
+    var max=1
+    var a=fund1[idx]**2+fund2[idx]**2-2*param['corr']*fund1[idx]*fund2[idx]
+    var maxv=fund1[idx]
+    if (fund2[idx]>fund1[idx]){
+        maxv=fund2[idx]
+        max=2
+    }
+    var b=2*param['corr']*fund1[idx]*fund2[idx]-2*(maxv**2)
+    var c=maxv**2-param['goal']**2
+    var d=b**2-4*a*c
+    var result=(-b-Math.sqrt(d))/(2*a)
+    if(max==2){
+        result=1-result
+    }
+    if(idx=="vola"){
+    fund1["epercent"]=1-result
+    fund2["epercent"]=result
+    }else{
+    fund1["percent"]=1-result
+    fund2["percent"]=result
+    }
+    console.log(fund1)
+    console.log(fund2)
+    },
+
       docalc(){
           var ret=[]
           for (var i in this.compData){
               var row=this.compData[i]
               if(row["vola"])
-              ret.push({"code":row["code"].replace("_extra",""),"vola":row["vola"]})
+              ret.push({"code":row["code"].replace("_extra",""),"vola":row["vola"],"波动率":row["波动率"]})
           }
           if(ret.length==2){
-              this.$axios({
-        url: "/fof/percent", //          
+              var param={"corr":this.corr,"goal":this.expect}
+               var fund1=ret[0],fund2=ret[1]
+     
+        this.calc_amount(fund1,fund2,param,"波动率")
 
-        method: "POST",
-        data: { fund1: ret[0],fund2:ret[1],goal:this.expect},
-      }).then((response) => {
-            this.compData = this.$tools.pandasToJson(response.data);
-            console.log(this.compData)
-        });
+        this.calc_amount(fund1,fund2,param,"vola")
+            this.cret=0
+            this.eret=0
+            for(var i in this.compData){
+                var row=this.compData[i]
+                if(row.code==fund1.code)
+                {
+                    Vue.set(this.compData[i], 'epercent', fund1.epercent)
+                    Vue.set(this.compData[i], 'percent', fund1.percent)
+                    this.cret+=row['近12月收益']*fund1.percent
+                    this.eret+=row['eret']*fund1.epercent
+
+                }
+                if(row.code==fund2.code)
+                {
+                    Vue.set(this.compData[i], 'epercent', fund2.percent)
+                    Vue.set(this.compData[i], 'percent', fund2.percent)
+                    this.cret+=row['近12月收益']*fund2.percent
+                    this.eret+=row['eret']*fund2.epercent
+
+                }
+            }
           }
 
       },
     doload() {
+       this.$axios({
+        url: "/fof/corr", //          
+        method: "GET",
+        params: { code: this.compares },
+      }).then((response) => {
+            var corrdata=response.data.corrs
+            for(var key in corrdata){
+                for (var skey in corrdata[key]){
+                    if(skey!=key){
+                        this.corr=corrdata[key][skey]
+                        return 
+                    }
+                }
+            }
+        }); 
       this.$axios({
         url: "/fof/jreport", //          
 
