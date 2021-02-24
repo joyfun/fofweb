@@ -494,7 +494,9 @@ export default {
             $this.divideBy(sidx,{start:sidx*100/datasize,end:100})   
             $this.refreshData({startValue:sidx,end:100}) 
         }
+       
         this.echart.setOption(this.options)
+
         this.echart.on('datazoom',function(params){
             console.log(params)
         var datasize=$this.echart.getModel().option.xAxis[0].data.length
@@ -503,9 +505,14 @@ export default {
         $this.refreshData(params) 
  
 })
-        this.echart.on('datazoom',function(params){
-        })
+        
       }
+      this.echart.on('click',function(params){
+            var option=$this.echart.getOption()
+            option.legend[0].selected[params.seriesName]=false
+            $this.echart.setOption(option)
+            // this.$emit("lineClick",params)
+        })
      
        // this.divideBy(lastIdx,params) 
         

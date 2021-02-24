@@ -465,7 +465,8 @@
         },
         
         downFile(){
-        var url="/fof/report"
+        //var url="/fof/report"
+        var url="/fof/jreport_down"
         if(this.multipleSelection.length<1){
             return
         }
