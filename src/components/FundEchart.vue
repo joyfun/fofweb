@@ -440,10 +440,10 @@ export default {
         var cname = this.raw_data["columns"][idx];
         var sdata = [...this.raw_data[cname]];
         var oneval = this.raw_data[cname][oneindex];
-        var idx = oneindex;
-        while (!oneval && idx < this.raw_data[cname].length) {
-          oneval = this.raw_data[cname][idx];
-          idx++;
+        var startindx = oneindex;
+        while (!oneval && startindx < this.raw_data[cname].length) {
+          oneval = this.raw_data[cname][startindx];
+          startindx++
         }
 
         for (var i = 0; i < this.raw_data[cname].length; i++) {
@@ -454,7 +454,10 @@ export default {
         // console.log(cname)
         // console.log(sdata.slice(oneindex))
         var mp = {};
+        console.log(this.raw_data)
+        console.log(idx)
         var cdate = this.raw_data.combine_date[idx];
+        console.log(cdate)
         if (cdate) {
           var cidx = this.raw_data.date.indexOf(cdate);
           if (cidx > 0)
@@ -474,6 +477,7 @@ export default {
               ],
             };
         }
+        console.log(mp)
         this.chartData.series.push({
           data: sdata,
           type: "line",

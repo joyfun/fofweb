@@ -6,6 +6,8 @@
         <el-button size="small" @click="toggleSelection()">取消选择</el-button>
         <el-button size="small" @click="compare()">对比</el-button>
         <el-button size="small" @click="downFile()">下载业绩对比</el-button>
+        <el-button  size="small" @click="downNetFile()">下载净值</el-button>
+
       </div>
     </div>
     <el-table
@@ -317,6 +319,22 @@ export default {
     downFile(){      
         const options = {"cache":1}
         this.$tools.exportExcel(this.url+"_down",options)
+        },
+    downNetFile(durl){
+        var url="/fof/report"
+        if(durl){
+            url=durl
+        }
+        if(this.multipleSelection.length<1){
+            return
+        }
+        var selcode=""
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+              selcode+=","+this.multipleSelection[i].code;
+        }
+        console.log(url)
+        const options = {code:selcode}
+            this.$tools.exportExcel(url,options)
         },
     delSelection() {
       for (let i = 0; i < this.multipleSelection.length; i++) {

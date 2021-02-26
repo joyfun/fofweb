@@ -22,7 +22,7 @@
     >
       <!--    @row-click = "Selection"-->
 
-      <el-table-column type="selection" width="55"> </el-table-column>
+      <!-- <el-table-column type="selection" width="55"> </el-table-column> -->
       <!--      测试ID-->
      <!--  <el-table-column
       prop="基金代码"

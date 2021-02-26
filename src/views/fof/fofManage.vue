@@ -162,7 +162,7 @@
     :close-on-press-escape="false"
     :visible.sync="tableVisible"
   >
-    <el-button  @click="downFile">下载数据</el-button>
+    <el-button  @click="downFile('/fof/jreport_down')">下载数据</el-button>
 
     <report-table    ref="compdata"  :titles="current.name"   :tableData="compData"  ></report-table>
 
@@ -464,9 +464,11 @@
         this.dialogVisible = false
         },
         
-        downFile(){
-        //var url="/fof/report"
-        var url="/fof/jreport_down"
+        downFile(durl){
+        var url="/fof/report"
+        if(durl){
+            url=durl
+        }
         if(this.multipleSelection.length<1){
             return
         }
