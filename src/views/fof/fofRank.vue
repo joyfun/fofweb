@@ -62,7 +62,7 @@
 </el-table-column>
 <el-table-column prop="class_type" label="类型"> </el-table-column>
 
-<el-table-column prop="sub_type" label="子类型"> </el-table-column>
+<el-table-column prop="sub_type" sortable label="子类型"> </el-table-column>
           <el-table-column prop="stage" label="阶段"> </el-table-column>
           <!-- <el-table-column hide="true" prop="amount" label="份额"> </el-table-column> -->
           <el-table-column align="right"  :formatter	="formatterNum" prop="netval" label="净值"> </el-table-column>

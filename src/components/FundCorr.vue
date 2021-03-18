@@ -117,17 +117,24 @@ export default {
     }
   },
   methods: {
-    cellStyle(row, column, rowIndex, columnIndex) {
-            console.log(row)
-            if (row.column.label == "事件告警信息" || row.column.label == "性能告警信息"  ) {
-                return "color:#FF747B";
+    cellStyle(row) {
+            var code=row.column.property
+            // console.log(row)
+            // console.log(column)
+            var cval=row.row[code]
+            if(cval==1){
+                return ""
             }
-            if(row.column.label == "系统状态" && row.row.equStatus == "正常" ){
-                 return "color:#08AD2B";
+            if (cval>=0.8 ) {
+                return "font-weight:bold;color:#8B0000";
             }
-            if(row.column.label == "均衡状态" && row.row.equStatus == "正常" ){
-                 return "color:#08AD2B";
+            if(cval>=0.4 ){
+                 return "font-weight:bold;color:#9ACD32";
             }
+            if(cval>=0 ){
+                 return "font-weight:bold;color:#FFD700";
+            }
+            else return ""
         },
     showResult(number,rate=1){
        if (null == number)

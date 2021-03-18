@@ -39,7 +39,21 @@ export default {
             return this.asideMenu.filter(item => item.children)
         }
     },
+    mounted(){
+        const menus=["fund-comp","fund-info","fund-info1","fund-info2","fund-info3","fund-info4","fund-info5","fund-info6","fund-compare","fund-info","fund-info4","fund-calc","fund-comb","fund-pressure","fund-compare","fund-report","fund-jcomp","fund-reason","fund-rank1","fund-rank2","fund-info","sys-param","sys-cfg","fund-concat","fund-alarm"
+]
+        for(var key in this.allMenu){
+            this.allMenu[key]=this.allMenu[key].filter((item)=>{
+                if(menus.indexOf(item.name)>-1){
+                return item
+                }
+            })
+        }
+        this.asideMenu=this.asideMenu.concat(this.allMenu["company"])
+
+    },
     created(){
+        
         Bus.$on('changeMenu',(arg)=> {
             this.asideMenu=[{
                     path: '/',
@@ -228,9 +242,9 @@ export default {
                             icon:'setting'
                         },
                          {
-                            path: '/fundinfo',
+                            path: '/fundalarm',
                             label: '业绩预警',
-                            name:'fund-info',
+                            name:'fund-alarm',
                             params:{
                                 type:'1',
                             },
@@ -272,23 +286,7 @@ export default {
                     label: '首页',
                     name:'home',
                     icon: 's-home'
-                },{
-                            path: '/fundcomp',
-                            label: '投资公司管理',
-                            name:'fund-comp',
-                            params:{
-                                type:'1',
-                            },
-                            icon:'setting'
-                        }, {
-                            path: '/fundinfo',
-                            label: '基金产品维护',
-                            name:'fund-info',
-                            params:{
-                                type:'1',
-                            },
-                            icon:'setting'
-                        }]
+                }]
         //     asideMenu:[
         //         {
         //             path: '/',

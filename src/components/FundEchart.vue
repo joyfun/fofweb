@@ -1,4 +1,18 @@
 <template>
+<div>
+<div class="block">
+    <span class="demonstration">起始日期</span>
+    <el-date-picker
+      v-model="startdate"
+      value-format="yyyyMMdd"
+      format="yyyyMMdd"
+      align="right"
+      @change="changeDate"
+      type="date"
+      placeholder="选择日期"
+      :picker-options="pickerOptions">
+    </el-date-picker>
+  </div>
   <div style="height: 420px" ref="echart">
     <!-- <el-button-group>
   <el-button type="primary">7天</el-button>
@@ -8,6 +22,7 @@
 </el-button-group> -->
     基金净值历史
   </div>
+</div>
 </template>
 
 // <script>
@@ -145,6 +160,55 @@ export default {
   data() {
     return {
       raw_data: {},
+      startdate:'',
+      pickerOptions:{
+          disabledDate(time) {
+            return time.getTime() > Date.now();
+          },
+          shortcuts: [ 
+            {
+            text: '7日',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', date);
+                }
+            },
+            {
+            text: '30日',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', date);
+                }
+            },
+            {
+            text: '90日',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', date);
+                }
+            }
+            ,
+            {
+            text: '180日',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 180);
+              picker.$emit('pick', date);
+                }
+            },
+            {
+            text: '一年',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 180);
+              picker.$emit('pick', date);
+                }
+            }
+          ]
+      },
       startidx: 0,
       max_date: "",
       //   width: this.initWidth(),
@@ -277,6 +341,10 @@ export default {
             type: "value",
             min: 0.9,
           },
+          {
+            type: "value",
+            max: 0.1,
+          },
         ],
         color: [
           "#588dd5",
@@ -319,6 +387,14 @@ export default {
     //   close() {
     //   this.$emit('close')
     // },
+    changeDate(vday){
+         var arr = this.echart.getModel().option.xAxis[0].data;
+          var sidx = this.getstart(vday);
+          var datasize = arr.length;
+          this.divideBy(sidx, { start: arr[sidx], end: 100 });
+          this.refreshData({ startValue: sidx, end: 100 });
+
+    },
     initWidth() {
       this.screenWidth = document.body.clientWidth;
       if (this.screenWidth < 991) {
@@ -435,16 +511,28 @@ export default {
       this.chartData.xData = [];
       this.chartData.series = [];
       this.chartData.xData = this.raw_data["date"];
+      this.startdate=this.chartData.xData[oneindex]
       var min = 0;
       for (var idx in this.raw_data["columns"]) {
         var cname = this.raw_data["columns"][idx];
-        var sdata = [...this.raw_data[cname]];
         var oneval = this.raw_data[cname][oneindex];
         var startindx = oneindex;
         while (!oneval && startindx < this.raw_data[cname].length) {
           oneval = this.raw_data[cname][startindx];
           startindx++
         }
+        if(cname.endsWith("_增强")){
+        this.chartData.series.push({
+          data: this.raw_data[cname].slice(startindx),
+          type: "line",
+          areaStyle: {},
+          name: cname,
+          smooth: true,
+          yAxisIndex:1
+        });
+        }else{
+var sdata = [...this.raw_data[cname]];
+
 
         for (var i = 0; i < this.raw_data[cname].length; i++) {
           sdata[i] = (this.raw_data[cname][i] / oneval).toFixed(4);
@@ -454,10 +542,8 @@ export default {
         // console.log(cname)
         // console.log(sdata.slice(oneindex))
         var mp = {};
-        console.log(this.raw_data)
-        console.log(idx)
+
         var cdate = this.raw_data.combine_date[idx];
-        console.log(cdate)
         if (cdate) {
           var cidx = this.raw_data.date.indexOf(cdate);
           if (cidx > 0)
@@ -477,11 +563,13 @@ export default {
               ],
             };
         }
-        console.log(mp)
+        }
+        
         this.chartData.series.push({
           data: sdata,
           type: "line",
           name: cname,
+          yAxisIndex:0,
           markPoint: mp,
         });
         this.axisOption.yAxis.min = min;
@@ -599,6 +687,20 @@ export default {
       this.echart.on("click", function (params) {
         var option = $this.echart.getOption();
         option.legend[0].selected[params.seriesName] = false;
+        console.log(option)
+        $this.echart.setOption(option);
+        // this.$emit("lineClick",params)
+      });
+     this.echart.on("legendselectchanged", function (params) {
+        var option = $this.echart.getOption();
+        console.log(params)
+        let basename=params.name
+        if(params.name.endsWith("_增强")){
+            basename=params.name.split("_增强")[0]
+            option.legend[0].selected[basename] = params.selected[params.name];
+        }else if(option.legend[0].selected[basename+"_增强"]!=undefined){
+            option.legend[0].selected[basename+"_增强"] = params.selected[basename];
+        }
         $this.echart.setOption(option);
         // this.$emit("lineClick",params)
       });
@@ -613,7 +715,6 @@ export default {
       this.echart.setOption(option, true);
     },
     getstart(vady) {
-      console.log(vady);
       var arr = this.echart.getModel().option.xAxis[0].data;
       for (var i = 0; i < arr.length; i++) {
         if (arr[i] > vady && i > 0) return i;

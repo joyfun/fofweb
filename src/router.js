@@ -176,6 +176,11 @@ const routes = [
         component:() => import('@/views/fof/fofReason.vue')
       },
       {
+        path: '/fundalarm',
+        name: 'fund-alarm',
+        component:() => import('@/views/fof/fofAlarm.vue')
+      },
+      {
         path: '/fundpressure',
         name: 'fund-pressure',
         component:() => import('@/views/fof/fofPressure.vue')
@@ -260,7 +265,23 @@ const routes = [
     ]
   },
 ]
-
+const menus=["fund-rank1","fund-rank2","fund-rank3","fund-report"]
+var filtermenu=(menu,umenu)=>{
+    var uroute=[]
+    console.log(menu.name)
+    for(var aidx in menu){
+        var amenu=menu[aidx]
+        if(amenu.children ){
+            amenu.children=filtermenu(amenu.children,menus)
+            uroute.push(amenu)
+        }
+        console.log(amenu)
+        if(menus.indexOf(amenu.name)>0){
+            uroute.push(amenu)
+        }
+    }
+    return uroute
+}
 const router = new VueRouter({
   routes
 })
