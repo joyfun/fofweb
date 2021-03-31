@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Login from "@/views/login/index"
 
 
 Vue.use(VueRouter)
@@ -124,7 +125,7 @@ const routes = [
         name: 'fund-compare2',
         component:() => import('@/views/fof/fofCompare.vue'),
         props:{
-            filters:{left:'二选',
+            filters:{left:'尽调',
             right:'预选'}
         },
       }
@@ -192,7 +193,7 @@ const routes = [
         props:{
             pfilter:{
             left:"已投",
-            right:"二选",
+            right:"尽调",
             class_type:"CTA"
             }
         },
@@ -253,17 +254,17 @@ const routes = [
     ]
   },
   {
-    path: '/login',
-    component:() => import('@/views/User/login.vue'),
-    children:[
-    ]
-  },
-  {
     path: '/register',
     component:() => import('@/views/User/register.vue'),
     children:[
     ]
-  },
+  },  {
+    path: "/login",
+    component: Login,
+    name: "",
+    hidden: true,
+    children: []
+  }
 ]
 const menus=["fund-rank1","fund-rank2","fund-rank3","fund-report"]
 var filtermenu=(menu,umenu)=>{

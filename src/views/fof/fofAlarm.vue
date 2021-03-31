@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="tableContainer" style="	height : 100%;">
     <div class="block" style="display: flex; justify-content: space-between">
       <div style=" width: 480px;">
         <el-button size="small" @click="delSelection()">删除</el-button>
@@ -13,6 +13,7 @@
     <el-table
       ref="multipleTable"
       :data="tableData"
+      :max-height="tmaxh"
       tooltip-effect="dark"
       @selection-change="handleSelectionChange" 
       style="width: 100%; margin-top: 20px"
@@ -164,7 +165,7 @@
     </el-table>
     <div style="display: flex; justify-content: space-between">
      
-      <div class="block" style="margin-top: 25px; height: 120px">
+      <div class="block" style="margin-top: 25px; height: 40px">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -214,6 +215,7 @@ export default {
   data() {
     return {
       current: {},
+      tmaxh:500,
       cur_code: "",
       dialogVisible: false,
       rowdata: "",
@@ -257,6 +259,10 @@ export default {
     }
   },
   methods: {
+    resizeChart(){
+                this.tmaxh=this.$refs.tableContainer.clientHeight-120
+
+      },
     editClose() {
       this.dialogVisible = false;
     },
@@ -400,7 +406,9 @@ export default {
     },
     //
   },
-
+mounted() {
+            window.addEventListener("resize", this.resizeChart);
+    },
   async created() {
     this.getList();
   },

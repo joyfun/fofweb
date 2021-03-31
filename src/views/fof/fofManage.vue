@@ -1,6 +1,6 @@
 <template>
-  <div>
-      <div class="block" style="display: flex;justify-content: space-between">
+  <div ref="tableContainer" style="	height : 100%;">
+      <div  class="block" style="display: flex;justify-content: space-between">
         
 
         <div style="display: flex;justify-content: space-between">
@@ -36,6 +36,7 @@
       <el-table
     ref="multipleTable"
     :data="tableData"
+    :max-height="tmaxh"
     :row-key="(row)=>{ return row.code}"
     tooltip-effect="dark"
     style="width: 100%;margin-top:20px;"
@@ -134,7 +135,7 @@
             </el-upload>
       <div style="display: flex;justify-content: space-between">
       
-      <div class="block" style=" margin-top: 25px; height: 120px; ">
+      <div class="block" style=" margin-top: 25px; height: 40px; ">
         <!-- --><el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -274,6 +275,7 @@
     import FundEchart from '../../components/FundEchart.vue';
     import HisTable from '../../components/HisTable.vue';
     import ReportTable from '../../components/ReportTable.vue';
+    import {mapGetters} from 'vuex'
 
     import FundCorr from '../../components/FundCorr.vue';
    const cForm=[
@@ -295,7 +297,16 @@
     {"tilte":"备投时间","dataIndex":"stage3_time"},
     {"tilte":"已投时间","dataIndex":"stage4_time"},
     {"tilte":"子基金对标","dataIndex":"compare"},
-    {"tilte":"市值","dataIndex":"cost"}
+    {"tilte":"市值","dataIndex":"cost"},
+    {"tilte":"管理费","dataIndex":"fee"},
+ {"tilte":"carry","dataIndex":"carry"},
+ {"tilte":"业绩报酬计提方式","dataIndex":"perf_comp"},
+ {"tilte":"止损","dataIndex":"lost"},
+ {"tilte":"预警","dataIndex":"alarm"},
+ {"tilte":"其他关键条款","dataIndex":"other"},
+ {"tilte":"渠道","dataIndex":"channel"},
+ {"tilte":"渠道联系人","dataIndex":"channel_man"},
+ {"tilte":"渠道联系方式","dataIndex":"channel_contact"} 
 ]
   export default {
       components: {
@@ -308,6 +319,7 @@
       type: Object,
       default:null
     },},
+    computed:{...mapGetters(['options','class_types'])},
     data() {
       return {
           cForm,
@@ -315,43 +327,7 @@
           filter:{},
           temp:-1,
           origin:{},
-          options: [
-              {
-          value: '无',
-          label: '无'
-        },{
-          value: '预选',
-          label: '预选'
-        }, {
-          value: '二选',
-          label: '二选'
-        }, {
-          value: '备投',
-          label: '备投'
-        }, {
-          value: '已投',
-          label: '已投'
-        }],
-        class_types: [{
-          value: 'CTA',
-          label: 'CTA'
-        }, {
-          value: '指增',
-          label: '指增'
-        }
-        , {
-          value: '中性',
-          label: '中性'
-        }, {
-          value: '套利',
-          label: '套利'
-        }, {
-          value: '混合',
-          label: '混合'
-        }, {
-          value: '期权',
-          label: '期权'
-        }],
+          
         multipleSelection: [],
         current:{},
         cur_code:"",
@@ -364,6 +340,7 @@
         editVisible:false,
         compData:[],
         rowdata: '',
+        tmaxh:500,
         value2: '',
         PageSize:30,
         chartData: {
@@ -669,6 +646,11 @@ showResult(number,rate=100){
     // }
 
       },
+      resizeChart(){
+                console.log(this.$refs.tableContainer.clientHeight)
+                this.tmaxh=this.$refs.tableContainer.clientHeight-120
+
+      },
       delSelection(){
         for (let i = 0; i < this.multipleSelection.length; i++) {
             console.log(this.multipleSelection[i].id);
@@ -741,6 +723,7 @@ showResult(number,rate=100){
                                 console.log(response);
                                 this.totaltableData = response.data;
                                 this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
+                                this.resizeChart()
                             })
                         .catch(
                             (error) => {
@@ -763,10 +746,12 @@ showResult(number,rate=100){
             },
         },
     created(){
-        console.log(this.$moment().day(-7))
         console.log(this.$moment().date(-7))
         
-    }
+    },
+    mounted() {
+            window.addEventListener("resize", this.resizeChart);
+    },
     //   async mounted() {
     //         console.log(this.$route.params)
     //         this.getList(this.$route.params.type);

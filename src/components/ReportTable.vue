@@ -11,13 +11,13 @@
   <el-button type="primary">90天</el-button>
   <el-button type="primary">本年</el-button>
 </el-button-group> -->
-  <el-button v-show="temp==1" @click="confirmData">确认数据</el-button>
         </div>
  </div>
    <el-table
       ref="multipleTable"
       :data="tableData"
       tooltip-effect="dark"
+      :default-sort="{prop:'类型',order:'ascending','当月收益':'descending'}"
       style="width: 100%; margin-top: 20px"
     >
       <!--    @row-click = "Selection"-->
@@ -33,7 +33,7 @@
       用例编号-->
       <el-table-column
         prop="基金名称"
-        width="160"
+        width="120"
         label="基金名称"
         show-overflow-tooltip
       >
@@ -72,6 +72,7 @@
       <el-table-column
         prop="当月收益"
         label="当月收益"
+        sortable
         align="right" 
         width="80"
         show-overflow-tooltip
@@ -82,7 +83,7 @@
 
         </template>
       </el-table-column>
-      <el-table-column prop="当年收益" label="当年收益" align="right"  show-overflow-tooltip>
+      <el-table-column prop="当年收益"  label="当年收益" align="right"  show-overflow-tooltip>
         <template slot-scope="scope">
                           <span :style="'text-align:right;color:'+(scope.row['当年收益']>=0?'red':'green') " >
 {{

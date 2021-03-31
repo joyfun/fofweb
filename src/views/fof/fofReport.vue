@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="tableContainer" style="	height : 100%;">
     <div class="block" style="display: flex; justify-content: space-between">
       <div style=" width: 480px;">
         <el-button size="small" @click="delSelection()">删除</el-button>
@@ -13,11 +13,13 @@
     <el-table
       ref="multipleTable"
       :data="tableData"
+      :max-height="tmaxh"
       tooltip-effect="dark"
+
       @selection-change="handleSelectionChange" 
       style="width: 100%; margin-top: 20px"
     >
-      <!--    @row-click = "Selection"-->
+      <!--    @row-click = "Selection"       :default-sort="{prop:'类型',order:'ascending','当月收益':'descending'}"-->
 
       <el-table-column type="selection" width="55"> </el-table-column>
       <!--      测试ID-->
@@ -30,7 +32,7 @@
       用例编号-->
       <el-table-column
         prop="基金名称"
-        width="160"
+        width="120"
         label="基金名称"
         show-overflow-tooltip
       >
@@ -42,7 +44,7 @@
       </el-table-column>
        <el-table-column
         prop="类型"
-        width="80"
+        width="60"
         label="类型"
         sortable
         show-overflow-tooltip
@@ -53,6 +55,11 @@
       <!--      测试项目-->
       <!--      测试用例是否关联-->
       <!--      测试输入-->
+      <el-table-column align="right" prop="净值日期"         width="100"
+ label="净值日期" show-overflow-tooltip>
+        <template slot-scope="scope">
+                 {{scope.row["净值日期"]}}</template>
+      </el-table-column>
       <el-table-column
         prop="本周收益"
         label="本周收益"
@@ -69,6 +76,7 @@
       <el-table-column
         prop="当月收益"
         label="当月收益"
+        sortable
         align="right" 
         width="80"
         show-overflow-tooltip
@@ -162,10 +170,17 @@
           showResult(scope.row["最大回撤"])
         }}</span></template>
       </el-table-column>
+            <el-table-column align="right" prop="当前净值" label="当前净值" show-overflow-tooltip>
+        <template slot-scope="scope">
+                 {{
+          scope.row["当前净值"]
+        }}</template>
+      </el-table-column>
+
     </el-table>
     <div style="display: flex; justify-content: space-between">
      
-      <div class="block" style="margin-top: 25px; height: 120px">
+      <div class="block" style="margin-top: 25px; height: 40px">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -219,6 +234,7 @@ export default {
       dialogVisible: false,
       rowdata: "",
       value2: "",
+      tmaxh:500,
       chartData: {
         xData: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         series: [
@@ -244,7 +260,6 @@ export default {
           if(n.params['url']){
               this.curl="/fof/"+n.params['url']
           }
-          console.log(this.curl)
         //   this.getList()
 		// 初始化操作
       },
@@ -258,6 +273,10 @@ export default {
     }
   },
   methods: {
+      resizeChart(){
+                this.tmaxh=this.$refs.tableContainer.clientHeight-120
+
+      },
     editClose() {
       this.dialogVisible = false;
     },
@@ -391,8 +410,18 @@ export default {
       axis
         .get(this.url) //axis后面的.get可以省略；
         .then((response) => {
-          console.log(response);
-          this.tableData = this.$tools.pandasToJson(response.data);
+            if(this.url.indexOf('jcompare')>0){
+                this.tableData = this.$tools.pandasToJson(response.data)
+            }else{
+          this.tableData = this.$tools.pandasToJson(response.data).sort((a,b)=>{
+              var atype=a["类型"]
+              var r=a["类型"].localeCompare(b["类型"])
+          if(r==0){
+              return b["当月收益"]-a["当月收益"]
+          }
+          return r
+          });}
+          this.resizeChart()
           //this.tableData = this.totaltableData;
         })
         .catch((error) => {
@@ -401,7 +430,9 @@ export default {
     },
     //
   },
-
+ mounted() {
+            window.addEventListener("resize", this.resizeChart);
+    },
   async created() {
     this.getList();
   },

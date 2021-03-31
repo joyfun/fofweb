@@ -225,11 +225,15 @@ export default {
       axisOption: {
         // title: {
         // text: "基金净值对比图"},
-        legend: {
-          textStyle: {
-            color: "#333",
-          },
-        },
+        
+        legend: [{
+          //option.legend[0].selected[basename+"_超额"] = params.selected[basename];
+          selected:{},
+          type: "scroll",
+          orient: "vertical",
+          top: "middle",
+          right: 0,
+        }],
         toolbox: {
           left: "left",
           feature: {
@@ -303,14 +307,14 @@ export default {
         },
         tooltip: {
           trigger: "axis",
-          //   formatter: function (datas, ticket, callback) {
-          //            var res = datas[0].name + '<br/>'
-          //            console.log(datas)
-          //     for (var i = 0, length = datas.length; i < length; i++) {
-          //         res += datas[i].seriesName + '：'  + datas[i].value.toFixed(4) + '<br/>'
-          //         }
-          //     return res
-          // }
+        //     formatter: function (datas, ticket, callback) {
+        //              var res = datas[0].name + '<br/>'
+        //              console.log(datas)
+        //       for (var i = 0, length = datas.length; i < length; i++) {
+        //           res += datas[i].seriesName + '：'  + datas[i].value.toFixed(4) + '<br/>'
+        //           }
+        //       return res
+        //   }
         },
         dataZoom: [
           //             {            type:"inside",
@@ -330,12 +334,6 @@ export default {
           type: "category",
           data: [],
         },
-        legend: {
-          type: "scroll",
-          orient: "vertical",
-          top: "middle",
-          right: 0,
-        },
         yAxis: [
           {
             type: "value",
@@ -343,7 +341,6 @@ export default {
           },
           {
             type: "value",
-            max: 0.1,
           },
         ],
         color: [
@@ -439,6 +436,9 @@ export default {
       return 0;
     },
     getChart(code) {
+        if(!code){
+            return
+        }
       var charturl = "";
       var $this = this;
       var data = this.filter;
@@ -463,74 +463,21 @@ export default {
           if (len) {
             $this.max_date = $this.chartData.xData[len - 1];
           }
-          for (var idx in response.data["columns"]) {
-            var cname = response.data["columns"][idx];
-
-            var sdata = {
-              data: this.raw_data[cname].concat(),
-              type: "line",
-              selectedMode: "single",
-              name: cname,
-              markPoint: {
-                data: [
-                  {
-                    name: "最大值",
-                    type: "max",
-                  },
-                  {
-                    name: "某个坐标",
-                    coord: [10, 20],
-                  },
-                  {
-                    name: "固定 x 像素位置",
-                    yAxis: 10,
-                    x: "90%",
-                  },
-
-                  {
-                    name: "某个屏幕坐标",
-                    x: 100,
-                    y: 100,
-                  },
-                ],
-              },
-            };
-            console.log(sdata);
-            $this.chartData.series.push(sdata);
-          }
           this.initChart();
         })
         .catch((error) => {
           console.log(error);
         });
     },
-
-    divideBy(oneindex, params) {
-      console.log("re draw chart by 1 at idx:" + oneindex);
-      this.startidx = oneindex;
-      this.chartData.xData = [];
-      this.chartData.series = [];
-      this.chartData.xData = this.raw_data["date"];
-      this.startdate=this.chartData.xData[oneindex]
-      var min = 0;
-      for (var idx in this.raw_data["columns"]) {
-        var cname = this.raw_data["columns"][idx];
+    getDividedData(cname,oneindex){
         var oneval = this.raw_data[cname][oneindex];
         var startindx = oneindex;
+        var min = 0;
+
         while (!oneval && startindx < this.raw_data[cname].length) {
           oneval = this.raw_data[cname][startindx];
           startindx++
         }
-        if(cname.endsWith("_增强")){
-        this.chartData.series.push({
-          data: this.raw_data[cname].slice(startindx),
-          type: "line",
-          areaStyle: {},
-          name: cname,
-          smooth: true,
-          yAxisIndex:1
-        });
-        }else{
 var sdata = [...this.raw_data[cname]];
 
 
@@ -541,6 +488,56 @@ var sdata = [...this.raw_data[cname]];
 
         // console.log(cname)
         // console.log(sdata.slice(oneindex))
+        return sdata
+    },
+    divideBy(oneindex, params) {
+      console.log("re draw chart by 1 at idx:" + oneindex);
+      this.startidx = oneindex;
+      this.chartData.xData = [];
+      this.chartData.series = [];
+      this.chartData.xData = this.raw_data["date"];
+      this.startdate=this.chartData.xData[oneindex]
+
+      var zz500data=[]
+      if(this.raw_data['中证500指数'])
+      zz500data=this.getDividedData('中证500指数',oneindex)
+      for (var idx in this.raw_data["columns"]) {
+        var cname = this.raw_data["columns"][idx];
+       
+        if(cname.endsWith("_超额")){
+        // this.chartData.series.push({
+        //   data: this.raw_data[cname],
+        //   type: "line",
+        //   areaStyle: {},
+        //   name: cname,
+        //   smooth: true,
+        //   yAxisIndex:1
+        // });
+        }else{
+        var sdata=this.getDividedData(cname,oneindex)
+
+        if(this.raw_data[cname+'_超额']){
+            var result=[]
+            var lastval=null
+            for (var i in sdata){
+                if(sdata[i]>0){
+                    lastval=(sdata[i]-zz500data[i]).toFixed(4)
+                }
+                result.push(lastval)
+            }
+          this.chartData.series.push({
+          data: result,
+          type: "line",
+        //   areaStyle:{},
+          name: cname+'_超额',
+        //   smooth: true,
+          yAxisIndex:1
+        })
+        console.log(this.axisOption)
+        this.axisOption.legend[0].selected[cname] = false;
+        this.axisOption.legend[0].selected["中证500指数"] = false;
+
+        }
         var mp = {};
 
         var cdate = this.raw_data.combine_date[idx];
@@ -563,8 +560,6 @@ var sdata = [...this.raw_data[cname]];
               ],
             };
         }
-        }
-        
         this.chartData.series.push({
           data: sdata,
           type: "line",
@@ -572,8 +567,8 @@ var sdata = [...this.raw_data[cname]];
           yAxisIndex:0,
           markPoint: mp,
         });
-        this.axisOption.yAxis.min = min;
-      }
+        // this.axisOption.yAxis.min = min;
+      }}
       this.axisOption.dataZoom[0].startValue = oneindex;
 
       // this.refreshData(params)
@@ -687,23 +682,22 @@ var sdata = [...this.raw_data[cname]];
       this.echart.on("click", function (params) {
         var option = $this.echart.getOption();
         option.legend[0].selected[params.seriesName] = false;
-        console.log(option)
-        $this.echart.setOption(option);
-        // this.$emit("lineClick",params)
-      });
-     this.echart.on("legendselectchanged", function (params) {
-        var option = $this.echart.getOption();
         console.log(params)
-        let basename=params.name
-        if(params.name.endsWith("_增强")){
-            basename=params.name.split("_增强")[0]
-            option.legend[0].selected[basename] = params.selected[params.name];
-        }else if(option.legend[0].selected[basename+"_增强"]!=undefined){
-            option.legend[0].selected[basename+"_增强"] = params.selected[basename];
-        }
         $this.echart.setOption(option);
         // this.$emit("lineClick",params)
       });
+    //  this.echart.on("legendselectchanged", function (params) {
+    //     var option = $this.echart.getOption();
+    //     let basename=params.name
+    //     if(params.name.endsWith("_超额")){
+    //         basename=params.name.split("_超额")[0]
+    //         option.legend[0].selected[basename] = params.selected[params.name];
+    //     }else if($this.raw_data[basename+"_超额"]){
+    //         option.legend[0].selected[basename+"_超额"] = params.selected[basename];
+    //     }
+    //     $this.echart.setOption(option);
+    //     // this.$emit("lineClick",params)
+    //   });
 
       // this.divideBy(lastIdx,params)
     },
@@ -717,7 +711,7 @@ var sdata = [...this.raw_data[cname]];
     getstart(vady) {
       var arr = this.echart.getModel().option.xAxis[0].data;
       for (var i = 0; i < arr.length; i++) {
-        if (arr[i] > vady && i > 0) return i;
+        if (arr[i] >= vady && i > 0) return i;
       }
     },
     initChartData() {

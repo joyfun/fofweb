@@ -135,10 +135,10 @@ export default {
                             icon:'setting'
                         },{
                             path: '/fundcompare2',
-                            label: '二选对比',
+                            label: '尽调对比',
                             name:'fund-compare2',
                             params:{
-                                left:'二选',
+                                left:'尽调',
                                 right:'预选'
                             },
                             icon:'setting'
@@ -192,10 +192,10 @@ export default {
                             icon:'setting'
                         },{
                             path: '/fundcompare2',
-                            label: '二选对比',
+                            label: '尽调对比',
                             name:'fund-compare2',
                             params:{
-                                left:'二选',
+                                left:'尽调',
                                 right:'预选'
                             },
                             icon:'setting'
@@ -231,7 +231,7 @@ export default {
                         },
                         {
                             path: '/fundrank1',
-                            label: '已投二选排名',
+                            label: '已投尽调排名',
                             name:'fund-rank1',
                             icon:'setting'
                         },

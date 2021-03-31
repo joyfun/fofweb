@@ -4,7 +4,7 @@
       <el-container>
         <el-header><v-CommonHeader>header</v-CommonHeader></el-header>
         <v--common-tab></v--common-tab>
-        <el-main>
+        <el-main ref="maincontainer">
             <router-view></router-view>
         </el-main>
       </el-container>

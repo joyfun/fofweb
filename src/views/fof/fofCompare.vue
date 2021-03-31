@@ -63,6 +63,7 @@ import axis from 'axios'
     import FundEchart from '../../components/FundEchart.vue';
     import HisTable from '../../components/HisTable.vue';
     import FundCorr from '../../components/FundCorr.vue';
+    import {mapGetters} from 'vuex'
 
   export default {
       components: {
@@ -70,6 +71,7 @@ import axis from 'axios'
             HisTable
         },
         computed:{
+            ...mapGetters(['options','class_types']),
              compares:{
           get() {
               console.log(this.filter.class_type)
@@ -95,35 +97,6 @@ import axis from 'axios'
               left:"",
               right:""
               },
-          options: [{
-          value: '预选',
-          label: '预选'
-        }, {
-          value: '二选',
-          label: '二选'
-        }, {
-          value: '备投',
-          label: '备投'
-        }, {
-          value: '已投',
-          label: '已投'
-        }],
-        class_types: [{
-          value: 'CTA',
-          label: 'CTA'
-        }, {
-          value: '指增',
-          label: '指增'
-        }, {
-          value: '中性',
-          label: '中性'
-        }, {
-          value: '套利',
-          label: '套利'
-        }, {
-          value: '混合',
-          label: '混合'
-        }]
         }}
         ,
             watch: {
