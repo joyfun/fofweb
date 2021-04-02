@@ -12,6 +12,17 @@
       placeholder="选择日期"
       :picker-options="pickerOptions">
     </el-date-picker>
+    <span class="demonstration">截止日期</span>
+    <el-date-picker
+      v-model="enddate"
+      value-format="yyyyMMdd"
+      format="yyyyMMdd"
+      align="right"
+      @change="changeEndDate"
+      type="date"
+      placeholder="截止日期"
+      :picker-options="pickerOptions">
+    </el-date-picker>
   </div>
   <div style="height: 420px" ref="echart">
     <!-- <el-button-group>
@@ -161,6 +172,7 @@ export default {
     return {
       raw_data: {},
       startdate:'',
+      enddate:'',
       pickerOptions:{
           disabledDate(time) {
             return time.getTime() > Date.now();
@@ -392,6 +404,23 @@ export default {
           this.refreshData({ startValue: sidx, end: 100 });
 
     },
+    changeEndDate(vday){
+        this.enddate=vday
+      if(this.raw_data.date.indexOf(vday)>0){
+      }else{
+          for(var day of this.raw_data.date){
+              if(day>vday){
+                  this.enddate=day
+                  break
+              }
+          }
+      }
+      var option = this.echart.getOption();
+      delete option.dataZoom[0].end ;
+      option.dataZoom[0].endValue = this.enddate;
+      option.series = this.chartData.series;
+      this.echart.setOption(option, true);
+    },
     initWidth() {
       this.screenWidth = document.body.clientWidth;
       if (this.screenWidth < 991) {
@@ -583,7 +612,8 @@ var sdata = [...this.raw_data[cname]];
       // console.log(typeof(lastIdx))
       lastIdx = lastIdx;
       // var rate=(lastIdx*100)/this.chartData.series[0].data.length
-      this.divideBy(lastIdx, { end: 100, startValue: lastIdx });
+      this.enddate=this.raw_data.date.pop()
+      this.divideBy(lastIdx, { endValue: this.enddate, startValue: lastIdx });
       this.initChartData();
       console.log(this.options);
     },

@@ -1,4 +1,5 @@
 <template>
+<div>
   <el-row class="home" :gutter="20">
     <!-- <el-col :span="8">
       
@@ -53,9 +54,14 @@
           style="width: 100%; margin-top: 20px"
         >
           <el-table-column prop="class_type" label="类型"> </el-table-column>
-          <el-table-column prop="short_name" label="名称"> </el-table-column>
+          <el-table-column prop="short_name" label="名称">     <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
+ </el-table-column>
+           <el-table-column align="right"  prop="s_date" label="建仓时间"> </el-table-column>
+           <el-table-column align="right"  prop="latest_date" label="净值日期"> </el-table-column>
           <!-- <el-table-column hide="true" prop="amount" label="份额"> </el-table-column> -->
-          <el-table-column align="right"  :formatter	="formatterNum" prop="netval" label="净值"> </el-table-column>
+          <el-table-column align="right"  :formatter	="formatterNum" prop="netval" label="当前净值"> </el-table-column>
+
+          <el-table-column align="right"  :formatter	="formatterNum" prop="sumrate" label="累计收益"> </el-table-column>
           <el-table-column  align="right" :formatter	="formatterNum" prop="profit" label="市值"> </el-table-column>
 
         </el-table>
@@ -68,6 +74,15 @@
             </div> -->
     </el-col>
   </el-row>
+   <el-dialog
+    width="80%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="dialogVisible"
+  >  <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
+    </el-dialog>
+</div> 
 </template>
 
 <script>
@@ -82,6 +97,10 @@ export default {
   },
   data() {
     return {
+      cur_code:"",
+      current:{},
+      dialogVisible:false,
+      cur_code:"",
       code: "",
       subtype:"",
       tableData: [],
@@ -139,6 +158,17 @@ export default {
     };
   },
   methods: {
+       editClose() {
+        this.dialogVisible = false
+        },
+         showHis(row){
+          console.log(row)
+          this.cur_code=""
+          this.current=row
+          this.dialogVisible=true
+          this.cur_code=row.code
+        //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
+      },
       formatterNum(row, column, value) {
       if (!value) return "0.00";
       return this.$tools.formatMoney(value,2)
@@ -172,6 +202,7 @@ export default {
                 }
             }
             row["profit"]=row.amount*(row["n_netval"])
+            row["sumrate"]=row["n_sumval"]/row["s_sumval"]-1
             ret.push({name:row.short_name,value:row["profit"]})
         }
         return ret;
@@ -244,7 +275,7 @@ this.pieData.action["click"]=(params)=>{
         this.$refs.subPie.initChart() 
 
       })
-    this.code = "FOF,000300.SH,000905.SH";
+    this.code = "FOF,000300.SH,000905.SH,000852.SH";
   },
 };
 </script>
