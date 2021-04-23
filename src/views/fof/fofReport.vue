@@ -217,10 +217,15 @@
 <script>
 import axis from "axios";
 import FundEchart from "../../components/FundEchart.vue";
+import {mapGetters} from 'vuex'
+
 export default {
   components: {
     FundEchart,
   },
+   computed: {
+     ...mapGetters(['class_order','sysparam'])
+   },
     props: {
       url:{
       type: String,
@@ -414,8 +419,7 @@ export default {
                 this.tableData = this.$tools.pandasToJson(response.data)
             }else{
           this.tableData = this.$tools.pandasToJson(response.data).sort((a,b)=>{
-              var atype=a["类型"]
-              var r=a["类型"].localeCompare(b["类型"])
+              var r= this.class_order.indexOf(a['类型'])-this.class_order.indexOf(b['类型'])
           if(r==0){
               return b["当月收益"]-a["当月收益"]
           }

@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from "@/views/login/index"
+import axios from 'axios'
+import store from './store'
+
 
 
 Vue.use(VueRouter)
@@ -177,6 +180,11 @@ const routes = [
         component:() => import('@/views/fof/fofReason.vue')
       },
       {
+        path: '/fundreturn',
+        name: 'fund-return',
+        component:() => import('@/views/fof/fofReturn.vue')
+      },
+      {
         path: '/fundalarm',
         name: 'fund-alarm',
         component:() => import('@/views/fof/fofAlarm.vue')
@@ -212,13 +220,31 @@ const routes = [
       {
         path: '/sysparam',
         name: 'sys-param',
+        params:{
+            parent:0,
+        },
         component:() => import('@/views/sys/sysParam.vue')
       }
       ,
       {
         path: '/syscfg',
         name: 'sys-cfg',
+        params:{
+            cfg:1,
+        },
         component:() => import('@/views/sys/sysParam.vue')
+      }
+      ,
+      {
+        path: '/action',
+        name: 'fof-action',
+        component:() => import('@/views/fof/fofAction.vue')
+      }
+      ,
+      {
+        path: '/usermanage',
+        name: 'user-manage',
+        component:() => import('@/views/sys/userManage.vue')
       }
       ,
         {
@@ -261,11 +287,33 @@ const routes = [
   },  {
     path: "/login",
     component: Login,
-    name: "",
+    name: "login",
     hidden: true,
     children: []
   }
 ]
+var that=this
+var updateparam=async ()=>{
+await axios.get('/sys/param').then((response) => {
+        console.log(response)
+        let params={}
+        for (var key in response.data){
+            console.log(key)
+            var row=response.data[key]
+            params[row.code]=row['child']
+        }
+        console.log(params)
+        store.commit('setSysParam',params)
+    })
+    await axios.get('/sys/allparam').then((response) => {
+        var ret={}
+        for (var row in response.data){
+            ret["param_"+row]=response.data[row]
+        }
+        store.commit('setAllParam',ret)
+    })
+}
+updateparam()
 const menus=["fund-rank1","fund-rank2","fund-rank3","fund-report"]
 var filtermenu=(menu,umenu)=>{
     var uroute=[]

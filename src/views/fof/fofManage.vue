@@ -1,8 +1,6 @@
 <template>
   <div ref="tableContainer" style="	height : 100%;">
       <div  class="block" style="display: flex;justify-content: space-between">
-        
-
         <div style="display: flex;justify-content: space-between">
            <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
         <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
@@ -13,18 +11,18 @@
 
         <el-select v-model="filter.stage" @change="getList" style="width:80px"  clearable placeholder="阶段">
     <el-option
-      v-for="item in options"
+      v-for="item in sysparam.stage"
       :key="item.value"
-      :label="item.label"
-      :value="item.value">
+      :label="item.value"
+      :value="item.code">
     </el-option>
   </el-select>
   <el-select v-model="filter.class_type" @change="getList"  style="width:80px"  clearable placeholder="类型">
     <el-option
-      v-for="item in class_types"
+      v-for="item in sysparam.class_type"
       :key="item.value"
-      :label="item.label"
-      :value="item.value">
+      :label="item.value"
+      :value="item.code">
     </el-option>
   </el-select>
         <el-button  size="small" @click="downFile()">下载</el-button>
@@ -74,12 +72,19 @@
      <template slot-scope="scope">{{ scope.row.class_type }}</template>
     </el-table-column>
     <el-table-column
+      prop="sub_type"
+      label="子类型"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.sub_type }}</template>
+    </el-table-column>
+    <!-- <el-table-column
       prop="buy_date"
       label="建仓日期"
       sortable
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.buy_date }}</template>
-    </el-table-column>
+    </el-table-column> -->
      <el-table-column
       prop="stage"
       label="状态"
@@ -87,19 +92,40 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.stage }}</template>
     </el-table-column>
+     <el-table-column
+      prop="fee"
+      label="管理费"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.fee }}</template>
+    </el-table-column>
+     <el-table-column
+      prop="carry"
+      label="carry"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.carry }}</template>
+     </el-table-column>>
+    
 <!--      测试输入-->
     
- <el-table-column
+ <!-- <el-table-column
       prop="name"
       label="基金名称"
       show-overflow-tooltip>
       <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.name }}</a></template>
-    </el-table-column>
+    </el-table-column> -->
 <el-table-column
       prop="company"
       label="公司"
       show-overflow-tooltip>
       <template slot-scope="scope">{{ scope.row.company }}</template>
+    </el-table-column>
+<el-table-column
+      prop="remark"
+      label="备注"
+      show-overflow-tooltip>
+      <template slot-scope="scope">{{ scope.row.remark }}</template>
     </el-table-column>
 <el-table-column
       label="操作"
@@ -108,6 +134,8 @@
         <template slot-scope="scope">
             <el-button @click.native.prevent="viewHis(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看净值历史" placement="left-start">
 <i class="el-icon-info"></i></el-tooltip></el-button>
+<el-button @click.native.prevent="viewAudit(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start">
+<i class="el-icon-s-order"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
@@ -179,6 +207,15 @@
     :visible.sync="hisVisible">
     <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  :visable="dialogVisible"></his-table>
     </el-dialog>
+
+        <el-dialog
+    width="50%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="auditVisible">
+    <audit-log       @close="editClose" ref="auditlog"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  :visable="auditVisible"></audit-log>
+    </el-dialog>
     <el-dialog
     width="80%"
     top="50px"
@@ -202,7 +239,7 @@
   </el-form-item> -->
   <el-form-item label="决策阶段">
      <el-radio-group v-model="current.stage">    
-    <el-radio :key="idx" v-for="(item,idx) in options" :label="item.label"></el-radio>
+    <el-radio :key="idx" v-for="(item,idx) in sysparam.stage" :label="item.value"></el-radio>
   </el-radio-group>
   </el-form-item>
   <el-form-item label="投资份额">
@@ -231,11 +268,29 @@
 
      <el-row  :key="index"   v-show="index%2==0">
       <el-col :span="12">              
-      <el-form-item v-if="index<cForm.length-1"  :prop="row.dataIndex"      :label=" row.tilte"><el-input v-model="current[row.dataIndex]"></el-input>
+      <el-form-item v-if="index<=cForm.length-1"  :prop="row.dataIndex"      :label=" row.tilte">
+          <el-select v-if="row.param" v-model="current[row.dataIndex]"  style="width:120px"  clearable :placeholder="row.tilte">
+    <el-option
+      v-for="item in sysparam[row.param]"
+      :key="item.value"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
+          <el-input v-else v-model="current[row.dataIndex]"></el-input>
       </el-form-item>
       </el-col>
       <el-col :span="12">              
-      <el-form-item v-if="index+1<cForm.length-1"  :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte"><el-input v-model="current[cForm[index+1].dataIndex]"></el-input>
+      <el-form-item v-if="index+1<cForm.length-1"  :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte">
+          <el-select v-if="cForm[index+1].param" v-model="current[cForm[index+1].dataIndex]"  style="width:120px"  clearable :placeholder="cForm[index+1].tilte">
+    <el-option
+      v-for="item in sysparam[cForm[index+1].param]"
+      :key="item.value"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
+          <el-input v-else v-model="current[cForm[index+1].dataIndex]"></el-input>
       </el-form-item>
       </el-col>
     </el-row >
@@ -273,7 +328,9 @@
 <script>
     import axis from 'axios'
     import FundEchart from '../../components/FundEchart.vue';
+    import AuditLog from '../../components/AuditLog.vue';
     import HisTable from '../../components/HisTable.vue';
+
     import ReportTable from '../../components/ReportTable.vue';
     import {mapGetters} from 'vuex'
 
@@ -282,36 +339,39 @@
     {"tilte":"编号","dataIndex":"code"},
     {"tilte":"名称","dataIndex":"name"},
     {"tilte":"简称","dataIndex":"short_name"},
-    {"tilte":"基金类型","dataIndex":"class_type"},
+    {"tilte":"基金类型","dataIndex":"class_type","param":"class_type"},
     {"tilte":"文件匹配条件","dataIndex":"regex"},
     {"tilte":"购买时净值","dataIndex":"buy_price"},
     {"tilte":"子类型","dataIndex":"sub_type"},
     {"tilte":"购买时间","dataIndex":"buy_date"},
     {"tilte":"份额","dataIndex":"amount"},
     {"tilte":"所属公司","dataIndex":"company"},
-    {"tilte":"类型","dataIndex":"type"},
+    {"tilte":"渠道","dataIndex":"type","param":"data_type"},
     {"tilte":"基金成立时间","dataIndex":"founded"},
-    {"tilte":"状态","dataIndex":"stage"},
-    {"tilte":"预选时间","dataIndex":"stage1_time"},
-    {"tilte":"二选时间","dataIndex":"stage2_time"},
-    {"tilte":"备投时间","dataIndex":"stage3_time"},
-    {"tilte":"已投时间","dataIndex":"stage4_time"},
+    {"tilte":"状态","dataIndex":"stage","param":"stage"},
     {"tilte":"子基金对标","dataIndex":"compare"},
-    {"tilte":"市值","dataIndex":"cost"},
     {"tilte":"管理费","dataIndex":"fee"},
- {"tilte":"carry","dataIndex":"carry"},
- {"tilte":"业绩报酬计提方式","dataIndex":"perf_comp"},
- {"tilte":"止损","dataIndex":"lost"},
- {"tilte":"预警","dataIndex":"alarm"},
- {"tilte":"其他关键条款","dataIndex":"other"},
- {"tilte":"渠道","dataIndex":"channel"},
- {"tilte":"渠道联系人","dataIndex":"channel_man"},
- {"tilte":"渠道联系方式","dataIndex":"channel_contact"} 
+    {"tilte":"carry","dataIndex":"carry"},
+    {"tilte":"业绩报酬计提方式","dataIndex":"perf_comp"},
+    {"tilte":"止损","dataIndex":"lost"},
+    {"tilte":"预警","dataIndex":"alarm"},
+    {"tilte":"风险等级","dataIndex":"risk_level","param":"risk_"},
+    {"tilte":"预期收益(年)","dataIndex":"rate"},
+    {"tilte":"预期最大回撤","dataIndex":"max_return"},
+    {"tilte":"预期夏普","dataIndex":"sharp"},
+    {"tilte":"预期卡玛","dataIndex":"calmar"},
+    {"tilte":"其他关键条款","dataIndex":"other"},
+    {"tilte":"渠道","dataIndex":"channel"},
+    {"tilte":"渠道联系人","dataIndex":"channel_man"},
+    {"tilte":"渠道联系方式","dataIndex":"channel_contact"} ,
+     {"tilte":"备注","dataIndex":"remark","type":"textarea"} 
+
 ]
   export default {
       components: {
             FundEchart,
             HisTable,
+            AuditLog,
             ReportTable,
             FundCorr
         },
@@ -319,7 +379,7 @@
       type: Object,
       default:null
     },},
-    computed:{...mapGetters(['options','class_types'])},
+    computed:{...mapGetters(['sysparam'])},
     data() {
       return {
           cForm,
@@ -337,6 +397,7 @@
         formVisible:false,
         tableVisible: false,
         hisVisible:false,
+        auditVisible:false,
         editVisible:false,
         compData:[],
         rowdata: '',
@@ -540,6 +601,14 @@ showResult(number,rate=100){
           this.cur_code=row.code
 
       },
+      viewAudit(row){
+          this.temp=-1
+          this.cur_code=""
+          this.current=row
+          this.auditVisible=true
+          this.cur_code=row.code
+
+      },
       
       viewHisTemp(row){
           this.temp=1
@@ -720,6 +789,7 @@ showResult(number,rate=100){
                 method: 'GET',
                 params: data
                 }).then((response) => {
+                                console.log(this.sysparam);
                                 console.log(response);
                                 this.totaltableData = response.data;
                                 this.tableData = this.totaltableData.slice(0 ,$this.PageSize);

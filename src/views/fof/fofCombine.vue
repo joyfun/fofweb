@@ -103,7 +103,7 @@ export default {
     HisTable,
   },
   computed: {
-     ...mapGetters(['options','class_types']),
+     ...mapGetters(['sysparam']),
     compares: {
       get() {
         //   console.log(this.filter.class_type)

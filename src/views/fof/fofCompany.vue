@@ -2,7 +2,6 @@
   <div>
       <div class="block" style="display: flex;justify-content: space-between">
         
-
         <div style="display: flex;justify-content: space-between">
             <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
             <el-button  size="small" @click="addCompany()">添加</el-button>
@@ -27,14 +26,15 @@
 <!--公司名称	状态	产品名称	投资规模（万元）	公司负责人	商务经理	联系方法	管理费	carry	业绩报酬计提方式	止损	预警	其它关键条款-->
     <el-table-column
       prop="name"
+      min-width	="240"
       label="名称"
-      width="160">
+      >
       <template slot-scope="scope">{{ scope.row.name }}</template>
     </el-table-column>
 <!--      用例编号-->
      <el-table-column
       prop="status"
-      width="60"
+      min-width="60"
       label="状态"
       show-overflow-tooltip>
       <template slot-scope="scope">{{ scope.row.status }}</template>
@@ -42,58 +42,53 @@
 <!--      测试项目-->
     <el-table-column
       prop="scope"
-      width="60"
-      label="规模(万)"
+      min-width="60"
+      label="规模(亿)"
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.scope }}</template>
     </el-table-column>
     <el-table-column
       prop="channel"
-      width="80"
+      min-width="80"
       label="渠道"
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.channel }}</template>
     </el-table-column>
     <el-table-column
-      prop="fee"
-      width="40"
-      label="管理费"
+      prop="manager"
+      label="负责人"
+      min-width="80"
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.fee }}</template>
+     <template slot-scope="scope">{{ scope.row.manager }}</template>
+    </el-table-column>
+    <el-table-column
+      prop="business_man"
+      min-width="80"
+      label="商务经理"
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.business_man }}</template>
     </el-table-column>
 <!--      测试用例是否关联-->
-    <el-table-column
-      prop="carry"
-      label="carry"
-      sortable
-      show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.carry }}</template>
-    </el-table-column>
+    
 <!--      测试输入-->
-    <el-table-column
+    <!-- <el-table-column
       prop="perf_comp"
-      label="提计方式"
-      sortable
+      label="计提方式"
+      min-width	="240"
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.perf_comp }}</template>
-    </el-table-column>
- <el-table-column
-      prop="lost"
-      label="止损"
-      sortable
+    </el-table-column> -->
+    <el-table-column
+      prop="product"
+      label="产品名称"
+      min-width	="160"
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.lost }}</template>
-    </el-table-column>
- <el-table-column
-      prop="alarm"
-      label="预警"
-      sortable
-      show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.alarm }}</template>
+     <template slot-scope="scope">{{ scope.row.product }}</template>
     </el-table-column>
 <el-table-column
       label="操作"
       sortable
+            min-width="80"
             fixed="right"
       show-overflow-tooltip>
         <template slot-scope="scope">
@@ -129,11 +124,11 @@
 
      <el-row  :key="index"   v-show="index%2==0">
       <el-col :span="12">              
-      <el-form-item v-if="index<cForm.length-1"  :prop="row.dataIndex"      :label=" row.tilte"><el-input v-model="curCompany[row.dataIndex]"></el-input>
+      <el-form-item v-if="index<=cForm.length-1"  :prop="row.dataIndex"      :label=" row.tilte"><el-input :type="row.type" v-model="curCompany[row.dataIndex]"></el-input>
       </el-form-item>
       </el-col>
       <el-col :span="12">              
-      <el-form-item v-if="index+1<cForm.length-1"  :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte"><el-input v-model="curCompany[cForm[index+1].dataIndex]"></el-input>
+      <el-form-item v-if="index+1<=cForm.length-1"  :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte"><el-input :type="cForm[index+1].type" v-model="curCompany[cForm[index+1].dataIndex]"></el-input>
       </el-form-item>
       </el-col>
     </el-row >
@@ -171,29 +166,29 @@
 <!--8、预期输出-->
 <script>
     import axis from 'axios'
+    import {mapGetters} from 'vuex'
+
     import FundEchart from '../../components/FundEchart.vue';
   const cForm=[
  {"tilte":"名称","dataIndex":"name"},
  {"tilte":"状态","dataIndex":"status"},
  {"tilte":"简称","dataIndex":"short_name"}, 
  {"tilte":"负责人","dataIndex":"manager"},
- {"tilte":"投资规模（万元）","dataIndex":"scope"},
+ {"tilte":"管理规模(亿)","dataIndex":"scope"},
  {"tilte":"商务经理","dataIndex":"business_man"},
  {"tilte":"联系方式","dataIndex":"contact"},
- {"tilte":"管理费","dataIndex":"fee"},
- {"tilte":"carry","dataIndex":"carry"},
- {"tilte":"业绩报酬计提方式","dataIndex":"perf_comp"},
- {"tilte":"止损","dataIndex":"lost"},
- {"tilte":"预警","dataIndex":"alarm"},
- {"tilte":"其他关键条款","dataIndex":"other"},
  {"tilte":"渠道","dataIndex":"channel"},
  {"tilte":"渠道联系人","dataIndex":"channel_man"},
- {"tilte":"渠道联系方式","dataIndex":"channel_contact"} 
+ {"tilte":"渠道联系方式","dataIndex":"channel_contact"},
+  {"tilte":"产品","dataIndex":"product"},
+ {"tilte":"备注","dataIndex":"remark","type":"textarea"} 
+
 ]
   export default {
       components: {
             FundEchart
         },
+            computed:{...mapGetters(['sysparam','class_order'])},
     data() {
       return {
         cForm,

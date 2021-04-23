@@ -29,11 +29,14 @@
   <el-table
           :data="tableData"
           :span-method="cellMerge"
+          :summary-method="getSummaries"
           show-summary
           border
           style="width: 100%; margin-top: 20px"
         >
           <el-table-column prop="class_type" label="类型"> </el-table-column>
+          <el-table-column prop="sub_type" label="子类型"> </el-table-column>
+
           <el-table-column prop="short_name" label="名称">      <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
 </el-table-column>
           <!-- <el-table-column hide="true" prop="amount" label="份额"> </el-table-column> -->
@@ -60,18 +63,23 @@
 import Echart from "../../components/Echart.vue";
 import FundEchart from "../../components/FundEchart.vue";
 import axis from "axios";
+import {mapGetters} from 'vuex'
 
 export default {
   components: {
     Echart,
     FundEchart,
   },
+  computed: {
+     ...mapGetters(['class_order'])
+   },
   data() {
     return {
       tableData: [],
       startDate:"",
       spanArr:[],
       dict:{},
+      subdict:{},
       current:{},
       subtype:"",
       cur_code:"",
@@ -126,15 +134,41 @@ export default {
     // }
     },
     methods: {
+        getSummaries(param) {
+			const { columns, data } = param;
+			const sums = [];
+			columns.forEach((column, index) => {
+				 if (index === 0) {
+				   sums[index] = '合计';
+				   return;
+				 }
+				 const values = data.map(item => Number(item[column.property]));
+				     if (column.property === 'profit' ) {
+							sums[index] = this.$tools.formatMoney(values.reduce((prev, curr) => {
+							 const value = Number(curr);
+							 if (!isNaN(value)) {
+							   return prev + curr;
+							 } else {
+							   return prev;
+							 }
+							}, 0),2);
+							sums[index];
+ 
+				     }
+				});
+				return sums
+	    	},
          showHis(row){
           this.current=row
           this.dialogVisible=true
           this.cur_code=row.code
         //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
       },
-         formatterNum(row, column, value) {
+     formatterNum(row, column, value) {
       if (!value) return "0.00";
-      return this.$tools.formatMoney(value,2)
+      if(row.class_type=='指增' && column.label=='收益率')
+      return this.$tools.formatMoney(value,3)+'\n(α:'+this.$tools.formatMoney(value-row['irate'],3)+'  β:'+this.$tools.formatMoney(row['irate'],3)+')'
+      return this.$tools.formatMoney(value,3)
     },
     changeDate(num){
 
@@ -168,22 +202,38 @@ export default {
         for(var cls in this.dict){
             ret.push({name:cls,value:this.dict[cls]})
         }
+        console.log(ret)
         return ret;
     },getPieDataOuter(data){
         var ret=[]
+        this.subdict={};
+
         for(var idx in data){
             var row=data[idx]
+            row["profit"]=row.amount*(row.n_sumval-row.s_sumval)
             if(this.subtype){
                 if(row.class_type!=this.subtype)
                 {
                     continue;
                 }
+                if(this.subdict[row.sub_type]){
+                this.subdict[row.sub_type]+=row["profit"]
+            }else{
+                this.subdict[row.sub_type]=row["profit"]
             }
-            row["profit"]=row.amount*(row.n_sumval-row.s_sumval)
-            row["rate"]=(row.n_sumval-row.s_sumval)/row.s_sumval
 
-            ret.push({name:row.name,value:row["profit"]})
+            }else{
+                ret.push({name:row.name,value:row["profit"]})
+            }
+
         }
+                    if(this.subtype){
+                        ret=[]
+                      for(var cls in this.subdict){
+            ret.push({name:cls,value:this.subdict[cls]})
+        }  
+                    }
+
         return ret;
     },
      getLegend(data,class_type){
@@ -222,7 +272,10 @@ getTableData(param) {
       })
         .then((response) => {
           this.startDate=response.data.start
-          this.tableData = response.data.datas;
+          this.tableData = response.data.datas.sort((a,b)=>{
+              return this.class_order.indexOf(a['class_type'])-this.class_order.indexOf(b['class_type'])
+          })
+          var cash=this.tableData.splice(0,1);
           this.subData.series[0].data=this.getPieDataOuter(this.tableData)
           this.subData.legend.data=this.getLegend(this.subData.series.data)
           this.pieData.series[0].data=this.getPieData(this.tableData)
@@ -262,3 +315,10 @@ getTableData(param) {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+
+.el-table /deep/ .cell {
+  white-space: pre-line;
+}
+</style>

@@ -11,7 +11,7 @@
   <el-button type="primary">90天</el-button>
   <el-button type="primary">本年</el-button>
 </el-button-group> -->
-  <el-button  @click="downCorr">下载</el-button>
+  <el-button  @click="downCorr">下载</el-button><span style="font-weight:bold;color:#8B0000">红色强相关（≥0.80）</span><span>绿色中相关（＜0.8，≥0.4）</span><span>黄色低相关（＜0.4，≥0）；负相关：＜0</span>
         </div>
  </div>
     <el-table

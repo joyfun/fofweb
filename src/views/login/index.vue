@@ -64,6 +64,8 @@
   </div>
 </template>
 <script>
+import jsSHA from "jssha"      //module
+
 export default {
   data () {
     return {
@@ -77,14 +79,14 @@ export default {
   methods: {
     submitForm () {
       let that = this
-      if (this.loginForm.username === "" || this.loginForm.password === "") {
-        this.$message({
-          showClose: true,
-          message: "账号或密码不能为空",
-          type: "error"
-        })
-        return false
-      } else {
+    //   if (this.loginForm.username === "" || this.loginForm.password === "") {
+    //     this.$message({
+    //       showClose: true,
+    //       message: "账号或密码不能为空",
+    //       type: "error"
+    //     })
+    //     return false
+    //   } else {
         // 真实请求参考
         // this.$request.fetchLogin({
         //   username: that.loginForm.username,
@@ -98,9 +100,31 @@ export default {
         // }).catch((err) => {
         //   console.log(err)
         // })
-        if(this.loginForm.username === "admin" &&this.loginForm.password === "fof"){
-            that.$store.dispatch("setToken", that.loginForm.username).then(() => {
-          that.$router.push({path: "/"})
+        if(this.loginForm.username.length>0&& this.loginForm.password.length>0){
+            const shaObj = new jsSHA("SHA-1","TEXT",{encoding:"UTF8"})
+            shaObj.update(this.loginForm.password)
+            console.log(shaObj.getHash("HEX"))
+            that.$axios({
+        url: "/sys/login",
+        method: "POST",
+        data: {"user":this.loginForm.username,"password":shaObj.getHash("HEX") },
+      }).then((response) => {
+            // let params={}
+            // for (var key in response.data){
+            //     params[key]=response.data[key]['child']
+            // }
+            if(response.data.status=="success"){
+             that.$store.dispatch('setUserMenu',response.data.permissions)
+             that.$store.dispatch("setToken", that.loginForm.username).then(() => {
+             that.$router.push({path: "/"})
+        })}else{
+            that.$message({
+            showClose: true,
+            message: "登录失败",
+            type: "error"
+          })
+        }
+           
         }).catch(res => {
           that.$message({
             showClose: true,
@@ -112,7 +136,7 @@ export default {
 
         // 将 username 设置为 token 存储在 store，仅为测试效果，实际存储 token 以后台返回为准
         
-      }
+    //   }
     },
     message () {
     //   const h = this.$createElement

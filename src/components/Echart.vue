@@ -140,8 +140,8 @@ export default {
         this.normalOption.series = this.chartData.series
         if(this.chartData.legend){
         this.normalOption.legend = this.chartData.legend
-
         }
+        this.normalOption.title = this.chartData.title
       }
     },
     resizeChart() {

@@ -5,7 +5,6 @@
       background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b">
-
       <el-menu-item  :index="item.path" v-for="item in  noChildren " :key="item.path" @click="clickMenu(item)">
         <i :class="'el-icon-'+ item.icon"></i>
         <span slot="title">{{ item.label }}</span>
@@ -29,9 +28,11 @@
 
 <script>
 import Bus from '../store/bus.js';
+import {mapGetters} from 'vuex'
 
 export default {
     computed:{
+        ...mapGetters(['allmenu','usermenu']),
         noChildren(){
             return this.asideMenu.filter(item => !item.children)
         },
@@ -40,16 +41,27 @@ export default {
         }
     },
     mounted(){
-        const menus=["fund-comp","fund-info","fund-info1","fund-info2","fund-info3","fund-info4","fund-info5","fund-info6","fund-compare","fund-info","fund-info4","fund-calc","fund-comb","fund-pressure","fund-compare","fund-report","fund-jcomp","fund-reason","fund-rank1","fund-rank2","fund-info","sys-param","sys-cfg","fund-concat","fund-alarm"
-]
-        for(var key in this.allMenu){
-            this.allMenu[key]=this.allMenu[key].filter((item)=>{
-                if(menus.indexOf(item.name)>-1){
-                return item
-                }
-            })
+        console.log(this.usermenu)
+        if (this.usermenu instanceof Array) {
+
+        for(var mn of this.usermenu){
+            this.menus.push(mn)
+        }}else if(this.usermenu){
+           for(var mn of this.usermenu.split(",")){
+            this.menus.push(mn)
+        } 
+
         }
-        this.asideMenu=this.asideMenu.concat(this.allMenu["company"])
+        
+
+//         ["fund-comp","fund-info","fund-info1","fund-info2","fund-info3","fund-info4","fund-info5","fund-info6","fund-compare","fund-info","fund-info4","fund-calc","fund-comb","fund-pressure","fund-compare","fund-report","fund-jcomp","fund-reason","fund-rank1","fund-rank2","fund-info","sys-param","sys-cfg","fund-concat","fund-alarm","fof-action","fund-return","user-manage"
+// ]
+        // for(var key in this.allMenu){
+        //     this.allMenu[key]=this.allMenu[key]
+        // }
+        console.log(this.allMenu["company"])
+        this.asideMenu=this.asideMenu.concat(this.allMenu["company"].filter(this.checkMenu))
+        console.log(this.asideMenu)
 
     },
     created(){
@@ -61,13 +73,14 @@ export default {
                     name:'home',
                     icon: 's-home'
                 }]
-        this.asideMenu=this.asideMenu.concat(this.allMenu[arg])
+        this.asideMenu=this.asideMenu.concat(this.allMenu[arg].filter(this.checkMenu))
           console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
       })
     },
     data(){
         return{
             isCollapse:false,
+            menus:[],
             allMenu:{
                 "company":[{
                             path: '/fundcomp',
@@ -77,7 +90,8 @@ export default {
                                 type:'1',
                             },
                             icon:'setting'
-                        }, {
+                        },
+                        {
                             path: '/fundinfo',
                             label: '初选基金管理',
                             name:'fund-info',
@@ -230,6 +244,15 @@ export default {
                             icon:'setting'
                         },
                         {
+                            path: '/fundreturn',
+                            label: '风险归因',
+                            name:'fund-return',
+                            params:{
+                                type:'1',
+                            },
+                            icon:'setting'
+                        },
+                        {
                             path: '/fundrank1',
                             label: '已投尽调排名',
                             name:'fund-rank1',
@@ -257,7 +280,7 @@ export default {
                             label: '系统字典',
                             name:'sys-param',
                             params:{
-                                parent:'0',
+                                parent:0,
                             },
                             icon:'setting'
                         },
@@ -266,7 +289,7 @@ export default {
                             label: '系统参数',
                             name:'sys-cfg',
                             params:{
-                                cfg:'1',
+                                cfg:1,
                             },
                             icon:'setting'
                         },
@@ -276,6 +299,18 @@ export default {
                             name:'fund-concat',
                             icon:'setting'
                         }, 
+                        {
+                            path: '/action',
+                            label: '刷新参数',
+                            name:'fof-action',
+                            icon:'setting'
+                        }, 
+                        {
+                            path: '/usermanage',
+                            label: '用户管理',
+                            name:'user-manage',
+                            icon:'setting'
+                        } 
                         ]
                         
             },
@@ -412,6 +447,9 @@ export default {
         }
     },
   methods: {
+       checkMenu(menu){
+           return this.menus.indexOf(menu.name)>-1
+        },
     clickMenu(item) {
       this.$router.push({name:item.name,params:item.params})
       this.$store.commit('selectMenu',item);

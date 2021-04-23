@@ -19,11 +19,31 @@
       <el-card shadow="hover">
         <fund-echart
           ref="hischart"
+          dstartdate="20200101"
+          cb="chgReturn"
           style="height: 500px"
           :code="code"
         ></fund-echart>
       </el-card>
       <el-card shadow="hover">
+          <el-form :inline="true" class="demo-form-inline">
+  <el-form-item label="名称">
+    <el-input v-model="dname" placeholder="名称"></el-input>
+  </el-form-item>
+  <el-form-item label="回撤开始">
+    <el-input v-model="start" placeholder="开始"></el-input>
+  </el-form-item>
+  <el-form-item label="回撤结束">
+    <el-input v-model="end" placeholder="结束"></el-input>
+  </el-form-item>
+  <el-form-item label="最大回撤">
+    <el-input v-model="lrate" placeholder="回撤"></el-input>
+  </el-form-item>
+    <el-form-item>
+    <el-button type="primary" @click="getTableData">查询</el-button>
+  </el-form-item>
+
+</el-form>
         <!-- <echart           ref="piechart"
 :chartData="pieData"  style="height: 260px" :isAxisChart="false"></echart> -->
 <el-row>
@@ -57,13 +77,14 @@
           <el-table-column prop="class_type" label="类型"> </el-table-column>
           <el-table-column prop="short_name" label="名称">     <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
  </el-table-column>
-           <el-table-column align="right"  prop="s_date" label="建仓时间"> </el-table-column>
-           <el-table-column align="right"  prop="latest_date" label="净值日期"> </el-table-column>
+           <el-table-column align="right"  prop="s_date" label="初始日期"> </el-table-column>
+           <el-table-column align="right"  prop="s_sumval" label="初始净值"> </el-table-column>
           <!-- <el-table-column hide="true" prop="amount" label="份额"> </el-table-column> -->
-          <el-table-column align="right"  :formatter	="formatterNum" prop="netval" label="当前净值"> </el-table-column>
+           <el-table-column align="right"  prop="e_date" label="净值日期"> </el-table-column>
+          <el-table-column align="right"  :formatter	="formatterNum" prop="e_sumval" label="当前净值"> </el-table-column>
 
           <el-table-column align="right"  :formatter	="formatterNum" prop="sumrate" label="累计收益率"> </el-table-column>
-          <el-table-column  align="right" :formatter	="formatterNum" prop="profit" label="市值"> </el-table-column>
+          <el-table-column  align="right" :formatter	="formatterNum" prop="profit" label="盈利"> </el-table-column>
 
         </el-table>
       </el-card>
@@ -81,7 +102,7 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :visible.sync="dialogVisible"
-  >  <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
+  >  <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px"  :code="cur_code"  :visable="dialogVisible"></fund-echart>
     </el-dialog>
 </div> 
 </template>
@@ -91,6 +112,7 @@ import Echart from "../../components/Echart.vue";
 import FundEchart from "../../components/FundEchart.vue";
 import axis from "axios";
 import {mapGetters} from 'vuex'
+import Bus from '@/store/bus.js';
 
 export default {
   components: {
@@ -103,6 +125,10 @@ export default {
   data() {
     return {
       cur_code:"",
+      dname:"",
+      start:"",
+      end:"",
+      lrate:"",
       current:{},
       dialogVisible:false,
       cur_code:"",
@@ -111,10 +137,15 @@ export default {
       tableData: [],
       pieData:{
           action:{},
+          title:{
+        text: '盈利占比',
+        left: '25%',
+        textAlign: 'center'
+    },  
            legend: {type: 'scroll',
         top: 2,
         data: []},
-          series:{     name:"资金占比",       type: 'pie',
+          series:{     name:"盈利明细",     type: 'pie',
                 //   radius: ['50%', '70%'],
             avoidLabelOverlap: false,
 
@@ -132,8 +163,13 @@ export default {
             ]}},
     subData: {
         legend: { type: "scroll", top: 2, data: [] },
+         title:{
+        text: '亏损占比',
+        left: '25%',
+        textAlign: 'center'
+    }, 
         series: [{
-          name: "资金占比",
+          name: "亏损明细",
           type: "pie",
         //   radius: ["0%", "60%"],
           avoidLabelOverlap: false,
@@ -151,15 +187,6 @@ export default {
       },
       spanArr:[],
       curId: 0,
-
-      userImg: require("../../assets/images/user.png"),
-
-      tableLabel: {
-        name: "课程",
-        todayBuy: "今日购买",
-        monthBuy: "本月购买",
-        totalBuy: "总购买",
-      },
     };
   },
   methods: {
@@ -200,11 +227,10 @@ export default {
       },
       formatterNum(row, column, value) {
       if (!value) return "0.00";
-      if(row.class_type=='指增' && column.label=='累计收益率')
-      return this.$tools.formatMoney(value,3)+'\n(α:'+this.$tools.formatMoney(value-row['irate'],3)+'  β:'+this.$tools.formatMoney(row['irate'],3)+')'
-      return this.$tools.formatMoney(value,3)
+      return this.$tools.formatMoney(value,2)
     },
     getSpanArr(data) {
+        this.spanArr=[]
       for (var i = 0; i < data.length; i++) {
         if (i === 0) {
           this.spanArr.push(1);
@@ -223,20 +249,21 @@ export default {
       console.log(this.spanArr)
     },
     getPieDataOuter(data){
-        var ret=[]
-        for(var idx in data){
-            var row=data[idx]
-            if(this.subtype){
-                if(row.class_type!=this.subtype)
-                {
-                    continue;
-                }
+        var lret=[]
+        var rret=[]
+
+        for(var row of data){
+            row["profit"]=row.amount*(row["e_sumval"]-row["s_sumval"])
+            row["sumrate"]=row["e_sumval"]/row["s_sumval"]-1
+            if(row["profit"]>0){
+            lret.push({name:row.short_name,value:row["profit"]})
+
+            }else if(row["profit"]<0){
+            rret.push({name:row.short_name,value:-row["profit"]})
+
             }
-            row["profit"]=row.amount*(row["n_netval"])
-            row["sumrate"]=row["n_sumval"]/row["s_sumval"]-1
-            ret.push({name:row.short_name,value:row["profit"]})
         }
-        return ret;
+        return {left:lret,right:rret};
     },
     getPieData(data){
         var dict={};
@@ -272,24 +299,26 @@ export default {
     },
     getTableData() {
       axis({
-        url: "/fof/summary",
+        url: "/fof/return",
         method: "GET",
-        params: {},
+        params: {"start":this.start,"end":this.end},
       })
         .then((response) => {
-          this.tableData = response.data.datas.sort((a,b)=>{
+          this.tableData = response.data.sort((a,b)=>{
               return this.class_order.indexOf(a['class_type'])-this.class_order.indexOf(b['class_type'])
           });
-          this.subData.series[0].data=this.getPieDataOuter(this.tableData)
-          this.pieData.series.data=this.getPieData(this.tableData)
-          this.pieData.legend.data=this.getLegend(this.pieData.series.data)
-          console.log(this.pieData.legend)
+          var cash=this.tableData.splice(0,1);
+          var pieResult=this.getPieDataOuter(this.tableData)
+          console.log(pieResult)
+          this.subData.series[0].data=pieResult.right
+          this.pieData.series.data=pieResult.left
+          this.pieData.legend.data=this.getLegend(pieResult.left)
           this.$refs.piechart.initChart()   //子组件$on中的名字
 
-          this.subData.legend.data=this.getLegend(this.subData.series.data)
+          this.subData.legend.data=this.getLegend(pieResult.right)
           this.$refs.subPie.initChart()   //子组件$on中的名字
+
           this.getSpanArr(this.tableData)
-          
         })
         .catch((error) => {
           console.log(error);
@@ -300,13 +329,14 @@ export default {
 this.pieData.action["click"]=(params)=>{
             this.$emit("mainpieClick",params)
         }
-    this.getTableData();
-    this.$on('mainpieClick',(arg)=> {
-        this.subtype=arg.name
-        this.subData.series[0].data=this.getPieDataOuter(this.tableData)
-        this.subData.legend.data=this.getLegend(this.subData.series.data)
-        this.$refs.subPie.initChart() 
-
+    //this.getTableData();
+    Bus.$on('chgReturn',(arg)=> {
+        console.log(arg)
+        this.start=arg.start
+        this.end=arg.end
+        this.dname=arg.name
+        this.lrate=arg.lrate
+        this.getTableData()
       })
     this.code = "FOF,000300.SH,000905.SH,000852.SH";
   },
@@ -331,9 +361,7 @@ this.pieData.action["click"]=(params)=>{
   color: #333;
   text-decoration: none;
 }
-.el-table /deep/ .cell {
-  white-space: pre-line;
-}
+
 .tab-tit .cur {
   background: #09f;
   color: #fff;

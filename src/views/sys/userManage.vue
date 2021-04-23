@@ -25,28 +25,28 @@
     </el-table-column>
 <!--      测试ID-->
     <el-table-column
-      prop="code"
-      label="编码"
+      prop="name"
+      label="名称"
       width="120">
-      <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.code }}</a></template>
+      <template slot-scope="scope">{{ scope.row.name }}</template>
     </el-table-column>
 <!--      用例编号-->
      <el-table-column
-      prop="value"
+      prop="user"
       label="值"
       show-overflow-tooltip>
-      <template slot-scope="scope">{{ scope.row.value }}</template>
+      <template slot-scope="scope">{{ scope.row.user }}</template>
     </el-table-column>
-     <el-table-column
+<!--      测试项目-->
+<el-table-column
       label="操作"
             fixed="right"
       width="160">
         <template slot-scope="scope">
-             <el-button @click.native.prevent="delparam(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="edituser(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit" ></i></el-tooltip></el-button>
+             <el-button @click.native.prevent="deluser(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
         </template>
     </el-table-column>
-<!--      测试项目-->
-
   </el-table>
       <div style="display: flex;justify-content: space-between">
       
@@ -96,14 +96,6 @@
       show-overflow-tooltip>
       <template slot-scope="scope">{{ scope.row.value }}</template>
     </el-table-column>
-        <el-table-column
-      label="操作"
-            fixed="right"
-      width="160">
-        <template slot-scope="scope">
-             <el-button @click.native.prevent="delparam(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
-        </template>
-    </el-table-column>
 <!--      测试项目-->
 
   </el-table>
@@ -119,23 +111,31 @@
 <el-form :model="current" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
     <template v-for="(row,index)  in cForm" >
     <el-form-item  :key="index" :prop="row.dataIndex"      :label=" row.tilte"><el-input v-model="current[row.dataIndex]"></el-input>
-      </el-form-item>
-     <!-- <el-row  :key="index"   v-show="index%2==0">
-      <el-col :span="12">              
-      <el-form-item v-if="index<cForm.length-1"  :prop="row.dataIndex"      :label=" row.tilte"><el-input v-model="current[row.dataIndex]"></el-input>
-      </el-form-item>
-      </el-col>
-      <el-col :span="12">               -->
-      <!-- <el-form-item :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte"><el-input v-model="current[cForm[index+1].dataIndex]"></el-input>
-      </el-form-item> -->
-      <!-- </el-col>
-    </el-row > -->
+      </el-form-item>   
     </template>
+          <el-form-item v-if="adduser" label="密码"> 
+
+    <el-input placeholder="请输入密码" v-model="current.password" show-password></el-input>
+          </el-form-item>
+      <el-form-item label="权限"> 
+    <el-checkbox-group v-model="current.permission">
+             
+
+     <!----> <template  v-for="(row,index)  in allmenu" >
+            {{row["lable"]}}            {{index}}
+
+      <el-checkbox :key="index" :label="row['lable']" :name="row['value']"></el-checkbox>
+
+      </template> 
+     
+    </el-checkbox-group>
+  </el-form-item>
 <el-form-item>
     <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
     <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
   </el-form-item>
 </el-form>
+
     </el-dialog>
   </div>
   
@@ -151,23 +151,27 @@
 <!--8、预期输出-->
 <script>
     import axis from 'axios'
-    import FundEchart from '../../components/FundEchart.vue';
+import {mapGetters} from 'vuex'
+    
 const cForm=[
-    {"tilte":"编号","dataIndex":"code"},
-    {"tilte":"名称","dataIndex":"value"}]
+    {"tilte":"用户","dataIndex":"user"},
+    {"tilte":"名称","dataIndex":"name"}]
   export default {
       components: {
-            FundEchart
+        },
+        computed:{
+        ...mapGetters(['allmenu'])
         },
     data() {
       return {
           stage:'',
+          adduser:false,
           cForm:cForm,
           formVisible:false,
           parent:0,
           subData: [],
         multipleSelection: [],
-        current:{},
+        current:{permission:[]},
         cur_code:"",
         dialogVisible: false,
         rowdata: '',
@@ -191,12 +195,11 @@ const cForm=[
     }
   },
     methods: {
-    delparam(row) {
-
+         deluser(row) {
           axis({
       method: 'post',
-      url: "/sys/delparam", // 请求地址
-      data: {id:row.id}, // 参数
+      url: "/sys/deluser", // 请求地址
+      data: {user:row.user}, // 参数
       responseType: 'json' // 表明返回服务器返回的数据类型
     }).then(
       response => {
@@ -211,7 +214,7 @@ const cForm=[
     )
       },
          addInfo(){
-          this.current={}
+          this.current={permission:[]}
           this.formVisible=true
       },
          editClose() {
@@ -223,12 +226,26 @@ const cForm=[
             this.getList()
         },
         submitForm(formName) {
-          console.log(this.$refs[formName].model)
-          this.current.parent=this.parent
+          var permissions=""
+          for(var perm of this.current.permission){
+              for(var aperm of this.allmenu){
+                  if(aperm["lable"]==perm){
+                      permissions+=aperm["value"]+","
+                      break
+                  }
+              }
+          }
+          this.current.permissions=permissions
+          var sumitData={"user":this.current.user,"name":this.current.name,"password":this.current.password,"permissions":permissions}
+          if(formName=='editform'){
+              delete sumitData.password
+          }else{
+
+          }
           axis({
       method: 'post',
-      url: "/sys/saveparam", // 请求地址
-      data: this.current, // 参数
+      url: "/sys/saveuser", // 请求地址
+      data: sumitData, // 参数
       responseType: 'json' // 表明返回服务器返回的数据类型
     }).then(
       response => {
@@ -359,14 +376,14 @@ const cForm=[
      getList(param){
             console.log(param)
              var $this=this
-             var data={}
+             var data={parent:0}
              if(param && typeof(param)=='object'){
                  data=param
              }
              
             //   axis.get('/fof/list')//axis后面的.get可以省略；
             axis( {
-                url: 'sys/param',
+                url: 'sys/user',
                 method: 'GET',
                 params: data
                 }).then((response) => {

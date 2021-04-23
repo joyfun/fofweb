@@ -5,36 +5,44 @@
 
         <div style="display: flex;justify-content: space-between">
            <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
- <el-select v-model="filter.class_type" @change="getList"  style="width:100px"   placeholder="类型">
+ <el-select v-model="filter.class_type" @change="changeSub"  style="width:100px"   placeholder="类型">
     <el-option
-      v-for="item in class_types"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
+      v-for="item in sysparam.class_type"
+      :key="item.id"
+      :label="item.value"
+      :value="item.code">
     </el-option>
-  </el-select>    
+  </el-select>   
+  <el-select v-model="filter.sub_type" @change="getList"  style="width:100px"  clearable placeholder="子类型">
+    <el-option
+      v-for="item in sub_type"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>  
 
      <el-select v-model="filter.left" @change="getList" style="width:100px"   placeholder="阶段一">
     <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
+      v-for="item in sysparam.stage"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
     </el-option>
   </el-select>
    <el-select v-model="filter.right" @change="getList" style="width:100px"   placeholder="阶段二">
     <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
+      v-for="item in sysparam.stage"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
     </el-option>
   </el-select>
   <el-select
     v-model="addition"
     filterable
     placeholder="名称"
-    :loading="loading">
+    >
     <el-option
       v-for="item in foflist"
       :key="item.code"
@@ -71,12 +79,12 @@ import axis from 'axios'
             HisTable
         },
         computed:{
-            ...mapGetters(['options','class_types']),
+            ...mapGetters(['sysparam',"allparam"]),
              compares:{
           get() {
               console.log(this.filter.class_type)
               console.log(this.addition)
-        return this.filter.class_type+","+this.filter.left+","+this.filter.right+","+this.addition
+        return this.filter.sub_type+","+this.filter.left+","+this.filter.right+","+this.addition
       }
       }
         },
@@ -91,9 +99,11 @@ import axis from 'axios'
           dialogVisible:true,
           origin:{},
           current:{},
+          sub_type:[],
           foflist:[],
           filter:{
-              class_type:"CTA",
+              class_type:"指增",
+              sub_type:"高频alpha",
               left:"",
               right:""
               },
@@ -125,6 +135,22 @@ import axis from 'axios'
         this.remoteMethod();
     },
         methods: {
+            changeSub(row){
+                var id=-1
+                for (var ap of this.sysparam.class_type)
+                {
+                    if(ap.code==row){
+                        id=ap.id
+                        break;
+                    }
+                    
+                }
+                console.log(id)
+                console.log(this.allparam)
+                this.sub_type=this.allparam['param_'+id]
+                console.log(this.sub_type)
+
+            },
             remoteMethod(query){
                 this.$axios({
         url: "/fof/foflist",

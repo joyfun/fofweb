@@ -4,7 +4,6 @@ const getters = {
   device: state => state.app.device,
   visitedViews: state => state.tagsView.visitedViews,
   cachedViews: state => state.tagsView.cachedViews,
-  token: state => state.user.token,
   avatar: state => state.user.avatar,
   name: state => state.user.name,
   introduction: state => state.user.introduction,
@@ -21,7 +20,14 @@ const getters = {
   left: state => state.layout.left,
   top: state => state.layout.top,
   rightNav: state => state.layout.rightNav,
-  options: state=>  [
+  sysparam: state => state.param,
+  allparam: state => state.allparam,
+  class_order: state =>["现金","指增","超额","混合","CTA","中性","套利","期权"],
+  data_type: state =>[{name:"GeShang",type:11},{name:"SiMuWang",type:12},{name:"已购",type:1},{name:"母基金",type:0}],
+  usermenu: state=>state.usermenu,
+  allmenu: state=>state.allmenu,
+  options: state=> 
+ [
     {
 value: '无',
 label: '无'

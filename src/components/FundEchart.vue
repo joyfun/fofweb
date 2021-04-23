@@ -40,6 +40,8 @@
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
 import axis from "axios";
+import Bus from '@/store/bus.js';
+
 var echarts = require("echarts");
 // 引入柱状图
 // require('echarts/lib/chart/line');
@@ -56,6 +58,14 @@ export default {
       type: String,
       default: "",
     },
+    cb: {
+      type: String,
+      default: "",
+    },
+    dstartdate: {
+      type: String,
+      default: "",
+    },
     compares: {
       type: String,
       default: "",
@@ -68,7 +78,7 @@ export default {
       type: Object,
       default: null,
     },
-    title: {
+    titles: {
       type: String,
       default: "",
     },
@@ -82,6 +92,9 @@ export default {
     },
   },
   computed: {
+      collen:{get() {
+          return this.raw_data["columns"].length
+      }},
     isVisible: {
       get() {
         return this.visable;
@@ -131,6 +144,7 @@ export default {
           if (len) {
             this.max_date = this.chartData.xData[len - 1];
           }
+          var cols=this.raw_data["columns"].length
           for (var idx in this.raw_data["columns"]) {
             var cname = this.raw_data["columns"][idx];
             this.chartData.series.push({
@@ -172,6 +186,7 @@ export default {
     return {
       raw_data: {},
       startdate:'',
+      tur:0,
       enddate:'',
       pickerOptions:{
           disabledDate(time) {
@@ -237,7 +252,7 @@ export default {
       axisOption: {
         // title: {
         // text: "基金净值对比图"},
-        
+        animation:false,
         legend: [{
           //option.legend[0].selected[basename+"_超额"] = params.selected[basename];
           selected:{},
@@ -336,7 +351,7 @@ export default {
             zoomOnMouseWheel: false,
             type: "slider",
             rangeMode: ["value", "percent"],
-            throttle: 200,
+            throttle: 300,
             show: true,
             realtime: true,
             end: 100,
@@ -484,7 +499,7 @@ export default {
       axis
         .get(charturl, { params: data }) //axis后面的.get可以省略；
         .then((response) => {
-          $this.raw_data = response.data;
+          $this.raw_data=response.data
           $this.chartData.xData = [];
           $this.chartData.series = [];
           $this.chartData.xData = response.data["date"];
@@ -544,7 +559,25 @@ var sdata = [...this.raw_data[cname]];
         // });
         }else{
         var sdata=this.getDividedData(cname,oneindex)
-
+        var sidx= this.raw_data.date.indexOf(this.startdate);
+        var eidx= this.raw_data.date.indexOf(this.enddate)
+        var high=1
+        var hidx=sidx
+        var midx=sidx
+        var mhidx=sidx
+        var maxdrop=0
+        for(var s=sidx;s<eidx;s++){
+            if(sdata[s]>high){
+                high=sdata[s]
+                hidx=s
+            }
+            var ndrop=sdata[s]/high-1
+            if(ndrop<maxdrop){
+                maxdrop=ndrop
+                midx=s
+                mhidx=hidx
+            }
+        }
         if(this.raw_data[cname+'_超额']){
             var result=[]
             var lastval=null
@@ -562,32 +595,50 @@ var sdata = [...this.raw_data[cname]];
         //   smooth: true,
           yAxisIndex:1
         })
-        console.log(this.axisOption)
         this.axisOption.legend[0].selected[cname] = false;
         this.axisOption.legend[0].selected["中证500指数"] = false;
 
         }
-        var mp = {};
+        var   mp = {
+              symbol: "circle",
+              symbolSize: 20,
+              label: {
+                formatter: function (param) {
+                  return param.data.name;
+                },
+              },
+              data: [],
+            }
+        if(this.collen<5){
+            if(cname=="华道FOF" && this.cb){
+                var param={"name":cname,"lrate":maxdrop,"start":this.raw_data.date[mhidx],"end":this.raw_data.date[midx]}
+                clearTimeout(this.tur)
+                console.log("撤销事件"+this.tur)
+                this.tur=setTimeout((x)=>{
+                Bus.$emit(this.cb,x)
+                console.log("emit"+this.cb+" end")
+                console.log("执行 tur:"+this.tur)
+                },1200,param);
+            }
+            mp.data.push({
+                  name: "回",
+                  coord: [this.raw_data.date[mhidx], sdata[mhidx]],
+                }
+                )
+            mp.data.push({
+                  name: "低",
+                  coord: [this.raw_data.date[midx], sdata[midx]],
+                })
+        }
 
         var cdate = this.raw_data.combine_date[idx];
         if (cdate) {
           var cidx = this.raw_data.date.indexOf(cdate);
           if (cidx > 0)
-            mp = {
-              symbol: "circle",
-              symbolSize: 20,
-              label: {
-                formatter: function (param) {
-                  return "拼";
-                },
-              },
-              data: [
-                {
+           mp.data.push({
                   name: "拼",
                   coord: [cdate, sdata[cidx]],
-                },
-              ],
-            };
+                })
         }
         this.chartData.series.push({
           data: sdata,
@@ -612,8 +663,16 @@ var sdata = [...this.raw_data[cname]];
       // console.log(typeof(lastIdx))
       lastIdx = lastIdx;
       // var rate=(lastIdx*100)/this.chartData.series[0].data.length
-      this.enddate=this.raw_data.date.pop()
+      var dlen=this.raw_data.date.length
+      this.enddate=this.raw_data.date[dlen-1]
+      if(this.dstartdate){
+          lastIdx=this.getstart(this.dstartdate)
       this.divideBy(lastIdx, { endValue: this.enddate, startValue: lastIdx });
+      }
+      else
+      {
+      this.divideBy(lastIdx, { endValue: this.enddate, startValue: lastIdx });
+      }
       this.initChartData();
       console.log(this.options);
     },
@@ -698,11 +757,15 @@ var sdata = [...this.raw_data[cname]];
           $this.divideBy(sidx, { start: (sidx * 100) / datasize, end: 100 });
           $this.refreshData({ startValue: sidx, end: 100 });
         };
-
         this.echart.setOption(this.options);
+        var tur=-1
 
+        var send=(x,y)=>{
+            $this.divideBy(x, y);
+            $this.refreshData(y);
+            tur = -1; 
+          }
         this.echart.on("datazoom", function (params) {
-          console.log(params);
           var datasize = $this.echart.getModel().option.xAxis[0].data.length;
           var startidx = Math.round((datasize * params.start) / 100);
           $this.divideBy(startidx, params);
@@ -726,10 +789,10 @@ var sdata = [...this.raw_data[cname]];
     //         option.legend[0].selected[basename+"_超额"] = params.selected[basename];
     //     }
     //     $this.echart.setOption(option);
-    //     // this.$emit("lineClick",params)
-    //   });
-
-      // this.divideBy(lastIdx,params)
+     //   });
+    //   if(this.dstartdate){
+    //   this.changeDate(this.dstartdate)
+    //   }
     },
     refreshData(params) {
       var option = this.echart.getOption();
@@ -739,7 +802,7 @@ var sdata = [...this.raw_data[cname]];
       this.echart.setOption(option, true);
     },
     getstart(vady) {
-      var arr = this.echart.getModel().option.xAxis[0].data;
+      var arr = this.raw_data.date;
       for (var i = 0; i < arr.length; i++) {
         if (arr[i] >= vady && i > 0) return i;
       }

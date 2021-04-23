@@ -9,27 +9,27 @@
 </el-button-group>
 <el-select v-model="filter.class_type" @change="getTableData"  style="width:100px"   placeholder="类型">
     <el-option
-      v-for="item in class_types"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
+      v-for="item in sysparam.class_type"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
     </el-option>
   </el-select>    
 
      <el-select v-model="filter.left" @change="getTableData" style="width:100px"   placeholder="阶段一">
     <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
+      v-for="item in sysparam.stage"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
     </el-option>
   </el-select>
    <el-select v-model="filter.right" @change="getTableData" style="width:100px"   placeholder="阶段二">
     <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
+      v-for="item in sysparam.stage"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
     </el-option>
   </el-select>
 <!-- <el-row>
@@ -90,12 +90,14 @@
 import Echart from "../../components/Echart.vue";
 import FundEchart from "../../components/FundEchart.vue";
 import axis from "axios";
+import {mapGetters} from 'vuex'
 
 export default {
   components: {
     Echart,
     FundEchart,
   },
+  computed:{...mapGetters(['sysparam'])},
   props: {pfilter:{
       type: Object,
       default:null
@@ -108,44 +110,8 @@ export default {
       current:{},
       subtype:"",
       cur_code:"",
-      dialogVisible: false,
-      filter:{
-              class_type:"CTA",
-              left:"",
-              right:"已投",
-              start:""
-              },
-          options: [{
-          value: '预选',
-          label: '预选'
-        }, {
-          value: '二选',
-          label: '二选'
-        }, {
-          value: '备投',
-          label: '备投'
-        }, {
-          value: '已投',
-          label: '已投'
-        }],
-        class_types: [{
-          value: 'CTA',
-          label: 'CTA'
-        }, {
-          value: '指增',
-          label: '指增'
-        }, {
-          value: '中性',
-          label: '中性'
-        }, {
-          value: '套利',
-          label: '套利'
-        }, {
-          value: '混合',
-          label: '混合'
-        }]
-        
-    }
+      dialogVisible: false
+      }
   },
   watch: {
      pfilter:{
