@@ -8,6 +8,7 @@
         <el-button type="primary" @click="doaction">刷新最新净值</el-button>
         <el-button type="primary" @click="updateparam">刷新参数</el-button>
         <el-button type="primary" @click="downWeekly">下载周报</el-button>
+        <el-button type="primary" @click="sendmail">发送邮件</el-button>
 
       
       </div>
@@ -102,7 +103,7 @@ export default {
     },
   },
   created() {
-    this.remoteMethod();
+    //this.remoteMethod();
   },
   methods: {
       downWeekly(){
@@ -120,12 +121,23 @@ this.$axios.get('/sys/param?refresh=1').then((response) => {
       },
     doaction() {
        this.$axios({
-        url: "/fof/action", //          
+        url: "/fof/action",
+        data:{"code":"update_cur"}, //          
         method: "POST"
       }).then((response) => {
             console.log(response.data)
         }); 
-    }}
+    },
+    sendmail() {
+       this.$axios({
+        url: "/fof/action",
+        data:{"code":"sendmail"}, //          
+        method: "POST"
+      }).then((response) => {
+            console.log(response.data)
+        }); 
+    },
+    }
 };
 </script>
 <style scoped>

@@ -103,7 +103,7 @@ import axis from 'axios'
           foflist:[],
           filter:{
               class_type:"指增",
-              sub_type:"高频alpha",
+              sub_type:"低频alpha",
               left:"",
               right:""
               },
@@ -152,15 +152,17 @@ import axis from 'axios'
 
             },
             remoteMethod(query){
-                this.$axios({
-        url: "/fof/foflist",
-        method: "GET",
-        params: {},
-      })
-        .then((response) => {
-            this.foflist=response.data
+    //             this.$axios({
+    //     url: "/fof/foflist",
+    //     method: "GET",
+    //     params: {},
+    //   })
+    //     .then((response) => {
+    //         this.foflist=response.data
+    //             this.sub_type=this.allparam['param_13']
 
-        })
+    //     })
+    this.sub_type=this.allparam['param_13']
             },
             getList() {
                 console.log(this.filter)

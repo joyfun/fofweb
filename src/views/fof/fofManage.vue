@@ -379,7 +379,7 @@
       type: Object,
       default:null
     },},
-    computed:{...mapGetters(['sysparam'])},
+    computed:{...mapGetters(['sysparam','token'])},
     data() {
       return {
           cForm,
@@ -792,6 +792,13 @@ showResult(number,rate=100){
                                 console.log(this.sysparam);
                                 console.log(response);
                                 this.totaltableData = response.data;
+                                if(this.token=='demo'){
+                                    for (var row in this.totaltableData){
+                                        this.totaltableData[row]["name"]="名称"+row
+                                        this.totaltableData[row]["short_name"]="名称"+row
+
+                                    }
+                                }
                                 this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
                                 this.resizeChart()
                             })

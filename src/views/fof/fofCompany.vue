@@ -188,7 +188,7 @@
       components: {
             FundEchart
         },
-            computed:{...mapGetters(['sysparam','class_order'])},
+            computed:{...mapGetters(['sysparam','class_order','token'])},
     data() {
       return {
         cForm,
@@ -413,7 +413,15 @@
                 params: data
                 }).then((response) => {
                                 console.log(response);
+                                
                                 this.totaltableData = response.data;
+                                if(this.token=='demo'){
+                                    for (var row in this.totaltableData){
+                                        this.totaltableData[row]["name"]="名称"+row
+                                        this.totaltableData[row]["short_name"]="名称"+row
+
+                                    }
+                                }
                                 this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
                             })
                         .catch(

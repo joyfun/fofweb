@@ -19,7 +19,7 @@
       <el-card shadow="hover">
         <fund-echart
           ref="hischart"
-          dstartdate="20200101"
+          dstartdate="20210101"
           cb="chgReturn"
           style="height: 500px"
           :code="code"

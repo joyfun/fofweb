@@ -41,6 +41,7 @@
 // import 'echarts/lib/chart/line'
 import axis from "axios";
 import Bus from '@/store/bus.js';
+import {mapGetters} from 'vuex'
 
 var echarts = require("echarts");
 // 引入柱状图
@@ -92,6 +93,8 @@ export default {
     },
   },
   computed: {
+      ...mapGetters(['sysparam','token']),
+
       collen:{get() {
           return this.raw_data["columns"].length
       }},
@@ -147,12 +150,16 @@ export default {
           var cols=this.raw_data["columns"].length
           for (var idx in this.raw_data["columns"]) {
             var cname = this.raw_data["columns"][idx];
-            this.chartData.series.push({
+            var asery={
               data: this.raw_data[cname].concat(),
               type: "line",
               selectedMode: "single",
               name: cname,
-            });
+            }
+            if(this.token=="demo"){
+                asery.name="产品"+idx
+            }
+            this.chartData.series.push(asery);
           }
           this.initChart();
         }
@@ -640,13 +647,17 @@ var sdata = [...this.raw_data[cname]];
                   coord: [cdate, sdata[cidx]],
                 })
         }
-        this.chartData.series.push({
+        var asery={
           data: sdata,
           type: "line",
           name: cname,
           yAxisIndex:0,
           markPoint: mp,
-        });
+        }
+        if(this.token=="demo"){
+            asery.name="产品"+idx
+        }
+        this.chartData.series.push(asery);
         // this.axisOption.yAxis.min = min;
       }}
       this.axisOption.dataZoom[0].startValue = oneindex;
