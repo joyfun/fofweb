@@ -23,7 +23,7 @@
                 <el-input type="text" v-model="loginForm.username" auto-complete="off" placeholder="请输入登录账号"></el-input>
               </el-form-item>
               <el-form-item>
-                <el-input type="password" v-model="loginForm.password" auto-complete="off"
+                <el-input type="password" v-model="loginForm.password" auto-complete="off" @keyup.enter.native="submitForm"
                           placeholder="请输入登录密码"></el-input>
               </el-form-item>
               <el-form-item>

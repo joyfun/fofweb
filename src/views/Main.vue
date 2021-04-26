@@ -2,7 +2,7 @@
     <el-container style="height: 100%">
       <el-aside width="200px" ><v-CommonAside></v-CommonAside></el-aside>
       <el-container>
-        <el-header><v-CommonHeader>header</v-CommonHeader></el-header>
+        <el-header><v-CommonHeader></v-CommonHeader></el-header>
         <v--common-tab></v--common-tab>
         <el-main ref="maincontainer">
             <router-view></router-view>
@@ -29,5 +29,8 @@
 <style lang="scss" scoped>
 .el-header {
     background-color: black;
+}
+.el-main{
+    padding: 5px 20px 5px 20px;
 }
 </style>
