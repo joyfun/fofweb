@@ -92,8 +92,8 @@
             fixed="right"
       show-overflow-tooltip>
         <template slot-scope="scope">
-            <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="delCompany0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
+            <el-button v-if="'info_edit'.indexOf(usermenu)>-1" @click.native.prevent="delCompany0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
 
         </template>
     </el-table-column>
@@ -134,8 +134,8 @@
     </el-row >
     </template>
 <el-form-item>
-    <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
-    <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+    <el-button v-if="'info_edit'.indexOf(usermenu)>-1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+    <el-button v-if="'info_edit'.indexOf(usermenu)>-1" @click="resetForm('dynamicValidateForm')">重置</el-button>
   </el-form-item>
 </el-form>
     </el-dialog>
@@ -188,7 +188,7 @@
       components: {
             FundEchart
         },
-            computed:{...mapGetters(['sysparam','class_order','token'])},
+            computed:{...mapGetters(['sysparam','class_order','token','usermenu'])},
     data() {
       return {
         cForm,

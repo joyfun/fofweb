@@ -137,13 +137,12 @@
 <el-button @click.native.prevent="viewAudit(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start">
 <i class="el-icon-s-order"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
+            <el-button v-if="'info_audit'.indexOf(usermenu)>-1" @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
+            <el-button v-if="'info_edit'.indexOf(usermenu)>-1"  @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.filename"  type="text" size="small"><el-tooltip class="item" effect="dark" content="下载报告" placement="left-start"><a :href=" '/fof/downfile?code='+scope.row.code "><i class="el-icon-download"></i></a></el-tooltip></el-button>
-
             <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            <el-button v-if="'info_edit'.indexOf(usermenu)>-1" @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
 
         </template>
     </el-table-column>
@@ -296,8 +295,8 @@
     </el-row >
     </template>
 <el-form-item>
-    <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
-    <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+    <el-button v-if="'info_edit'.indexOf(usermenu)>-1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+    <el-button v-if="'info_edit'.indexOf(usermenu)>-1" @click="resetForm('dynamicValidateForm')">重置</el-button>
   </el-form-item>
 </el-form>
     </el-dialog>
@@ -379,7 +378,7 @@
       type: Object,
       default:null
     },},
-    computed:{...mapGetters(['sysparam','token'])},
+    computed:{...mapGetters(['sysparam','token','usermenu'])},
     data() {
       return {
           cForm,
@@ -441,7 +440,9 @@
           this.formVisible=true
       },
       submitForm(formName) {
-          console.log(this.$refs[formName].model)
+          if(this.current.type){
+
+          
           axis({
       method: 'post',
       url: "/fof/saveinfo", // 请求地址
@@ -458,7 +459,13 @@
       err => {
         reject(err)
       }
-    )
+    )}else{
+        this.$message({
+            showClose: true,
+            message: "来源为必填项",
+            type: "error"
+          })
+    }
       },
       delFund0(row){
           this.confirmVisible=true

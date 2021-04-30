@@ -107,7 +107,7 @@ export default {
   },
   methods: {
       downWeekly(){
-          window.location.href="/weekly.docx"
+          window.location.href="/fof/downfile?code=FOF"
       },
       updateparam(){
           var that=this

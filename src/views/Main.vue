@@ -16,9 +16,12 @@
     import CommonAside from '../components/CommonAside.vue';   //引入左侧栏
     import CommonHeader from '../components/CommonHeader.vue';   //引入header
     import CommonTab from '../components/CommonTab.vue';   //引入header
+    import RightPanel from '../components/RightPanel.vue'
+
     export default {
        components:{  /* 前面的组件名称不能和HTML标签一样*/
            'v-CommonAside':CommonAside,
+           RightPanel,
            'v-CommonHeader':CommonHeader,
            'v-CommonTab':CommonTab,
         },

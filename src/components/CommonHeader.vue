@@ -21,13 +21,14 @@
 
                  
         </el-breadcrumb> -->
-<el-row :gutter="20">
+<el-row :gutter="5">
     <el-button-group>
 
     <el-button @click="changeMenu('company')" >投资渠道</el-button>
     <el-button @click="changeMenu('invest')" >尽职调查</el-button>
     <el-button @click="changeMenu('decision')">投资决策</el-button>
     <el-button @click="changeMenu('after')">投后管理</el-button>
+    <el-button @click="changeMenu('datamag')">数据管理</el-button>
     <el-button @click="changeMenu('sys')">系统设置</el-button>
     </el-button-group>
 
@@ -143,7 +144,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .el-row {
-    width:800px;
+    width:1000px;
     margin-bottom: 20px;
     &:last-child {
       margin-bottom: 0;

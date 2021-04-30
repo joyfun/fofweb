@@ -82,6 +82,17 @@ export default {
             isCollapse:false,
             menus:[],
             allMenu:{
+                "datamag":[{
+                            path: '/fundconcat',
+                            label: '基金拼接',
+                            name:'fund-concat',
+                            icon:'setting'
+                        },{
+                            path: '/action',
+                            label: '下载报告',
+                            name:'fof-action',
+                            icon:'setting'
+                        } ],
                 "company":[{
                             path: '/fundcomp',
                             label: '投资公司管理',
@@ -163,7 +174,7 @@ export default {
                             label: '备投列表',
                             name:'fund-info',
                             params:{
-                                type:'1',
+                                stage:'备投',
                             },
                             icon:'setting'
                         }
@@ -235,8 +246,20 @@ export default {
                             icon:'setting'
                         },
                         {
+                            path: '/fundrank1',
+                            label: '已投尽调排名',
+                            name:'fund-rank1',
+                            icon:'setting'
+                        },
+                        {
+                            path: '/fundrank2',
+                            label: '已投备投排名',
+                            name:'fund-rank2',
+                            icon:'setting'
+                        },
+                        {
                             path: '/fundreason',
-                            label: '归因',
+                            label: '收益归因',
                             name:'fund-reason',
                             params:{
                                 type:'1',
@@ -250,18 +273,6 @@ export default {
                             params:{
                                 type:'1',
                             },
-                            icon:'setting'
-                        },
-                        {
-                            path: '/fundrank1',
-                            label: '已投尽调排名',
-                            name:'fund-rank1',
-                            icon:'setting'
-                        },
-                        {
-                            path: '/fundrank2',
-                            label: '已投备投排名',
-                            name:'fund-rank2',
                             icon:'setting'
                         },
                          {
@@ -293,12 +304,7 @@ export default {
                             },
                             icon:'setting'
                         },
-                        {
-                            path: '/fundconcat',
-                            label: '基金拼接',
-                            name:'fund-concat',
-                            icon:'setting'
-                        }, 
+                        
                         {
                             path: '/action',
                             label: '刷新参数',

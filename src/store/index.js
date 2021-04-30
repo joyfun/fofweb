@@ -46,6 +46,8 @@ export default new Vuex.Store({
         {lable:"基金拼接",value:"fund-concat"},
         {lable:"业绩预警",value:"fund-alarm"},
         {lable:"刷新参数",value:"fof-action"},
+        {lable:"编辑信息",value:"info-edit"},
+        {lable:"审核信息",value:"info-audit"},
         {lable:"用户管理",value:"user-manage"}]
   },
   mutations: {
