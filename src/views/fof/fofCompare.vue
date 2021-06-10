@@ -30,7 +30,15 @@
       :value="item.code">
     </el-option>
   </el-select>
-   <el-select v-model="filter.right" @change="getList" style="width:100px"   placeholder="阶段二">
+   <el-select v-show="filter.right" v-model="filter.right" @change="getList" style="width:100px"   placeholder="阶段二">
+    <el-option
+      v-for="item in sysparam.stage"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
+  <el-select v-show="filter.other" v-model="filter.other" @change="getList" style="width:100px"   placeholder="阶段三">
     <el-option
       v-for="item in sysparam.stage"
       :key="item.code"
@@ -39,7 +47,10 @@
     </el-option>
   </el-select>
   <el-select
-    v-model="addition"
+    v-model="mult"
+    style="width:360px"   
+    multiple
+    clearable
     filterable
     placeholder="名称"
     >
@@ -51,8 +62,8 @@
     </el-option>
   </el-select>
   
-        <!-- <el-button  size="small" @click="downFile()">下载</el-button>
-        <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
+       <el-button type="primary"  size="small" @click="searchHis">查询</el-button>
+       <!-- <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button> -->
         </div>
       </div>
@@ -80,13 +91,13 @@ import axis from 'axios'
         },
         computed:{
             ...mapGetters(['sysparam',"allparam"]),
-             compares:{
-          get() {
-              console.log(this.filter.class_type)
-              console.log(this.addition)
-        return this.filter.sub_type+","+this.filter.left+","+this.filter.right+","+this.addition
-      }
-      }
+    //          compares:{
+    //       get() {
+    //           console.log(this.filter.class_type)
+    //           console.log(this.addition)
+    //     return this.filter.sub_type+","+this.filter.left+","+this.filter.right+","+this.addition
+    //   }
+    //   }
         },
         props: {filters:{
       type: Object,
@@ -96,6 +107,8 @@ import axis from 'axios'
       return {
           temp:-1,
           addition:"",
+          compares:"",
+          mult:[],
           dialogVisible:true,
           origin:{},
           current:{},
@@ -135,6 +148,14 @@ import axis from 'axios'
         this.remoteMethod();
     },
         methods: {
+            multchange(val){
+                console.log(val)
+                this.addition=val.join()
+            },
+            searchHis(){
+                this.compares=this.filter.sub_type+","+this.filter.left+","+this.filter.right+","+this.addition 
+                this.addition=this.mult.join()
+            },
             changeSub(row){
                 var id=-1
                 for (var ap of this.sysparam.class_type)
@@ -152,16 +173,16 @@ import axis from 'axios'
 
             },
             remoteMethod(query){
-    //             this.$axios({
-    //     url: "/fof/foflist",
-    //     method: "GET",
-    //     params: {},
-    //   })
-    //     .then((response) => {
-    //         this.foflist=response.data
-    //             this.sub_type=this.allparam['param_13']
+                this.$axios({
+        url: "/fof/foflist",
+        method: "GET",
+        params: {},
+      })
+        .then((response) => {
+            this.foflist=response.data
+                this.sub_type=this.allparam['param_13']
 
-    //     })
+        })
     this.sub_type=this.allparam['param_13']
             },
             getList() {

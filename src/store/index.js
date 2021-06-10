@@ -19,7 +19,11 @@ export default new Vuex.Store({
     token: Cookies.get("token"),
     allparam:{},
     usermenu:Cookies.get("umenu"),
+    uproduct:Cookies.get("uproduct"),
+    uproductname:Cookies.get("uproductname"),
+
     param:{"class_type":[],"stage":[]},
+    foflist:[],
     allmenu:[
         {lable:"基金公司",value:"fund-comp"},
         {lable:"初选基金",value:"fund-info"},
@@ -32,6 +36,7 @@ export default new Vuex.Store({
         {lable:"分类基金对比",value:"fund-compare"},
         {lable:"已投对比",value:"fund-compare1"},
         {lable:"尽调对比",value:"fund-compare2"},
+        {lable:"预选对比",value:"fund-compare3"},
         {lable:"组合配置",value:"fund-calc"},
         {lable:"虚拟配置",value:"fund-comb"},
         {lable:"压力测试",value:"fund-pressure"},
@@ -55,6 +60,14 @@ export default new Vuex.Store({
       state.token = token
       Cookies.set("token", token, { expires: 1 / 24 })
     },
+    updataUproduct (state, product) {
+        state.uproduct = product
+        Cookies.set("uproduct", product, { expires: 'never' })
+      },
+    updataUproductName (state, productname) {
+        state.uproductname = productname
+        Cookies.set("uproductname", productname, { expires: 'never' })
+      },
     setSysParam(state,params){
         state.param=params
     },

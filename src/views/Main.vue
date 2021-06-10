@@ -5,10 +5,14 @@
         <el-header><v-CommonHeader></v-CommonHeader></el-header>
         <v--common-tab></v--common-tab>
         <el-main ref="maincontainer">
-            <router-view></router-view>
+            <router-view :key="$route.fullPath"></router-view>
         </el-main>
       </el-container>
+      <right-panel >
+        <fund-table/>
+      </right-panel>
     </el-container>
+    
 </template>
 
 
@@ -17,11 +21,12 @@
     import CommonHeader from '../components/CommonHeader.vue';   //引入header
     import CommonTab from '../components/CommonTab.vue';   //引入header
     import RightPanel from '../components/RightPanel.vue'
+    import FundTable from "../components/FundTable.vue"
 
     export default {
        components:{  /* 前面的组件名称不能和HTML标签一样*/
            'v-CommonAside':CommonAside,
-           RightPanel,
+           RightPanel,FundTable,
            'v-CommonHeader':CommonHeader,
            'v-CommonTab':CommonTab,
         },

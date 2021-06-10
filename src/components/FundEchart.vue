@@ -157,7 +157,7 @@ export default {
               name: cname,
             }
             if(this.token=="demo"){
-                asery.name="产品"+idx
+                asery.name=this.raw_data["mcodes"][idx]
             }
             this.chartData.series.push(asery);
           }
@@ -264,10 +264,16 @@ export default {
           //option.legend[0].selected[basename+"_超额"] = params.selected[basename];
           selected:{},
           type: "scroll",
+          align :"right",
           orient: "vertical",
           top: "middle",
           right: 0,
         }],
+        grid: {
+            left:"2%",
+        right: '10%',
+        containLabel: true
+    },
         toolbox: {
           left: "left",
           feature: {
@@ -617,7 +623,7 @@ var sdata = [...this.raw_data[cname]];
               data: [],
             }
         if(this.collen<5){
-            if(cname=="华道FOF" && this.cb){
+            if(cname=="华道FOF"  && this.cb){
                 var param={"name":cname,"lrate":maxdrop,"start":this.raw_data.date[mhidx],"end":this.raw_data.date[midx]}
                 clearTimeout(this.tur)
                 console.log("撤销事件"+this.tur)
@@ -655,7 +661,7 @@ var sdata = [...this.raw_data[cname]];
           markPoint: mp,
         }
         if(this.token=="demo"){
-            asery.name="产品"+idx
+                asery.name=this.raw_data["mcodes"][idx]
         }
         this.chartData.series.push(asery);
         // this.axisOption.yAxis.min = min;

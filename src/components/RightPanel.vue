@@ -2,8 +2,8 @@
   <div ref="rightPanel" :class="{show:show}" class="rightPanel-container">
     <div class="rightPanel-background" />
     <div class="rightPanel">
-      <div class="handle-button" :style="{'top':buttonTop+'px','background-color':theme}" @click="show=!show">
-        <i :class="show?'el-icon-close':'el-icon-setting'" />
+      <div class="handle-button" :style="{'top':buttonTop+'px'}" @click="show=!show">
+        <i :class="show?'el-icon-close':'el-icon-shopping-cart-full'" />
       </div>
       <div class="rightPanel-items">
         <slot />
@@ -33,9 +33,9 @@ export default {
     }
   },
   computed: {
-    theme() {
-      return this.$store.state.settings.theme
-    }
+    // theme() {
+    //   return this.$store.state.settings.theme
+    // }
   },
   watch: {
     show(value) {
@@ -106,14 +106,14 @@ export default {
   transition: all .25s cubic-bezier(.7, .3, .1, 1);
   transform: translate(100%);
   background: #fff;
-  z-index: 40000;
+  z-index: 2006;
 }
 
 .show {
   transition: all .3s cubic-bezier(.7, .3, .1, 1);
 
   .rightPanel-background {
-    z-index: 20000;
+    z-index: 2005;
     opacity: 1;
     width: 100%;
     height: 100%;
@@ -136,6 +136,7 @@ export default {
   pointer-events: auto;
   cursor: pointer;
   color: #fff;
+  background-color: rgb(24, 144, 255);
   line-height: 48px;
   i {
     font-size: 24px;

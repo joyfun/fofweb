@@ -7,6 +7,7 @@
 
         <el-button type="primary" @click="doaction">刷新最新净值</el-button>
         <el-button type="primary" @click="updateparam">刷新参数</el-button>
+        <el-button type="primary" @click="genWeekly">生成周报</el-button>
         <el-button type="primary" @click="downWeekly">下载周报</el-button>
         <el-button type="primary" @click="sendmail">发送邮件</el-button>
 
@@ -106,8 +107,16 @@ export default {
     //this.remoteMethod();
   },
   methods: {
+       genWeekly(){
+this.$axios({
+        url: "/fof/action",
+        data:{"code":"weekly"}, //          
+        method: "POST"
+      }).then((response) => {
+            console.log(response.data)
+        });       },
       downWeekly(){
-          window.location.href="/fof/downfile?code=FOF"
+          window.location.href="/fof/downfile?code=FOF&r="+Math.random()
       },
       updateparam(){
           var that=this

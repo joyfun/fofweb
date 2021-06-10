@@ -159,13 +159,18 @@ export default {
                             },
                             icon:'setting'
                         },{
-                            path: '/fundcompare2',
+                            path: '/fundcompare3',
                             label: '尽调对比',
-                            name:'fund-compare2',
+                            name:'fund-compare3',
                             params:{
                                 left:'尽调',
                                 right:'预选'
                             },
+                            icon:'setting'
+                        },{
+                            path: '/fundcompare2',
+                            label: '侯选对比',
+                            name:'fund-compare2',
                             icon:'setting'
                         }]}],
                          "decision":[
@@ -216,13 +221,18 @@ export default {
                             },
                             icon:'setting'
                         },{
-                            path: '/fundcompare2',
+                            path: '/fundcompare3',
                             label: '尽调对比',
-                            name:'fund-compare2',
+                            name:'fund-compare3',
                             params:{
                                 left:'尽调',
                                 right:'预选'
                             },
+                            icon:'setting'
+                        },{
+                            path: '/fundcompare2',
+                            label: '侯选对比',
+                            name:'fund-compare2',
                             icon:'setting'
                         }]}
                         ],
