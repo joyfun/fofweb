@@ -137,13 +137,14 @@
 <el-button @click.native.prevent="viewAudit(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start">
 <i class="el-icon-s-order"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
+            <el-button v-if="usermenu.indexOf('info-audit')>-1" @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
+            <el-button v-if="usermenu.indexOf('info-edit')>-1"  @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.filename"  type="text" size="small"><el-tooltip class="item" effect="dark" content="下载报告" placement="left-start"><a :href=" '/fof/downfile?code='+scope.row.code "><i class="el-icon-download"></i></a></el-tooltip></el-button>
+           <el-button v-show="scope.row.combine" @click.native.prevent="viewConcat(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="拼接历史" placement="left-start"><i class="el-icon-link"></i></el-tooltip></el-button>
 
             <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
 
         </template>
     </el-table-column>
@@ -215,6 +216,14 @@
     :close-on-press-escape="false"
     :visible.sync="auditVisible">
     <audit-log       @close="editClose" ref="auditlog"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  :visable="auditVisible"></audit-log>
+    </el-dialog>
+    <el-dialog
+    width="50%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="concatVisible">
+    <concat-log       @close="editClose" ref="concatlog"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  :visable="concatVisible"></concat-log>
     </el-dialog>
     <el-dialog
     width="80%"
@@ -296,8 +305,8 @@
     </el-row >
     </template>
 <el-form-item>
-    <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
-    <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+    <el-button v-if="usermenu.indexOf('info-edit')>-1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+    <el-button v-if="usermenu.indexOf('info-edit')>-1" @click="resetForm('dynamicValidateForm')">重置</el-button>
   </el-form-item>
 </el-form>
     </el-dialog>
@@ -329,6 +338,8 @@
     import axis from 'axios'
     import FundEchart from '../../components/FundEchart.vue';
     import AuditLog from '../../components/AuditLog.vue';
+    import ConcatLog from '../../components/ConcatLog.vue';
+    import Bus from '@/store/bus.js';
     import HisTable from '../../components/HisTable.vue';
 
     import ReportTable from '../../components/ReportTable.vue';
@@ -340,7 +351,7 @@
     {"tilte":"名称","dataIndex":"name"},
     {"tilte":"简称","dataIndex":"short_name"},
     {"tilte":"基金类型","dataIndex":"class_type","param":"class_type"},
-    {"tilte":"文件匹配条件","dataIndex":"regex"},
+    {"tilte":"投资类型","dataIndex":"scale","param":"scale"},
     {"tilte":"购买时净值","dataIndex":"buy_price"},
     {"tilte":"子类型","dataIndex":"sub_type"},
     {"tilte":"购买时间","dataIndex":"buy_date"},
@@ -372,6 +383,7 @@
             FundEchart,
             HisTable,
             AuditLog,
+            ConcatLog,
             ReportTable,
             FundCorr
         },
@@ -379,7 +391,7 @@
       type: Object,
       default:null
     },},
-    computed:{...mapGetters(['sysparam'])},
+    computed:{...mapGetters(['sysparam','token','usermenu'])},
     data() {
       return {
           cForm,
@@ -398,6 +410,7 @@
         tableVisible: false,
         hisVisible:false,
         auditVisible:false,
+        concatVisible:false,
         editVisible:false,
         compData:[],
         rowdata: '',
@@ -441,7 +454,9 @@
           this.formVisible=true
       },
       submitForm(formName) {
-          console.log(this.$refs[formName].model)
+          if(this.current.type){
+
+          
           axis({
       method: 'post',
       url: "/fof/saveinfo", // 请求地址
@@ -458,7 +473,13 @@
       err => {
         reject(err)
       }
-    )
+    )}else{
+        this.$message({
+            showClose: true,
+            message: "来源为必填项",
+            type: "error"
+          })
+    }
       },
       delFund0(row){
           this.confirmVisible=true
@@ -537,6 +558,7 @@ showResult(number,rate=100){
           var ret=this.$tools.checkModi(this.current,this.origin)
           var $this=this
           ret['code']=this.origin.code
+          ret['stage']=this.current.stage
           axis({
         method: 'post',
         url: "/fof/updateinfo", // 请求地址
@@ -593,6 +615,12 @@ showResult(number,rate=100){
           this.cur_code=selcode
         //   this.$refs.hischart.$emit("getChart",selcode)  
       },
+      showChartByCodes(codes){
+          this.cur_code=""
+          this.current={}
+          this.dialogVisible=true
+          this.cur_code=codes
+      },
       viewHis(row){
           this.temp=-1
           this.cur_code=""
@@ -606,6 +634,14 @@ showResult(number,rate=100){
           this.cur_code=""
           this.current=row
           this.auditVisible=true
+          this.cur_code=row.code
+
+      },
+       viewConcat(row){
+          this.temp=-1
+          this.cur_code=""
+          this.current=row
+          this.concatVisible=true
           this.cur_code=row.code
 
       },
@@ -792,6 +828,13 @@ showResult(number,rate=100){
                                 console.log(this.sysparam);
                                 console.log(response);
                                 this.totaltableData = response.data;
+                                if(this.token=='demo'){
+                                    for (var row in this.totaltableData){
+                                        this.totaltableData[row]["name"]=this.totaltableData[row]["mcode"]
+                                        this.totaltableData[row]["short_name"]=this.totaltableData[row]["mcode"]
+
+                                    }
+                                }
                                 this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
                                 this.resizeChart()
                             })
@@ -817,6 +860,10 @@ showResult(number,rate=100){
         },
     created(){
         console.log(this.$moment().date(-7))
+         Bus.$on('cartchart',(arg)=> {
+          console.log("========cartchart========")
+          this.showChartByCodes(arg)
+         })
         
     },
     mounted() {

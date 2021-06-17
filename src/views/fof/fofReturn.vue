@@ -19,7 +19,7 @@
       <el-card shadow="hover">
         <fund-echart
           ref="hischart"
-          dstartdate="20200101"
+          dstartdate="20210101"
           cb="chgReturn"
           style="height: 500px"
           :code="code"
@@ -139,10 +139,10 @@ export default {
           action:{},
           title:{
         text: '盈利占比',
-        left: '25%',
+        left: '5%',
         textAlign: 'center'
     },  
-           legend: {type: 'scroll',
+           legend: {left:'20%',type: 'scroll',
         top: 2,
         data: []},
           series:{     name:"盈利明细",     type: 'pie',
@@ -162,10 +162,10 @@ export default {
             
             ]}},
     subData: {
-        legend: { type: "scroll", top: 2, data: [] },
+        legend: { left:'20%',type: "scroll", top: 2, data: [] },
          title:{
         text: '亏损占比',
-        left: '25%',
+        left: '5%',
         textAlign: 'center'
     }, 
         series: [{

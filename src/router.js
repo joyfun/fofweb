@@ -15,6 +15,9 @@ const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
+const compare1 =()=> import('@/views/fof/fofCompare.vue')
+const compare2 =()=> import('@/views/fof/fofCompare.vue')
+const compare3 =()=> import('@/views/fof/fofCompare.vue')
 
 const routes = [
   {
@@ -115,7 +118,7 @@ const routes = [
       {
         path: '/fundcompare1',
         name: 'fund-compare1',
-        component:() => import('@/views/fof/fofCompare.vue'),
+        component: compare1,
         props:
         {
             filters:{left:'已投',
@@ -126,17 +129,22 @@ const routes = [
       {
         path: '/fundcompare2',
         name: 'fund-compare2',
-        component:() => import('@/views/fof/fofCompare.vue'),
+        component:compare2,
         props:{
-            filters:{left:'尽调',
-            right:'预选'}
+            filters:{left:'预选'
+            }
         },
       }
       ,
       {
         path: '/fundcompare3',
         name: 'fund-compare3',
-        component:() => import('@/views/fof/fofCompare.vue')
+        component:compare3,
+        props:{
+            filters:{left:'尽调',
+            right:'预选',
+            other:'已投'}
+        },
       }
       ,
       {

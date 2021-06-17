@@ -24,6 +24,34 @@
         ></fund-echart>
       </el-card>
       <el-card shadow="hover">
+        <el-table
+    ref="profiltTable"
+    :data="profitlist"
+    tooltip-effect="dark"
+    max-height="480"
+    :default-sort="{prop:'year',order:'descending'}"
+    style="width: 100%;margin-top:20px;">
+    <el-table-column
+      :label="mcols[0]"
+      sortable
+      prop="year"
+      show-overflow-tooltip>
+    </el-table-column>
+    <el-table-column
+    v-for=" n in 13" :key="'col'+n"
+      prop="name"
+      :label="mcols[n]"
+      show-overflow-tooltip>
+      <template slot-scope="scope">
+              <span :style="'text-align:right;color:'+((scope.row[mindx[n]]&&scope.row[mindx[n]].startsWith('-'))?'green':'red') " >
+                    {{ scope.row[mindx[n]] }}</span>
+
+        </template>
+     <!-- <template slot-scope="scope">{{ scope.row[mindx[n]] }}</template> -->
+    </el-table-column>
+    </el-table> 
+      </el-card>
+      <el-card shadow="hover">
         <!-- <echart           ref="piechart"
 :chartData="pieData"  style="height: 260px" :isAxisChart="false"></echart> -->
 <el-row>
@@ -98,17 +126,21 @@ export default {
     FundEchart,
   },
    computed: {
-     ...mapGetters(['class_order'])
+     ...mapGetters(['class_order','token'])
+
    },
   data() {
     return {
       cur_code:"",
       current:{},
+      mcols:["年份","一月","二月","三月", "四月","五月", "六月","七月","八月","九月", "十月", "十一月","十二月","年收益"],
+      mindx:["year","m01","m02","m03","m04","m05","m06","m07","m08","m09","m10","m11","m12","vyear"],
       dialogVisible:false,
       cur_code:"",
       code: "",
       subtype:"",
       tableData: [],
+      profitlist:[],
       pieData:{
           action:{},
            legend: {type: 'scroll',
@@ -232,8 +264,14 @@ export default {
                     continue;
                 }
             }
+            if(this.token=='demo'){
+                row["short_name"]=row["mcode"]
+                row["name"]=row["mcode"]
+
+            }
             row["profit"]=row.amount*(row["n_netval"])
             row["sumrate"]=row["n_sumval"]/row["s_sumval"]-1
+
             ret.push({name:row.short_name,value:row["profit"]})
         }
         return ret;
@@ -271,6 +309,14 @@ export default {
       }
     },
     getTableData() {
+        axis({
+        url: "/fof/profit",
+        method: "GET",
+        params: {code:"FOF"},
+      })
+        .then((response) => {
+            this.profitlist=response.data
+        }),
       axis({
         url: "/fof/summary",
         method: "GET",

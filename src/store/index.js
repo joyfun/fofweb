@@ -17,9 +17,14 @@ export default new Vuex.Store({
   },
   state: {
     token: Cookies.get("token"),
+    cart: JSON.parse(decodeURIComponent(Cookies.get("cart"))),
     allparam:{},
     usermenu:Cookies.get("umenu"),
+    uproduct:Cookies.get("uproduct"),
+    uproductname:Cookies.get("uproductname"),
+
     param:{"class_type":[],"stage":[]},
+    foflist:[],
     allmenu:[
         {lable:"基金公司",value:"fund-comp"},
         {lable:"初选基金",value:"fund-info"},
@@ -32,6 +37,7 @@ export default new Vuex.Store({
         {lable:"分类基金对比",value:"fund-compare"},
         {lable:"已投对比",value:"fund-compare1"},
         {lable:"尽调对比",value:"fund-compare2"},
+        {lable:"预选对比",value:"fund-compare3"},
         {lable:"组合配置",value:"fund-calc"},
         {lable:"虚拟配置",value:"fund-comb"},
         {lable:"压力测试",value:"fund-pressure"},
@@ -46,6 +52,8 @@ export default new Vuex.Store({
         {lable:"基金拼接",value:"fund-concat"},
         {lable:"业绩预警",value:"fund-alarm"},
         {lable:"刷新参数",value:"fof-action"},
+        {lable:"编辑信息",value:"info-edit"},
+        {lable:"审核信息",value:"info-audit"},
         {lable:"用户管理",value:"user-manage"}]
   },
   mutations: {
@@ -53,6 +61,18 @@ export default new Vuex.Store({
       state.token = token
       Cookies.set("token", token, { expires: 1 / 24 })
     },
+    setCart (state, cart) {
+      // state.cart = JSON.parse(cart)
+      Cookies.set("cart", encodeURIComponent(cart),  { expires: 365 })
+    },
+    updataUproduct (state, product) {
+        state.uproduct = product
+        Cookies.set("uproduct", product, { expires: 'never' })
+      },
+    updataUproductName (state, productname) {
+        state.uproductname = productname
+        Cookies.set("uproductname", productname, { expires: 'never' })
+      },
     setSysParam(state,params){
         state.param=params
     },
@@ -70,6 +90,12 @@ export default new Vuex.Store({
     setToken ({commit}, token) {
       return new Promise((resolve, reject) => {
         commit("setToken", token)
+        resolve()
+      })
+    },
+    setCart ({commit}, cart) {
+      return new Promise((resolve, reject) => {
+        commit("setCart", cart)
         resolve()
       })
     },

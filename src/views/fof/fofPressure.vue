@@ -552,9 +552,7 @@ export default {
       axis
         .get(this.url) //axis后面的.get可以省略；
         .then((response) => {
-          console.log(response);
           this.tableData = this.$tools.pandasToJson(response.data);
-          console.log(this.tableData)
           var that=this
           var dict={};
           var minReduce = function (a, b) { return (that.$tools.isNull(b) || b > a) ? a : b }
@@ -569,7 +567,7 @@ export default {
                 aclas={change:0,"类型":class_type,"count":aclas["count"]+1,"悲观收益":[aclas["悲观收益"],row["low"]].reduce(minReduce, Number.MAX_VALUE),"当前额度":aclas["当前额度"]+row["份额"]*row["当前净值"],"预期回撤":aclas["预期回撤"]+row["最大回撤"],"过去3年年均收益":aclas["过去3年年均收益"]+row["过去3年年均收益"]}
                 dict[class_type]=aclas
             }else{
-                dict[class_type]={"类型":class_type,"count":1,"悲观收益":row["low"],"当前额度":row["份额"]*row["当前净值"],"过去3年年均收益":row["过去3年年均收益"],"预期回撤":row["最大回撤"],"change":1}
+                dict[class_type]={"类型":class_type,"count":1,"悲观收益":row["low"],"当前额度":row["份额"]*row["当前净值"],"过去3年年均收益":row["过去3年年均收益"],"预期回撤":row["最大回撤"],"change":0}
             }
             this.all=this.sum
         }

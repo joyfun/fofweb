@@ -211,6 +211,8 @@ export default {
         for(var idx in data){
             var row=data[idx]
             row["profit"]=row.amount*(row.n_sumval-row.s_sumval)
+            row["rate"]=row["n_sumval"]/row["s_sumval"]-1
+
             if(this.subtype){
                 if(row.class_type!=this.subtype)
                 {

@@ -41,6 +41,7 @@
 // import 'echarts/lib/chart/line'
 import axis from "axios";
 import Bus from '@/store/bus.js';
+import {mapGetters} from 'vuex'
 
 var echarts = require("echarts");
 // 引入柱状图
@@ -92,6 +93,8 @@ export default {
     },
   },
   computed: {
+      ...mapGetters(['sysparam','token']),
+
       collen:{get() {
           return this.raw_data["columns"].length
       }},
@@ -147,12 +150,16 @@ export default {
           var cols=this.raw_data["columns"].length
           for (var idx in this.raw_data["columns"]) {
             var cname = this.raw_data["columns"][idx];
-            this.chartData.series.push({
+            var asery={
               data: this.raw_data[cname].concat(),
               type: "line",
               selectedMode: "single",
               name: cname,
-            });
+            }
+            if(this.token=="demo"){
+                asery.name=this.raw_data["mcodes"][idx]
+            }
+            this.chartData.series.push(asery);
           }
           this.initChart();
         }
@@ -257,10 +264,16 @@ export default {
           //option.legend[0].selected[basename+"_超额"] = params.selected[basename];
           selected:{},
           type: "scroll",
+          align :"right",
           orient: "vertical",
           top: "middle",
           right: 0,
         }],
+        grid: {
+            left:"2%",
+        right: '10%',
+        containLabel: true
+    },
         toolbox: {
           left: "left",
           feature: {
@@ -610,7 +623,7 @@ var sdata = [...this.raw_data[cname]];
               data: [],
             }
         if(this.collen<5){
-            if(cname=="华道FOF" && this.cb){
+            if(cname=="华道FOF"  && this.cb){
                 var param={"name":cname,"lrate":maxdrop,"start":this.raw_data.date[mhidx],"end":this.raw_data.date[midx]}
                 clearTimeout(this.tur)
                 console.log("撤销事件"+this.tur)
@@ -640,13 +653,17 @@ var sdata = [...this.raw_data[cname]];
                   coord: [cdate, sdata[cidx]],
                 })
         }
-        this.chartData.series.push({
+        var asery={
           data: sdata,
           type: "line",
           name: cname,
           yAxisIndex:0,
           markPoint: mp,
-        });
+        }
+        if(this.token=="demo"){
+                asery.name=this.raw_data["mcodes"][idx]
+        }
+        this.chartData.series.push(asery);
         // this.axisOption.yAxis.min = min;
       }}
       this.axisOption.dataZoom[0].startValue = oneindex;

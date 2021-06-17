@@ -23,7 +23,7 @@
                 <el-input type="text" v-model="loginForm.username" auto-complete="off" placeholder="请输入登录账号"></el-input>
               </el-form-item>
               <el-form-item>
-                <el-input type="password" v-model="loginForm.password" auto-complete="off"
+                <el-input type="password" v-model="loginForm.password" auto-complete="off" @keyup.enter.native="submitForm"
                           placeholder="请输入登录密码"></el-input>
               </el-form-item>
               <el-form-item>
@@ -115,6 +115,7 @@ export default {
             // }
             if(response.data.status=="success"){
              that.$store.dispatch('setUserMenu',response.data.permissions)
+             that.$store.dispatch('setCart',response.data.cart)
              that.$store.dispatch("setToken", that.loginForm.username).then(() => {
              that.$router.push({path: "/"})
         })}else{

@@ -44,7 +44,9 @@
       width="160">
         <template slot-scope="scope">
             <el-button @click.native.prevent="edituser(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit" ></i></el-tooltip></el-button>
-             <el-button @click.native.prevent="deluser(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="resetPass(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="修改密码" placement="left-start"><i class="el-icon-key"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="deluser(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+
         </template>
     </el-table-column>
   </el-table>
@@ -62,44 +64,7 @@
         </el-pagination> 
       </div>
     </div>
-    <el-dialog
-    width="80%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="dialogVisible"
-  >
- <el-button  size="small" @click="addInfo()">添加</el-button>
-<el-table
-    ref="subTable"
-    :data="subData"
-    tooltip-effect="dark"
-    style="width: 100%;margin-top:20px;"
-    @selection-change="handleSelectionChange"      >
-<!--    @row-click = "Selection"-->
 
-    <el-table-column
-      type="selection"
-      width="55">
-    </el-table-column>
-<!--      测试ID-->
-    <el-table-column
-      prop="code"
-      label="编码"
-      width="120">
-      <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.code }}</a></template>
-    </el-table-column>
-<!--      用例编号-->
-     <el-table-column
-      prop="value"
-      label="值"
-      show-overflow-tooltip>
-      <template slot-scope="scope">{{ scope.row.value }}</template>
-    </el-table-column>
-<!--      测试项目-->
-
-  </el-table>
-      </el-dialog>
       <el-dialog
     width="80%"
     top="50px"
@@ -120,9 +85,7 @@
       <el-form-item label="权限"> 
     <el-checkbox-group v-model="current.permission">
              
-
      <!----> <template  v-for="(row,index)  in allmenu" >
-            {{row["lable"]}}            {{index}}
 
       <el-checkbox :key="index" :label="row['lable']" :name="row['value']"></el-checkbox>
 
@@ -133,6 +96,26 @@
 <el-form-item>
     <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
     <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+  </el-form-item>
+</el-form>
+
+    </el-dialog>
+
+    <el-dialog
+    width="80%"
+    top="50px"
+    @close="saveClose"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="resetVisible"
+  >
+<el-form :model="current" ref="resetPassForm" label-width="120px" class="demo-dynamic">
+    <el-form-item label="密码"> 
+        <el-input placeholder="请输入密码" v-model="current.password" show-password></el-input>
+    </el-form-item>
+<el-form-item>
+    <el-button type="primary" @click="submitPass('resetPassForm')">提交</el-button>
+    <el-button @click="resetForm('resetPassForm')">重置</el-button>
   </el-form-item>
 </el-form>
 
@@ -168,6 +151,7 @@ const cForm=[
           adduser:false,
           cForm:cForm,
           formVisible:false,
+          resetVisible:false,
           parent:0,
           subData: [],
         multipleSelection: [],
@@ -204,7 +188,7 @@ const cForm=[
     }).then(
       response => {
           if(response.data["status"]=="success"){
-
+            this.getList()
           }
 
       },
@@ -214,9 +198,34 @@ const cForm=[
     )
       },
          addInfo(){
+          this.adduser=true
           this.current={permission:[]}
           this.formVisible=true
       },
+      resetPass(row){
+          this.current=row
+          this.resetVisible=true
+      },
+      resetForm(formName) {
+          console.log(formName)
+        this.$refs[formName].resetFields();
+      },
+      edituser(row){
+          console.log(row)
+          this.adduser=false
+          var perms=[]
+          for(var perm of row.permissions.split(",")){
+              for(var aperm of this.allmenu){
+                  if(aperm["value"]==perm){
+                      perms.push(aperm['lable'])
+                      break
+                  }
+              }
+          }
+          this.current={user:row.user,name:row.name,permission:perms}
+          this.formVisible=true
+      }
+      ,
          editClose() {
         this.dialogVisible = false
         this.parent=0
@@ -224,6 +233,26 @@ const cForm=[
         saveClose(){
             this.formVisible=false
             this.getList()
+        },
+        submitPass(formName){
+            if(this.current&&this.current.user){
+                axis({
+      method: 'post',
+      url: "/sys/updatepass", // 请求地址
+      data: {"user":this.current.user,"password":this.current.password}, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then(
+      response => {
+          if(response.data["status"]=="success"){
+            this.resetVisible = false
+          }
+
+      },
+      err => {
+        reject(err)
+      }
+    )
+            }
         },
         submitForm(formName) {
           var permissions=""

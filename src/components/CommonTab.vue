@@ -50,7 +50,7 @@
 </script>
 <style lang="scss" scoped>
 .tags {
-    padding: 20px;
+    padding: 10px 20px 5px 20px;
     .el-tag {
         margin-right: 15px;
     }
