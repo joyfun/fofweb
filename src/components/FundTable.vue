@@ -29,16 +29,20 @@
     </el-option>
   </el-select>
        <el-button type="primary"   size="small" @click="addCart">添加</el-button>
-       <el-button type="primary"   size="small" @click="showCart">显示</el-button>
+      
 
           </div>
+
  </div>
  
-  
+   <div class="block" style="display: flex;justify-content: space-between">
+           <el-button type="primary"   size="small" @click="showCart">对比</el-button>
+  </div>
     <!-- --><el-table
     ref="multipleTable"
     :data="foflist"
     tooltip-effect="dark"
+    :row-key="(row)=>{ return row.code}"
     max-height="480"
     @selection-change="handleSelectionChange"
     style="width: 100%;margin-top:20px;">
@@ -149,7 +153,15 @@ export default {
     }
   },
   methods: {
-    delCart(code){},
+    delCart(row){
+      for (var key in this.foflist) {
+        if (this.foflist[key].code === row.code) {
+         this.foflist.splice(key, 1)
+        }
+  }
+      this.$store.dispatch('setCart',this.foflist)
+      this.updateChart()
+    },
     showCart(rows){
       var codes=""
       this.sel.forEach((row)=>{
@@ -164,23 +176,43 @@ export default {
         // var funds=[]
         for(var code of this.mult){
             console.log(code)
-            var afund=this.foflist.find((item)=>{//遍历list的数据
+            var afund=this.alllist.find((item)=>{//遍历list的数据
                     return item.code === code;//筛选出匹配数据
                 })
+            var old=this.foflist.find((item)=>{//遍历list的数据
+                    return item.code === code;//筛选出匹配数据
+                })
+              console.log(old)
+              if(old){
+                return
+              }
             this.foflist.push({code:afund["code"],name:afund["name"]})
         }
+             this.$store.dispatch('setCart',this.foflist)
+      this.updateChart()
+
         // console.log(funds)
     },
+    updateChart(){
+      this.$axios({
+        url: "/sys/updatecart",
+        data:{"user":this.token,"cart":JSON.stringify(this.foflist)}, //          
+        method: "POST"
+      }).then((response) => {
+            console.log(response.data)
+        });
+    },
     remoteMethod(query){
+      if(this.cart){
       this.foflist=this.cart
-      
-                this.$axios({
+      }
+      this.$axios({
         url: "/fof/foflist",
         method: "GET",
       })
         .then((response) => {
             this.alllist=response.data
-            console.log(this.foflist)
+            console.log("####init####")
 
         })
     },

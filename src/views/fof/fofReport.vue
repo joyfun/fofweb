@@ -48,8 +48,17 @@
         label="类型"
         sortable
         show-overflow-tooltip
+      >  <template slot-scope="scope">{{ scope.row['类型'] }}</template>
+
+      </el-table-column>
+      <el-table-column
+        prop="子类型"
+        width="60"
+        label="子"
+        sortable
+        show-overflow-tooltip
       >
-             <template slot-scope="scope">{{ scope.row['类型'] }}</template>
+             <template slot-scope="scope">{{ scope.row['子类型'] }}</template>
 
       </el-table-column>
       <!--      测试项目-->

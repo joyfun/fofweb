@@ -17,7 +17,7 @@
       :value="item.code">
     </el-option>
   </el-select>
-  <el-select v-model="filter.class_type" @change="getList"  style="width:80px"  clearable placeholder="类型">
+  <el-select v-model="filter.class_type" @change="changeSub"  style="width:80px"  clearable placeholder="类型">
     <el-option
       v-for="item in sysparam.class_type"
       :key="item.value"
@@ -25,6 +25,14 @@
       :value="item.code">
     </el-option>
   </el-select>
+  <el-select v-model="filter.sub_type" @change="getList"  style="width:100px"  clearable placeholder="子">
+    <el-option
+      v-for="item in sub_type"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>  
         <el-button  size="small" @click="downFile()">下载</el-button>
         <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
@@ -70,6 +78,13 @@
       sortable
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.class_type }}</template>
+    </el-table-column>
+       <el-table-column
+      prop="create_time"
+      label="入库"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.create_time|formatDate }}</template>
     </el-table-column>
     <el-table-column
       prop="sub_type"
@@ -391,7 +406,7 @@
       type: Object,
       default:null
     },},
-    computed:{...mapGetters(['sysparam','token','usermenu'])},
+    computed:{...mapGetters(['sysparam','token','usermenu',"allparam"])},
     data() {
       return {
           cForm,
@@ -401,6 +416,7 @@
           origin:{},
           
         multipleSelection: [],
+        sub_type:[],
         current:{},
         cur_code:"",
         dialogVisible: false,
@@ -447,6 +463,20 @@
     }
   },
     methods: {
+                  changeSub(row){
+                var id=-1
+                for (var ap of this.sysparam.class_type)
+                {
+                    if(ap.code==row){
+                        id=ap.id
+                        break;
+                    }
+                    
+                }
+
+                this.sub_type=this.allparam['param_'+id]
+
+            },
           editInfo(row){
         //   this.cur_id=row.id
         //   this.current=JSON.parse(JSON.stringify(row))  
@@ -827,7 +857,8 @@ showResult(number,rate=100){
                 }).then((response) => {
                                 console.log(this.sysparam);
                                 console.log(response);
-                                this.totaltableData = response.data;
+                                this.totaltableData = response.data.sort((a,b)=>{return   b['create_time'].localeCompare(a['create_time'])
+});
                                 if(this.token=='demo'){
                                     for (var row in this.totaltableData){
                                         this.totaltableData[row]["name"]=this.totaltableData[row]["mcode"]
@@ -866,6 +897,16 @@ showResult(number,rate=100){
          })
         
     },
+     filters: {
+   formatDate: function(time) {
+        if(time&&time.length>10)
+        {
+          var date = new Date(time);
+          return time.substring(0,10).replaceAll("-","")
+        }else{
+          return "";
+        }
+      }},
     mounted() {
             window.addEventListener("resize", this.resizeChart);
     },

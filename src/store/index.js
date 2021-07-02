@@ -17,7 +17,9 @@ export default new Vuex.Store({
   },
   state: {
     token: Cookies.get("token"),
-    cart: JSON.parse(decodeURIComponent(Cookies.get("cart"))),
+    ccart: Cookies.get("cart"),
+//    ccart: JSON.parse(decodeURIComponent(Cookies.get("cart"))),
+    cart:[],
     allparam:{},
     usermenu:Cookies.get("umenu"),
     uproduct:Cookies.get("uproduct"),
@@ -63,7 +65,19 @@ export default new Vuex.Store({
     },
     setCart (state, cart) {
       // state.cart = JSON.parse(cart)
-      Cookies.set("cart", encodeURIComponent(cart),  { expires: 365 })
+      var cartstr=""
+      if(typeof(cart)=="string")
+      {
+        cartstr=cart
+        state.cart=JSON.parse(cart)
+
+      }else{
+        state.cart=cart
+        cartstr=JSON.stringify(cart)
+
+      }
+      Cookies.set("ccart", cartstr,  { expires: 365 })
+
     },
     updataUproduct (state, product) {
         state.uproduct = product

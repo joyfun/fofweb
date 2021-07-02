@@ -93,7 +93,7 @@
       show-overflow-tooltip>
         <template slot-scope="scope">
             <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
-            <el-button v-if="'info_edit'.indexOf(usermenu)>-1" @click.native.prevent="delCompany0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delCompany0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
 
         </template>
     </el-table-column>
@@ -123,7 +123,7 @@
     <template v-for="(row,index)  in cForm" >
 
      <el-row  :key="index"   v-show="index%2==0">
-      <el-col :span="12">              
+      <el-col :span="12">          
       <el-form-item v-if="index<=cForm.length-1"  :prop="row.dataIndex"      :label=" row.tilte"><el-input :type="row.type" v-model="curCompany[row.dataIndex]"></el-input>
       </el-form-item>
       </el-col>
@@ -134,8 +134,8 @@
     </el-row >
     </template>
 <el-form-item>
-    <el-button v-if="'info_edit'.indexOf(usermenu)>-1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
-    <el-button v-if="'info_edit'.indexOf(usermenu)>-1" @click="resetForm('dynamicValidateForm')">重置</el-button>
+    <el-button v-if="usermenu.indexOf('info-edit')>-1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+    <el-button v-if="usermenu.indexOf('info-edit')>-1" @click="resetForm('dynamicValidateForm')">重置</el-button>
   </el-form-item>
 </el-form>
     </el-dialog>

@@ -30,7 +30,7 @@
       :value="item.code">
     </el-option>
   </el-select>
-   <el-select v-show="filter.right" v-model="filter.right" @change="getList" style="width:100px"   placeholder="阶段二">
+   <el-select  v-model="filter.right" @change="getList" style="width:100px" clearable  placeholder="阶段二">
     <el-option
       v-for="item in sysparam.stage"
       :key="item.code"

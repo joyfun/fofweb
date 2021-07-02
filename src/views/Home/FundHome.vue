@@ -117,6 +117,8 @@
 <script>
 import Echart from "../../components/Echart.vue";
 import FundEchart from "../../components/FundEchart.vue";
+import Bus from '@/store/bus.js';
+
 import axis from "axios";
 import {mapGetters} from 'vuex'
 
@@ -229,6 +231,12 @@ export default {
           this.dialogVisible=true
           this.cur_code=row.code
         //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
+      },
+            showChartByCodes(codes){
+          this.cur_code=""
+          this.current={}
+          this.dialogVisible=true
+          this.cur_code=codes
       },
       formatterNum(row, column, value) {
       if (!value) return "0.00";
@@ -355,6 +363,10 @@ this.pieData.action["click"]=(params)=>{
 
       })
     this.code = "FOF,000300.SH,000905.SH,000852.SH";
+      Bus.$on('cartchart',(arg)=> {
+          console.log("========cartchart========")
+          this.showChartByCodes(arg)
+         })
   },
 };
 </script>

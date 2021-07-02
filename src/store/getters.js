@@ -1,3 +1,4 @@
+import Cookies from "js-cookie"
 const getters = {
   sidebar: state => state.app.sidebar,
   size: state => state.app.size,
@@ -11,7 +12,13 @@ const getters = {
   permission_routes: state => state.permission.routes,
   errorLogs: state => state.errorLog.logs,
   token: state => state.token,
-  cart: state =>state.cart,
+  cart: state =>{if(state.cart&&state.cart.length>0){
+    return state.cart
+  }else{
+    return JSON.parse(decodeURIComponent(Cookies.get("ccart")))
+  }
+
+  },
   info: state => state.role.info,
   logoShow: state => state.layout.logoShow,
   isCollapse: state => state.layout.isCollapse,
@@ -23,7 +30,7 @@ const getters = {
   rightNav: state => state.layout.rightNav,
   sysparam: state => state.param,
   allparam: state => state.allparam,
-  class_order: state =>["现金","指增","超额","混合","CTA","中性","套利","期权"],
+  class_order: state =>["现金","指增","超额","混合","CTA","中性","套利","期权","FOF"],
   usermenu: state=>state.usermenu,
   allmenu: state=>state.allmenu,
 
