@@ -62,12 +62,12 @@ export default {
                 this.getTable(this.code)
               }
     },
-    isVisible: {
+    visable: {
       handler: function(val) {
           console.log(val)
           console.log(this)
           if(val){
-        this.getChart(this.code)
+        this.getTable(this.code)
           }
       }
     },

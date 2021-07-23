@@ -250,6 +250,12 @@ const routes = [
       }
       ,
       {
+        path: '/crawl',
+        name: 'fof-crawl',
+        component:() => import('@/views/fof/crawlDash.vue')
+      }
+      ,
+      {
         path: '/usermanage',
         name: 'user-manage',
         component:() => import('@/views/sys/userManage.vue')
@@ -260,11 +266,11 @@ const routes = [
         name: 'test-execute',
         component:() => import('@/views/testexecute/testexecute.vue')
       },
-      {
-        path: '/testresult',
-        name: 'test-result',
-        component:() => import('@/views/testresult/testresult.vue')
-      },
+      // {
+      //   path: '/testresult',
+      //   name: 'test-result',
+      //   component:() => import('@/views/testresult/testresult.vue')
+      // },
       {
         path: '/page1',
         name: 'page1',

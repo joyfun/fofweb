@@ -54,7 +54,7 @@ export default {
         }
         
 
-//         ["fund-comp","fund-info","fund-info1","fund-info2","fund-info3","fund-info4","fund-info5","fund-info6","fund-compare","fund-info","fund-info4","fund-calc","fund-comb","fund-pressure","fund-compare","fund-report","fund-jcomp","fund-reason","fund-rank1","fund-rank2","fund-info","sys-param","sys-cfg","fund-concat","fund-alarm","fof-action","fund-return","user-manage"
+//         ["fund-comp","fund-info","fund-info1","fund-info2","fund-info3","fund-info4","fund-info5","fund-info6","fund-compare","fund-info","fund-info4","fund-calc","fund-comb","fund-pressure","fund-compare","fund-report","fund-jcomp","fund-reason","fund-rank1","fund-rank2","fund-info","sys-param","sys-cfg","fund-concat","fund-alarm","fof-action","fof-crawl","fund-return","user-manage"
 // ]
         // for(var key in this.allMenu){
         //     this.allMenu[key]=this.allMenu[key]
@@ -91,6 +91,11 @@ export default {
                             path: '/action',
                             label: '下载报告',
                             name:'fof-action',
+                            icon:'setting'
+                        },{
+                            path: '/action',
+                            label: '三方数据',
+                            name:'fof-crawl',
                             icon:'setting'
                         } ],
                 "company":[{

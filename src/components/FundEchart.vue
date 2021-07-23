@@ -1,5 +1,5 @@
 <template>
-<div>
+<div ref="echartdiv">
 <div class="block">
     <span class="demonstration">起始日期</span>
     <el-date-picker
@@ -23,6 +23,8 @@
       placeholder="截止日期"
       :picker-options="pickerOptions">
     </el-date-picker>
+    <el-button  @click="downPDF('echartdiv')">保存图表</el-button>
+
   </div>
   <div style="height: 420px" ref="echart">
     <!-- <el-button-group>
@@ -424,6 +426,9 @@ export default {
     //   close() {
     //   this.$emit('close')
     // },
+        downPDF(exportRef){
+          this.$tools.downloadPdf(this.$refs[exportRef],"业绩走势.pdf")
+        },
     changeDate(vday){
          var arr = this.echart.getModel().option.xAxis[0].data;
           var sidx = this.getstart(vday);

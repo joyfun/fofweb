@@ -40,6 +40,8 @@
           <el-table-column prop="short_name" label="名称">      <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
 </el-table-column>
           <!-- <el-table-column hide="true" prop="amount" label="份额"> </el-table-column> -->
+          <el-table-column align="right"  :formatter	="formatterNum" prop="csumval" label="市值"> </el-table-column>
+
           <el-table-column align="right"  :formatter	="formatterNum" prop="netval" label="净值"> </el-table-column>
           <el-table-column  align="right"      sortable :formatter 	="formatterNum" prop="rate" label="收益率"> </el-table-column>
 
@@ -168,6 +170,8 @@ export default {
       if (!value) return "0.00";
       if(row.class_type=='指增' && column.label=='收益率')
       return this.$tools.formatMoney(value,3)+'\n(α:'+this.$tools.formatMoney(value-row['irate'],3)+'  β:'+this.$tools.formatMoney(row['irate'],3)+')'
+      if(column.label=='市值')
+      return this.$tools.formatMoney(value/10000,0)+'万'
       return this.$tools.formatMoney(value,3)
     },
     changeDate(num){

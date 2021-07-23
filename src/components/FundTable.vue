@@ -11,6 +11,14 @@
   <el-button type="primary">90天</el-button>
   <el-button type="primary">本年</el-button>
 </el-button-group> -->
+  <el-select v-model="filter.class_type" @change="changeSub"  style="width:80px"  clearable placeholder="类型">
+    <el-option
+      v-for="item in sysparam.class_type"
+      :key="item.value"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
 <el-select
     v-model="mult"
     style="width:180px;"   
@@ -112,7 +120,7 @@ export default {
         ...mapState({
             current: state => state.tab.currentMenu
         }),
-       ...mapGetters(['uproduct','token','cart','uproductname']),
+       ...mapGetters(['uproduct','token','cart','uproductname',"allparam","sysparam"])
 
     },
   watch: {
@@ -144,8 +152,10 @@ export default {
   data() {
     return {
       foflist:[],
+      filter:{},
       zz500:5,
       tlist:[{"name":"名称","code":"code1"},{"name":"名称2","code":"code2"}],
+      rawlist:[],
       mult:[],
       sel:[],
       alllist:[],
@@ -202,6 +212,20 @@ export default {
             console.log(response.data)
         });
     },
+      changeSub(row){
+              console.log(row)
+              if(row){
+              var a=[]
+              for (var ar of this.rawlist){
+                if(ar.class_type==row)
+                a.push(ar)
+              }
+              if(a.length>0)
+              this.alllist=a
+              }else{
+                this.alllist=this.rawlist
+              }
+            },
     remoteMethod(query){
       if(this.cart){
       this.foflist=this.cart
@@ -211,7 +235,8 @@ export default {
         method: "GET",
       })
         .then((response) => {
-            this.alllist=response.data
+            this.rawlist=response.data
+            this.changeSub(this.filter.class_type)
             console.log("####init####")
 
         })
