@@ -256,6 +256,12 @@ const routes = [
       }
       ,
       {
+        path: '/funddash',
+        name: 'fof-dash',
+        component:() => import('@/views/fof/fundDash.vue')
+      }
+      ,
+      {
         path: '/usermanage',
         name: 'user-manage',
         component:() => import('@/views/sys/userManage.vue')

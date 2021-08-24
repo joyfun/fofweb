@@ -36,7 +36,6 @@
       :value="item.code">
     </el-option>
   </el-select>
-       <el-button type="primary"   size="small" @click="addCart">添加</el-button>
       
 
           </div>
@@ -44,6 +43,8 @@
  </div>
  
    <div class="block" style="display: flex;justify-content: space-between">
+            <el-button type="primary"   size="small" @click="addCart">添加</el-button>
+
            <el-button type="primary"   size="small" @click="showCart">对比</el-button>
   </div>
     <!-- --><el-table

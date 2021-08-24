@@ -45,33 +45,33 @@
         show-overflow-tooltip
       >
         <template slot-scope="scope"
-          ><a href="javascript:;" @click="showHis(scope.row)">{{
+          ><a href="javascript:;" @click="showHis(scope.row)"><span :style="'text-align:right;color:'+(scope.row['amount']>0?'red':'black') " >{{
             scope.row["name"]
-          }}</a></template
+          }}</span></a></template
         >
       </el-table-column>
 
       <el-table-column
-        prop="lastval_date"
+        prop="latest_date"
         width="100"
         label="最后更新日期"
         sortable
         show-overflow-tooltip
       >
-             <template slot-scope="scope">{{ scope.row['lastval_date'] }}</template>
+             <template slot-scope="scope">{{ scope.row['latest_date'] }}</template>
 
       </el-table-column>
             <el-table-column
-        prop="cnt"
+        prop="latest_val"
         width="100"
-        label="未确认"
+        label="最新净值"
         sortable
         show-overflow-tooltip
       >
-             <template slot-scope="scope">{{ scope.row['cnt'] }}</template>
+             <template slot-scope="scope">{{ scope.row['latest_val'] }}</template>
 
       </el-table-column>
-                  <el-table-column
+                  <!-- <el-table-column
         prop="ncnt"
         width="100"
         label="新数据"
@@ -80,7 +80,7 @@
       >
              <template slot-scope="scope">{{ scope.row['ncnt'] }}</template>
 
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         prop="code"
         width="80"
@@ -365,7 +365,7 @@ export default {
     //
     getList() {
       axis
-        .get('/fof/funddash?type=GeShang,SiMuWang') //axis后面的.get可以省略；
+        .get('/fof/funddash') //axis后面的.get可以省略；
         .then((response) => {
              this.tableData=response.data
           //this.tableData = this.totaltableData;

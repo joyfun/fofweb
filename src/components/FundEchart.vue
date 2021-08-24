@@ -650,12 +650,21 @@ var sdata = [...this.raw_data[cname]];
         }
 
         var cdate = this.raw_data.combine_date[idx];
-        if (cdate) {
-          var cidx = this.raw_data.date.indexOf(cdate);
-          if (cidx > 0)
+
+        var bdate = this.raw_data.buy_date[idx];
+         var cidx=0
+        if (bdate) {
+           cidx = this.raw_data.date.indexOf(bdate);
+           mp.data.push({
+                  name: "购",
+                  coord: [bdate, sdata[cidx]],
+                })
+        }else if (cdate) {
+          var didx = this.raw_data.date.indexOf(cdate);
+          if (didx > 0 && didx !=cidx)
            mp.data.push({
                   name: "拼",
-                  coord: [cdate, sdata[cidx]],
+                  coord: [cdate, sdata[didx]],
                 })
         }
         var asery={

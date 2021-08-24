@@ -39,6 +39,8 @@
 
           <el-table-column prop="short_name" label="名称">      <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
 </el-table-column>
+          <el-table-column prop="s_date" label="购买日期"> </el-table-column>
+
           <!-- <el-table-column hide="true" prop="amount" label="份额"> </el-table-column> -->
           <el-table-column align="right"  :formatter	="formatterNum" prop="csumval" label="市值"> </el-table-column>
 
