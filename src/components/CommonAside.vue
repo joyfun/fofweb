@@ -99,7 +99,7 @@ export default {
                             icon:'setting'
                         },{
                             path: '/funddash',
-                            label: '三方数据',
+                            label: '数据时效',
                             name:'fof-dash',
                             icon:'setting'
                         } ],

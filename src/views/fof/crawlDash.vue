@@ -365,7 +365,7 @@ export default {
     //
     getList() {
       axis
-        .get('/fof/funddash?type=GeShang,SiMuWang') //axis后面的.get可以省略；
+        .get('/fof/crawl?type=GeShang,SiMuWang') //axis后面的.get可以省略；
         .then((response) => {
              this.tableData=response.data
           //this.tableData = this.totaltableData;
