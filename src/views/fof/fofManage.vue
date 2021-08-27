@@ -38,7 +38,40 @@
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
         </div>
       </div>
-       
+   <el-collapse  @change="handlecollapse">
+  <el-collapse-item title="高级搜索" name="1">
+    <div>
+      <el-row>
+        <el-col :span="4">年化收益<el-input @input="forceUpdate" v-model="filter['yavg']" clearable placeholder="年化收益" style="width:80px"></el-input></el-col>
+        <el-col :span="6">近三年平均收益<el-input @input="forceUpdate" v-model="filter['y3avg']" clearable placeholder="近3年均收益" style="width:80px"></el-input></el-col>
+        <!-- <el-col :span="4">波动率</el-col>
+        <el-col :span="4">夏普</el-col>
+        <el-col :span="4">卡玛</el-col>
+        <el-col :span="4">最大回撤</el-col> -->
+      </el-row>
+      <el-row>
+        <el-col :span="4">年份</el-col>
+        <el-col :span="4">收益</el-col>
+        <el-col :span="4">波动率</el-col>
+        <el-col :span="4">夏普</el-col>
+        <el-col :span="4">卡玛</el-col>
+        <el-col :span="4">最大回撤</el-col>
+      </el-row>
+        <el-row  :key="year" v-for=" year in  ['2021','2020','2019','2018']"  >
+  <!-- <el-form-item label="活动名称"> -->
+    <el-col :span="1">{{year}}</el-col>
+    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_y'+year]" clearable :placeholder="year+'收益'" style="width:180px"></el-input></el-col>
+    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_vola'+year]" clearable :placeholder="year+'波动率'" style="width:180px"></el-input></el-col>
+    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_sharp'+year]" clearable :placeholder="year+'夏普'" style="width:180px"></el-input></el-col>
+    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_calmar'+year]" clearable :placeholder="year+'卡玛'" style="width:180px"></el-input></el-col>
+    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_dd'+year]" clearable :placeholder="year+'最大回撤'" style="width:180px"></el-input></el-col>
+  <!-- </el-form-item> -->
+            <!-- <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input> -->
+             </el-row>
+
+    </div>
+  </el-collapse-item>
+   </el-collapse>
       <el-table
     ref="multipleTable"
     :data="tableData"
@@ -412,7 +445,7 @@
       return {
           cForm,
           selcode:"",
-          filter:{},
+          filter:{year:"2022"},
           temp:-1,
           origin:{},
           pdf: null,
@@ -572,6 +605,9 @@
         },
         downPDF(exportRef){
           this.$tools.downloadPdf(this.$refs[exportRef],"业绩对标.pdf")
+        },
+        forceUpdate(){
+          this.$forceUpdate()
         },
       //   downloadPdf (exportdiv) {
       //   this.pdf = this.$refs[exportdiv]
@@ -840,6 +876,12 @@ showResult(number,rate=100){
     // }
 
       },
+       handlecollapse(val) {
+        // if(val.length>1){
+          filter.extra=val.length
+        // }
+        // console.log(val);
+      },
       resizeChart(){
                 console.log(this.$refs['tableContainer'].clientHeight)
                 this.tmaxh=this.$refs['tableContainer'].clientHeight-120
@@ -897,6 +939,8 @@ showResult(number,rate=100){
       },
       //
      getList(param){
+          // console.log(this.filter)
+          // return
              var $this=this
              if(param && typeof(param)=='object' && "click"!=param.type){
                  this.filter=param
