@@ -59,8 +59,17 @@
         show-overflow-tooltip
       >
              <template slot-scope="scope">{{ scope.row['子类型'] }}</template>
-
       </el-table-column>
+
+      <!-- <el-table-column
+        prop="份额"
+        width="60"
+        label="额"
+        sortable
+        show-overflow-tooltip
+      >
+             <template slot-scope="scope">{{ scope.row['份额'] }}</template>
+      </el-table-column> -->
       <!--      测试项目-->
       <!--      测试用例是否关联-->
       <!--      测试输入-->
