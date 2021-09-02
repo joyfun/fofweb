@@ -878,7 +878,7 @@ showResult(number,rate=100){
       },
        handlecollapse(val) {
         // if(val.length>1){
-          filter.extra=val.length
+          this.filter.extra=val.length
         // }
         // console.log(val);
       },
