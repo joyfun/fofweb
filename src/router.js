@@ -167,6 +167,14 @@ const routes = [
         },
       },
       {
+        path: '/fundextra',
+        name: 'fund-extra',
+        component:() => import('@/views/fof/fofExtra.vue'),
+        props:{
+            url:"/fof/fofextra"
+        },
+      },
+      {
         path: '/fundcomb',
         name: 'fund-comb',
         component:() => import('@/views/fof/fofCombine.vue'),

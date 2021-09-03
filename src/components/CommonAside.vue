@@ -133,7 +133,7 @@ export default {
                             label: '指数增强',
                             name:'fund-info2',
                             icon:'setting'
-                        },, {
+                        }, {
                             path: '/fundinfo3',
                             label: '套利',
                             name:'fund-info3',
@@ -168,7 +168,14 @@ export default {
                                 right:'预选'
                             },
                             icon:'setting'
-                        },{
+                        },
+                        {
+                            path: '/fundextra',
+                            label: '高级查询',
+                            name:'fund-extra',
+                            icon:'setting'
+                        },
+                        {
                             path: '/fundcompare3',
                             label: '尽调对比',
                             name:'fund-compare3',
