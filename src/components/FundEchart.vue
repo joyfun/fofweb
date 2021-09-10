@@ -613,6 +613,7 @@ var sdata = [...this.raw_data[cname]];
           this.chartData.series.push({
           data: result,
           type: "line",
+          connectNulls:true,
         //   areaStyle:{},
           name: cname+'_超额',
         //   smooth: true,
@@ -676,6 +677,7 @@ var sdata = [...this.raw_data[cname]];
           data: sdata,
           type: "line",
           name: cname,
+          connectNulls: true,
           yAxisIndex:0,
           markPoint: mp,
         }
