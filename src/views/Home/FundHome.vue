@@ -150,7 +150,7 @@ export default {
         data: []},
           series:{     name:"资金占比",       type: 'pie',
                 //   radius: ['50%', '70%'],
-            avoidLabelOverlap: false,
+            avoidLabelOverlap: true,
 
             label: {
                 formatter:(params) => {  //格式化数据的函数
@@ -169,9 +169,9 @@ export default {
         series: [{
           name: "资金占比",
           type: "pie",
-        //   radius: ["0%", "60%"],
-          avoidLabelOverlap: false,
+          avoidLabelOverlap: true ,
 
+        //   radius: ["0%", "60%"],
           label: {
             formatter:(params) => {  //格式化数据的函数
             return params.name+":\n"+(params.value/10000).toFixed(1)+"万 "+params.percent+"%" 

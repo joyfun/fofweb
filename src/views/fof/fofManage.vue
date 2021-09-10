@@ -518,8 +518,7 @@
           this.formVisible=true
       },
       submitForm(formName) {
-          if(this.current.type){
-
+          if(this.current.type && this.current.class_type){
           
           axis({
       method: 'post',
@@ -540,7 +539,7 @@
     )}else{
         this.$message({
             showClose: true,
-            message: "来源为必填项",
+            message: "类型和来源为必填项",
             type: "error"
           })
     }

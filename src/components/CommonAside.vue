@@ -154,6 +154,11 @@ export default {
                             label: '混合',
                             name:'fund-info6',
                             icon:'setting'
+                        },{
+                            path: '/fundextra',
+                            label: '高级查询',
+                            name:'fund-extra',
+                            icon:'setting'
                         },
                          {
                             path: '/fundcompare1',
@@ -167,12 +172,6 @@ export default {
                                 left:'已投',
                                 right:'预选'
                             },
-                            icon:'setting'
-                        },
-                        {
-                            path: '/fundextra',
-                            label: '高级查询',
-                            name:'fund-extra',
                             icon:'setting'
                         },
                         {

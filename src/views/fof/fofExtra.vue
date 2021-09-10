@@ -301,6 +301,7 @@ export default {
         ],
       },
       input: "",
+      filter:{},
       tableData: [],
       totaltableData: [],
       currentPage: 1,
@@ -328,6 +329,12 @@ export default {
     }
   },
   methods: {
+    forceUpdate(){
+          this.$forceUpdate()
+        },
+    handlecollapse(val) {
+          this.filter.extra=val.length
+      },    
       resizeChart(){
                 this.tmaxh=this.$refs.tableContainer.clientHeight-120
 

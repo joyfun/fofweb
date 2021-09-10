@@ -544,7 +544,12 @@ var sdata = [...this.raw_data[cname]];
 
 
         for (var i = 0; i < this.raw_data[cname].length; i++) {
+          if(this.raw_data[cname][i]==null){
+            sdata[i]=null
+            continue
+          }
           sdata[i] = (this.raw_data[cname][i] / oneval).toFixed(4);
+
           min = sdata[i] > min ? min : sdata[i];
         }
 
