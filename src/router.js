@@ -158,6 +158,12 @@ const routes = [
         name: 'fund-report',
         component:() => import('@/views/fof/fofReport.vue')
       },
+      ,
+      {
+        path: '/fundanalysis',
+        name: 'fund-analysis',
+        component:() => import('@/views/fof/fofAnalysis.vue')
+      },
       {
         path: '/fundjcomp',
         name: 'fund-jcomp',

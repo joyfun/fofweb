@@ -519,6 +519,7 @@
       },
       submitForm(formName) {
           if(this.current.type && this.current.class_type){
+            
           
           axis({
       method: 'post',
@@ -995,7 +996,12 @@ showResult(number,rate=100){
         console.log(this.$moment().date(-7))
          Bus.$on('cartchart',(arg)=> {
           console.log("========cartchart========")
-          this.showChartByCodes(arg)
+          var selcode=""
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+              selcode+=this.multipleSelection[i].code+",";
+        }
+        this.showcomapre(selcode+arg)
+          // this.showChartByCodes(arg)
          })
         
     },

@@ -44,6 +44,7 @@ export default new Vuex.Store({
         {lable:"虚拟配置",value:"fund-comb"},
         {lable:"压力测试",value:"fund-pressure"},
         {lable:"业绩对标",value:"fund-report"},
+        {lable:"基金分析",value:"fund-analysis"},
         {lable:"对标差",value:"fund-jcomp"},
         {lable:"高级筛选",value:"fund-extra"},
         {lable:"归因",value:"fund-reason"},
