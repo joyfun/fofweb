@@ -342,6 +342,15 @@ export default {
               //     this.rawData()
               // }
             },
+            mycombine: {
+              show: true,
+              title: "合并",
+              icon:
+                "path://M958.860775 371.564637l-163.624795 93.499883-29.705692-17.04425V311.666275a36.523392 36.523392 0 0 0-18.018206-31.166627L633.072121 213.783586v-30.679649l163.137816-93.986861 163.137816 93.986861z m-243.489278 48.697856l-82.299376-48.697856v-97.395711l80.83844 48.697856z m0 125.640467l-25.809863 14.609357-150.963352-87.65614a36.523392 36.523392 0 0 0-36.036413 0l-149.502417 85.708225-25.809863-14.609356v-31.166628l146.093566-83.273333a36.523392 36.523392 0 0 0 18.018207-31.166627V227.418985l29.705692-17.044249 29.705692 17.044249v170.929473a36.523392 36.523392 0 0 0 18.018206 31.166627l146.093567 83.273333z m-277.577776 61.846276l84.734268-48.697855 84.734269 48.697855-84.734269 48.697856z m247.872084 45.289006v188.460701l-163.137816 93.986861-165.08573-95.934775v-188.460701l25.809864-14.609357 119.309746 68.663976a36.523392 36.523392 0 0 0 36.036413 0l119.309746-68.663976zM408.575008 274.655905v97.395711l-80.838441 48.697855v-97.395711zM243.489277 465.06452L82.299376 371.564637V183.103937L243.489277 89.117076l165.085731 93.986861v31.166627L292.187133 280.499648a36.523392 36.523392 0 0 0-18.018207 31.166627v136.353995z m779.165688-340.884989L813.254187 4.869786a36.523392 36.523392 0 0 0-34.088499 0l-209.400779 120.283703a36.036413 36.036413 0 0 0-18.018206 31.166627v10.22655l-11.687486-6.8177a36.523392 36.523392 0 0 0-36.036413 0l-11.687485 6.8177v-10.22655a36.523392 36.523392 0 0 0-18.018207-31.166627L263.455398 4.869786a36.523392 36.523392 0 0 0-36.036413 0L18.018207 125.153489a36.036413 36.036413 0 0 0-18.018207 31.166627v243.489278a36.036413 36.036413 0 0 0 18.018207 31.166627l209.400778 120.283703a36.523392 36.523392 0 0 0 36.036413 0l11.687486-6.8177v10.22655A36.523392 36.523392 0 0 0 292.187133 584.374266l7.304678 4.382807-7.304678 4.382807a36.523392 36.523392 0 0 0-18.018207 31.166627v243.489278a36.523392 36.523392 0 0 0 18.018207 31.166627l209.400779 120.283703a36.523392 36.523392 0 0 0 36.036413 0l209.400778-120.283703a36.523392 36.523392 0 0 0 18.018207-31.166627v-243.489278a36.523392 36.523392 0 0 0-18.018207-31.166627l-7.304678-4.382807 7.304678-4.382807a36.523392 36.523392 0 0 0 18.018207-31.166628v-10.226549l11.687485 6.817699a36.523392 36.523392 0 0 0 36.036413 0L1022.654965 429.515085a36.523392 36.523392 0 0 0 18.505185-31.166627v-243.489278a36.036413 36.036413 0 0 0-18.505185-29.705691z",
+              // onclick: function (){
+              //     this.rawData()
+              // }
+            },
             magicType: {
               type: ["line", "bar"],
             },
@@ -794,6 +803,74 @@ var sdata = [...this.raw_data[cname]];
           var datasize = $this.echart.getModel().option.xAxis[0].data.length;
           $this.divideBy(sidx, { start: (sidx * 100) / datasize, end: 100 });
           $this.refreshData({ startValue: sidx, end: 100 });
+        };
+        this.axisOption.toolbox.feature.mycombine.onclick = () => {
+          console.log($this.echart.getModel().option)
+          var validx=[]
+          var seled=$this.echart.getModel().option.legend[0].selected
+          console.log(seled)
+          for (var sr of $this.echart.getModel().option.series){
+            if(sr.name=="虚拟配置"){
+              continue
+            }
+              if ( seled[sr.name]==false){
+              }else{
+                validx.push(sr.name)
+              }
+          }
+          var cnt=validx.length
+          var dlen=this.raw_data["date"].length
+          if(cnt<1){
+          return
+          }
+          var indx=0 
+          for(var vn of validx){
+               for(var i=indx;i<dlen;i++){
+                if(this.raw_data[vn][i]){
+                  indx=i>indx?i:indx
+                  break
+                }
+              }
+            }
+          if(indx==dlen){
+            return
+          }
+          this.raw_data['虚拟配置']=Array.apply(null, Array(dlen)).map(function (x, i) { return null; })
+          var cols=['虚拟配置']
+          this.raw_data["columns"].forEach(element => {
+            if(element!='虚拟配置'){
+              cols.push(element)
+            }
+          });
+          this.raw_data["columns"]=cols
+          var wdict={}
+          var lval={}
+          for(var vn of validx){
+            var  cval=-1
+             for(var j=indx;j<dlen;j++){
+                 cval=this.raw_data[vn][j]
+                 if(cval)
+                 break
+             }
+            wdict[vn]=1/cnt/cval
+          }
+          console.log(wdict)
+          for(var j=indx;j<dlen;j++){
+            var sval=0
+            for(var vn of validx){
+                var  cval=this.raw_data[vn][j]
+                if(cval){
+                  lval[vn]=cval
+                }
+                else{
+                  cval=lval[vn]
+                }
+                sval+=cval*wdict[vn]
+            }
+            this.raw_data['虚拟配置'][j]=sval
+          }
+          this.changeDate(this.raw_data["date"][indx])
+          console.log(this.raw_data)
         };
         this.echart.setOption(this.options);
         var tur=-1
