@@ -697,7 +697,7 @@ var sdata = [...this.raw_data[cname]];
         if(this.token=="demo"){
                 asery.name=this.raw_data["mcodes"][idx]
         }
-        if(cname=='虚拟配置'){
+        if(cname=='虚拟组合'){
             asery.itemStyle={
                 normal:{
                     lineStyle:{
@@ -824,7 +824,7 @@ var sdata = [...this.raw_data[cname]];
           var seled=$this.echart.getModel().option.legend[0].selected
           console.log(seled)
           for (var sr of $this.echart.getModel().option.series){
-            if(sr.name=="虚拟配置"){
+            if(sr.name=="虚拟组合"){
               continue
             }
               if ( seled[sr.name]==false){
@@ -894,10 +894,10 @@ var sdata = [...this.raw_data[cname]];
           if(indx==dlen){
             return
           }
-          this.raw_data['虚拟配置']=Array.apply(null, Array(dlen)).map(function (x, i) { return null; })
-          var cols=['虚拟配置']
+          this.raw_data['虚拟组合']=Array.apply(null, Array(dlen)).map(function (x, i) { return null; })
+          var cols=['虚拟组合']
           this.raw_data["columns"].forEach(element => {
-            if(element!='虚拟配置'){
+            if(element!='虚拟组合'){
               cols.push(element)
             }
           });
@@ -935,7 +935,7 @@ var sdata = [...this.raw_data[cname]];
                 }
                 sval+=cval*wdict[vn]
             }
-            this.raw_data['虚拟配置'][j]=sval
+            this.raw_data['虚拟组合'][j]=sval
           }
           this.changeDate(this.raw_data["date"][indx])
     },

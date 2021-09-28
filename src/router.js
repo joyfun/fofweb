@@ -27,7 +27,7 @@ const routes = [
       {
         path: '/',
         name: 'home',
-        component:() => import('@/views/Home/FundHome.vue')
+        component:() => import('@/views/fof/fofSimple.vue')
       },
       {
         path: '/testcase',

@@ -33,13 +33,20 @@
       </div>
       <el-card shadow="hover">
         <el-form ref="form" label-width="160px">
-                        <el-col :span="11">
-                                              <el-button type="primary"   size="small" @click="doCalc">计算</el-button>
-
-                    <el-form-item :key="row.code" v-for="row in sellist "  :prop="row.code"      :label=" row.name"><el-input-number  v-model="row.cost"></el-input-number>
-            
-                </el-form-item>
-                        </el-col>
+                    <el-button type="primary"   size="small" @click="doCalc">计算</el-button>
+           <template v-for="(row,index)  in sellist" >
+                    <el-row  :key="index"   v-show="index%2==0">
+                      <el-col :span="12">        
+                    <el-form-item   v-if="index<=sellist.length-1" :prop="row.code"      :label=" row.name"><el-input-number  v-model="row.cost"></el-input-number> 
+                    <el-button  @click.native.prevent="delItem(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+                    </el-form-item>
+                     </el-col>
+                  <el-col :span="12"> 
+                    <el-form-item   v-if="index+1<=sellist.length-1" :prop="row.code"      :label=" sellist[index+1].name"><el-input-number  v-model="sellist[index+1].cost"></el-input-number> 
+                    <el-button  @click.native.prevent="delItem(sellist[index+1])" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+                    </el-form-item>
+      </el-col>
+      </el-row></template>
         </el-form>
 
       </el-card>
@@ -141,13 +148,20 @@ this.$axios( {
                     return item.code === code;//筛选出匹配数据
                 })
               if(old){
-                return
+                continue
               }
             this.sellist.push({code:afund["code"],name:afund["name"]})
         }
             // this.$store.dispatch('setCart',this.foflist)
 
         // console.log(funds)
+    },
+        delItem(row){
+      for (var key in this.sellist) {
+        if (this.sellist[key].code === row.code) {
+         this.sellist.splice(key, 1)
+        }
+  }
     },
       changeSub(row){
               console.log(row)
