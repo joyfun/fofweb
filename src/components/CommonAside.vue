@@ -213,6 +213,12 @@ export default {
                             name:'fund-calc',
                             icon:'setting'
                         },
+                         {
+                            path: '/fundvirtual',
+                            label: '组合模拟',
+                            name:'fund-virtual',
+                            icon:'setting'
+                        },
                         {
                             path: '/fundcomb',
                             label: '虚拟配置',

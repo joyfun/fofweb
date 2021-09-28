@@ -61,6 +61,10 @@ export default {
       type: String,
       default: "",
     },
+    wts: {
+      type: String,
+      default: "",
+    },
     cb: {
       type: String,
       default: "",
@@ -124,7 +128,6 @@ export default {
     combine: {
       handler: function (val) {
         if (val) {
-          console.log(val);
           for (var key in val) {
             if (this.raw_data.columns.indexOf(key) < 0)
               this.raw_data.columns.push(key);
@@ -170,7 +173,7 @@ export default {
     filter: {
       handler: function (val) {
         console.log("watch filter by");
-        this.getChart();
+        this.getChart(this.code);
       },
     },
     compares: {
@@ -521,11 +524,12 @@ export default {
         }
       } else if (code && code.length > 2) {
         charturl = "/fof/hisdata";
-        data = { code: code };
+        data = { code: code ,w:this.wts};
       }
       axis
         .get(charturl, { params: data }) //axis后面的.get可以省略；
         .then((response) => {
+            console.log(response)
           $this.raw_data=response.data
           $this.chartData.xData = [];
           $this.chartData.series = [];
@@ -693,6 +697,16 @@ var sdata = [...this.raw_data[cname]];
         if(this.token=="demo"){
                 asery.name=this.raw_data["mcodes"][idx]
         }
+        if(cname=='虚拟配置'){
+            asery.itemStyle={
+                normal:{
+                    lineStyle:{
+                        width:2,
+                        type:'dotted'  //'dotted'虚线 'solid'实线
+                    }
+                }
+            }
+        }
         this.chartData.series.push(asery);
         // this.axisOption.yAxis.min = min;
       }}
@@ -818,61 +832,10 @@ var sdata = [...this.raw_data[cname]];
                 validx.push(sr.name)
               }
           }
-          var cnt=validx.length
-          var dlen=this.raw_data["date"].length
-          if(cnt<1){
-          return
-          }
-          var indx=0 
-          for(var vn of validx){
-               for(var i=indx;i<dlen;i++){
-                if(this.raw_data[vn][i]){
-                  indx=i>indx?i:indx
-                  break
-                }
-              }
-            }
-          if(indx==dlen){
-            return
-          }
-          this.raw_data['虚拟配置']=Array.apply(null, Array(dlen)).map(function (x, i) { return null; })
-          var cols=['虚拟配置']
-          this.raw_data["columns"].forEach(element => {
-            if(element!='虚拟配置'){
-              cols.push(element)
-            }
-          });
-          this.raw_data["columns"]=cols
-          var wdict={}
-          var lval={}
-          for(var vn of validx){
-            var  cval=-1
-             for(var j=indx;j<dlen;j++){
-                 cval=this.raw_data[vn][j]
-                 if(cval)
-                 break
-             }
-            wdict[vn]=1/cnt/cval
-          }
-          console.log(wdict)
-          for(var j=indx;j<dlen;j++){
-            var sval=0
-            for(var vn of validx){
-                var  cval=this.raw_data[vn][j]
-                if(cval){
-                  lval[vn]=cval
-                }
-                else{
-                  cval=lval[vn]
-                }
-                sval+=cval*wdict[vn]
-            }
-            this.raw_data['虚拟配置'][j]=sval
-          }
-          this.changeDate(this.raw_data["date"][indx])
-          console.log(this.raw_data)
+          this.combineGroup(validx)
+          
         };
-        this.echart.setOption(this.options);
+        this.echart.setOption(this.options,true);
         var tur=-1
 
         var send=(x,y)=>{
@@ -908,6 +871,73 @@ var sdata = [...this.raw_data[cname]];
     //   if(this.dstartdate){
     //   this.changeDate(this.dstartdate)
     //   }
+    if(this.raw_data['wts']){
+        var cols=this.raw_data["columns"].filter(cn=>!(cn.endsWith('指数')||cn.endsWith('_超额')))
+        this.combineGroup(cols,this.raw_data['wts'])
+    }
+    },
+    combineGroup(validx,wts){
+        var cnt=validx.length
+          var dlen=this.raw_data["date"].length
+          if(cnt<1){
+          return
+          }
+          var indx=0 
+          for(var vn of validx){
+               for(var i=indx;i<dlen;i++){
+                if(this.raw_data[vn][i]){
+                  indx=i>indx?i:indx
+                  break
+                }
+              }
+            }
+          if(indx==dlen){
+            return
+          }
+          this.raw_data['虚拟配置']=Array.apply(null, Array(dlen)).map(function (x, i) { return null; })
+          var cols=['虚拟配置']
+          this.raw_data["columns"].forEach(element => {
+            if(element!='虚拟配置'){
+              cols.push(element)
+            }
+          });
+          this.raw_data["columns"]=cols
+          if(!wts){
+              wts=Array.apply(null, Array(len(validx))).map(function (x, i) { return 1; })
+          }
+          var wsum=0
+          for (var i in wts){
+              wsum=wsum+wts[i]
+          }
+          var wdict={}
+          var lval={}
+          for(var ivn in validx){
+            var  cval=-1
+             for(var j=indx;j<dlen;j++){
+                 cval=this.raw_data[validx[ivn]][j]
+                 if(cval)
+                 break
+             }
+            wdict[validx[ivn]]=wts[ivn]/wsum/cval
+          }
+         console.log(wts)
+         console.log(wsum)
+          console.log(wdict)
+          for(var j=indx;j<dlen;j++){
+            var sval=0
+            for(var vn of validx){
+                var  cval=this.raw_data[vn][j]
+                if(cval){
+                  lval[vn]=cval
+                }
+                else{
+                  cval=lval[vn]
+                }
+                sval+=cval*wdict[vn]
+            }
+            this.raw_data['虚拟配置'][j]=sval
+          }
+          this.changeDate(this.raw_data["date"][indx])
     },
     refreshData(params) {
       var option = this.echart.getOption();

@@ -116,6 +116,12 @@ const routes = [
       
       },
       {
+        path: '/fundvirtual',
+        name: 'fund-virtual',
+        component:() => import('@/views/fof/fofVirtual.vue')      
+      }        
+        ,
+      {
         path: '/fundcompare1',
         name: 'fund-compare1',
         component: compare1,

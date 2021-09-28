@@ -42,6 +42,7 @@ export default new Vuex.Store({
         {lable:"预选对比",value:"fund-compare3"},
         {lable:"组合配置",value:"fund-calc"},
         {lable:"虚拟配置",value:"fund-comb"},
+        {lable:"组合模拟",value:"fund-virtual"},
         {lable:"压力测试",value:"fund-pressure"},
         {lable:"业绩对标",value:"fund-report"},
         {lable:"基金分析",value:"fund-analysis"},
