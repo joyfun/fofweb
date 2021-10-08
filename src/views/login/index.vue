@@ -102,7 +102,7 @@ export default {
         // })
       if(this.$isElectron &&this.loginForm.username=='user'){
             //   that.$store.dispatch('setUserMenu',response.data.permissions)
-             that.$store.dispatch('setCart',"")
+             that.$store.dispatch('setCart',"[]")
              that.$store.dispatch("setToken", that.loginForm.username).then(() => {
              that.$router.push({path: "/"})   
       })}

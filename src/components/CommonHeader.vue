@@ -46,6 +46,9 @@
               <span class="el-dropdown-link"><img :src="userImg" alt="" class="user"></span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="changepassword" >修改密码</el-dropdown-item>
+                <el-dropdown-item v-if="$isElectron" command="backupDB" >备份数据</el-dropdown-item>
+                <el-dropdown-item v-if="$isElectron" command="loadDB" >导入数据</el-dropdown-item>
+
                 <el-dropdown-item command="logout">退出</el-dropdown-item>
 
               </el-dropdown-menu>
@@ -76,7 +79,16 @@
 <script>
 import { mapState,mapGetters } from 'vuex'
 import Bus from '../store/bus.js';
+import tools from '../store/tools.js';
 import axis from 'axios'
+const fs = require('fs')
+import DB from '@/store/localapi.js';
+if(tools.isElectron()){
+const { dialog } = require('electron').remote
+}
+
+
+const os = require('os')
 
 
 export default {
@@ -88,6 +100,56 @@ export default {
 
     },
       methods: {
+        loadDB(){
+            console.log(dialog)
+            dialog.showOpenDialog({
+            title: '导入备份文件',
+            defaultPath: 'C:/',
+            filters: [{
+                name: '备份文件',
+                extensions: ['db', 'sqlite3']
+            }],
+            buttonLabel: '导入!'
+        }).then(result => {
+          console.log(result)
+            fs.readFile(result.filePaths[0], (err, data) => {
+            if (!err) {
+              DB.reload(data)
+                      this.$message({
+            showClose: true,
+            message: "导入数据成功 请重新启动APP",
+            type: "info"
+          })
+
+            }
+        })
+        }).catch(err=>{
+            console.log(err)
+        })
+
+
+        },
+              backupDB(){
+
+                const fileName="backup.db"
+                console.log(fileName)
+              const buffer = DB.serialize()
+              console.log(buffer.length)
+                  let blob = new Blob([buffer])
+         if (window.navigator.msSaveOrOpenBlob) {
+            // console.log(2)
+            navigator.msSaveBlob(blob, fileName)
+          } else {
+            // console.log(3)
+            var link = document.createElement('a')
+            link.href = window.URL.createObjectURL(blob)
+            link.download = fileName
+            link.click()
+            //释放内存
+            window.URL.revokeObjectURL(link.href)
+          }
+
+      },
           handleTabClick(item){
               console.log(item)
               this.changeMenu(item.name)
@@ -99,6 +161,10 @@ export default {
             }else if(item=="changepassword"){
                 this.resetVisible=true
                 this.current.user=this.token
+            }else if(item=="backupDB"){
+              this.backupDB()
+            }else if(item=="loadDB"){
+              this.loadDB()
             }
             
 

@@ -5,7 +5,7 @@
            <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
         <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
         <el-button  size="small" @click="addInfo()">添加</el-button>
-  <el-select v-model="filter.class_type" @change="changeSub"  style="width:80px"  clearable placeholder="类型">
+  <el-select v-model="filter.class_type"  style="width:80px"  clearable placeholder="类型">
     <el-option
       v-for="item in sysparam.class_type"
       :key="item.value"
@@ -13,14 +13,6 @@
       :value="item.code">
     </el-option>
   </el-select>
-  <el-select v-model="filter.sub_type" @change="getList"  style="width:100px"  clearable placeholder="子">
-    <el-option
-      v-for="item in sub_type"
-      :key="item.code"
-      :label="item.value"
-      :value="item.code">
-    </el-option>
-  </el-select>  
         <el-button  size="small" @click="downFile()">下载</el-button>
         <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
@@ -30,7 +22,7 @@
     ref="multipleTable"
     :data="tableData"
     :max-height="tmaxh"
-    :row-key="(row)=>{ return row.code}"
+    :row-key="(row)=>{ return row.scode}"
     tooltip-effect="dark"
     style="width: 100%;margin-top:20px;"
     @selection-change="handleSelectionChange"      >
@@ -71,14 +63,14 @@
      <template slot-scope="scope">{{ scope.row.type }}</template>
     </el-table-column>
     <el-table-column
-      prop="scode"
+      prop="code"
       label="网站代码"
       sortable
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.scode }}</template>
+     <template slot-scope="scope">{{ scope.row.code }}</template>
     </el-table-column>
     <el-table-column
-      prop="code"
+      prop="scode"
       label="备案号"
       sortable
       show-overflow-tooltip>
@@ -117,7 +109,7 @@
             <el-button v-show="scope.row.filename"  type="text" size="small"><el-tooltip class="item" effect="dark" content="下载报告" placement="left-start"><a :href=" '/fof/downfile?code='+scope.row.code "><i class="el-icon-download"></i></a></el-tooltip></el-button>
            <el-button v-show="scope.row.combine" @click.native.prevent="viewConcat(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="拼接历史" placement="left-start"><i class="el-icon-link"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
-            --><el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            --><el-button @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
 
         </template>
     </el-table-column>
@@ -279,8 +271,8 @@
     </el-row >
     </template>
 <el-form-item>
-    <el-button v-if="usermenu.indexOf('info-edit')>-1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
-    <el-button v-if="usermenu.indexOf('info-edit')>-1" @click="resetForm('dynamicValidateForm')">重置</el-button>
+    <el-button  type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+    <el-button  @click="resetForm('dynamicValidateForm')">重置</el-button>
   </el-form-item>
 </el-form>
     </el-dialog>
@@ -423,32 +415,10 @@
           this.formVisible=true
       },
       submitForm(formName) {
-          if(this.current.type && this.current.class_type){
-            
-          
-          axis({
-      method: 'post',
-      url: "/fof/saveinfo", // 请求地址
-      data: this.current, // 参数
-      responseType: 'json' // 表明返回服务器返回的数据类型
-    }).then(
-      response => {
-          if(response.data["status"]=="success"){
-              this.getList(this.filter)
-            this.formVisible = false
-          }
+        this.savesqlite([this.current])
+                  this.formVisible=false
+                  this.getList()
 
-      },
-      err => {
-        reject(err)
-      }
-    )}else{
-        this.$message({
-            showClose: true,
-            message: "类型和来源为必填项",
-            type: "error"
-          })
-    }
       },
       delFund0(row){
           this.confirmVisible=true
@@ -589,24 +559,24 @@ showResult(number,rate=100){
           var $this=this
           ret['code']=this.origin.code
           ret['stage']=this.current.stage
-          axis({
-        method: 'post',
-        url: "/fof/updateinfo", // 请求地址
-        data: ret, // 参数
-        responseType: 'json' // 表明返回服务器返回的数据类型
-      }).then(
-        response => {
-            if(response.data.status=="success"){
-                $this.getList()
-                this.editVisible=false
-                this.$message({
-                message: '保存成功',
-                type: 'success',
-                center: true
-        });
-                                        }
+      //     axis({
+      //   method: 'post',
+      //   url: "/fof/updateinfo", // 请求地址
+      //   data: ret, // 参数
+      //   responseType: 'json' // 表明返回服务器返回的数据类型
+      // }).then(
+      //   response => {
+      //       if(response.data.status=="success"){
+      //           $this.getList()
+      //           this.editVisible=false
+      //           this.$message({
+      //           message: '保存成功',
+      //           type: 'success',
+      //           center: true
+      //   });
+      //                                   }
 
-        })
+      //   })
 
       },
       handleClose(done) {
@@ -853,17 +823,26 @@ showResult(number,rate=100){
           }
         });
         insertMany(data)
-        // var insertTileSql = "insert into fund_info(code ,name ,short_name ,create_time  ,type ,scode ,remark ,class_type ) values(?,?,?,?,?,?,?,?)";
-        // var tileData=[]
-        // var now= (new Date()).getTime()
-        // for(var i in data){
-        //   var row=data[i]
-        //   tileData.push([row['code'],row['name'],row['short_name'],now,row['type'],row['scode'],row['remark'],row['class_type']])
-        // }
-        // // console.log(tileData)
-        // DB.insertData(insertTileSql, tileData);
+      },
+      savefundval(funds,code){
+        const insert = DB.prepare('insert into fund_val(date,code ,sumval ) VALUES (@date ,@code ,@sumval)');
+        
+        const insertMany = DB.transaction((data) => {
+          for (const row of data) {
+              insert.run({"date":row[0],"code":row[1],"sumval":row[2]});
+          }
+        })
+        for(var row of funds){
+            axis.get('/fof/his',{params:{"code":row["code"]}})//axis后面的.get可以省略；
+                        .then(
+                          (response) => {
+                            insertMany(response.data.datas)
+                          }
+                        )
+        }
+        
 
-
+        insertMany(data)
       },
      getList(param){
           // console.log(this.filter)
@@ -876,8 +855,8 @@ showResult(number,rate=100){
                                                   console.log('####################')
                   const stmt = DB.prepare('SELECT * FROM fund_info');
                   this.totaltableData = stmt.all();
-                  console.log(this.totaltableData)
-                  this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
+                  // this.savefundval(this.totaltableData)
+                  this.tableData = this.totaltableData.slice(0 ,this.PageSize);
             // axis( {
             //     url: '/fof/list',
             //     method: 'GET',

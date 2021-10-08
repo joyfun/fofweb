@@ -179,6 +179,7 @@ const cForm=[
     }
   },
     methods: {
+
          deluser(row) {
           axis({
       method: 'post',

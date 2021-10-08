@@ -35,11 +35,11 @@
      <template slot-scope="scope">{{ scope.row.net_val }}</template>
     </el-table-column>
     <el-table-column
-      prop="sum_val"
+      prop="sumval"
       label="累计净值"
       sortable
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.sum_val }}</template>
+     <template slot-scope="scope">{{ scope.row.sumval }}</template>
     </el-table-column>
     </el-table>
   </div>
@@ -49,6 +49,7 @@
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
 import axis from 'axios'
+import DB from '@/store/localapi.js';
 var echarts = require('echarts');
 // 引入柱状图
 // require('echarts/lib/chart/line');
@@ -136,6 +137,20 @@ export default {
                   param["temp"]=this.temp
               }
               var $this=this
+              if(this.$isElectron){
+                  const stmt = DB.prepare('SELECT * FROM fund_val where code=?');
+                  var hisData = stmt.all(code);
+                   var len=hisData.length
+                                console.log(len)
+                                for (var i =len ;i>0;i--){
+                                this.tableData.push(
+                                   hisData[i-1]
+                                )
+                                }
+                  }
+              else{
+
+              
               axis.get('/fof/his',{params:param})//axis后面的.get可以省略；
                         .then(
                             (response) => {
@@ -147,7 +162,7 @@ export default {
                                     date:response.data.datas[i-1][0],
                                     code:response.data.datas[i-1][1],
                                     net_val:response.data.datas[i-1][2],
-                                    sum_val:response.data.datas[i-1][3]
+                                    sumval:response.data.datas[i-1][3]
                                 })
                                 }
                                 console.log($this.tableData.length)
@@ -157,7 +172,7 @@ export default {
                         .catch(
                             (error) => {
                                 console.log(error);
-                    });
+                    });}
           }
 
       },
