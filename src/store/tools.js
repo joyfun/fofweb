@@ -158,4 +158,8 @@ tools.install = function (Vue, options) {
   Vue.prototype.$tools = tools
   Vue.tools = tools
 }
+
+tools.isElectron = ()=>{
+  return window && window.process && window.process.versions && window.process.versions['electron'];
+}
 export default tools

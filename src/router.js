@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Login from "@/views/login/index"
 import axios from 'axios'
 import store from './store'
+import tools from '@/store/tools.js'
 
 
 
@@ -18,6 +19,7 @@ VueRouter.prototype.push = function push(location) {
 const compare1 =()=> import('@/views/fof/fofCompare.vue')
 const compare2 =()=> import('@/views/fof/fofCompare.vue')
 const compare3 =()=> import('@/views/fof/fofCompare.vue')
+        //component:() => import('@/views/fof/fofSimple.vue')
 
 const routes = [
   {
@@ -27,12 +29,7 @@ const routes = [
       {
         path: '/',
         name: 'home',
-        component:() => import('@/views/fof/fofSimple.vue')
-      },
-      {
-        path: '/testcase',
-        name: 'test-case',
-        component:() => import('@/views/testcaseManage/testcaseManage.vue')
+        component:() => import('@/views/Home/FundHome.vue')
       },
       {
         path: '/fundinfo',
@@ -287,11 +284,7 @@ const routes = [
         component:() => import('@/views/sys/userManage.vue')
       }
       ,
-        {
-        path: '/testexecute',
-        name: 'test-execute',
-        component:() => import('@/views/testexecute/testexecute.vue')
-      },
+
       // {
       //   path: '/testresult',
       //   name: 'test-result',
@@ -353,7 +346,14 @@ await axios.get('/sys/param').then((response) => {
         store.commit('setAllParam',ret)
     })
 }
-updateparam()
+if(tools.isElectron()){
+  // store.commit('setSysParam',params)
+  // store.commit('setAllParam',ret)
+
+}
+else{
+  updateparam()
+}
 const menus=["fund-rank1","fund-rank2","fund-rank3","fund-report"]
 var filtermenu=(menu,umenu)=>{
     var uroute=[]

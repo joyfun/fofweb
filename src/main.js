@@ -24,6 +24,7 @@ Vue.use(tools)
 
 Vue.prototype.$axios = axios
 Vue.prototype.$moment = moment
+Vue.prototype.$isElectron= tools.isElectron()
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)

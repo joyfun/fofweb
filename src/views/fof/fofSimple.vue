@@ -5,18 +5,6 @@
            <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
         <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
         <el-button  size="small" @click="addInfo()">添加</el-button>
-        <!-- <el-button  size="small" @click="allrun()">对比</el-button>
-        <el-button  size="small" @click="showcorr()">相关性</el-button>
-        <el-button  size="small" @click="compare()">业绩对标</el-button> -->
-
-        <!-- <el-select v-model="filter.stage" @change="getList" style="width:80px"  clearable placeholder="阶段">
-    <el-option
-      v-for="item in sysparam.stage"
-      :key="item.value"
-      :label="item.value"
-      :value="item.code">
-    </el-option>
-  </el-select> -->
   <el-select v-model="filter.class_type" @change="changeSub"  style="width:80px"  clearable placeholder="类型">
     <el-option
       v-for="item in sysparam.class_type"
@@ -70,17 +58,30 @@
     </el-table-column>
        <el-table-column
       prop="create_time"
-      label="入库"
+      label="添加时间"
       sortable
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.create_time|formatDate }}</template>
     </el-table-column>
     <el-table-column
-      prop="sub_type"
-      label="子类型"
+      prop="type"
+      label="来源"
       sortable
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.sub_type }}</template>
+     <template slot-scope="scope">{{ scope.row.type }}</template>
+    </el-table-column>
+    <el-table-column
+      prop="scode"
+      label="网站代码"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.scode }}</template>
+    </el-table-column>
+    <el-table-column
+      prop="code"
+      label="备案号"
+      sortable
+      show-overflow-tooltip>
     </el-table-column>
     <!-- <el-table-column
       prop="buy_date"
@@ -101,27 +102,25 @@
       show-overflow-tooltip>
       <template slot-scope="scope">{{ scope.row.remark }}</template>
     </el-table-column>
-<!-- <el-table-column
+<el-table-column
       label="操作"
             fixed="right"
       width="160">
         <template slot-scope="scope">
-            <el-button @click.native.prevent="viewHis(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看净值历史" placement="left-start">
-<i class="el-icon-info"></i></el-tooltip></el-button>
-<el-button @click.native.prevent="viewAudit(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start">
-<i class="el-icon-s-order"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="viewHis(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看净值历史" placement="left-start"><i class="el-icon-info"></i></el-tooltip></el-button>
+<!-- <el-button @click.native.prevent="viewAudit(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start"><i class="el-icon-s-order"></i></el-tooltip></el-button> 
             <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
             <el-button v-if="usermenu.indexOf('info-audit')>-1" @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
-            <el-button v-if="usermenu.indexOf('info-edit')>-1"  @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
+            --><el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="信息维护" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
+            <!--<el-button v-if="usermenu.indexOf('info-edit')>-1"  @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.filename"  type="text" size="small"><el-tooltip class="item" effect="dark" content="下载报告" placement="left-start"><a :href=" '/fof/downfile?code='+scope.row.code "><i class="el-icon-download"></i></a></el-tooltip></el-button>
            <el-button v-show="scope.row.combine" @click.native.prevent="viewConcat(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="拼接历史" placement="left-start"><i class="el-icon-link"></i></el-tooltip></el-button>
-
             <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
-            <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            --><el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
 
         </template>
-    </el-table-column> -->
+    </el-table-column>
 
   </el-table>
   <el-upload
@@ -315,6 +314,8 @@
     import AuditLog from '../../components/AuditLog.vue';
     import ConcatLog from '../../components/ConcatLog.vue';
     import Bus from '@/store/bus.js';
+    import DB from '@/store/localapi.js';
+
     import HisTable from '../../components/HisTable.vue';
 
     import ReportTable from '../../components/ReportTable.vue';
@@ -322,11 +323,12 @@
 
     import FundCorr from '../../components/FundCorr.vue';
    const cForm=[
-    {"tilte":"编号","dataIndex":"code"},
+    {"tilte":"备案号","dataIndex":"code"},
     {"tilte":"名称","dataIndex":"name"},
     {"tilte":"简称","dataIndex":"short_name"},
     {"tilte":"基金类型","dataIndex":"class_type","param":"class_type"},
     {"tilte":"渠道","dataIndex":"type","param":"data_type"},
+    {"tilte":"网站代码","dataIndex":"scode"},
     {"tilte":"备注","dataIndex":"remark","type":"textarea"} 
 
 ]
@@ -841,6 +843,28 @@ showResult(number,rate=100){
         console.log(this.value2[1]);
       },
       //
+      savesqlite(data){
+        var now= (new Date()).getTime()
+        const insert = DB.prepare('insert into fund_info(code ,name ,short_name ,create_time  ,type ,scode ,remark ,class_type ) VALUES (@code ,@name ,@short_name ,@create_time  ,@type ,@scode ,@remark ,@class_type)');
+        const insertMany = DB.transaction((data) => {
+          for (const row of data) {
+              row['create_time']=now
+              insert.run(row);
+          }
+        });
+        insertMany(data)
+        // var insertTileSql = "insert into fund_info(code ,name ,short_name ,create_time  ,type ,scode ,remark ,class_type ) values(?,?,?,?,?,?,?,?)";
+        // var tileData=[]
+        // var now= (new Date()).getTime()
+        // for(var i in data){
+        //   var row=data[i]
+        //   tileData.push([row['code'],row['name'],row['short_name'],now,row['type'],row['scode'],row['remark'],row['class_type']])
+        // }
+        // // console.log(tileData)
+        // DB.insertData(insertTileSql, tileData);
+
+
+      },
      getList(param){
           // console.log(this.filter)
           // return
@@ -849,51 +873,41 @@ showResult(number,rate=100){
                  this.filter=param
              }
              var data=this.filter
-             console.log(data)
-            //  if(this.input)
-            //  data["name"]=this.input
-            //  console.log(this)
-            //  if(this.stage)
-            //  data["stage"]=this.stage
-            //   axis.get('/fof/list')//axis后面的.get可以省略；
-            axis( {
-                url: '/fof/list',
-                method: 'GET',
-                params: data
-                }).then((response) => {
-                                console.log(this.sysparam);
-                                console.log(response);
-                                this.totaltableData = response.data.sort((a,b)=>{return   b['create_time'].localeCompare(a['create_time'])
-});
-                                if(this.token=='demo'){
-                                    for (var row in this.totaltableData){
-                                        this.totaltableData[row]["name"]=this.totaltableData[row]["mcode"]
-                                        this.totaltableData[row]["short_name"]=this.totaltableData[row]["mcode"]
+                                                  console.log('####################')
+                  const stmt = DB.prepare('SELECT * FROM fund_info');
+                  this.totaltableData = stmt.all();
+                  console.log(this.totaltableData)
+                  this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
+            // axis( {
+            //     url: '/fof/list',
+            //     method: 'GET',
+            //     params: data
+            //     }).then((response) => {
+            //                     console.log(this.sysparam);
+            //                     console.log(response);
+            //                     this.totaltableData = response.data.sort((a,b)=>{return   b['create_time'].localeCompare(a['create_time'])});
+            //                     this.savesqlite(this.totaltableData)
+            //                     if(this.token=='demo'){
+            //                         for (var row in this.totaltableData){
+            //                             this.totaltableData[row]["name"]=this.totaltableData[row]["mcode"]
+            //                             this.totaltableData[row]["short_name"]=this.totaltableData[row]["mcode"]
 
-                                    }
-                                }
-                                this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
-                                this.resizeChart()
-                            })
-                        .catch(
-                            (error) => {
-                                console.log(error);
-                    });
+            //                         }
+            //                     }
+            //                     this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
+            //                     this.resizeChart()
+
+            //                 })
+            //             .catch(
+            //                 (error) => {
+            //                     console.log(error);
+            //         });
+            // if(this.$isElectron){
+
+            //  }
+
             },
               //
-        request_excute(test_id){
-            let url = '/api/testcase/case/?testid=' + test_id
-            // console.log(url)
-            axis.get(url)//axis后面的.get可以省略；
-                        .then(
-                            (response) => {
-                                console.log(response);
-                            })
-                        .catch(
-                            (error) => {
-                                console.log(error);
-                    });
-            },
         },
     created(){
         console.log(this.$moment().date(-7))

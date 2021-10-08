@@ -100,7 +100,13 @@ export default {
         // }).catch((err) => {
         //   console.log(err)
         // })
-        if(this.loginForm.username.length>0&& this.loginForm.password.length>0){
+      if(this.$isElectron &&this.loginForm.username=='user'){
+            //   that.$store.dispatch('setUserMenu',response.data.permissions)
+             that.$store.dispatch('setCart',"")
+             that.$store.dispatch("setToken", that.loginForm.username).then(() => {
+             that.$router.push({path: "/"})   
+      })}
+      else if(this.loginForm.username.length>0&& this.loginForm.password.length>0){
             const shaObj = new jsSHA("SHA-1","TEXT",{encoding:"UTF8"})
             shaObj.update(this.loginForm.password)
             console.log(shaObj.getHash("HEX"))
