@@ -44,6 +44,7 @@
 import axis from "axios";
 import Bus from '@/store/bus.js';
 import {mapGetters} from 'vuex'
+import DB from '@/store/localapi.js';
 
 var echarts = require("echarts");
 // 引入柱状图
@@ -476,33 +477,6 @@ export default {
         return "800px";
       }
     },
-    //   getChart(code){
-    //       console.log("emit method getChart")
-    //       console.log(code)
-    //       if(code){
-    //           console.log("refresh chart:"+code)
-    //           var chartData=this.chartData
-    //           axis.get('/fof/his',{params:{"code":code}})//axis后面的.get可以省略；
-    //                     .then(
-    //                         (response) => {
-    //                             chartData.xData=[]
-    //                             chartData.series=[{data:[],type:"line",name: '累计净值',},{name: '当前净值',data:[],type:"line"}]
-    //                             for(var idx in response.data.datas){
-    //                                 var row=response.data.datas[idx]
-    //                                 chartData.xData.push(row[0])
-    //                                 chartData.series[0].data.push(row[3])
-    //                                 chartData.series[1].data.push(row[2])
-
-    //                             }
-    //                             this.initChart()
-    //                         })
-    //                     .catch(
-    //                         (error) => {
-    //                             console.log(error);
-    //                 });
-    //       }
-
-    //   },
     getLastIndex(data) {
       for (var idx in data) {
         if (data[idx]) return idx;
@@ -513,6 +487,33 @@ export default {
         if(!code){
             return
         }
+        if(this.$isElectron){
+                 var codes=code.split(",")
+        var rst={"columns":[],"date":[],"combine_date":[null],"buy_date":["19000101"]}
+        for (var acode of codes ){
+        const istmt =DB.prepare('SELECT * FROM fund_info where code=?')
+        var info=istmt.get(acode)
+        rst.columns=[info['name']]
+        rst[info['name']]=[]
+        const stmt = DB.prepare('SELECT * FROM fund_val where code=?');
+        const dbval=stmt.all(acode)
+        for (var row of dbval){
+          rst['date'].push(row['date'])
+          rst[info['name']].push(row['sumval'])
+        }
+        }
+        console.log(rst)
+          this.raw_data=rst
+          this.chartData.xData = [];
+          this.chartData.series = [];
+          this.chartData.xData = rst["date"];
+          var len = this.chartData.xData.length;
+          this.max_date = this.chartData.xData[len - 1];
+          this.initChart();
+        }
+        else{
+
+      
       var charturl = "";
       var $this = this;
       var data = this.filter;
@@ -542,7 +543,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-        });
+        });  }
     },
     getDividedData(cname,oneindex){
         var oneval = this.raw_data[cname][oneindex];

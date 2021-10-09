@@ -21,8 +21,8 @@
 
                  
         </el-breadcrumb> -->
-<el-row :gutter="5">
-    <el-button-group>
+<el-row :gutter="5" v-if="!$isElectron">
+    <el-button-group  >
 
     <el-button @click="changeMenu('company')" >投资渠道</el-button>
     <el-button @click="changeMenu('invest')" >尽职调查</el-button>
@@ -83,9 +83,6 @@ import tools from '../store/tools.js';
 import axis from 'axios'
 const fs = require('fs')
 import DB from '@/store/localapi.js';
-if(tools.isElectron()){
-const { dialog } = require('electron').remote
-}
 
 
 const os = require('os')
@@ -101,6 +98,7 @@ export default {
     },
       methods: {
         loadDB(){
+            const { dialog } = require('electron').remote
             console.log(dialog)
             dialog.showOpenDialog({
             title: '导入备份文件',

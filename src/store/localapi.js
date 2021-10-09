@@ -24,8 +24,8 @@ db = new sqlite3(dbPath, { verbose: console.log })
 //   });
 // });
 try {
-db.exec("create table fund_val(code varchar(10),date varchar(10),sumval real)");
-db.exec("create table fund_info(code varchar(10),name varchar(40),short_name varchar(40),create_time number ,type varchar(10),scode varchar(10),remark TEXT,class_type  varchar(10) )");
+db.exec("create table fund_val(code varchar(10),date varchar(10),sumval real,primary key (code,date))");
+db.exec("create table fund_info(code varchar(10),name varchar(40),short_name varchar(40),create_time number ,type varchar(10),scode varchar(10) PRIMARY KEY     NOT NULL,remark TEXT,class_type  varchar(10) )");
 } catch (err) {
   console.log(err);
 }
