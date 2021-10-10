@@ -648,7 +648,7 @@ var sdata = [...this.raw_data[cname]];
               data: [],
             }
         if(this.collen<5){
-            if(cname=="华道FOF"  && this.cb){
+            if(cname=="华道多策略FOF"  && this.cb){
                 var param={"name":cname,"lrate":maxdrop,"start":this.raw_data.date[mhidx],"end":this.raw_data.date[midx]}
                 clearTimeout(this.tur)
                 console.log("撤销事件"+this.tur)
