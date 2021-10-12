@@ -55,6 +55,13 @@
       >
       </el-table-column>
       </el-table-column>
+      <el-table-column 
+        prop="ascore"
+        sortable
+        label="ascore"
+        show-overflow-tooltip
+      >
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -107,7 +114,7 @@ export default {
       range:3,
       tmaxh:720,
       limit_dic:{'sharpe': 3, 'calmar': 5, 'sortino': 5, 'yeaily_return': 0.7},
-      wts: [1, 2, 1, 1, -1, 1, 0, -0.5],
+      wts: [0, 2, 1, 0.5, -1, 0, 1, 0],
       wtsdict:{'yeaily_return':1, 'sharpe':2, 'calmar':1, 'sortino':3, 'dd':1, 'dd_week':2, 'win_ratio':2, 'volatility':1},
       tableData:[],
       tags: ["近一月","近季度","近半年","近一年","近2年","全部","今年","去年","前年"],
@@ -125,13 +132,48 @@ export default {
     calc_score(){
       var rawdata = JSON.parse(JSON.stringify(this.tableData));
       for(var ret_df of rawdata){
+      //去极值
       for(var item in this.limit_dic){
-        console.log(ret_df['fundname']+item)
           ret_df[item] = (ret_df[item] >= this.limit_dic[item]) * this.limit_dic[item] + (ret_df[item] < this.limit_dic[item]) * ret_df[item]
-        console.log(ret_df[item] )
 
         }
       }
+    //求最大值
+    var maxmin={}
+    for (var item of this.cols){
+      maxmin[item+"_max"]=-99
+      maxmin[item+"_min"]=99
+            for(var row of rawdata){
+              if(row[item]>maxmin[item+"_max"]){
+                   maxmin[item+"_max"]=row[item]
+              }
+              if(row[item]<maxmin[item+"_min"]){
+                   maxmin[item+"_min"]=row[item]
+              }
+            }
+    }
+    for (var item of this.cols){
+     maxmin[item+"_diff"]=maxmin[item+"_max"]-maxmin[item+"_min"]
+    }
+    for(var ridx in rawdata){ 
+      var row=rawdata[ridx]
+      var ascore=0
+       for (var idx in this.cols){
+         var item=this.cols[idx]
+         var diff=maxmin[item+"_diff"]
+         if(diff==0){
+           diff=1
+         }
+        row[item]=(row[item]-maxmin[item+"_min"])/diff
+        ascore+=row[item]*this.wts[idx]
+       }
+       this.tableData[ridx]['ascore']=ascore
+    }
+    // console.log(rawdata)
+    // console.log(this.wts)
+    // console.log(this.tableData)
+       this.$forceUpdate()
+
     },
     wtsUpdate(event,idx){
       console.log(event)
