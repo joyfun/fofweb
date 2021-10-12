@@ -8,6 +8,7 @@
         <el-button  size="small" @click="allrun()">对比</el-button>
         <el-button  size="small" @click="showcorr()">相关性</el-button>
         <el-button  size="small" @click="compare()">业绩对标</el-button>
+        <el-button  size="small" @click="showRank()">排名</el-button>
 
         <el-select v-model="filter.stage" @change="getList" style="width:80px"  clearable placeholder="阶段">
     <el-option
@@ -184,13 +185,12 @@
 <i class="el-icon-info"></i></el-tooltip></el-button>
 <el-button @click.native.prevent="viewAudit(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start">
 <i class="el-icon-s-order"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
+            <!-- <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button> -->
             <el-button v-if="usermenu.indexOf('info-audit')>-1" @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
             <el-button v-if="usermenu.indexOf('info-edit')>-1"  @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.filename"  type="text" size="small"><el-tooltip class="item" effect="dark" content="下载报告" placement="left-start"><a :href=" '/fof/downfile?code='+scope.row.code "><i class="el-icon-download"></i></a></el-tooltip></el-button>
-           <el-button v-show="scope.row.combine" @click.native.prevent="viewConcat(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="拼接历史" placement="left-start"><i class="el-icon-link"></i></el-tooltip></el-button>
-
+            <el-button v-show="scope.row.combine" @click.native.prevent="viewConcat(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="拼接历史" placement="left-start"><i class="el-icon-link"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
             <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
 
@@ -229,15 +229,6 @@
     top="50px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    :visible.sync="dialogVisible"
-  >
-    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
-    </el-dialog>
-    <el-dialog
-    width="80%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
     :visible.sync="tableVisible"
   >
     <el-button  @click="downFile('/fof/jreport_down')">下载数据</el-button>
@@ -254,8 +245,11 @@
     top="50px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    :visible.sync="hisVisible">
-    <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  :visable="dialogVisible"></his-table>
+     :visible.sync="dialogVisible"
+     >
+    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='hisChart'"></fund-echart>
+    <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
+    <rank-table       @close="editClose" ref="ranktable"  :titles="current.name"  style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
     </el-dialog>
 
         <el-dialog
@@ -292,9 +286,6 @@
   <el-form-item label="基金名称">
     <label >{{current.name}}</label>
   </el-form-item>
-  <!-- <el-form-item label="即时配送">
-    <el-switch v-model="current.delivery"></el-switch>
-  </el-form-item> -->
   <el-form-item label="决策阶段">
      <el-radio-group v-model="current.stage">    
     <el-radio :key="idx" v-for="(item,idx) in sysparam.stage" :label="item.value"></el-radio>
@@ -390,6 +381,7 @@
     import ConcatLog from '../../components/ConcatLog.vue';
     import Bus from '@/store/bus.js';
     import HisTable from '../../components/HisTable.vue';
+    import RankTable from '../../components/RankTable.vue';
 
     import ReportTable from '../../components/ReportTable.vue';
     import {mapGetters} from 'vuex'
@@ -431,6 +423,7 @@
       components: {
             FundEchart,
             HisTable,
+            RankTable,
             AuditLog,
             ConcatLog,
             ReportTable,
@@ -453,6 +446,7 @@
         sub_type:[],
         current:{},
         cur_code:"",
+        diagName:"",
         dialogVisible: false,
         confirmVisible:false,
         corrVisible:false,
@@ -672,11 +666,24 @@ showResult(number,rate=100){
         return this.$tools.formatMoney(number*rate,3)
     },
       showHis(row){
+          console.log(this.diagName)
           this.cur_code=""
           this.current=row
           this.dialogVisible=true
+          this.diagName="hisChart"
           this.cur_code=row.code
-        //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
+          console.log(this.diagName)
+      },
+      showRank(){
+          this.cur_code=""
+          this.dialogVisible=true
+          this.diagName="rankDialog"
+          var selcode=""
+          for (let i = 0; i < this.multipleSelection.length; i++) {
+              selcode+=this.multipleSelection[i].code+",";
+          }
+          this.cur_code=selcode
+          console.log(this.cur_code)
       },
       onSubmit(){
           
@@ -737,6 +744,7 @@ showResult(number,rate=100){
           this.cur_code=""
           this.current=this.multipleSelection[0]
           this.dialogVisible=true
+          this.diagName="hisChart"
           this.cur_code=selcode
         //   this.$refs.hischart.$emit("getChart",selcode)  
       },
@@ -750,8 +758,11 @@ showResult(number,rate=100){
           this.temp=-1
           this.cur_code=""
           this.current=row
-          this.hisVisible=true
+          this.dia=true
           this.cur_code=row.code
+          this.dialogVisible=true
+          this.diagName="hisTable"
+
 
       },
       viewAudit(row){
@@ -777,7 +788,8 @@ showResult(number,rate=100){
           this.current=row
           this.hisVisible=true
           this.cur_code=row.code
-
+          this.dialogVisible=true
+          this.diagName="hisTable"
       },
        editStatus(row){
           this.cur_code=""
@@ -1018,10 +1030,11 @@ showResult(number,rate=100){
     mounted() {
             window.addEventListener("resize", this.resizeChart);
     },
-    //   async mounted() {
-    //         console.log(this.$route.params)
-    //         this.getList(this.$route.params.type);
-    //   }
   }
   
 </script>
+<style lang="scss" scoped>
+.el-dialog__body{
+    padding: 10px 10px;
+}
+</style>

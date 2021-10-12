@@ -1,373 +1,189 @@
 <template>
-  <div ref="tableContainer" style="	height : 100%;">
-    <el-table
-      ref="multipleTable"
-      :data="tableData"
-      :max-height="tmaxh"
-      tooltip-effect="dark"
+  <div>
+      <div class="block" style="display: flex;justify-content: space-between">
+        
 
-      @selection-change="handleSelectionChange" 
-      style="width: 100%; margin-top: 20px"
+        <div style="display: flex;justify-content: space-between">
+           <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
+ <el-select v-model="filter.class_type" @change="changeSub"  style="width:100px"   placeholder="类型">
+    <el-option
+      v-for="item in sysparam.class_type"
+      :key="item.id"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>   
+  <el-select v-model="filter.sub_type" @change="getList"  style="width:100px"  clearable placeholder="子类型">
+    <el-option
+      v-for="item in sub_type"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>  
+
+     <el-select v-model="filter.left" @change="getList" style="width:100px"   placeholder="阶段一">
+    <el-option
+      v-for="item in sysparam.stage"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
+   <el-select  v-model="filter.right" @change="getList" style="width:100px" clearable  placeholder="阶段二">
+    <el-option
+      v-for="item in sysparam.stage"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
+  <el-select v-show="filter.other" v-model="filter.other" @change="getList" style="width:100px"   placeholder="阶段三">
+    <el-option
+      v-for="item in sysparam.stage"
+      :key="item.code"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
+  <el-select
+    v-model="mult"
+    style="width:360px"   
+    multiple
+    clearable
+    filterable
+    placeholder="名称"
     >
-      <!--    @row-click = "Selection"       :default-sort="{prop:'类型',order:'ascending','当月收益':'descending'}"-->
-
-      <el-table-column type="selection" width="55"> </el-table-column>
-      <!--      测试ID-->
-     <!--  <el-table-column
-      prop="基金代码"
-      label="基金代码"
-      width="100">
-      <template slot-scope="scope">{{ scope.row["基金代码"]}}</a></template>
-    </el-table-column>
-      用例编号-->
-      <el-table-column
-        prop="基金名称"
-        width="120"
-        label="基金名称"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope"
-          ><a href="javascript:;" @click="showHis(scope.row)">{{
-            scope.row["name"]
-          }}</a></template
-        >
-      </el-table-column>
-       <el-table-column
-        prop="class_type"
-        width="60"
-        label="类型"
-        sortable
-        show-overflow-tooltip
-      >  <template slot-scope="scope">{{ scope.row['class_type'] }}</template>
-
-      </el-table-column>
-      <el-table-column
-        prop="sub_type"
-        width="60"
-        label="子"
-        sortable
-        show-overflow-tooltip
-      >
-             <template slot-scope="scope">{{ scope.row['sub_type'] }}</template>
-      </el-table-column>
-
-      <!-- <el-table-column
-        prop="份额"
-        width="60"
-        label="额"
-        sortable
-        show-overflow-tooltip
-      >
-             <template slot-scope="scope">{{ scope.row['份额'] }}</template>
-      </el-table-column> -->
-      <!--      测试项目-->
-      <!--      测试用例是否关联-->
-      <!--      测试输入-->
-      <el-table-column align="right" prop="time_domain1"         width="100"
- label="分析区间" show-overflow-tooltip>
-        <template slot-scope="scope">
-                 {{scope.row["time_domain1"]}}</template>
-      </el-table-column>
-      
-      <el-table-column
-      v-for=" item in ['sharpe_x' ,'calmar_x' ,'sortino_x' ,'dd_x' ,'dd_week_x' ,'win_ratio_x' ,'yeaily_return_x' ,'volatility_x' ,'scores_x' , 'rank_x' , 'length_x']"
-       :key="item"
-        :prop="item"
-        :label="item"
-        align="right" 
-        width="80"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope">
-              <span :style="'text-align:right;color:'+(scope.row[item]>=0?'red':'green') " >
-                    {{showResult(scope.row[item],1)}}</span>
-
-        </template>
-      </el-table-column>
-            <el-table-column align="right" prop="time_domain1"         width="100"
- label="分析区间2" show-overflow-tooltip>
-        <template slot-scope="scope">
-                 {{scope.row["time_domain2"]}}</template>
-      </el-table-column>
-      
-      <el-table-column
-      v-for=" item in ['sharpe_y','calmar_y','sortino_y','dd_y','dd_week_y','win_ratio_y','yeaily_return_y','volatility_y','scores_y','rank_y','length_y','time_domain2']"
-       :key="item"
-        :prop="item"
-        :label="item"
-        align="right" 
-        width="80"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope">
-              <span :style="'text-align:right;color:'+(scope.row[item]>=0?'red':'green') " >
-                    {{showResult(scope.row[item],1)}}</span>
-
-        </template>
-      </el-table-column>
-
-    </el-table>
-    <div style="display: flex; justify-content: space-between">
-     
-      <div class="block" style="margin-top: 25px; height: 40px">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 15, 25, 30]"
-          :page-size="PageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totaltableData.length"
-        >
-        </el-pagination>
+    <el-option
+      v-for="item in foflist"
+      :key="item.code"
+      :label="item.name"
+      :value="item.code">
+    </el-option>
+  </el-select>
+  
+       <el-button type="primary"  size="small" @click="searchRank">查询</el-button>
+       <!-- <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
+          <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button> -->
+        </div>
       </div>
-    </div>
+    <rank-table     ref="ranktable"  :titles="current.name"  style="height: 600px"  :code="cur_code" ></rank-table>
+   
 
-     <el-dialog
-    width="80%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="dialogVisible"
-  >
-    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
-    </el-dialog>
+
   </div>
+  
 </template>
-
-<!--1、用例编号;-->
-<!--2、测试项目;-->
-<!--3、测试标题;-->
-<!--4、重要级别;-->
-<!--5、预置条件;-->
-<!--6、测试输入;-->
-<!--7、操作步骤;-->
-<!--8、预期输出-->
 <script>
-import axis from "axios";
-import FundEchart from "../../components/FundEchart.vue";
-import {mapGetters} from 'vuex'
+import axis from 'axios'
+    import FundEchart from '../../components/FundEchart.vue';
+    import HisTable from '../../components/RankTable.vue';
+    import {mapGetters} from 'vuex'
 
-export default {
-  components: {
-    FundEchart,
-  },
-   computed: {
-     ...mapGetters(['class_order','sysparam'])
-   },
-    props: {
-      url:{
-      type: String,
-      default: "/fof/simulate"
-    },
-    },
-  data() {
-    return {
-      current: {},
-      cur_code: "",
-      dialogVisible: false,
-      rowdata: "",
-      value2: "",
-      tmaxh:500,
-      chartData: {
-        xData: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        series: [
-          {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-            type: "line",
-            smooth: true,
-          },
-        ],
-      },
-      input: "",
-      tableData: [],
-      totaltableData: [],
-      currentPage: 1,
-      PageSize: 10,
-      multipleSelection: [],
-    };
-  },
-  watch: {
+  export default {
+      components: {
+            FundEchart,
+            RankTable
+        },
+        computed:{
+            ...mapGetters(['sysparam',"allparam"]),
+    //          compares:{
+    //       get() {
+    //           console.log(this.filter.class_type)
+    //           console.log(this.addition)
+    //     return this.filter.sub_type+","+this.filter.left+","+this.filter.right+","+this.addition
+    //   }
+    //   }
+        },
+        props: {filters:{
+      type: Object,
+      default:null
+    },},
+     data() {
+      return {
+          temp:-1,
+          addition:"",
+          compares:"",
+          mult:[],
+          dialogVisible:true,
+          origin:{},
+          current:{},
+          sub_type:[],
+          foflist:[],
+          filter:{
+              class_type:"指增",
+              sub_type:"低频alpha",
+              left:"",
+              right:""
+              },
+        }}
+        ,
+            watch: {
     $route:{
       handler(n){
-          console.log(n)
-          if(n.params['url']){
-              this.curl="/fof/"+n.params['url']
+          if(this.filters){
+              console.log("route init ")
+              console.log(this.filter)
+              var jobj=JSON.parse(JSON.stringify(this.filters))
+              for(var key in jobj){
+                this.filter[key]=  jobj[key]
+              }
+
+            //   this.filter=JSON.parse(JSON.stringify(this.filters));
+            //   this.filter["class_type"]="CTA"
+          }else{
+          this.filter=n.params
           }
-        //   this.getList()
 		// 初始化操作
       },
       immediate: true,
       deep: true,
-    },
-    url:{
-              handler(n){
-                  this.getList()
-              }
     }
   },
-  methods: {
-      resizeChart(){
-                this.tmaxh=this.$refs.tableContainer.clientHeight-120
+    created() {
+        this.remoteMethod();
+    },
+        methods: {
+            multchange(val){
+                console.log(val)
+                this.addition=val.join()
+            },
+            searchHis(){
+                this.compares=this.filter.sub_type+","+this.filter.left+","+this.filter.right+","+this.addition 
+                this.addition=this.mult.join()
+            },
+            changeSub(row){
+                var id=-1
+                for (var ap of this.sysparam.class_type)
+                {
+                    if(ap.code==row){
+                        id=ap.id
+                        break;
+                    }
+                    
+                }
+                console.log(id)
+                console.log(this.allparam)
+                this.sub_type=this.allparam['param_'+id]
+                console.log(this.sub_type)
 
-      },
-    editClose() {
-      this.dialogVisible = false;
-    },
-    showResult(number,rate=100){
-       if (null == number)
-          return '' 
-        var color=number>=0?"red":"green"
-        //return '<span style="text-align:right;color='+color+'">'+this.formatMoney(number,4)+'</span>'
-        return this.$tools.formatMoney(number*rate,3)
-    },
-    
-
-    showHis(row){
-          this.cur_code=""
-          this.current=row
-          this.dialogVisible=true
-          this.cur_code=row.code
-        //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
-      },
-    handleClose(done) {
-      done();
-      // this.$confirm('确认关闭？')
-      //   .then(_ => {
-      //     done();
-      //   })
-      //   .catch(_ => {});
-    },
-    //表格方法
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach((row) => {
-          this.$refs.multipleTable.toggleRowSelection(row);
-        });
-      } else {
-        this.$refs.multipleTable.clearSelection();
-      }
-    },
-    //
-    compare() {
-        // console.log(this.multipleSelection)
-        if(this.multipleSelection.length<1){
-            return
-        }
-        var selcode=""
-        console.log(this.multipleSelection)
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-              selcode+=","+this.multipleSelection[i].code;
-        }
-          this.cur_code=""
-          this.current=this.multipleSelection[0]
-          this.dialogVisible=true
-          this.cur_code=selcode
-        //   this.$refs.hischart.$emit("getChart",selcode)  
-      },
-    // 选中
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
-    downFile(){      
-        const options = {"cache":1}
-        this.$tools.exportExcel(this.url+"_down",options)
-        },
-    downNetFile(durl){
-        var url="/fof/simulate"
-        if(durl){
-            url=durl
-        }
-        if(this.multipleSelection.length<1){
-            return
-        }
-        var selcode=""
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-              selcode+=","+this.multipleSelection[i].code;
-        }
-        console.log(url)
-        const options = {code:selcode}
-            this.$tools.exportExcel(url,options)
-        },
-    delSelection() {
-      for (let i = 0; i < this.multipleSelection.length; i++) {
-        console.log(this.multipleSelection[i].id);
-        for (let j = 0; j < this.tableData.length; j++) {
-          if (this.multipleSelection[i].id === this.tableData[j].id) {
-            this.tableData.splice(j, 1);
-            break;
-          }
-        }
-      }
-    },
-    clickSelection(index, row) {
-      // console.log(index, row);
-      console.log(row.test_id);
-      this.request_excute(row.test_id);
-    },
-    // 分页方法
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-      this.PageSize = val;
-      console.log(this.PageSize);
-      console.log(this.currentPage);
-    },
-    // 跳转
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      this.currentPage = val;
-      //页面每页大小
-      console.log(this.PageSize);
-      //当前页
-      console.log(this.currentPage);
-      let startindex = (this.currentPage - 1) * this.PageSize;
-      if (startindex <= 0) {
-        startindex = 0;
-      }
-      let endindex;
-      if (this.PageSize * this.currentPage > this.totaltableData.length) {
-        endindex = this.totaltableData.length - 1;
-      } else {
-        endindex = this.PageSize * this.currentPage - 1;
-      }
-      console.log(startindex, endindex);
-      this.tableData = this.totaltableData.slice(startindex, endindex);
-    },
-    //时间选择器方法
-    handeldateChange() {
-      console.log(this.value2[0]);
-      console.log(this.value2[1]);
-    },
-    
-    //
-    getList() {
-      axis
-        .get(this.url) //axis后面的.get可以省略；
+            },
+            remoteMethod(query){
+                this.$axios({
+        url: "/fof/foflist",
+        method: "GET",
+        params: {},
+      })
         .then((response) => {
-            if(this.url.indexOf('jcompare')>0){
-                this.tableData = this.$tools.pandasToJson(response.data)
-            }else{
-          this.tableData = this.$tools.pandasToJson(response.data).sort((a,b)=>{
-              var r= this.class_order.indexOf(a['类型'])-this.class_order.indexOf(b['类型'])
-          if(r==0){
-              return b["当月收益"]-a["当月收益"]
-          }
-          return r
-          });}
-          this.resizeChart()
-          //this.tableData = this.totaltableData;
+            this.foflist=response.data
+                this.sub_type=this.allparam['param_13']
+
         })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    //
-  },
- mounted() {
-            window.addEventListener("resize", this.resizeChart);
-    },
-  async created() {
-    this.getList();
-  },
-};
+    this.sub_type=this.allparam['param_13']
+            },
+            getList() {
+                console.log(this.filter)
+        },
+        }
+}
 </script>

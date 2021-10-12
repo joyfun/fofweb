@@ -1,0 +1,172 @@
+<template>
+  <div>
+<el-radio-group v-model="range">
+  <el-radio-button type="primary" :key="i"  :label="i" icon="el-icon-edit" v-for="(item,i) in tags">{{item}}</el-radio-button>
+</el-radio-group>
+   <el-table
+      ref="multipleTable"
+      :data="tableData"
+      :max-height="tmaxh"
+      tooltip-effect="dark"
+      style="width: 100%; margin-top: 20px"
+    >  
+
+      <el-table-column
+        prop="基金名称"
+        width="120"
+        sortable
+        label="基金名称"
+        show-overflow-tooltip
+      >
+
+        <template slot-scope="scope">
+          <!-- <a href="javascript:;" @click="showHis(scope.row)"> -->
+            {{scope.row["name"]}}
+            <!-- </a> -->
+            </template>
+      </el-table-column>
+                <el-table-column 
+        prop="class_type"
+        sortable
+        label="类型"
+        show-overflow-tooltip
+      >
+      </el-table-column>
+ 
+      <el-table-column :key="col + wts[idx]" v-for="(col,idx) in cols">
+        <template slot="header"><el-input   v-model="wts[idx]" :placeholder="col" clearable  ></el-input></template>
+            <el-table-column 
+        :prop="col"
+        width="80"
+        sortable
+        :label="names[idx]"
+        show-overflow-tooltip
+      >      <template slot-scope="scope">{{ scope.row[col] }}</template>
+      </el-table-column>
+      </el-table-column>
+
+ <el-table-column>
+              <template slot="header"><el-button size="mini" @click="calc_score">打分</el-button></template>
+                 <el-table-column 
+        prop="scores"
+        sortable
+        label="scores"
+        show-overflow-tooltip
+      >
+      </el-table-column>
+      </el-table-column>
+    </el-table>
+  </div>
+</template>
+ <script>
+// import echarts from 'echarts'
+import Vue from 'vue'
+// import 'echarts/lib/chart/line'
+// 引入柱状图
+// require('echarts/lib/chart/line');
+// // 引入提示框和标题组件
+// require('echarts/lib/component/tooltip');
+// require('echarts/lib/component/title');
+export default {
+  props: {
+     code:{
+      type: String,
+      default: ""
+    },
+     title: {
+      type: String,
+      default: ''
+    },
+    width: {
+      type: String,
+      default: '80%'
+    },
+
+  },
+  watch: {
+    code:{
+    handler: function(val) {
+                console.log(val)
+                this.getTable()
+              }
+    },
+    // wts:{
+    // handler: function(val) {
+    //             console.log(val)
+    //             this.forceUpdate()
+    //           }
+    // }, 
+    range:{
+    handler: function(val) {
+                this.getTable()
+              }
+    },
+  },
+  data() {
+    return {
+      range:3,
+      tmaxh:720,
+      limit_dic:{'sharpe': 3, 'calmar': 5, 'sortino': 5, 'yeaily_return': 0.7},
+      wts: [1, 2, 1, 1, -1, 1, 0, -0.5],
+      wtsdict:{'yeaily_return':1, 'sharpe':2, 'calmar':1, 'sortino':3, 'dd':1, 'dd_week':2, 'win_ratio':2, 'volatility':1},
+      tableData:[],
+      tags: ["近一月","近季度","近半年","近一年","近2年","全部","今年","去年","前年"],
+      cols: ['yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility'],
+      names: ['年化收益', 'sharpe', 'calmar', 'sortino', '最大回撤', '回撤(周)', '胜率', '波动率']
+    }
+  },
+  methods: {
+    showResult(number,rate=100){
+       if (null == number)
+          return '' 
+        var color=number>=0?"red":"green"
+        return this.$tools.formatMoney(number*rate,3)
+    },
+    calc_score(){
+      var rawdata = JSON.parse(JSON.stringify(this.tableData));
+      for(var ret_df of rawdata){
+      for(var item in this.limit_dic){
+        console.log(ret_df['fundname']+item)
+          ret_df[item] = (ret_df[item] >= this.limit_dic[item]) * this.limit_dic[item] + (ret_df[item] < this.limit_dic[item]) * ret_df[item]
+        console.log(ret_df[item] )
+
+        }
+      }
+    },
+    wtsUpdate(event,idx){
+      console.log(event)
+      Vue.set(this.wts,idx,parseFloat(event))
+      this.$forceUpdate();
+      return parseFloat(event)
+        },
+    getTable(){
+        var $this=this
+        var param={code:this.code,range:this.range}
+        this.$axios.get('/fof/fundrank',{params:{code:this.code,range:this.range}})//axis后面的.get可以省略；
+            .then(
+                (response) => {
+                    $this.tableData=this.$tools.pandasToJson(response.data)
+                    console.log(this.tableData)
+                    console.log($this.tableData.length)
+                })
+            .catch(
+                (error) => {
+                    console.log(error);
+        });
+    }
+  },
+  created(){
+    
+    this.getTable()
+  },
+  mounted() {
+
+    window.addEventListener('resize', this.resizeChart)
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.resizeChart)
+  }
+}
+</script>
+
+<style lang="scss" scoped></style>
