@@ -55,6 +55,13 @@
       >
       </el-table-column>
       </el-table-column>
+      <el-table-column 
+        prop="length"
+        sortable
+        label="数据长度"
+        show-overflow-tooltip
+      >
+      </el-table-column>
       <!-- <el-table-column 
         prop="ascore"
         sortable
@@ -117,7 +124,7 @@ export default {
       wts: [0, 2, 1, 0.5, -1, 0, 1, 0],
       wtsdict:{'yeaily_return':1, 'sharpe':2, 'calmar':1, 'sortino':3, 'dd':1, 'dd_week':2, 'win_ratio':2, 'volatility':1},
       tableData:[],
-      tags: ["近一月","近季度","近半年","近一年","近2年","全部","今年","去年","前年"],
+      tags: ["近一月","近季度","近半年","近一年","近2年","近3年","全部","今年","去年","前年"],
       cols: ['yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility'],
       names: ['年化收益', 'sharpe', 'calmar', 'sortino', '最大回撤', '回撤(周)', '胜率', '波动率']
     }
