@@ -48,20 +48,20 @@
  <el-table-column>
               <template slot="header"><el-button size="mini" @click="calc_score">打分</el-button></template>
                  <el-table-column 
-        prop="scores"
+        prop="score"
         sortable
-        label="scores"
+        label="score"
         show-overflow-tooltip
       >
       </el-table-column>
       </el-table-column>
-      <el-table-column 
+      <!-- <el-table-column 
         prop="ascore"
         sortable
         label="ascore"
         show-overflow-tooltip
-      >
-      </el-table-column>
+      > -->
+      <!-- </el-table-column> -->
     </el-table>
   </div>
 </template>
@@ -167,12 +167,13 @@ export default {
         row[item]=(row[item]-maxmin[item+"_min"])/diff
         ascore+=row[item]*this.wts[idx]
        }
-       this.tableData[ridx]['ascore']=ascore
+       this.tableData[ridx]['score']=ascore
     }
     // console.log(rawdata)
     // console.log(this.wts)
     // console.log(this.tableData)
-       this.$forceUpdate()
+      this.$refs.multipleTable.clearSort()
+      this.$refs.multipleTable.sort('score', 'descending')
 
     },
     wtsUpdate(event,idx){
@@ -188,8 +189,7 @@ export default {
             .then(
                 (response) => {
                     $this.tableData=this.$tools.pandasToJson(response.data)
-                    console.log(this.tableData)
-                    console.log($this.tableData.length)
+                    this.calc_score()
                 })
             .catch(
                 (error) => {
