@@ -115,13 +115,19 @@ export default {
         method: "POST",
         data: {"user":this.loginForm.username,"password":shaObj.getHash("HEX") },
       }).then((response) => {
-            // let params={}
-            // for (var key in response.data){
-            //     params[key]=response.data[key]['child']
-            // }
             if(response.data.status=="success"){
              that.$store.dispatch('setUserMenu',response.data.permissions)
-             that.$store.dispatch('setCart',response.data.cart)
+             that.$axios({
+        url: "/sys/getcart",
+        method: "GET",
+        data: {"user":this.loginForm.username},
+      }).then((response) => {
+             that.$store.dispatch('setAllCart',response.data)
+             if(response.data.default){
+              that.$store.dispatch('changeCart','default')
+             }
+
+      })
              that.$store.dispatch("setToken", that.loginForm.username).then(() => {
              that.$router.push({path: "/"})
         })}else{

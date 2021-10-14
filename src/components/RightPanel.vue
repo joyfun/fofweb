@@ -2,8 +2,16 @@
   <div ref="rightPanel" :class="{show:show}" class="rightPanel-container">
     <div class="rightPanel-background" />
     <div class="rightPanel">
-      <div class="handle-button" :style="{'top':buttonTop+'px'}" @click="show=!show">
-        <i :class="show?'el-icon-close':'el-icon-shopping-cart-full'" />
+    <el-popover
+    ref="popover"
+    placement="top"
+    width="10"
+        trigger="manual"
+    v-model="tipvisible"
+    :content="tipcontent">
+  </el-popover>
+      <div class="handle-button" ref="cartButton" :style="{'top':buttonTop+'px'}" v-popover:popover>
+        <i  @click="show=!show" :class="show?'el-icon-close':'el-icon-shopping-cart-full'" />
       </div>
       <div class="rightPanel-items">
         <slot />
@@ -14,6 +22,8 @@
 
 <script>
 import { addClass, removeClass } from '@/utils'
+import Bus from '../store/bus.js';
+import { mapState } from 'vuex'
 
 export default {
   name: 'RightPanel',
@@ -29,16 +39,20 @@ export default {
   },
   data() {
     return {
+      tipvisible:false,
+      tipcontent:"+1",
       show: false
     }
   },
-  computed: {
-    // theme() {
-    //   return this.$store.state.settings.theme
-    // }
-  },
+   computed: {
+        ...mapState({
+            nowcart: state =>state.nowcart
+        }),
+
+    },
   watch: {
     show(value) {
+      console.log("触发 close cart 事件")
       if (value && !this.clickNotClose) {
         this.addEventClick()
       }
@@ -51,6 +65,13 @@ export default {
   },
   mounted() {
     this.insertToBody()
+        Bus.$on('addcart',(arg)=> {
+          this.tipcontent="+"+arg['name']+"到   \n"+this.nowcart
+          this.tipvisible=true
+          setTimeout(() => {
+        this.tipvisible=false
+      }, 1500)
+  })
   },
   beforeDestroy() {
     const elx = this.$refs.rightPanel
@@ -61,7 +82,10 @@ export default {
       window.addEventListener('click', this.closeSidebar)
     },
     closeSidebar(evt) {
+      console.log(evt.target)
       const parent = evt.target.closest('.rightPanel')
+            console.log(parent)
+
       if (!parent) {
         this.show = false
         window.removeEventListener('click', this.closeSidebar)

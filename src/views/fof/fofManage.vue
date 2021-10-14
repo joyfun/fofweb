@@ -103,7 +103,9 @@
       prop="short_name"
       label="基金"
       show-overflow-tooltip>
-     <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
+     <template slot-scope="scope">
+       <el-button  @click.native.prevent="addCart(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
+       <a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
     </el-table-column>
 <!--      测试用例是否关联-->
    <el-table-column
@@ -491,6 +493,9 @@
     }
   },
     methods: {
+          addCart(row){
+        Bus.$emit("addcart",row)
+    },
                   changeSub(row){
                 var id=-1
                 for (var ap of this.sysparam.class_type)

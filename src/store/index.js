@@ -16,6 +16,7 @@ export default new Vuex.Store({
     Person
   },
   state: {
+    nowcart:'default',
     token: Cookies.get("token"),
     ccart: Cookies.get("cart"),
 //    ccart: JSON.parse(decodeURIComponent(Cookies.get("cart"))),
@@ -68,6 +69,25 @@ export default new Vuex.Store({
       state.token = token
       Cookies.set("token", token, { expires: 1 / 24 })
     },
+    nowCart (state, cartname) {
+      state.nowcart = cartname
+      this.commit('setCart',state.allCart[cartname])
+
+    },
+    setAllCart (state, allcart) {
+      state.allCart=allcart
+      Cookies.set("acart", state.allCart,  { expires: 365 })
+    },
+    addCartTag (state, tag) {
+      state.allCart[tag]='[]'
+      this.commit('nowCart',tag)
+      Cookies.set("acart", state.allCart,  { expires: 365 })
+    },
+    delCartTag (state, tag) {
+      delete state.allCart[tag]
+      this.commit('nowCart','default')
+      Cookies.set("acart", state.allCart,  { expires: 365 })
+    },
     setCart (state, cart) {
       // state.cart = JSON.parse(cart)
       var cartstr=""
@@ -81,6 +101,9 @@ export default new Vuex.Store({
         cartstr=JSON.stringify(cart)
 
       }
+      state.allCart[state.nowcart]=cartstr
+      Cookies.set("acart", state.allCart,  { expires: 365 })
+
       Cookies.set("ccart", cartstr,  { expires: 365 })
 
     },
@@ -112,9 +135,30 @@ export default new Vuex.Store({
         resolve()
       })
     },
+    changeCart({commit},cartname){
+      commit("nowCart", cartname)
+    },
     setCart ({commit}, cart) {
       return new Promise((resolve, reject) => {
         commit("setCart", cart)
+        resolve()
+      })
+    },
+    addCartTag ({commit}, tag) {
+      return new Promise((resolve, reject) => {
+        commit("addCartTag", tag)
+        resolve()
+      })
+    },
+    delCartTag ({commit}, tag) {
+      return new Promise((resolve, reject) => {
+        commit("delCartTag", tag)
+        resolve()
+      })
+    },
+    setAllCart ({commit}, cart) {
+      return new Promise((resolve, reject) => {
+        commit("setAllCart", cart)
         resolve()
       })
     },

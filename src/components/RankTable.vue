@@ -21,7 +21,9 @@
 
         <template slot-scope="scope">
           <!-- <a href="javascript:;" @click="showHis(scope.row)"> -->
-            {{scope.row["name"]}}
+                       <el-button  @click.native.prevent="addCart(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
+
+              {{ scope.row["name"] }}
             <!-- </a> -->
             </template>
       </el-table-column>
@@ -53,6 +55,11 @@
         label="score"
         show-overflow-tooltip
       >
+            <template slot-scope="scope">
+          <!-- <a href="javascript:;" @click="showHis(scope.row)"> -->
+            {{showResult(scope.row["score"],1)}}
+            <!-- </a> -->
+            </template>
       </el-table-column>
       </el-table-column>
       <el-table-column 
@@ -62,25 +69,14 @@
         show-overflow-tooltip
       >
       </el-table-column>
-      <!-- <el-table-column 
-        prop="ascore"
-        sortable
-        label="ascore"
-        show-overflow-tooltip
-      > -->
-      <!-- </el-table-column> -->
     </el-table>
   </div>
 </template>
  <script>
 // import echarts from 'echarts'
 import Vue from 'vue'
-// import 'echarts/lib/chart/line'
-// 引入柱状图
-// require('echarts/lib/chart/line');
-// // 引入提示框和标题组件
-// require('echarts/lib/component/tooltip');
-// require('echarts/lib/component/title');
+import Bus from '../store/bus.js';
+
 export default {
   props: {
      code:{
@@ -100,7 +96,6 @@ export default {
   watch: {
     code:{
     handler: function(val) {
-                console.log(val)
                 this.getTable()
               }
     },
@@ -130,6 +125,12 @@ export default {
     }
   },
   methods: {
+    addCart(row){
+      if(row['fundname']){
+        row['code']=row['fundname']
+        Bus.$emit("addcart",row)
+      }
+    },
     showResult(number,rate=100){
        if (null == number)
           return '' 

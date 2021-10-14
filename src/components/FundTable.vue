@@ -44,10 +44,42 @@
  
    <div class="block" style="display: flex;justify-content: space-between">
             <el-button type="primary"   size="small" @click="addCart">添加</el-button>
-
            <el-button type="primary"   size="small" @click="showCart">对比</el-button>
   </div>
-    <!-- --><el-table
+   <div class="block" style="display: flex">
+      <el-tag
+  @click="changeCart('default')"
+  :effect="'default'==nowcart?'dark':'light'"
+  type='warning'
+  :disable-transitions="false">
+  默认
+</el-tag>
+ <el-tag
+  :key="tag"
+  v-for="(item,tag) in allCart"
+  v-show="tag!='default'"
+  @click="changeCart(tag)"
+  @close="delCartTag(tag)"
+  :effect="tag==nowcart?'dark':'light'"
+  type='warning'
+  closable
+  :disable-transitions="false">
+  {{tag}}
+</el-tag>
+ <el-input id="tInput1"
+ style="width:80px"
+  v-show="inputVisible"
+  v-model="nTagName"
+  width="10"
+  ref="saveTagInput"
+  size="mini"
+  @keyup.enter.native="handleInputConfirm"
+>
+</el-input>
+<el-button id="tBtn1" v-show="!inputVisible" class="button-new-tag" size="small" @click="showInput">+添加</el-button>
+
+   </div>
+  <el-table
     ref="multipleTable"
     :data="foflist"
     tooltip-effect="dark"
@@ -81,9 +113,9 @@
 // <script>
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
-import { mapState,mapGetters } from 'vuex'
+import { mapState,mapGetters,mapMutations } from 'vuex'
 import Bus from '../store/bus.js';
-import axis from 'axios'
+import Vue from 'vue'
 // 引入柱状图
 
 // require('echarts/lib/chart/line');
@@ -119,9 +151,10 @@ export default {
   },
    computed: {
         ...mapState({
-            current: state => state.tab.currentMenu
+            current: state => state.tab.currentMenu,
+            nowcart: state =>state.nowcart
         }),
-       ...mapGetters(['uproduct','token','cart','uproductname',"allparam","sysparam"])
+       ...mapGetters(['uproduct','token','allCart','cart','uproductname',"allparam","sysparam"])
 
     },
   watch: {
@@ -154,6 +187,8 @@ export default {
     return {
       foflist:[],
       filter:{},
+      inputVisible: false,
+      nTagName: '',
       zz500:5,
       tlist:[{"name":"名称","code":"code1"},{"name":"名称2","code":"code2"}],
       rawlist:[],
@@ -164,6 +199,38 @@ export default {
     }
   },
   methods: {
+    handleInputConfirm(){
+      console.log(this.nTagName)
+      var message=""
+      if(this.allCart[this.nTagName]){
+        message="标签已存在"
+      }else{
+        // this.allCart[this.nTagName]='[]'
+      this.$store.dispatch('addCartTag',this.nTagName)
+      Vue.set(this,'foflist',this.cart)
+        this.nTagName=''
+      }
+        this.$message({
+            showClose: true,
+            message: "添加标签成功",
+            type: "info"
+          })
+    },
+     handleClose(tag) {
+        // this.allCart.splice(this.dynamicTags.indexOf(tag), 1);
+      },
+
+      showInput() {
+        this.inputVisible = true;
+      },
+    changeCart(row){
+      this.$store.dispatch('changeCart',row)
+      Vue.set(this,'foflist',this.cart)
+    },
+    delCartTag(tag){
+      this.$store.dispatch('delCartTag',tag)
+      Vue.set(this,'foflist',this.cart)
+    },
     delCart(row){
       for (var key in this.foflist) {
         if (this.foflist[key].code === row.code) {
@@ -171,7 +238,7 @@ export default {
         }
   }
       this.$store.dispatch('setCart',this.foflist)
-      this.updateChart()
+      this.updateCart()
     },
     showCart(rows){
       var codes=""
@@ -200,11 +267,24 @@ export default {
             this.foflist.push({code:afund["code"],name:afund["name"]})
         }
              this.$store.dispatch('setCart',this.foflist)
-      this.updateChart()
+      this.updateCart()
 
         // console.log(funds)
     },
-    updateChart(){
+    cartAction(afund){
+              var old=this.foflist.find((item)=>{//遍历list的数据
+                    return item.code === afund['code'];//筛选出匹配数据
+                })
+              console.log(old)
+              if(old){
+                return
+              }
+            this.foflist.push({code:afund["code"],name:afund["name"]})
+            this.$store.dispatch('setCart',this.foflist)
+            this.updateCart()
+
+    },
+    updateCart(){
       this.$axios({
         url: "/sys/updatecart",
         data:{"user":this.token,"cart":JSON.stringify(this.foflist)}, //          
@@ -251,8 +331,11 @@ export default {
 
   mounted() {
     window.addEventListener('resize', this.resizeChart)
-
-  },
+    Bus.$on('addcart',(arg)=> {
+          console.log("========add========")
+          this.cartAction(arg)
+  })}
+  ,
   destroyed() {
     window.removeEventListener('resize', this.resizeChart)
   }
@@ -260,5 +343,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+// .el-input--mini .el-input__inner {
+//     width: 20%;
+//   }
 </style>
