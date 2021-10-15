@@ -1,6 +1,6 @@
 <template>
 
-  <div>
+  <div ref="tableContainer" style="	height : 100%;">
 
  <div class="block" style="display: flex;justify-content: space-between">
         
@@ -45,8 +45,10 @@
    <div class="block" style="display: flex;justify-content: space-between">
             <el-button type="primary"   size="small" @click="addCart">添加</el-button>
            <el-button type="primary"   size="small" @click="showCart">对比</el-button>
+            <el-button type="primary"   size="small" @click="showRank">排名</el-button>
+
   </div>
-   <div class="block" style="display: flex">
+   <div class="block" style="display: flex;flex-wrap: wrap;">
       <el-tag
   @click="changeCart('default')"
   :effect="'default'==nowcart?'dark':'light'"
@@ -84,7 +86,7 @@
     :data="foflist"
     tooltip-effect="dark"
     :row-key="(row)=>{ return row.code}"
-    max-height="480"
+    :max-height="tmaxh"
     @selection-change="handleSelectionChange"
     style="width: 100%;margin-top:20px;">
         <el-table-column
@@ -103,7 +105,7 @@
             fixed="right"
       >
         <template slot-scope="scope">
-            <el-button  @click.native.prevent="delCart(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            <el-button  @click.native.prevent="delCart(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete rightCell" style="color:red;"></i></el-tooltip></el-button>
         </template>
     </el-table-column>
     </el-table> 
@@ -152,9 +154,10 @@ export default {
    computed: {
         ...mapState({
             current: state => state.tab.currentMenu,
-            nowcart: state =>state.nowcart
+            nowcart: state =>state.nowcart,
+            allCart:  state =>state.allCart
         }),
-       ...mapGetters(['uproduct','token','allCart','cart','uproductname',"allparam","sysparam"])
+       ...mapGetters(['uproduct','token','cart','uproductname',"allparam","sysparam"])
 
     },
   watch: {
@@ -190,6 +193,7 @@ export default {
       inputVisible: false,
       nTagName: '',
       zz500:5,
+      tmaxh:600,
       tlist:[{"name":"名称","code":"code1"},{"name":"名称2","code":"code2"}],
       rawlist:[],
       mult:[],
@@ -206,9 +210,11 @@ export default {
         message="标签已存在"
       }else{
         // this.allCart[this.nTagName]='[]'
-      this.$store.dispatch('addCartTag',this.nTagName)
+      this.$store.dispatch('addCartTag',this.nTagName).then(()=>{
       Vue.set(this,'foflist',this.cart)
         this.nTagName=''
+        this.inputVisible = false;
+        console.log(this.allCart)})
       }
         this.$message({
             showClose: true,
@@ -216,7 +222,16 @@ export default {
             type: "info"
           })
     },
-     handleClose(tag) {
+     delCartTag(tag) {
+             this.$axios({
+        url: "/sys/delcart",
+        data:{"user":this.token,"name":tag}, //          
+        method: "POST"
+      }).then((response) => {
+        this.$store.dispatch('delCartTag',tag)
+        Vue.set(this,'foflist',this.cart)
+        console.log(response.data)
+        });
         // this.allCart.splice(this.dynamicTags.indexOf(tag), 1);
       },
 
@@ -225,10 +240,6 @@ export default {
       },
     changeCart(row){
       this.$store.dispatch('changeCart',row)
-      Vue.set(this,'foflist',this.cart)
-    },
-    delCartTag(tag){
-      this.$store.dispatch('delCartTag',tag)
       Vue.set(this,'foflist',this.cart)
     },
     delCart(row){
@@ -247,6 +258,15 @@ export default {
       })
       console.log(codes)
       Bus.$emit('cartchart',codes)
+
+    },
+    showRank(rows){
+      var codes=""
+      this.sel.forEach((row)=>{
+        codes=codes+row['code']+","
+      })
+      console.log(codes)
+      Bus.$emit('cartrank',codes)
 
     },
     addCart(){
@@ -286,8 +306,8 @@ export default {
     },
     updateCart(){
       this.$axios({
-        url: "/sys/updatecart",
-        data:{"user":this.token,"cart":JSON.stringify(this.foflist)}, //          
+        url: "/sys/updatecart1",
+        data:{"user":this.token,"name":this.nowcart,"codes":JSON.stringify(this.foflist)}, //          
         method: "POST"
       }).then((response) => {
             console.log(response.data)
@@ -319,6 +339,7 @@ export default {
             this.rawlist=response.data
             this.changeSub(this.filter.class_type)
             console.log("####init####")
+          this.tmaxh=this.$refs.tableContainer.clientHeight-120
 
         })
     },

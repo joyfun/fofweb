@@ -38,7 +38,8 @@
         show-overflow-tooltip
       >
         <template slot-scope="scope"
-          ><a href="javascript:;" @click="showHis(scope.row)">{{
+          >                       <el-button  @click.native.prevent="addCart(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
+<a href="javascript:;" @click="showHis(scope.row)">{{
             scope.row["基金名称"]
           }}</a></template
         >
@@ -173,7 +174,7 @@
 // <script>
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
-import axis from 'axios'
+import Bus from '../store/bus.js';
 var echarts = require('echarts');
 // 引入柱状图
 // require('echarts/lib/chart/line');
@@ -216,6 +217,12 @@ export default {
     }
   },
   methods: {
+    addCart(row){
+      if(row['基金名称']){
+        row['name']=row['基金名称']
+        Bus.$emit("addcart",row)
+      }
+    },
     showResult(number,rate=100){
        if (null == number)
           return '' 

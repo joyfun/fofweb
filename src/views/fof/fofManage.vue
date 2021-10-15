@@ -1020,6 +1020,20 @@ showResult(number,rate=100){
         this.showcomapre(selcode+arg)
           // this.showChartByCodes(arg)
          })
+
+        Bus.$on('cartrank',(arg)=> {
+          console.log("========cartrank========")
+          this.cur_code=""
+
+          var selcode=""
+          for (let i = 0; i < this.multipleSelection.length; i++) {
+              selcode+=this.multipleSelection[i].code+",";
+          }
+          this.cur_code=selcode+arg
+          this.diagName="rankDialog"
+          this.dialogVisible=true
+          // this.showChartByCodes(arg)
+         })
         
     },
      filters: {

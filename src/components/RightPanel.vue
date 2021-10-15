@@ -83,9 +83,11 @@ export default {
     },
     closeSidebar(evt) {
       console.log(evt.target)
+      const cls=evt.target.getAttribute("class")
+      if(cls&&cls.indexOf('rightCell')>-1){
+        return
+      }     
       const parent = evt.target.closest('.rightPanel')
-            console.log(parent)
-
       if (!parent) {
         this.show = false
         window.removeEventListener('click', this.closeSidebar)
@@ -108,7 +110,7 @@ export default {
 }
 </style>
 
-<style lang="scss" scoped>
+<style lang="scss" scoped>+
 .rightPanel-background {
   position: fixed;
   top: 0;
@@ -118,7 +120,9 @@ export default {
   background: rgba(0, 0, 0, .2);
   z-index: -1;
 }
-
+.rightPanel-items {
+  height: 100%
+}
 .rightPanel {
   width: 100%;
   max-width: 260px;

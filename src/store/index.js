@@ -17,10 +17,12 @@ export default new Vuex.Store({
   },
   state: {
     nowcart:'default',
+    allCart:{},
     token: Cookies.get("token"),
     ccart: Cookies.get("cart"),
 //    ccart: JSON.parse(decodeURIComponent(Cookies.get("cart"))),
     cart:[],
+    
     allparam:{},
     usermenu:Cookies.get("umenu"),
     uproduct:Cookies.get("uproduct"),
@@ -80,12 +82,17 @@ export default new Vuex.Store({
     },
     addCartTag (state, tag) {
       state.allCart[tag]='[]'
+      console.log(state.allCart)
       this.commit('nowCart',tag)
       Cookies.set("acart", state.allCart,  { expires: 365 })
     },
     delCartTag (state, tag) {
       delete state.allCart[tag]
-      this.commit('nowCart','default')
+      if(tag==state.nowcart){
+        this.commit('nowCart','default')
+      }else{
+        this.commit('nowCart',state.nowcart)
+      }
       Cookies.set("acart", state.allCart,  { expires: 365 })
     },
     setCart (state, cart) {
