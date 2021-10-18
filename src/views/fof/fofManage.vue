@@ -740,6 +740,7 @@ showResult(number,rate=100){
       //表格方法
       toggleSelection(rows,) {
         console.log(rows)
+        console.log(this.multipleSelection)
         if (rows) {
           rows.forEach(row => {
             this.$refs.multipleTable.toggleRowSelection(row,this.allSelect);
@@ -748,7 +749,9 @@ showResult(number,rate=100){
                   if(this.multipleSelection[i].code==row.code){
                     if(this.allSelect){
                     }else{
-                      this.multipleSelection.splice[i,1]
+                      var a=this.multipleSelection.splice(i,1)
+                      console.log('diselc:'+a.name)
+
                     }
                     insert=false
                     break                    
@@ -761,6 +764,7 @@ showResult(number,rate=100){
           this.$refs.multipleTable.clearSelection();
           this.multipleSelection=[]
         }
+        console.log(this.multipleSelection)
       },
       //
       allrun() {
