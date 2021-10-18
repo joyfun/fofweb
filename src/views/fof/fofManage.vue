@@ -80,7 +80,8 @@
     :row-key="(row)=>{ return row.code}"
     tooltip-effect="dark"
     style="width: 100%;margin-top:20px;"
-    @selection-change="handleSelectionChange"      >
+    @select-all="onselectAll"
+    @select="handleSelectionChange"      >
 <!--    @row-click = "Selection"-->
 
     <el-table-column
@@ -440,6 +441,7 @@
       return {
           cForm,
           selcode:"",
+          allSelect:false,
           filter:{year:"2022"},
           temp:-1,
           origin:{},
@@ -493,6 +495,15 @@
     }
   },
     methods: {
+      onselectAll(row){
+
+        this.allSelect=!this.allSelect
+        console.log(row)
+        var flag=row.length>0
+        //console.log(flag)
+        this.toggleSelection(this.totaltableData)
+
+      },
           addCart(row){
         Bus.$emit("addcart",row)
     },
@@ -685,7 +696,9 @@ showResult(number,rate=100){
           this.diagName="rankDialog"
           var selcode=""
           for (let i = 0; i < this.multipleSelection.length; i++) {
+            if(this.multipleSelection[i].stage!='非卖'){
               selcode+=this.multipleSelection[i].code+",";
+              }
           }
           this.cur_code=selcode
           console.log(this.cur_code)
@@ -725,15 +738,29 @@ showResult(number,rate=100){
         //   .catch(_ => {});
       },
       //表格方法
-      toggleSelection(rows) {
+      toggleSelection(rows,) {
+        console.log(rows)
         if (rows) {
           rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
+            this.$refs.multipleTable.toggleRowSelection(row,this.allSelect);
+              var insert=true
+               for (let i = 0; i < this.multipleSelection.length; i++) {
+                  if(this.multipleSelection[i].code==row.code){
+                    if(this.allSelect){
+                    }else{
+                      this.multipleSelection.splice[i,1]
+                    }
+                    insert=false
+                    break                    
+                  }}
+              if(this.allSelect){
+                  this.multipleSelection.push(row)
+                }
           });
         } else {
           this.$refs.multipleTable.clearSelection();
+          this.multipleSelection=[]
         }
-        this.multipleSelection=[]
       },
       //
       allrun() {
@@ -877,7 +904,7 @@ showResult(number,rate=100){
       // 选中
       handleSelectionChange(val) {
           console.log(val)
-          console.log(this.multipleSelection)
+        //   console.log(this.multipleSelection)
 
         this.multipleSelection = val;
     //         if (this.multipleSelection.length > 0) {
@@ -1027,7 +1054,9 @@ showResult(number,rate=100){
 
           var selcode=""
           for (let i = 0; i < this.multipleSelection.length; i++) {
+              if(this.multipleSelection[i].stage!='非卖'){
               selcode+=this.multipleSelection[i].code+",";
+              }
           }
           this.cur_code=selcode+arg
           this.diagName="rankDialog"

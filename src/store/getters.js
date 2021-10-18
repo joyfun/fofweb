@@ -12,7 +12,8 @@ const getters = {
   permission_routes: state => state.permission.routes,
   errorLogs: state => state.errorLog.logs,
   token: state => state.token,
-  allCart:state =>{if(state.allCart&&state.allCart.length>0){
+  allCart:state =>{
+    if(state.allCart&&state.allCart.length>0){
     return state.allCart
   }else{
     state.allCart=JSON.parse(decodeURIComponent(Cookies.get("acart")))

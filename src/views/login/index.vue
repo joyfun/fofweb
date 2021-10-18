@@ -116,11 +116,12 @@ export default {
         data: {"user":this.loginForm.username,"password":shaObj.getHash("HEX") },
       }).then((response) => {
             if(response.data.status=="success"){
+              var luser=response.data.user
              that.$store.dispatch('setUserMenu',response.data.permissions)
              that.$axios({
         url: "/sys/getcart",
         method: "GET",
-        data: {"user":this.loginForm.username},
+        params: {"user":luser},
       }).then((response) => {
              that.$store.dispatch('setAllCart',response.data)
              if(response.data.default){

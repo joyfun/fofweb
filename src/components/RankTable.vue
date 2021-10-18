@@ -13,7 +13,7 @@
 
       <el-table-column
         prop="基金名称"
-        width="120"
+        width="220"
         sortable
         label="基金名称"
         show-overflow-tooltip
@@ -29,6 +29,7 @@
       </el-table-column>
                 <el-table-column 
         prop="class_type"
+        width="60"
         sortable
         label="类型"
         show-overflow-tooltip
@@ -36,7 +37,7 @@
       </el-table-column>
  
       <el-table-column :key="col + wts[idx]" v-for="(col,idx) in cols">
-        <template slot="header"><el-input   v-model="wts[idx]" :placeholder="col" clearable  ></el-input></template>
+        <template slot="header"><el-input   class="rankcell" v-model="wts[idx]" :placeholder="col" clearable  ></el-input></template>
             <el-table-column 
         :prop="col"
         width="80"
@@ -116,7 +117,7 @@ export default {
       range:3,
       tmaxh:720,
       limit_dic:{'sharpe': 3, 'calmar': 5, 'sortino': 5, 'yeaily_return': 0.7},
-      wts: [0, 2, 1, 0.5, -1, 0, 1, 0],
+      wts: [6, 0, 2, 1, 2, -1, 0, 0],
       wtsdict:{'yeaily_return':1, 'sharpe':2, 'calmar':1, 'sortino':3, 'dd':1, 'dd_week':2, 'win_ratio':2, 'volatility':1},
       tableData:[],
       tags: ["近一月","近季度","近半年","近一年","近2年","近3年","全部","今年","去年","前年"],
@@ -219,4 +220,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.el-input__inner {
+padding:0 3px;
+  }
+</style>
