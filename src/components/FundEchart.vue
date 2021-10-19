@@ -633,8 +633,11 @@ var sdata = [...this.raw_data[cname]];
         //   smooth: true,
           yAxisIndex:1
         })
-        this.axisOption.legend[0].selected[cname+'_超额'] = false;
+        this.axisOption.legend[0].selected[cname] = false;
         this.axisOption.legend[0].selected["中证500指数"] = false;
+        this.axisOption.legend[0].selected["沪深500指数"] = false;
+        this.axisOption.legend[0].selected["中证1000指数"] = false;
+
 
         }
         var   mp = {

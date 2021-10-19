@@ -3,8 +3,11 @@
 <el-radio-group v-model="range">
   <el-radio-button type="primary" :key="i"  :label="i" icon="el-icon-edit" v-for="(item,i) in tags">{{item}}</el-radio-button>
 </el-radio-group>
+    <!-- <el-button type="info" @click="downFile('/fof/jscore_down')">下载数据</el-button> -->
+    <el-button type="info" @click="exportExcel">导出评分</el-button>
    <el-table
       ref="multipleTable"
+      id="out-table"
       :data="tableData"
       :max-height="tmaxh"
       tooltip-effect="dark"
@@ -13,7 +16,8 @@
 
       <el-table-column
         prop="基金名称"
-        width="220"
+        min-width="160"
+        max-width="260"
         sortable
         label="基金名称"
         show-overflow-tooltip
@@ -52,6 +56,7 @@
               <template slot="header"><el-button size="mini" @click="calc_score">打分</el-button></template>
                  <el-table-column 
         prop="score"
+        width="60"
         sortable
         label="score"
         show-overflow-tooltip
@@ -65,6 +70,7 @@
       </el-table-column>
       <el-table-column 
         prop="length"
+        width="80"
         sortable
         label="数据长度"
         show-overflow-tooltip
@@ -77,7 +83,8 @@
 // import echarts from 'echarts'
 import Vue from 'vue'
 import Bus from '../store/bus.js';
-
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
 export default {
   props: {
      code:{
@@ -138,6 +145,44 @@ export default {
         var color=number>=0?"red":"green"
         return this.$tools.formatMoney(number*rate,3)
     },
+        exportExcel() {
+          var title='评分'+new Date().getTime()
+  /* generate workbook object from table */
+  var workbook = XLSX.utils.book_new();
+
+  var st = XLSX.utils.table_to_sheet(document.querySelector('#out-table'))
+  st.C1={t: 'n', v:this.wts[0]}
+  st.D1={t: 'n', v:this.wts[1]}
+  st.E1={t: 'n', v:this.wts[2]}
+  st.F1={t: 'n', v:this.wts[3]}
+  st.G1={t: 'n', v:this.wts[4]}
+  st.H1={t: 'n', v:this.wts[5]}
+  st.I1={t: 'n', v:this.wts[6]}
+  st.J1={t: 'n', v:this.wts[7]}
+  // console.log(st['!ref'])
+  var reg = new RegExp("(\d+$)")
+  var rows=st['!ref'].match(/\d+$/)[0]
+  // console.log(rows)
+  st["M2"]={t:"s",v:"排名"}
+  for(var i=3;i<=rows;i++){
+    st["M"+i]={t: 'n', v:i-2}
+  }
+  XLSX.utils.book_append_sheet(workbook, st, "评分");
+  /* get binary string as output */
+  var wbout = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'array' })
+
+
+   try {
+      FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
+   } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+   return wbout
+
+    },
+      downFile(durl){
+
+        const options = {"code":this.code}
+            this.$tools.exportExcel(durl,options)
+        },
     calc_score(){
       var rawdata = JSON.parse(JSON.stringify(this.tableData));
       for(var ret_df of rawdata){
