@@ -756,7 +756,7 @@ showResult(number,rate=100){
                     insert=false
                     break                    
                   }}
-              if(this.allSelect){
+              if(this.allSelect&&insert){
                   this.multipleSelection.push(row)
                 }
           });
