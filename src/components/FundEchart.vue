@@ -635,7 +635,7 @@ var sdata = [...this.raw_data[cname]];
         })
         this.axisOption.legend[0].selected[cname] = false;
         this.axisOption.legend[0].selected["中证500指数"] = false;
-        this.axisOption.legend[0].selected["沪深500指数"] = false;
+        this.axisOption.legend[0].selected["沪深300指数"] = false;
         this.axisOption.legend[0].selected["中证1000指数"] = false;
 
 
