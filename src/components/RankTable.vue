@@ -85,6 +85,7 @@ import Vue from 'vue'
 import Bus from '../store/bus.js';
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
+import DB from '@/store/localapi.js';
 export default {
   props: {
      code:{
@@ -236,8 +237,23 @@ export default {
       this.$forceUpdate();
       return parseFloat(event)
         },
+    getFundVal(code){
+              const stmt = DB.prepare('SELECT * FROM fund_val where code=?');
+              return stmt.all(code)
+    },
     getTable(){
         var $this=this
+        if(this.$isElectron){
+          var zz500idx=this.getFundVal('000905.SHW')
+          this.code.split(",").forEach((acode,idx)=>{
+            if(acode){
+              const istmt =DB.prepare('SELECT * FROM fund_info where code=?')
+              var info=istmt.get(acode)
+
+            }
+          })
+        return
+        }
         var param={code:this.code,range:this.range}
         this.$axios.get('/fof/fundrank',{params:{code:this.code,range:this.range}})//axis后面的.get可以省略；
             .then(

@@ -13,6 +13,7 @@
       :value="item.code">
     </el-option>
   </el-select>
+        <el-button  size="small" @click="showRank()">排名</el-button>
         <el-button  size="small" @click="downFile()">下载</el-button>
         <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
@@ -141,14 +142,16 @@
         </el-pagination> 
       </div>
     </div>
-    <el-dialog
+<el-dialog
     width="80%"
     top="50px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    :visible.sync="dialogVisible"
-  >
-    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
+     :visible.sync="dialogVisible"
+     >
+    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='hisChart'"></fund-echart>
+    <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
+    <rank-table       @close="editClose" ref="ranktable"  :titles="current.name"  style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
     </el-dialog>
     <el-dialog
     width="80%"
@@ -309,6 +312,7 @@
     import DB from '@/store/localapi.js';
 
     import HisTable from '../../components/HisTable.vue';
+    import RankTable from '../../components/RankTable.vue';
 
     import ReportTable from '../../components/ReportTable.vue';
     import {mapGetters} from 'vuex'
@@ -329,6 +333,7 @@
             FundEchart,
             HisTable,
             AuditLog,
+            RankTable,
             ConcatLog,
             ReportTable,
             FundCorr
@@ -342,6 +347,7 @@
       return {
           cForm,
           selcode:"",
+          diagName:"",
           filter:{year:"2022"},
           temp:-1,
           origin:{},
@@ -485,8 +491,22 @@ showResult(number,rate=100){
           this.cur_code=""
           this.current=row
           this.dialogVisible=true
+          this.diagName="hisChart"
           this.cur_code=row.code
-        //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
+          console.log(this.diagName)
+      },
+      showRank(){
+          this.cur_code=""
+          this.dialogVisible=true
+          this.diagName="rankDialog"
+          var selcode=""
+          for (let i = 0; i < this.multipleSelection.length; i++) {
+            if(this.multipleSelection[i].stage!='非卖'){
+              selcode+=this.multipleSelection[i].code+",";
+              }
+          }
+          this.cur_code=selcode
+          console.log(this.cur_code)
       },
       onSubmit(){
           
@@ -763,15 +783,16 @@ showResult(number,rate=100){
         const insert = DB.prepare('insert into fund_val(date,code ,sumval ) VALUES (@date ,@code ,@sumval)');
         
         const insertMany = DB.transaction((data) => {
-          for (const row of data) {
-              insert.run({"date":row[0],"code":row[1],"sumval":row[2]});
-          }
-        })
+          data.index.forEach((ele,index)=>{
+              insert.run({"date":ele,"code":data.columns[0],"sumval":data.data[index][0]});
+            })
+          })
         for(var row of funds){
-            axis.get('/fof/his',{params:{"code":row["code"]}})//axis后面的.get可以省略；
+            axis.get('/fof/whis',{params:{"code":row["code"]}})//axis后面的.get可以省略；
                         .then(
                           (response) => {
-                            insertMany(response.data.datas)
+                            console.log(response.data)
+                            insertMany(response.data)
                           }
                         )
         }
@@ -790,6 +811,7 @@ showResult(number,rate=100){
                                                   console.log('####################')
                   const stmt = DB.prepare('SELECT * FROM fund_info');
                   this.totaltableData = stmt.all();
+                  this.savefundval([{"code":"000905.SHW"}])
                   // this.savefundval(this.totaltableData)
                   this.tableData = this.totaltableData.slice(0 ,this.PageSize);
             // axis( {
