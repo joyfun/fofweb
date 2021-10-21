@@ -1,5 +1,5 @@
 <template>
-  <div ref="tableContainer" style="	height : 100%;">
+  <div id="tableContainer" style="	height : 100%;">
       <div  class="block" style="display: flex;justify-content: space-between">
         <div style="display: flex;justify-content: space-between">
            <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
@@ -14,7 +14,7 @@
     </el-option>
   </el-select>
         <el-button  size="small" @click="showRank()">排名</el-button>
-        <el-button  size="small" @click="downFile()">下载</el-button>
+        <el-button  size="small" @click="downData()">同步数据</el-button>
         <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
         </div>
@@ -101,6 +101,8 @@
       width="160">
         <template slot-scope="scope">
             <el-button @click.native.prevent="viewHis(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看净值历史" placement="left-start"><i class="el-icon-info"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="savefundval(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="同步数据" placement="left-start"><i class="el-icon-download"></i></el-tooltip></el-button>
+
 <!-- <el-button @click.native.prevent="viewAudit(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start"><i class="el-icon-s-order"></i></el-tooltip></el-button> 
             <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
             <el-button v-if="usermenu.indexOf('info-audit')>-1" @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
@@ -426,6 +428,12 @@
                   this.getList()
 
       },
+      downData(){
+        this.savefundval({"code":"000905.SHW"})
+        for (var row of this.totaltableData){
+          this.savefundval(row)
+        }
+      },
       delFund0(row){
           this.confirmVisible=true
           this.current=row
@@ -713,8 +721,7 @@ showResult(number,rate=100){
         // console.log(val);
       },
       resizeChart(){
-                console.log(this.$refs['tableContainer'].clientHeight)
-                this.tmaxh=this.$refs['tableContainer'].clientHeight-120
+                this.tmaxh=document.getElementById('tableContainer').clientHeight-120
 
       },
       delSelection(){
@@ -779,26 +786,27 @@ showResult(number,rate=100){
         });
         insertMany(data)
       },
-      savefundval(funds,code){
+      savefundval(row){
         const insert = DB.prepare('insert into fund_val(date,code ,sumval ) VALUES (@date ,@code ,@sumval)');
-        
         const insertMany = DB.transaction((data) => {
           data.index.forEach((ele,index)=>{
               insert.run({"date":ele,"code":data.columns[0],"sumval":data.data[index][0]});
             })
           })
-        for(var row of funds){
             axis.get('/fof/whis',{params:{"code":row["code"]}})//axis后面的.get可以省略；
                         .then(
                           (response) => {
-                            console.log(response.data)
                             insertMany(response.data)
+                            this.$message({
+                message: '成功同步'+response.data.index.length+"条数据",
+                type: 'success',
+                center: true
+        });
                           }
                         )
-        }
         
 
-        insertMany(data)
+        //insertMany(data)
       },
      getList(param){
           // console.log(this.filter)
@@ -811,9 +819,10 @@ showResult(number,rate=100){
                                                   console.log('####################')
                   const stmt = DB.prepare('SELECT * FROM fund_info');
                   this.totaltableData = stmt.all();
-                  this.savefundval([{"code":"000905.SHW"}])
                   // this.savefundval(this.totaltableData)
                   this.tableData = this.totaltableData.slice(0 ,this.PageSize);
+                  this.$nextTick(() => { 
+                  this.resizeChart()})
             // axis( {
             //     url: '/fof/list',
             //     method: 'GET',
@@ -869,7 +878,7 @@ showResult(number,rate=100){
         }
       }},
     mounted() {
-            window.addEventListener("resize", this.resizeChart);
+            // window.addEventListener("resize", this.resizeChart);
     },
     //   async mounted() {
     //         console.log(this.$route.params)

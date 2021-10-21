@@ -138,6 +138,7 @@ export default {
               }
               var $this=this
               if(this.$isElectron){
+                   $this.tableData=[]
                   const stmt = DB.prepare('SELECT * FROM fund_val where code=?');
                   var hisData = stmt.all(code);
                    var len=hisData.length
