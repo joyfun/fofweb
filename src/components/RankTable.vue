@@ -57,8 +57,8 @@
       </el-table-column>
 
  <el-table-column>
-              <template slot="header"><el-button size="mini" @click="calc_score">打分1</el-button></template>
-              <template slot="header"><el-button size="mini" @click="calc_score2">打分2</el-button></template>
+              <template slot="header"><el-button size="mini" @click="calc_score(1)">打分1</el-button></template>
+              <template slot="header"><el-button size="mini" @click="calc_score(2)">打分2</el-button></template>
 
                  <el-table-column 
         prop="score"
@@ -175,18 +175,43 @@ export default {
         var color=number>=0?"red":"green"
         return this.$tools.formatMoney(number*rate,3)
     },
+    exportExcelAll(){
+        const options = {"code":this.code}
+        this.$axios({
+        method: 'post',
+        url: '/fof/jscore_down', // 请求地址
+        data: options, // 参数
+        responseType:'arraybuffer',
+      }).then(response => {
+          var data = new Uint8Array(response.data);
+          var workbook = XLSX.read(data, {type:"array"});
+          for (var sn of workbook.SheetNames){
+              let st=workbook.Sheets[sn]
+              let tdata=XLSX.utils.sheet_to_json(workbook.Sheets[sn])
+              if(tdata.length>2)
+              this.do_calc(tdata)
+              tdata.sort((a,b)=>{a['socre']-b['score']})
+              workbook.Sheets[sn]=XLSX.utils.json_to_sheet(tdata,{header:['fundname','name','class_type','sub_type','yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','score'], skipHeader:false})
+              
+          }
+            var wbout = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'array' })
+        var title='评分下载'+new Date().getTime()
+        FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
+        //   console.log(workbook.SheetNames)
+      })
+        
+
+    },
     exportExcel(){
+      var title='评分'+new Date().getTime()
       let wbout=this.genSheet()
          try {
       FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
-   } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+   }    catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
 
     },
         genSheet() {
-          var title='评分'+new Date().getTime()
-  /* generate workbook object from table */
   var workbook = XLSX.utils.book_new();
-
   var st = XLSX.utils.table_to_sheet(document.querySelector('#out-table'))
   st.D1={t: 'n', v:this.wts[0]}
   st.E1={t: 'n', v:this.wts[1]}
@@ -196,24 +221,9 @@ export default {
   st.I1={t: 'n', v:this.wts[5]}
   st.J1={t: 'n', v:this.wts[6]}
   st.K1={t: 'n', v:this.wts[7]}
-  // console.log(st['!ref'])
-  // var reg = new RegExp("(\d+$)")
-  // var rows=st['!ref'].match(/\d+$/)[0]
-  // // console.log(rows)
-  // st["M2"]={t:"s",v:"排名"}
-  // for(var i=3;i<=rows;i++){
-  //   st["M"+i]={t: 'n', v:i-2}
-  // }
   XLSX.utils.book_append_sheet(workbook, st, "评分");
-  /* get binary string as output */
   var wbout = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'array' })
-
-
-  //  try {
-  //     FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
-  //  } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
    return wbout
-
     },
       downFile(durl){
 
@@ -221,8 +231,8 @@ export default {
             this.$tools.exportExcel(durl,options)
         },
 
-    calc_score2(){
-      var rawdata = JSON.parse(JSON.stringify(this.tableData));
+    do_calc2(tableData){
+      var rawdata = JSON.parse(JSON.stringify(tableData));
       // console.log(rawdata)
       //console.log(rawdata.sort((a,b)=>{return b['yeaily_return']-a['yeaily_return']}))
 
@@ -251,7 +261,7 @@ export default {
          var item=this.cols[idx]
         ascore+=row[item]*this.wts[idx]
        }
-      this.tableData.forEach((item,idx)=>{
+      tableData.forEach((item,idx)=>{
         if(item['fundname']==row['fundname']){
           item['score2']=ascore
         }
@@ -260,17 +270,24 @@ export default {
       //  this.tableData[ridx]['score2']=ascore
     }
     // Vue.set(this,"tableData",this.tableData)
-        this.$nextTick(() => {      this.$refs.multipleTable.clearSort()
-      this.$refs.multipleTable.sort('score2', 'descending')}) 
     },
-
-    calc_score(){
-      var rawdata = JSON.parse(JSON.stringify(this.tableData));
+    calc_score(type=1){
+        var sortcol="score"
+        if(type==1){
+        this.do_calc(this.tableData)
+        }else{
+            sortcol="score2"
+        this.do_calc2(this.tableData)    
+        }
+        this.$nextTick(() => {      this.$refs.multipleTable.clearSort()
+        this.$refs.multipleTable.sort(sortcol, 'descending')}) 
+    },
+    do_calc(tableData){
+      var rawdata = JSON.parse(JSON.stringify(tableData));
       for(var ret_df of rawdata){
       //去极值
       for(var item in this.limit_dic){
           ret_df[item] = (ret_df[item] >= this.limit_dic[item]) * this.limit_dic[item] + (ret_df[item] < this.limit_dic[item]) * ret_df[item]
-
         }
       }
     //求最大值
@@ -302,10 +319,8 @@ export default {
         row[item]=(row[item]-maxmin[item+"_min"])/diff
         ascore+=row[item]*this.wts[idx]
        }
-       this.tableData[ridx]['score']=ascore
+       tableData[ridx]['score']=ascore
     }
-    this.$nextTick(() => {      this.$refs.multipleTable.clearSort()
-      this.$refs.multipleTable.sort('score', 'descending')}) 
     },
     wtsUpdate(event,idx){
       console.log(event)
@@ -471,7 +486,9 @@ export default {
             .then(
                 (response) => {
                     $this.tableData=this.$tools.pandasToJson(response.data)
-                    this.calc_score()
+                    this.calc_score(1)
+                    this.calc_score(2)
+
                 })
             .catch(
                 (error) => {
