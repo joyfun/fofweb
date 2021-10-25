@@ -338,7 +338,7 @@ this.pieData.action["click"]=(params)=>{
         this.lrate=arg.lrate
         this.getTableData()
       })
-    this.code = "FOF,000300.SH,000905.SH,000852.SH";
+    this.code = "SY9620,000300.SH,000905.SH,000852.SH";
   },
 };
 </script>

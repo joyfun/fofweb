@@ -219,7 +219,7 @@ getTableData(param) {
 
     //   })
 
-    this.code = "FOF,000300.SH,000905.SH";
+    this.code = "SY9620,000300.SH,000905.SH";
   },
 };
 </script>

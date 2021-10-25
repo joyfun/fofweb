@@ -26,7 +26,8 @@
     :row-key="(row)=>{ return row.scode}"
     tooltip-effect="dark"
     style="width: 100%;margin-top:20px;"
-    @selection-change="handleSelectionChange"      >
+    @select-all="onselectAll"
+    @select="handleSelectionChange"       >
 <!--    @row-click = "Selection"-->
 
     <el-table-column
@@ -261,7 +262,7 @@
       </el-form-item>
       </el-col>
       <el-col :span="12">              
-      <el-form-item v-if="index+1<cForm.length-1"  :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte">
+      <el-form-item v-if="index+1<cForm.length"  :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte">
           <el-select v-if="cForm[index+1].param" v-model="current[cForm[index+1].dataIndex]"  style="width:120px"  clearable :placeholder="cForm[index+1].tilte">
     <el-option
       v-for="item in sysparam[cForm[index+1].param]"
@@ -348,6 +349,7 @@
     data() {
       return {
           cForm,
+          allSelect:false,
           selcode:"",
           diagName:"",
           filter:{year:"2022"},
@@ -550,16 +552,44 @@ showResult(number,rate=100){
         //   })
         //   .catch(_ => {});
       },
+
+      onselectAll(row){
+
+        this.allSelect=!this.allSelect
+        var flag=row.length>0
+        //console.log(flag)
+        this.toggleSelection(this.totaltableData)
+
+      },
+
       //表格方法
-      toggleSelection(rows) {
+      toggleSelection(rows,) {
+        console.log(rows)
+        console.log(this.multipleSelection)
         if (rows) {
           rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
+            this.$refs.multipleTable.toggleRowSelection(row,this.allSelect);
+              var insert=true
+               for (let i = 0; i < this.multipleSelection.length; i++) {
+                  if(this.multipleSelection[i].code==row.code){
+                    if(this.allSelect){
+                    }else{
+                      var a=this.multipleSelection.splice(i,1)
+                      console.log('diselc:'+a.name)
+
+                    }
+                    insert=false
+                    break                    
+                  }}
+              if(this.allSelect&&insert){
+                  this.multipleSelection.push(row)
+                }
           });
         } else {
           this.$refs.multipleTable.clearSelection();
+          this.multipleSelection=[]
         }
-        this.multipleSelection=[]
+        console.log(this.multipleSelection)
       },
       //
       allrun() {
@@ -697,21 +727,7 @@ showResult(number,rate=100){
       },
       // 选中
       handleSelectionChange(val) {
-          console.log(val)
-          console.log(this.multipleSelection)
-
         this.multipleSelection = val;
-    //         if (this.multipleSelection.length > 0) {
-    //     this.multipleSelection.forEach((item, index) => {
-    //         if (item.code == row.code) {
-    //             this.multipleSelection.splice(index,1)
-    //         } else {
-    //             this.multipleSelection.push(row)
-    //         }
-    //     })
-    // } else {
-    //     this.multipleSelection.push(row)
-    // }
 
       },
        handlecollapse(val) {

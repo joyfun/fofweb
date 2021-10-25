@@ -52,12 +52,13 @@ export default {
     },
   watch: {
     show(value) {
-      console.log("触发 close cart 事件")
       if (value && !this.clickNotClose) {
         this.addEventClick()
       }
       if (value) {
         addClass(document.body, 'showRightPanel')
+        Bus.$emit('switchcart',this.nowcart)
+
       } else {
         removeClass(document.body, 'showRightPanel')
       }

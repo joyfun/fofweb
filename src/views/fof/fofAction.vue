@@ -116,7 +116,7 @@ this.$axios({
             console.log(response.data)
         });       },
       downWeekly(){
-          window.location.href="/fof/downfile?code=FOF&r="+Math.random()
+          window.location.href="/fof/downfile?code=SY9620&r="+Math.random()
       },
       updateparam(){
           var that=this

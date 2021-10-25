@@ -320,7 +320,7 @@ export default {
         axis({
         url: "/fof/profit",
         method: "GET",
-        params: {code:"FOF"},
+        params: {code:"SY9620"},
       })
         .then((response) => {
             this.profitlist=response.data
@@ -362,7 +362,7 @@ this.pieData.action["click"]=(params)=>{
         this.$refs.subPie.initChart() 
 
       })
-    this.code = "FOF,000300.SH,000905.SH,000852.SH";
+    this.code = "SY9620,000300.SH,000905.SH,000852.SH";
       Bus.$on('cartchart',(arg)=> {
           console.log("========cartchart========")
           this.showChartByCodes(arg)

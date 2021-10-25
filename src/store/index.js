@@ -19,7 +19,7 @@ export default new Vuex.Store({
     nowcart:'default',
     allCart:{},
     token: Cookies.get("token"),
-    ccart: Cookies.get("cart"),
+    // ccart: Cookies.get("cart"),
 //    ccart: JSON.parse(decodeURIComponent(Cookies.get("cart"))),
     cart:[],
     
@@ -70,21 +70,33 @@ export default new Vuex.Store({
     setToken (state, token) {
       state.token = token
       Cookies.set("token", token, { expires: 1 / 24 })
+      // Cookies.remove("acart")
+      // this.commit('nowCart','default')
     },
     nowCart (state, cartname) {
       state.nowcart = cartname
-      this.commit('setCart',state.allCart[cartname])
+      // this.commit('setCart',state.allCart[cartname])
 
     },
     setAllCart (state, allcart) {
-      state.allCart=allcart
-      Cookies.set("acart", state.allCart,  { expires: 365 })
+      console.log("start set allChart")
+      console.log(allcart)
+      for (var a in allcart){
+        if(typeof(allcart[a])=='string')
+        allcart[a]=JSON.parse(allcart[a])
+      }
+      localStorage.setItem('acart', JSON.stringify(allcart));
+
+      // var acart=JSON.parse(decodeURIComponent(Cookies.get("acart")))
+      // console.log(acart)
+      Vue.set(state,"allCart",allcart)
+      state.nowcart='default'
     },
     addCartTag (state, tag) {
-      state.allCart[tag]='[]'
-      console.log(state.allCart)
+      state.allCart[tag]=[]
       this.commit('nowCart',tag)
-      Cookies.set("acart", state.allCart,  { expires: 365 })
+      localStorage.setItem('acart', JSON.stringify(state.allCart));
+
     },
     delCartTag (state, tag) {
       delete state.allCart[tag]
@@ -93,26 +105,12 @@ export default new Vuex.Store({
       }else{
         this.commit('nowCart',state.nowcart)
       }
-      Cookies.set("acart", state.allCart,  { expires: 365 })
+      localStorage.setItem('acart', JSON.stringify(state.allCart));
     },
     setCart (state, cart) {
-      // state.cart = JSON.parse(cart)
-      var cartstr=""
-      if(typeof(cart)=="string")
-      {
-        cartstr=cart
-        state.cart=JSON.parse(cart)
-
-      }else{
-        state.cart=cart
-        cartstr=JSON.stringify(cart)
-
-      }
-      state.allCart[state.nowcart]=cartstr
-      Cookies.set("acart", state.allCart,  { expires: 365 })
-
-      Cookies.set("ccart", cartstr,  { expires: 365 })
-
+      console.log("setCart")
+      state.allCart[state.nowcart]=cart
+      localStorage.setItem('acart', JSON.stringify(state.allCart));
     },
     updataUproduct (state, product) {
         state.uproduct = product
@@ -165,6 +163,8 @@ export default new Vuex.Store({
     },
     setAllCart ({commit}, cart) {
       return new Promise((resolve, reject) => {
+        console.log("###setAllcart")
+        console.log(cart)
         commit("setAllCart", cart)
         resolve()
       })

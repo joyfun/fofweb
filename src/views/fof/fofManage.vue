@@ -333,7 +333,7 @@
       </el-form-item>
       </el-col>
       <el-col :span="12">              
-      <el-form-item v-if="index+1<cForm.length-1"  :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte">
+      <el-form-item v-if="index+1<cForm.length"  :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte">
           <el-select v-if="cForm[index+1].param" v-model="current[cForm[index+1].dataIndex]"  style="width:120px"  clearable :placeholder="cForm[index+1].tilte">
     <el-option
       v-for="item in sysparam[cForm[index+1].param]"
@@ -391,7 +391,7 @@
 
     import FundCorr from '../../components/FundCorr.vue';
    const cForm=[
-    {"tilte":"编号","dataIndex":"code"},
+    {"tilte":"备案号","dataIndex":"code"},
     {"tilte":"名称","dataIndex":"name"},
     {"tilte":"简称","dataIndex":"short_name"},
     {"tilte":"基金类型","dataIndex":"class_type","param":"class_type"},
@@ -402,6 +402,7 @@
     {"tilte":"份额","dataIndex":"amount"},
     {"tilte":"所属公司","dataIndex":"company"},
     {"tilte":"渠道","dataIndex":"type","param":"data_type"},
+    {"tilte":"网站代码","dataIndex":"scode"},
     {"tilte":"基金成立时间","dataIndex":"founded"},
     {"tilte":"状态","dataIndex":"stage","param":"stage"},
     {"tilte":"子基金对标","dataIndex":"compare"},
@@ -418,8 +419,10 @@
     {"tilte":"其他关键条款","dataIndex":"other"},
     {"tilte":"渠道","dataIndex":"channel"},
     {"tilte":"渠道联系人","dataIndex":"channel_man"},
-    {"tilte":"渠道联系方式","dataIndex":"channel_contact"} ,
-     {"tilte":"备注","dataIndex":"remark","type":"textarea"} 
+    {"tilte":"渠道联系方式","dataIndex":"channel_contact"},
+    {"tilte":"备注","dataIndex":"remark","type":"textarea"} ,
+
+    
 
 ]
   export default {
@@ -986,6 +989,10 @@ showResult(number,rate=100){
         console.log(this.value2[1]);
       },
       //
+      seachChange(param){
+        console.log(param)
+        this.getList()
+      },
      getList(param){
           // console.log(this.filter)
           // return

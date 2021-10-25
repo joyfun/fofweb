@@ -64,7 +64,7 @@
   @close="delCartTag(tag)"
   :effect="tag==nowcart?'dark':'light'"
   type='warning'
-  closable
+  :closable="tag==nowcart"
   :disable-transitions="false">
   {{tag}}
 </el-tag>
@@ -155,9 +155,8 @@ export default {
         ...mapState({
             current: state => state.tab.currentMenu,
             nowcart: state =>state.nowcart,
-            allCart:  state =>state.allCart
         }),
-       ...mapGetters(['uproduct','token','cart','uproductname',"allparam","sysparam"])
+       ...mapGetters(['uproduct','allCart','token','uproductname',"allparam","sysparam"])
 
     },
   watch: {
@@ -211,7 +210,7 @@ export default {
       }else{
         // this.allCart[this.nTagName]='[]'
       this.$store.dispatch('addCartTag',this.nTagName).then(()=>{
-      Vue.set(this,'foflist',this.cart)
+      Vue.set(this,'foflist',[])
         this.nTagName=''
         this.inputVisible = false;
         console.log(this.allCart)})
@@ -228,8 +227,7 @@ export default {
         data:{"user":this.token,"name":tag}, //          
         method: "POST"
       }).then((response) => {
-        this.$store.dispatch('delCartTag',tag)
-        Vue.set(this,'foflist',this.cart)
+        this.$store.dispatch('delCartTag',tag).then(()=>Vue.set(this,'foflist',this.allCart[this.nowcart]))
         console.log(response.data)
         });
         // this.allCart.splice(this.dynamicTags.indexOf(tag), 1);
@@ -240,7 +238,8 @@ export default {
       },
     changeCart(row){
       this.$store.dispatch('changeCart',row)
-      Vue.set(this,'foflist',this.cart)
+      Vue.set(this,'foflist',this.allCart[row])
+      console.log(this.foflist)
     },
     delCart(row){
       for (var key in this.foflist) {
@@ -286,7 +285,8 @@ export default {
               }
             this.foflist.push({code:afund["code"],name:afund["name"]})
         }
-             this.$store.dispatch('setCart',this.foflist)
+            this.$store.dispatch('setCart',this.foflist)
+            this.foflist.splice(1,0)
       this.updateCart()
 
         // console.log(funds)
@@ -302,6 +302,7 @@ export default {
             this.foflist.push({code:afund["code"],name:afund["name"]})
             this.$store.dispatch('setCart',this.foflist)
             this.updateCart()
+            this.foflist.splice(1,0)
 
     },
     updateCart(){
@@ -328,9 +329,6 @@ export default {
               }
             },
     remoteMethod(query){
-      if(this.cart){
-      this.foflist=this.cart
-      }
       this.$axios({
         url: "/fof/foflist",
         method: "GET",
@@ -347,7 +345,9 @@ export default {
         this.sel = val;
       }
   },
-  created(){    this.remoteMethod();
+  created(){   
+    //this.changeCart(this.nowcart)
+    this.remoteMethod();
 },
 
   mounted() {
@@ -355,7 +355,13 @@ export default {
     Bus.$on('addcart',(arg)=> {
           console.log("========add========")
           this.cartAction(arg)
-  })}
+  })
+    Bus.$on('switchcart',(arg)=> {
+          console.log(arg)
+          this.changeCart(arg)
+  })
+  
+  }
   ,
   destroyed() {
     window.removeEventListener('resize', this.resizeChart)

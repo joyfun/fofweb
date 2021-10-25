@@ -5,6 +5,8 @@
 </el-radio-group>
     <!-- <el-button type="info" @click="downFile('/fof/jscore_down')">下载数据</el-button> -->
     <el-button type="info" @click="exportExcel">导出评分</el-button>
+    <el-button type="info" @click="exportExcelAll()">下载数据</el-button> 
+
    <el-table
       ref="multipleTable"
       id="out-table"
@@ -13,11 +15,12 @@
       tooltip-effect="dark"
       style="width: 100%; margin-top: 20px"
     >  
-
+ <el-table-column
+      type="index"
+      :index="indexMethod"></el-table-column>
       <el-table-column
         prop="基金名称"
-        min-width="160"
-        max-width="260"
+        min-width="120"
         sortable
         label="基金名称"
         show-overflow-tooltip
@@ -44,20 +47,22 @@
         <template slot="header"><el-input   class="rankcell" v-model="wts[idx]" :placeholder="col" clearable  ></el-input></template>
             <el-table-column 
         :prop="col"
-        width="80"
+        min-width="70"
         sortable
         :label="names[idx]"
         show-overflow-tooltip
-             <template slot-scope="scope" >{{ showResult(scope.row[col],1,col) }}</template>
+            > <template slot-scope="scope" >{{ showResult(scope.row[col],1,col) }}</template>
       
       </el-table-column>
       </el-table-column>
 
  <el-table-column>
-              <template slot="header"><el-button size="mini" @click="calc_score">打分</el-button></template>
+              <template slot="header"><el-button size="mini" @click="calc_score">打分1</el-button></template>
+              <template slot="header"><el-button size="mini" @click="calc_score2">打分2</el-button></template>
+
                  <el-table-column 
         prop="score"
-        width="60"
+        min-width="70"
         sortable
         label="score"
         show-overflow-tooltip
@@ -67,11 +72,24 @@
             {{showResult(scope.row["score"],1)}}
             <!-- </a> -->
             </template>
+                 </el-table-column>
+              <el-table-column 
+        prop="score2"
+        min-width="70"
+        sortable
+        label="score2"
+        show-overflow-tooltip
+      >
+            <template slot-scope="scope">
+          <!-- <a href="javascript:;" @click="showHis(scope.row)"> -->
+            {{showResult(scope.row["score2"],1)}}
+            <!-- </a> -->
+            </template>
       </el-table-column>
       </el-table-column>
       <el-table-column 
         prop="length"
-        width="80"
+        min-width="40"
         sortable
         label="数据长度"
         show-overflow-tooltip
@@ -126,7 +144,7 @@ export default {
   data() {
     return {
       dateranges:[],
-      range:6,
+      range:3,
       zz500idx:[],
       tmaxh:720,
       limit_dic:{'sharpe': 3, 'calmar': 5, 'sortino': 5, 'yeaily_return': 0.7},
@@ -139,6 +157,9 @@ export default {
     }
   },
   methods: {
+     indexMethod(index) {
+        return index +1
+      },
     addCart(row){
       if(row['fundname']){
         row['code']=row['fundname']
@@ -154,36 +175,43 @@ export default {
         var color=number>=0?"red":"green"
         return this.$tools.formatMoney(number*rate,3)
     },
-        exportExcel() {
+    exportExcel(){
+      let wbout=this.genSheet()
+         try {
+      FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
+   } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+
+    },
+        genSheet() {
           var title='评分'+new Date().getTime()
   /* generate workbook object from table */
   var workbook = XLSX.utils.book_new();
 
   var st = XLSX.utils.table_to_sheet(document.querySelector('#out-table'))
-  st.C1={t: 'n', v:this.wts[0]}
-  st.D1={t: 'n', v:this.wts[1]}
-  st.E1={t: 'n', v:this.wts[2]}
-  st.F1={t: 'n', v:this.wts[3]}
-  st.G1={t: 'n', v:this.wts[4]}
-  st.H1={t: 'n', v:this.wts[5]}
-  st.I1={t: 'n', v:this.wts[6]}
-  st.J1={t: 'n', v:this.wts[7]}
+  st.D1={t: 'n', v:this.wts[0]}
+  st.E1={t: 'n', v:this.wts[1]}
+  st.F1={t: 'n', v:this.wts[2]}
+  st.G1={t: 'n', v:this.wts[3]}
+  st.H1={t: 'n', v:this.wts[4]}
+  st.I1={t: 'n', v:this.wts[5]}
+  st.J1={t: 'n', v:this.wts[6]}
+  st.K1={t: 'n', v:this.wts[7]}
   // console.log(st['!ref'])
-  var reg = new RegExp("(\d+$)")
-  var rows=st['!ref'].match(/\d+$/)[0]
-  // console.log(rows)
-  st["M2"]={t:"s",v:"排名"}
-  for(var i=3;i<=rows;i++){
-    st["M"+i]={t: 'n', v:i-2}
-  }
+  // var reg = new RegExp("(\d+$)")
+  // var rows=st['!ref'].match(/\d+$/)[0]
+  // // console.log(rows)
+  // st["M2"]={t:"s",v:"排名"}
+  // for(var i=3;i<=rows;i++){
+  //   st["M"+i]={t: 'n', v:i-2}
+  // }
   XLSX.utils.book_append_sheet(workbook, st, "评分");
   /* get binary string as output */
   var wbout = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'array' })
 
 
-   try {
-      FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
-   } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+  //  try {
+  //     FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
+  //  } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
    return wbout
 
     },
@@ -192,6 +220,50 @@ export default {
         const options = {"code":this.code}
             this.$tools.exportExcel(durl,options)
         },
+
+    calc_score2(){
+      var rawdata = JSON.parse(JSON.stringify(this.tableData));
+      // console.log(rawdata)
+      //console.log(rawdata.sort((a,b)=>{return b['yeaily_return']-a['yeaily_return']}))
+
+      var rlen=rawdata.length
+      if(rlen<2){
+        return
+      }
+    for (var col of this.cols){
+          console.log(col)
+          rawdata.sort((a,b)=>{return b[col]-a[col]})
+          // for (var i =0;i<rlen;i++){
+          //   rawdata[i][col+"_"]=1-i/(rlen-1)
+          //   rawdata[i][col+"_i"]=i+1 
+          // }
+          rawdata.forEach((item,i)=>{
+            item[col]=1-i/(rlen-1)
+            item[col+"_i"]=i+1
+
+        })
+        // console.log(rawdata)
+    }
+    for(var ridx in rawdata){ 
+      var row=rawdata[ridx]
+      var ascore=0
+       for (var idx in this.cols){
+         var item=this.cols[idx]
+        ascore+=row[item]*this.wts[idx]
+       }
+      this.tableData.forEach((item,idx)=>{
+        if(item['fundname']==row['fundname']){
+          item['score2']=ascore
+        }
+      })
+       
+      //  this.tableData[ridx]['score2']=ascore
+    }
+    // Vue.set(this,"tableData",this.tableData)
+        this.$nextTick(() => {      this.$refs.multipleTable.clearSort()
+      this.$refs.multipleTable.sort('score2', 'descending')}) 
+    },
+
     calc_score(){
       var rawdata = JSON.parse(JSON.stringify(this.tableData));
       for(var ret_df of rawdata){
@@ -232,14 +304,8 @@ export default {
        }
        this.tableData[ridx]['score']=ascore
     }
-    console.log(this.tableData)
-    // console.log(rawdata)
-    // console.log(this.wts)
-    // console.log(this.tableData)
     this.$nextTick(() => {      this.$refs.multipleTable.clearSort()
       this.$refs.multipleTable.sort('score', 'descending')}) 
-
-
     },
     wtsUpdate(event,idx){
       console.log(event)

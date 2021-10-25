@@ -116,6 +116,7 @@ export default {
         data: {"user":this.loginForm.username,"password":shaObj.getHash("HEX") },
       }).then((response) => {
             if(response.data.status=="success"){
+              console.log("======login success=======")
               var luser=response.data.user
              that.$store.dispatch('setUserMenu',response.data.permissions)
              that.$axios({
@@ -123,14 +124,15 @@ export default {
         method: "GET",
         params: {"user":luser},
       }).then((response) => {
-             that.$store.dispatch('setAllCart',response.data)
-             if(response.data.default){
-              that.$store.dispatch('changeCart','default')
-             }
-
-      })
+             console.log("======get cart=======")
+             console.log(response.data)
+             that.$store.dispatch('setAllCart',response.data).then(()=>{
+            //  this.$store.dispatch('changeCart','default').then(()=>{
              that.$store.dispatch("setToken", that.loginForm.username).then(() => {
              that.$router.push({path: "/"})
+             })}) 
+             //})
+             
         })}else{
             that.$message({
             showClose: true,

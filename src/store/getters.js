@@ -13,18 +13,21 @@ const getters = {
   errorLogs: state => state.errorLog.logs,
   token: state => state.token,
   allCart:state =>{
-    if(state.allCart&&state.allCart.length>0){
+    console.log("call get allCart")
+    console.log(state)
+    if(state.allCart&&state.allCart.default){
     return state.allCart
   }else{
-    state.allCart=JSON.parse(decodeURIComponent(Cookies.get("acart")))
+    console.log("useCookies")
+    var acart=JSON.parse(localStorage.getItem('acart'))
+    console.log(acart)
+    state.allCart=acart
+    for (var a in state.allCart){
+      if(typeof(state.allCart[a])=='string')
+      state.allCart[a]=JSON.parse(state.allCart[a])
+    }
+    console.log(state.allCart)
     return state.allCart
-  }
-
-  },
-  cart: state =>{if(state.cart&&state.cart.length>0){
-    return state.cart
-  }else{
-    return JSON.parse(getters.allCart(state)[state.nowcart])
   }
 
   },

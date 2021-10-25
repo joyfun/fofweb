@@ -91,6 +91,8 @@
              <template slot-scope="scope">
                  <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="medium"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
                  <el-button @click.native.prevent="jumpToSource(scope.row)" type="text" size="medium"> <el-tooltip class="item" effect="dark" content="原始值" placement="left-start"><i class="el-icon-info"></i></el-tooltip></el-button>
+                 <el-button @click.native.prevent="recrawl(scope.row)" type="text" size="medium"> <el-tooltip class="item" effect="dark" content="重新爬取" placement="left-start"><i class="el-icon-receiving"></i></el-tooltip></el-button>
+
              </template>
       </el-table-column>
       <!--      测试项目-->
@@ -237,9 +239,9 @@ export default {
     jumpToSource(row){
         var url=""
         if(row.type=="GeShang"){
-            url='https://www.licai.com/simu/product/'+row.code
+            url='https://www.licai.com/simu/product/'+row.scode
         }else if(row.type=="SiMuWang"){
-            url = 'https://dc.simuwang.com/product/' + row.code + '.html'
+            url = 'https://dc.simuwang.com/product/' + row.scode + '.html'
         }url
         if(url){
             window.open(url)
@@ -361,7 +363,18 @@ export default {
       console.log(this.value2[0]);
       console.log(this.value2[1]);
     },
-    
+    reCrawl(row) {
+      axis
+        .get('/fof/reCrawl',{params:row})
+        .then((response) => {
+             this.tableData=response.data
+             this.resizeChart();
+          //this.tableData = this.totaltableData;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     //
     getList() {
       axis
