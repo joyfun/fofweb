@@ -153,6 +153,7 @@ export default {
       tableData:[],
       tags: ["近一月","近季度","近半年","近一年","近2年","近3年","全部","今年","去年","前年"],
       cols: ['yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility'],
+      samplerow:{"rank":"",'fundname':'','name':'','class_type':'','sub_type':'','yeaily_return':1, 'sharpe':2, 'calmar':1, 'sortino':3, 'dd':1, 'dd_week':2, 'win_ratio':2, 'volatility':1},
       names: ['年化收益', 'sharpe', 'calmar', 'sortino', '最大回撤', '回撤(周)', '胜率', '波动率']
     }
   },
@@ -185,16 +186,25 @@ export default {
       }).then(response => {
           var data = new Uint8Array(response.data);
           var workbook = XLSX.read(data, {type:"array"});
+          var nwb= XLSX.utils.book_new();
           for (var sn of workbook.SheetNames){
-              let st=workbook.Sheets[sn]
               let tdata=XLSX.utils.sheet_to_json(workbook.Sheets[sn])
               if(tdata.length>2)
               this.do_calc(tdata)
               tdata.sort((a,b)=>{a['socre']-b['score']})
-              workbook.Sheets[sn]=XLSX.utils.json_to_sheet(tdata,{header:['fundname','name','class_type','sub_type','yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','score'], skipHeader:false})
+              for(var i in this.cols){
+                this.samplerow[this.cols[i]]=this.wts[i]
+              }
+              const headers=['rank','fundname','name','class_type','sub_type','yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','score']
+              tdata.map(t=>{t['rank']=t['__EMPTY']+1
+              delete t['__EMPTY']})
+              var nst=XLSX.utils.json_to_sheet([this.samplerow],{header:headers, skipHeader:true})
+               XLSX.utils.sheet_add_json(nst,tdata,{header:headers,  skipHeader: false, origin: -1})
+              XLSX.utils.book_append_sheet(nwb, nst, sn);
+
               
           }
-            var wbout = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'array' })
+            var wbout = XLSX.write(nwb, { bookType: 'xlsx', bookSST: true, type: 'array' })
         var title='评分下载'+new Date().getTime()
         FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
         //   console.log(workbook.SheetNames)

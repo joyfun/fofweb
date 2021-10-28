@@ -83,7 +83,7 @@
       </el-table-column>
       <el-table-column
         prop="code"
-        width="80"
+        width="120"
         label="原始值"
         sortable
         show-overflow-tooltip
@@ -91,7 +91,7 @@
              <template slot-scope="scope">
                  <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="medium"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
                  <el-button @click.native.prevent="jumpToSource(scope.row)" type="text" size="medium"> <el-tooltip class="item" effect="dark" content="原始值" placement="left-start"><i class="el-icon-info"></i></el-tooltip></el-button>
-                 <el-button @click.native.prevent="recrawl(scope.row)" type="text" size="medium"> <el-tooltip class="item" effect="dark" content="重新爬取" placement="left-start"><i class="el-icon-receiving"></i></el-tooltip></el-button>
+                 <el-button @click.native.prevent="reCrawl(scope.row)" type="text" size="medium"> <el-tooltip class="item" effect="dark" content="重新爬取" placement="left-start"><i class="el-icon-receiving"></i></el-tooltip></el-button>
 
              </template>
       </el-table-column>

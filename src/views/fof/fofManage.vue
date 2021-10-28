@@ -997,6 +997,7 @@ showResult(number,rate=100){
           // console.log(this.filter)
           // return
              var $this=this
+             console.log(param)
              if(param && typeof(param)=='object' && "click"!=param.type){
                  this.filter=param
              }
