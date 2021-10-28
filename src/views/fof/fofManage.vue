@@ -9,6 +9,7 @@
         <el-button  size="small" @click="showcorr()">相关性</el-button>
         <el-button  size="small" @click="compare()">业绩对标</el-button>
         <el-button  size="small" @click="showRank()">排名</el-button>
+        <el-button  size="small" @click="showSimulate()">仿真</el-button>
 
         <el-select v-model="filter.stage" @change="getList" style="width:80px"  clearable placeholder="阶段">
     <el-option
@@ -253,6 +254,8 @@
     <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='hisChart'"></fund-echart>
     <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
     <rank-table       @close="editClose" ref="ranktable"  :titles="current.name"  style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
+    <fof-simulate       @close="editClose" ref="simtable"  :titles="current.name"  style="height: 800px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
+
     </el-dialog>
 
         <el-dialog
@@ -385,6 +388,7 @@
     import Bus from '@/store/bus.js';
     import HisTable from '../../components/HisTable.vue';
     import RankTable from '../../components/RankTable.vue';
+    import FofSimulate from '../../components/FofSimulate.vue';
 
     import ReportTable from '../../components/ReportTable.vue';
     import {mapGetters} from 'vuex'
@@ -432,6 +436,7 @@
             RankTable,
             AuditLog,
             ConcatLog,
+            FofSimulate,
             ReportTable,
             FundCorr
         },
@@ -697,6 +702,19 @@ showResult(number,rate=100){
           this.cur_code=""
           this.dialogVisible=true
           this.diagName="rankDialog"
+          var selcode=""
+          for (let i = 0; i < this.multipleSelection.length; i++) {
+            if(this.multipleSelection[i].stage!='非卖'){
+              selcode+=this.multipleSelection[i].code+",";
+              }
+          }
+          this.cur_code=selcode
+          console.log(this.cur_code)
+      },
+      showSimulate(){
+          this.cur_code=""
+          this.dialogVisible=true
+          this.diagName="simuDialog"
           var selcode=""
           for (let i = 0; i < this.multipleSelection.length; i++) {
             if(this.multipleSelection[i].stage!='非卖'){
