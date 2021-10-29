@@ -41,6 +41,13 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.sumval }}</template>
     </el-table-column>
+        <el-table-column
+      prop="reval"
+      label="复权净值"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.reval }}</template>
+    </el-table-column>
     </el-table>
   </div>
 </template>
@@ -163,7 +170,9 @@ export default {
                                     date:response.data.datas[i-1][0],
                                     code:response.data.datas[i-1][1],
                                     net_val:response.data.datas[i-1][2],
-                                    sumval:response.data.datas[i-1][3]
+                                    sumval:response.data.datas[i-1][3],
+                                    reval:response.data.datas[i-1][4]
+
                                 })
                                 }
                                 console.log($this.tableData.length)
