@@ -1,6 +1,6 @@
 <template>
     <el-container style="height: 100%">
-      <el-aside width="200px" ><v-CommonAside></v-CommonAside></el-aside>
+      <el-aside v-if="!$isElectron" width="200px" ><v-CommonAside></v-CommonAside></el-aside>
       <el-container>
         <el-header><v-CommonHeader></v-CommonHeader></el-header>
         <v--common-tab></v--common-tab>

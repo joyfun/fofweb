@@ -79,27 +79,6 @@ export default {
   methods: {
     submitForm () {
       let that = this
-    //   if (this.loginForm.username === "" || this.loginForm.password === "") {
-    //     this.$message({
-    //       showClose: true,
-    //       message: "账号或密码不能为空",
-    //       type: "error"
-    //     })
-    //     return false
-    //   } else {
-        // 真实请求参考
-        // this.$request.fetchLogin({
-        //   username: that.loginForm.username,
-        //   password: that.loginForm.password
-        // }).then(res => {
-        //   that.$restBack(res.data, () => {
-        //     that.$store.dispatch("setToken", res.data.data.access_token).then(res => {
-        //       that.$router.push({path: "/"})
-        //     })
-        //   }, "登录成功")
-        // }).catch((err) => {
-        //   console.log(err)
-        // })
       if(this.$isElectron &&this.loginForm.username=='user'){
             //   that.$store.dispatch('setUserMenu',response.data.permissions)
              that.$store.dispatch('setCart',"[]")

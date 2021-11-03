@@ -46,6 +46,7 @@
             <el-button type="primary"   size="small" @click="addCart">添加</el-button>
            <el-button type="primary"   size="small" @click="showCart">对比</el-button>
             <el-button type="primary"   size="small" @click="showRank">排名</el-button>
+            <!-- <el-button type="primary"   size="small" @click="showSimu">仿真</el-button> -->
 
   </div>
    <div class="block" style="display: flex;flex-wrap: wrap;">
@@ -267,6 +268,14 @@ export default {
       console.log(codes)
       Bus.$emit('cartrank',codes)
 
+    },
+    showSimu(rows){
+      var codes=""
+      this.sel.forEach((row)=>{
+        codes=codes+row['code']+","
+      })
+      console.log(codes)
+      Bus.$emit('calcsimu',codes)
     },
     addCart(){
 

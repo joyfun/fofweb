@@ -1,6 +1,31 @@
 
 import tools from './tools'
-var db={}
+var db={
+  getSocres:(codes)=>{
+    var zz500idx =this.getFundVal('000905.SHW')
+    let ret=[]
+    codes.split(",").forEach((acode,idx)=>{
+      if(acode){
+        const istmt =this.prepare('SELECT * FROM fund_info where code=? ')
+        var info=istmt.get(acode)
+        console.log(info)
+        let rst=this.calc_values(this.getFundVal(acode),info['class_type']=="指增")
+        if(rst){
+        rst['fundname']=info['code']
+        rst['name']=info['short_name']
+        rst['class_type']=info['class_type']
+        ret.push(rst)
+        }
+
+      }
+    })
+    this.tableData=ret
+    this.calc_score()
+  },
+  
+}
+
+
 if(tools.isElectron()){
 const sqlite3 = require('better-sqlite3')
 const path = require('path')

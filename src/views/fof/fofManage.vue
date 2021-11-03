@@ -254,7 +254,7 @@
     <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='hisChart'"></fund-echart>
     <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
     <rank-table       @close="editClose" ref="ranktable"  :titles="current.name"  style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
-    <fof-simulate       @close="editClose" ref="simtable"  :titles="current.name"  style="height: 800px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
+    <fof-simulate       @close="editClose" ref="simtable"  :titles="current.name"  style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
 
     </el-dialog>
 
@@ -388,9 +388,9 @@
     import Bus from '@/store/bus.js';
     import HisTable from '../../components/HisTable.vue';
     import RankTable from '../../components/RankTable.vue';
-    import FofSimulate from '../../components/FofSimulate.vue';
+    import FofSimulate from '../../components/FofSimulate';
 
-    import ReportTable from '../../components/ReportTable.vue';
+    import ReportTable from '../../components/ReportTable';
     import {mapGetters} from 'vuex'
 
     import FundCorr from '../../components/FundCorr.vue';
@@ -1090,6 +1090,22 @@ showResult(number,rate=100){
           }
           this.cur_code=selcode+arg
           this.diagName="rankDialog"
+          this.dialogVisible=true
+          // this.showChartByCodes(arg)
+         })
+
+        Bus.$on('calcsimu',(arg)=> {
+          console.log("========cartrank========")
+          this.cur_code=""
+
+          var selcode=""
+          for (let i = 0; i < this.multipleSelection.length; i++) {
+              if(this.multipleSelection[i].stage!='非卖'){
+              selcode+=this.multipleSelection[i].code+",";
+              }
+          }
+          this.cur_code=selcode+arg
+          this.diagName="simuDialog"
           this.dialogVisible=true
           // this.showChartByCodes(arg)
          })

@@ -14,6 +14,7 @@
     </el-option>
   </el-select>
         <el-button  size="small" @click="showRank()">排名</el-button>
+         <el-button  size="small" @click="showSimulate()">仿真</el-button>
         <el-button  size="small" @click="downData()">同步数据</el-button>
         <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
@@ -155,6 +156,8 @@
     <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='hisChart'"></fund-echart>
     <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
     <rank-table       @close="editClose" ref="ranktable"  :titles="current.name"  style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
+    <fof-simulate       @close="editClose" ref="simtable"  :titles="current.name"  style="height: 800px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
+
     </el-dialog>
     <el-dialog
     width="80%"
@@ -314,13 +317,15 @@
     import Bus from '@/store/bus.js';
     import DB from '@/store/localapi.js';
 
-    import HisTable from '../../components/HisTable.vue';
-    import RankTable from '../../components/RankTable.vue';
+    import HisTable from '../../components/HisTable';
+    import RankTable from '../../components/RankTable';
 
-    import ReportTable from '../../components/ReportTable.vue';
+    import ReportTable from '../../components/ReportTable';
+    import FofSimulate from '../../components/FofSimulate';
+
     import {mapGetters} from 'vuex'
 
-    import FundCorr from '../../components/FundCorr.vue';
+    import FundCorr from '../../components/FundCorr';
    const cForm=[
     {"tilte":"备案号","dataIndex":"code"},
     {"tilte":"名称","dataIndex":"name"},
@@ -339,6 +344,7 @@
             RankTable,
             ConcatLog,
             ReportTable,
+            FofSimulate,
             FundCorr
         },
         props: {filters:{
@@ -404,6 +410,19 @@
     }
   },
     methods: {
+            showSimulate(){
+          this.cur_code=""
+          this.dialogVisible=true
+          this.diagName="simuDialog"
+          var selcode=""
+          for (let i = 0; i < this.multipleSelection.length; i++) {
+            if(this.multipleSelection[i].stage!='非卖'){
+              selcode+=this.multipleSelection[i].code+",";
+              }
+          }
+          this.cur_code=selcode
+          console.log(this.cur_code)
+      },
                   changeSub(row){
                 var id=-1
                 for (var ap of this.sysparam.class_type)
@@ -524,25 +543,6 @@ showResult(number,rate=100){
           var $this=this
           ret['code']=this.origin.code
           ret['stage']=this.current.stage
-      //     axis({
-      //   method: 'post',
-      //   url: "/fof/updateinfo", // 请求地址
-      //   data: ret, // 参数
-      //   responseType: 'json' // 表明返回服务器返回的数据类型
-      // }).then(
-      //   response => {
-      //       if(response.data.status=="success"){
-      //           $this.getList()
-      //           this.editVisible=false
-      //           this.$message({
-      //           message: '保存成功',
-      //           type: 'success',
-      //           center: true
-      //   });
-      //                                   }
-
-      //   })
-
       },
       handleClose(done) {
           done()
@@ -832,8 +832,15 @@ showResult(number,rate=100){
                  this.filter=param
              }
              var data=this.filter
-                                                  console.log('####################')
-                  const stmt = DB.prepare('SELECT * FROM fund_info');
+             var qsql='SELECT * FROM fund_info where 1=1 '
+             if(data&&data.class_type){
+               qsql=qsql+ " and class_type='"+data.class_type+"'"
+             }
+             if(data&&data.name){
+               qsql=qsql+ " and ( name like'%"+data.name+"%' or short_name like '%"+data.name+"')"
+             }
+             console.log(qsql)
+                  const stmt = DB.prepare(qsql);
                   this.totaltableData = stmt.all();
                   // this.savefundval(this.totaltableData)
                   this.tableData = this.totaltableData.slice(0 ,this.PageSize);
