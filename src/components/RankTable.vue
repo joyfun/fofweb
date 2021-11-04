@@ -284,7 +284,7 @@ export default {
     calc_score(type=1){
         var sortcol="score"
         if(type==1){
-        this.do_calc(this.tableData)
+        DB.do_calc(this.tableData,this.cols,this.limit_dic,this.wts)
         }else{
             sortcol="score2"
         this.do_calc2(this.tableData)    
@@ -292,152 +292,13 @@ export default {
         this.$nextTick(() => {      this.$refs.multipleTable.clearSort()
         this.$refs.multipleTable.sort(sortcol, 'descending')}) 
     },
-    do_calc(tableData){
-      var rawdata = JSON.parse(JSON.stringify(tableData));
-      for(var ret_df of rawdata){
-      //去极值
-      for(var item in this.limit_dic){
-          ret_df[item] = (ret_df[item] >= this.limit_dic[item]) * this.limit_dic[item] + (ret_df[item] < this.limit_dic[item]) * ret_df[item]
-        }
-      }
-    //求最大值
-    var maxmin={}
-    for (var item of this.cols){
-      maxmin[item+"_max"]=-99
-      maxmin[item+"_min"]=99
-            for(var row of rawdata){
-              if(row[item]>maxmin[item+"_max"]){
-                   maxmin[item+"_max"]=row[item]
-              }
-              if(row[item]<maxmin[item+"_min"]){
-                   maxmin[item+"_min"]=row[item]
-              }
-            }
-    }
-    for (var item of this.cols){
-     maxmin[item+"_diff"]=maxmin[item+"_max"]-maxmin[item+"_min"]
-    }
-    for(var ridx in rawdata){ 
-      var row=rawdata[ridx]
-      var ascore=0
-       for (var idx in this.cols){
-         var item=this.cols[idx]
-         var diff=maxmin[item+"_diff"]
-         if(diff==0){
-           diff=1
-         }
-        row[item]=(row[item]-maxmin[item+"_min"])/diff
-        ascore+=row[item]*this.wts[idx]
-       }
-       tableData[ridx]['score']=ascore
-    }
-    },
+  
     wtsUpdate(event,idx){
       console.log(event)
       Vue.set(this.wts,idx,parseFloat(event))
       this.$forceUpdate();
       return parseFloat(event)
         },
-    getFundVal(code){
-              const stmt = DB.prepare('SELECT * FROM fund_val where code=? order by date');
-              return stmt.all(code)
-    },
-    get_pctchange(data){
-      var prev=0
-      var ret=[NaN]
-      data.forEach((val,idx)=>{
-        if(prev!=0){
-            ret.push(val/prev-1)
-        }
-        prev=val
-      })
-      return ret 
-    },
-    cutByDate(data,rg){
-      var ndata=[]
-      data.forEach((dt,idx)=>{
-        if(dt['date']>=rg[0] &&dt['date']<=rg[1])
-        ndata.push(dt)
-      })
-      if(ndata.length<2){
-        return null
-      }
-      return ndata
-    },
-    calc_values(data,isExtra=false){
-
-      const rg=this.dateranges[this.range]
-      const ndata=this.cutByDate(data,rg)
-      if(!ndata){
-        return null
-      }
-      let datadf=new df.DataFrame(ndata)
-      if(isExtra){
-      let idxdata=this.cutByDate(this.zz500idx,rg)
-      let idxdf=new df.DataFrame(idxdata)
-      datadf=df.merge({ left: datadf, right: idxdf, 
-                            on: ["date"], how: "left"})
-      const fval = datadf.head(1)['sumval'].values[0]
-      const fidx = datadf.head(1)['sumval_1'].values[0]      
-      let retsr = datadf['sumval'].div(fval).sub(datadf['sumval_1'].div(fidx)) 
-      datadf.addColumn({ "column": "return", "values":retsr, inplace: true })
-
-      }else{
-      let ret=this.get_pctchange(datadf['sumval'].values)
-      datadf.addColumn({ "column": "return", "values":ret, inplace: true })
-
-      }
-      datadf.print()
-      let stdval=datadf['return'].std()
-      let mean=datadf['return'].mean()
-
-      let win =datadf.iloc({rows:datadf['return'].gt(0)})
-      let loss =datadf.iloc({rows:datadf['return'].lt(0)})
-      var nhigh=0,hidx=0,drop=1,didx=0,sdidx=0
-      var key ='sumval'
-      if(isExtra){
-        key='return'
-      }
-      datadf['sumval'].values.forEach((mval,idx)=>{
-            if(mval>nhigh){
-              nhigh=mval
-              hidx=idx
-            }else{
-              let ndrop=mval/nhigh
-              if(ndrop<drop){
-                drop=ndrop
-                sdidx=hidx
-              }
-              if(sdidx==hidx)
-              didx=idx
-            }
-      })
-      
-      let [sharpe, calmar, sortino, max_dd, dd_week, win_ratio, y_r, volatility] = [4, 10, 10, 0, 0, 1, 1, 0]
-      let shp=datadf.shape
-      const sqrt52=Math.sqrt(52)
-      if(shp[0]>0){
-        sharpe=mean/stdval*sqrt52
-        if(isExtra){
-        y_r=datadf.tail(1)['return'].values[0]*52/shp[0]
-        volatility=new df.Series(this.get_pctchange(datadf['return'].values)).std()*sqrt52
-        }else{
-        y_r=(datadf.tail(1)['sumval'].values[0]/datadf.head(1)['sumval'].values[0]-1)*52/shp[0]
-        volatility=datadf['return'].std()*sqrt52
-        }
-        if(loss.shape[0]>0){
-        sortino=mean/Math.sqrt((loss['return'].mul(loss['return']).sum())/(shp[0]-1))*sqrt52
-        }
-        max_dd=drop-1
-        win_ratio=win.shape[0]/shp[0]
-        dd_week=didx-sdidx
-        calmar =-(y_r / max_dd)
-      }
-    
-    let rst= {"sharpe":sharpe, "calmar":calmar, "sortino":sortino, "dd":max_dd, "dd_week":dd_week, "win_ratio":win_ratio, "yeaily_return":y_r, "volatility":volatility,"std":stdval,'mean':mean,'drops':nhigh+"_"+sdidx+"_"+drop+"_"+didx,"length":shp[0]}
-    console.log(rst)
-    return rst
-    },
     getDateRanges(){
       //      tags: ["近一月","近季度","近半年","近一年","近2年","近3年","全部","今年","去年","前年"],
 
@@ -470,24 +331,25 @@ export default {
     getTable(){
         var $this=this
         if(this.$isElectron){
-          this.zz500idx =this.getFundVal('000905.SHW')
-          let ret=[]
-          this.code.split(",").forEach((acode,idx)=>{
-            if(acode){
-              const istmt =DB.prepare('SELECT * FROM fund_info where code=? ')
-              var info=istmt.get(acode)
-              console.log(info)
-              let rst=this.calc_values(this.getFundVal(acode),info['class_type']=="指增")
-              if(rst){
-              rst['fundname']=info['code']
-              rst['name']=info['short_name']
-              rst['class_type']=info['class_type']
-              ret.push(rst)
-              }
+          // this.zz500idx =this.getFundVal('000905.SHW')
+          // let ret=[]
+          // this.code.split(",").forEach((acode,idx)=>{
+          //   if(acode){
+          //     const istmt =DB.prepare('SELECT * FROM fund_info where code=? ')
+          //     var info=istmt.get(acode)
+          //     console.log(info)
+          //     let rst=this.calc_values(this.getFundVal(acode),info['class_type']=="指增")
+          //     if(rst){
+          //     rst['fundname']=info['code']
+          //     rst['name']=info['short_name']
+          //     rst['class_type']=info['class_type']
+          //     ret.push(rst)
+          //     }
 
-            }
-          })
-          this.tableData=ret
+          //   }
+          // })
+          const rg=this.dateranges[this.range]
+          this.tableData=DB.getSocres(this.code,rg)
           this.calc_score()
           return
         }

@@ -55,6 +55,7 @@
 
 // <script>
 // import Echart from "../../components/Echart.vue";
+import DB from '@/store/localapi.js';
 import FundEchart from "@/components/FundEchart.vue";
 export default {
   components: {
@@ -105,6 +106,7 @@ export default {
         return index +1
       },
       doSimulate(){
+
         var ret={}
         for (var rg in this.tableData){
           var codes=""
@@ -117,6 +119,13 @@ export default {
           ret[rg]=codes
         }
         this.showchart=false
+        if(this.$isElectron){
+          DB.calc_simval(ret)
+          this.buy_amts=DB.calc_simval(ret)
+          this.collapseItem=""
+          this.showchart=true
+        }
+        else{
         this.$axios({
         url: "/fof/calcsimu",
         data:{"name":"temp","splits":ret}, //          
@@ -126,6 +135,7 @@ export default {
                 this.buy_amts=response.data.date
         this.showchart=true
         });
+        }
       },
       saveSimulate(){
         var that=this
@@ -154,10 +164,39 @@ export default {
           });       
         });
       },
+      getDateArray(){
+      var nday=this.$moment().format("YYYYMMDD");
+      var emon=0
+      if(this.$moment().month()>6){
+        emon=6
+      }
+      
+      var sdate=this.$moment().month(emon).date(1)
+      let rst=[sdate.format("YYYYMMDD")]
+      for (var i=1;i<6;i++){
+        rst.push(sdate.add(-6, "M").format("YYYYMMDD"))
+      }
+      return rst.sort()
+      },
           getTable(){
             console.log("rpc call started")
             if(this.code&&this.code.length>10){
+              
              var $this=this
+             if(this.$isElectron){
+
+               //let ret=DB.getSocres(this.code,['20000101','20210101'])
+              let dts=this.getDateArray()
+               this.tableData={}
+              for (var day of dts){
+                const rg=[this.$moment(day).add(-2,'y').format("YYYYMMDD"),day]
+                console.log(rg)
+                  this.tableData[day]=DB.getSocres(this.code,rg)
+              }
+                console.log(dts)
+             }else{
+
+
                 this.$axios.get('/fof/fundsimu',{params:{code:this.code}})//axis后面的.get可以省略；
             .then(
                 (response) => {
@@ -170,7 +209,7 @@ export default {
             .catch(
                 (error) => {
                     console.log(error);
-        });}
+        });}}
           }
       },
       mounted(){

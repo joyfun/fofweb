@@ -36,7 +36,7 @@
     </el-option>
   </el-select>  
         <el-button  size="small" @click="downFile()">下载</el-button>
-        <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px" @keyup.enter.native="getList"></el-input>
+        <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px" ></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
         </div>
       </div>
