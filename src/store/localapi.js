@@ -114,7 +114,7 @@ db.getSocres=(codes,rg)=>{
     datadf.addColumn({ "column": "return", "values":ret, inplace: true })
 
     }
-    datadf.print()
+    // datadf.print()
     let stdval=datadf['return'].std()
     let mean=datadf['return'].mean()
 

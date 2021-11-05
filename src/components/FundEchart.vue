@@ -45,6 +45,7 @@ import axis from "axios";
 import Bus from '@/store/bus.js';
 import {mapGetters} from 'vuex'
 import DB from '@/store/localapi.js';
+import * as df from "danfojs/dist/index";
 
 var echarts = require("echarts");
 // 引入柱状图
@@ -484,23 +485,46 @@ export default {
       return 0;
     },
     getChart(code) {
+        console.log("############")
+        console.log(code)
         if(!code){
             return
         }
         if(this.$isElectron){
                  var codes=code.split(",")
-        var rst={"columns":[],"date":[],"combine_date":[null],"buy_date":["19000101"]}
+                 console.log(codes)
+        var rst={"combine_date":[null],"buy_date":["19000101"]}
+        let datadf=new df.DataFrame()
         for (var acode of codes ){
+               if(acode.length<2){
+          continue
+        }
         const istmt =DB.prepare('SELECT * FROM fund_info where code=?')
         var info=istmt.get(acode)
-        rst.columns=[info['name']]
-        rst[info['name']]=[]
+        // rst.columns=[info['name']]
         const stmt = DB.prepare('SELECT * FROM fund_val where code=?');
         const dbval=stmt.all(acode)
-        for (var row of dbval){
-          rst['date'].push(row['date'])
-          rst[info['name']].push(row['sumval'])
+        if(dbval.length<2){
+          continue
         }
+         let ndf=new df.DataFrame(dbval)
+         ndf.set_index({column: "date", drop: true, inplace: true})
+         ndf.rename({ mapper: {"sumval": info["short_name"]},inplace: true })
+         ndf.drop({ columns: ["code"], inplace: true })
+         console.log(info)
+         ndf.print()
+         datadf = df.concat({ df_list: [datadf, ndf], axis: 0 })
+         console.log(datadf.index)
+        // for (var row of dbval){
+        //   rst['date'].push(row['date'])
+        //   rst[info['name']].push(row['sumval'])
+        // }
+        }
+        // console.log(datadf.axis.columns)
+        rst['date']=datadf.index
+        rst.columns=datadf.axis.columns
+        for(var col of datadf.axis.columns){
+          rst[col]=datadf[col].values
         }
         console.log(rst)
           this.raw_data=rst

@@ -13,6 +13,7 @@
       :value="item.code">
     </el-option>
   </el-select>
+          <el-button  size="small" @click="allrun()">对比</el-button>
         <el-button  size="small" @click="showRank()">排名</el-button>
          <el-button  size="small" @click="showSimulate()">仿真</el-button>
         <el-button  size="small" @click="downData()">同步数据</el-button>
@@ -322,7 +323,7 @@
 
     import ReportTable from '../../components/ReportTable';
     import FofSimulate from '../../components/FofSimulate';
-
+    import * as df from "danfojs/dist/index";
     import {mapGetters} from 'vuex'
 
     import FundCorr from '../../components/FundCorr';
@@ -606,6 +607,8 @@ showResult(number,rate=100){
           this.current=this.multipleSelection[0]
           this.dialogVisible=true
           this.cur_code=selcode
+          this.diagName="hisChart"
+
         //   this.$refs.hischart.$emit("getChart",selcode)  
       },
       showChartByCodes(codes){
