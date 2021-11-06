@@ -25,8 +25,6 @@ export default new Vuex.Store({
     
     allparam:{},
     usermenu:Cookies.get("umenu"),
-    uproduct:Cookies.get("uproduct"),
-    uproductname:Cookies.get("uproductname"),
 
     param:{"class_type":[],"stage":[]},
     foflist:[],
@@ -112,14 +110,6 @@ export default new Vuex.Store({
       state.allCart[state.nowcart]=cart
       localStorage.setItem('acart', JSON.stringify(state.allCart));
     },
-    updataUproduct (state, product) {
-        state.uproduct = product
-        Cookies.set("uproduct", product, { expires: 'never' })
-      },
-    updataUproductName (state, productname) {
-        state.uproductname = productname
-        Cookies.set("uproductname", productname, { expires: 'never' })
-      },
     setSysParam(state,params){
         state.param=params
     },

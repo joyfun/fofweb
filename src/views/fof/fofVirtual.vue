@@ -71,7 +71,7 @@ computed: {
         ...mapState({
             current: state => state.tab.currentMenu
         }),
-       ...mapGetters(['uproduct','token','uproductname',"allparam","sysparam"])
+       ...mapGetters(['token',"allparam","sysparam"])
     },
     props: {
       url:{

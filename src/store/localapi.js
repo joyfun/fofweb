@@ -264,7 +264,6 @@ db.getSocres=(codes,rg)=>{
         }
       }
     })
-    console.log(rval)
     db.prepare("delete from fund_val where code='V_Temp'").run()
     const insert = db.prepare('insert into fund_val(date,code ,sumval ) VALUES (@date ,@code ,@sumval)');
     const insertMany = db.transaction((data) => {

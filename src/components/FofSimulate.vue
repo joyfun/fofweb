@@ -19,6 +19,7 @@
       :ref="'table'+rg"
       id="out-table"
       :data="tableData[rg]"
+      :row-key="(row)=>{ return row.fundname}"
       tooltip-effect="dark"
       max-height="400"
       style="width: 100%; margin-top: 20px"
@@ -29,7 +30,14 @@
     </el-table-column>
  <!-- <el-table-column
       type="index"
-      :index="indexMethod"></el-table-column> -->
+      :index="indexMethod"></el-table-column> 
+            <el-table-column
+        prop="score"
+        min-width="70"
+        sortable
+        label="score"
+        show-overflow-tooltip
+      ></el-table-column>-->
       <el-table-column
         prop="name"
         min-width="120"
@@ -96,6 +104,9 @@ export default {
   },
       data() {
               return {
+      wts: [6, 0, 2, 1, 2, -1, 0, 0],
+      cols: ['yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility'],
+      limit_dic:{'sharpe': 3, 'calmar': 5, 'sortino': 5, 'yeaily_return': 0.7},
       buy_amts:null,
       collapseItem:"prodcollapse",
       showchart:false,
@@ -190,8 +201,10 @@ export default {
                this.tableData={}
               for (var day of dts){
                 const rg=[this.$moment(day).add(-2,'y').format("YYYYMMDD"),day]
-                console.log(rg)
-                  this.tableData[day]=DB.getSocres(this.code,rg)
+                let scores=DB.getSocres(this.code,rg)
+                DB.do_calc(scores,this.cols,this.limit_dic,this.wts)
+                this.tableData[day]=scores.sort((a,b)=>{return b['score']-a['score']})
+
               }
                 console.log(dts)
              }else{

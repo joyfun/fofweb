@@ -106,7 +106,6 @@ import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
 import DB from '@/store/localapi.js';
 import * as df from "danfojs/dist/index";
-import nj from 'numjs'
 export default {
   props: {
      code:{
