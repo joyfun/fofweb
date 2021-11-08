@@ -1,5 +1,7 @@
 <template>
 <div ref="echartdiv">
+      <!-- <rank-table       ref="ranktable"  :titles="compare"  style="height: 800px"  :code="code"  ></rank-table> -->
+
 <div class="block">
     <span class="demonstration">起始日期</span>
     <el-date-picker
@@ -46,7 +48,7 @@ import Bus from '@/store/bus.js';
 import {mapGetters} from 'vuex'
 import DB from '@/store/localapi.js';
 import * as df from "danfojs/dist/index";
-
+import RankTable from '@/components/RankTable';
 var echarts = require("echarts");
 // 引入柱状图
 // require('echarts/lib/chart/line');
@@ -54,6 +56,9 @@ var echarts = require("echarts");
 // require('echarts/lib/component/tooltip');
 // require('echarts/lib/component/title');
 export default {
+        components: {
+            RankTable,
+        },
   props: {
     visable: {
       type: Boolean,
@@ -508,23 +513,31 @@ export default {
           continue
         }
          let ndf=new df.DataFrame(dbval)
-         ndf.set_index({column: "date", drop: true, inplace: true})
+        //  ndf.set_index({column: "date", drop: true, inplace: true})
          ndf.rename({ mapper: {"sumval": info["short_name"]},inplace: true })
          ndf.drop({ columns: ["code"], inplace: true })
-         console.log(info)
-         ndf.print()
-         datadf = df.concat({ df_list: [datadf, ndf], axis: 0 })
-         console.log(datadf.index)
-        // for (var row of dbval){
-        //   rst['date'].push(row['date'])
-        //   rst[info['name']].push(row['sumval'])
-        // }
+        //  console.log(info)
+        //  ndf.print()
+        //  datadf.print()
+        //  console.log(datadf.axis.columns)
+        console.log(ndf['date'].values)
+         if(datadf.axis.columns.length>0){
+         datadf = df.merge({ left:datadf, right:ndf, on: ["date"] ,how:"outer"})
+         }
+         else{
+           datadf=ndf
+         }
         }
-        // console.log(datadf.axis.columns)
+        // datadf.print()
+        datadf.set_index({column: "date", drop: true, inplace: true})
+        datadf.sort_index()
         rst['date']=datadf.index
         rst.columns=datadf.axis.columns
         for(var col of datadf.axis.columns){
-          rst[col]=datadf[col].values
+          // console.log(col)
+          // datadf.print()
+          // console.log(datadf[col])
+          rst[col]=datadf.column(col).values
         }
         console.log(rst)
           this.raw_data=rst
