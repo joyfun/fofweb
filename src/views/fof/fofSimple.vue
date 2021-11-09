@@ -19,6 +19,9 @@
         <el-button  size="small" @click="downData()">同步数据</el-button>
         <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
+          <el-button type="primary"  @click="getRList" style="margin-left: 10px;">远程搜索</el-button>
+          <el-button type="primary"  @click="saveall" style="margin-left: 10px;">保存产品</el-button>
+
         </div>
       </div>
       <el-table
@@ -68,14 +71,14 @@
     </el-table-column>
     <el-table-column
       prop="code"
-      label="网站代码"
+      label="备案号"
       sortable
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.code }}</template>
     </el-table-column>
     <el-table-column
       prop="scode"
-      label="备案号"
+      label="网站代码"
       sortable
       show-overflow-tooltip>
     </el-table-column>
@@ -111,6 +114,8 @@
             <el-button v-if="usermenu.indexOf('info-audit')>-1" @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
             --><el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="信息维护" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="savefundval(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="同步数据" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
+
             <!--<el-button v-if="usermenu.indexOf('info-edit')>-1"  @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.filename"  type="text" size="small"><el-tooltip class="item" effect="dark" content="下载报告" placement="left-start"><a :href=" '/fof/downfile?code='+scope.row.code "><i class="el-icon-download"></i></a></el-tooltip></el-button>
            <el-button v-show="scope.row.combine" @click.native.prevent="viewConcat(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="拼接历史" placement="left-start"><i class="el-icon-link"></i></el-tooltip></el-button>
@@ -332,6 +337,8 @@
     {"tilte":"名称","dataIndex":"name"},
     {"tilte":"简称","dataIndex":"short_name"},
     {"tilte":"基金类型","dataIndex":"class_type","param":"class_type"},
+    {"tilte":"公司","dataIndex":"company"},
+
     {"tilte":"渠道","dataIndex":"type","param":"data_type"},
     {"tilte":"网站代码","dataIndex":"scode"},
     {"tilte":"备注","dataIndex":"remark","type":"textarea"} 
@@ -356,6 +363,7 @@
     data() {
       return {
           cForm,
+          vhost:"http://192.168.0.22",
           allSelect:false,
           selcode:"",
           diagName:"",
@@ -796,7 +804,7 @@ showResult(number,rate=100){
       //
       savesqlite(data){
         var now= (new Date()).getTime()
-        const insert = DB.prepare('insert into fund_info(code ,name ,short_name ,create_time  ,type ,scode ,remark ,class_type ) VALUES (@code ,@name ,@short_name ,@create_time  ,@type ,@scode ,@remark ,@class_type)');
+        const insert = DB.prepare('insert into fund_info(code ,name ,short_name ,create_time  ,type ,scode ,remark ,company,class_type ) VALUES (@code ,@name ,@short_name ,@create_time  ,@type ,@scode ,@remark ,@company,@class_type)');
         const insertMany = DB.transaction((data) => {
           for (const row of data) {
               row['create_time']=now
@@ -812,7 +820,7 @@ showResult(number,rate=100){
               insert.run({"date":ele,"code":data.columns[0],"sumval":data.data[index][0]});
             })
           })
-            axis.get('/fof/whis',{params:{"code":row["code"]}})//axis后面的.get可以省略；
+            axis.get(this.vhost+'/fof/whis',{params:{"code":row["code"]}})//axis后面的.get可以省略；
                         .then(
                           (response) => {
                             insertMany(response.data)
@@ -827,6 +835,37 @@ showResult(number,rate=100){
 
         //insertMany(data)
       },
+
+    saveall(){
+                                      this.savesqlite(this.totaltableData)
+
+    },
+    getRList(param){
+             var $this=this
+             if(param && typeof(param)=='object' && "click"!=param.type){
+                 this.filter=param
+             }
+             var data=this.filter
+            axis( {
+                url: this.vhost+'/fof/list',
+                method: 'GET',
+                params: data
+                }).then((response) => {
+                                console.log(this.sysparam);
+                                console.log(response);
+                                this.totaltableData = response.data.sort((a,b)=>{return   b['create_time'].localeCompare(a['create_time'])});
+                                this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
+                                this.resizeChart()
+
+                            })
+                        .catch(
+                            (error) => {
+                                console.log(error);
+                    });
+            if(this.$isElectron){
+
+             }
+    },
      getList(param){
           // console.log(this.filter)
           // return
@@ -842,7 +881,6 @@ showResult(number,rate=100){
              if(data&&data.name){
                qsql=qsql+ " and ( name like'%"+data.name+"%' or short_name like '%"+data.name+"')"
              }
-             console.log(qsql)
                   const stmt = DB.prepare(qsql);
                   this.totaltableData = stmt.all();
                   // this.savefundval(this.totaltableData)
