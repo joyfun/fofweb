@@ -154,13 +154,13 @@
     :close-on-press-escape="false"
      :visible.sync="dialogVisible"
      >
-    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='hisChart'"></fund-echart>
+    <rank-table       @close="editClose" ref="ranktable"  :titles="current.name"    :code="cur_code"  v-if="diagName=='rankDialog' || diagName=='hisChart' "></rank-table>
+    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 480px" :code="cur_code"   v-if="diagName=='hisChart'"></fund-echart>
     <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
-    <rank-table       @close="editClose" ref="ranktable"  :titles="current.name"  style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
     <fof-simulate       @close="editClose" ref="simtable"  :titles="current.name"  style="height: 800px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
 
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
     width="80%"
     top="50px"
     :close-on-click-modal="false"
@@ -174,7 +174,7 @@
 
      <fund-echart    ref="hischart1"  :titles="current.name"  style="height: 600px" :code="selcode"  ></fund-echart>
 </div>
-        </el-dialog>
+        </el-dialog> -->
 
         <el-dialog
     width="80%"

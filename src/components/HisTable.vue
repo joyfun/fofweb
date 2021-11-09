@@ -27,7 +27,7 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.date }}</template>
     </el-table-column>
-    <el-table-column
+    <el-table-column v-if="!$isElectron"
       prop="net_val"
       label="当前净值"
       sortable
@@ -41,7 +41,7 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.sumval }}</template>
     </el-table-column>
-        <el-table-column
+        <el-table-column  v-if="!$isElectron"
       prop="reval"
       label="复权净值"
       sortable

@@ -398,7 +398,7 @@ export default {
         yAxis: [
           {
             type: "value",
-            min: 0.9,
+            min: 0.5,
           },
           {
             type: "value",
@@ -520,7 +520,7 @@ export default {
         //  ndf.print()
         //  datadf.print()
         //  console.log(datadf.axis.columns)
-        console.log(ndf['date'].values)
+        // console.log(ndf['date'].values)
          if(datadf.axis.columns.length>0){
          datadf = df.merge({ left:datadf, right:ndf, on: ["date"] ,how:"outer"})
          }
@@ -733,6 +733,19 @@ var sdata = [...this.raw_data[cname]];
           name: cname,
           connectNulls: true,
           yAxisIndex:0,
+          markLine: {
+             symbol:"none",           //去掉警戒线最后面的箭头
+          silent: true,
+          lineStyle: {
+            color: '#333'
+          },
+          data: [
+            {
+              yAxis: 1
+            },
+           
+          ]
+        },
           markPoint: mp,
         }
         if(this.token=="demo"){
@@ -780,9 +793,9 @@ var sdata = [...this.raw_data[cname]];
     },
 
     initChart() {
-      if (this.raw_data.columns.indexOf("沪深300指数") > 0) {
-        this.axisOption.yAxis[0]["min"] = 0.7;
-      }
+      // if (this.raw_data.columns.indexOf("沪深300指数") > 0) {
+      //   this.axisOption.yAxis[0]["min"] = 0.7;
+      // }
       console.log(this.raw_data);
       this.start_init();
       var $this = this;

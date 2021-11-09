@@ -5,7 +5,7 @@
 </el-radio-group>
     <!-- <el-button type="info" @click="downFile('/fof/jscore_down')">下载数据</el-button> -->
     <el-button type="info" @click="exportExcel">导出评分</el-button>
-    <el-button type="info" @click="exportExcelAll()">下载数据</el-button> 
+    <el-button v-if="!$isElectron" type="info" @click="exportExcelAll()">下载数据</el-button> 
 
    <el-table
       ref="multipleTable"
