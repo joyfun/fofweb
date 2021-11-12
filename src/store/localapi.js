@@ -176,46 +176,7 @@ db.getSocres=(codes,rg)=>{
   console.log(rst)
   return rst
   }
-  db.do_calc=(tableData,cols,limit_dic,wts)=>{
-    var rawdata = JSON.parse(JSON.stringify(tableData));
-    for(var ret_df of rawdata){
-    //去极值
-    for(var item in limit_dic){
-        ret_df[item] = (ret_df[item] >= limit_dic[item]) * limit_dic[item] + (ret_df[item] < limit_dic[item]) * ret_df[item]
-      }
-    }
-  //求最大值
-  var maxmin={}
-  for (var item of cols){
-    maxmin[item+"_max"]=-99
-    maxmin[item+"_min"]=99
-          for(var row of rawdata){
-            if(row[item]>maxmin[item+"_max"]){
-                 maxmin[item+"_max"]=row[item]
-            }
-            if(row[item]<maxmin[item+"_min"]){
-                 maxmin[item+"_min"]=row[item]
-            }
-          }
-  }
-  for (var item of cols){
-   maxmin[item+"_diff"]=maxmin[item+"_max"]-maxmin[item+"_min"]
-  }
-  for(var ridx in rawdata){ 
-    var row=rawdata[ridx]
-    var ascore=0
-     for (var idx in cols){
-       var item=cols[idx]
-       var diff=maxmin[item+"_diff"]
-       if(diff==0){
-         diff=1
-       }
-      row[item]=(row[item]-maxmin[item+"_min"])/diff
-      ascore+=row[item]*wts[idx]
-     }
-     tableData[ridx]['score']=ascore
-  }
-  }
+  
 
   db.sell_fund=(day,codes)=>{
     let cash=0
@@ -321,4 +282,44 @@ db.getSocres=(codes,rg)=>{
 
 }
 // });
+db.do_calc=(tableData,cols,limit_dic,wts)=>{
+  var rawdata = JSON.parse(JSON.stringify(tableData));
+  for(var ret_df of rawdata){
+  //去极值
+  for(var item in limit_dic){
+      ret_df[item] = (ret_df[item] >= limit_dic[item]) * limit_dic[item] + (ret_df[item] < limit_dic[item]) * ret_df[item]
+    }
+  }
+//求最大值
+var maxmin={}
+for (var item of cols){
+  maxmin[item+"_max"]=-99
+  maxmin[item+"_min"]=99
+        for(var row of rawdata){
+          if(row[item]>maxmin[item+"_max"]){
+               maxmin[item+"_max"]=row[item]
+          }
+          if(row[item]<maxmin[item+"_min"]){
+               maxmin[item+"_min"]=row[item]
+          }
+        }
+}
+for (var item of cols){
+ maxmin[item+"_diff"]=maxmin[item+"_max"]-maxmin[item+"_min"]
+}
+for(var ridx in rawdata){ 
+  var row=rawdata[ridx]
+  var ascore=0
+   for (var idx in cols){
+     var item=cols[idx]
+     var diff=maxmin[item+"_diff"]
+     if(diff==0){
+       diff=1
+     }
+    row[item]=(row[item]-maxmin[item+"_min"])/diff
+    ascore+=row[item]*wts[idx]
+   }
+   tableData[ridx]['score']=ascore
+}
+}
 export default db
