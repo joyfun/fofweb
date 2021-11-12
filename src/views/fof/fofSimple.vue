@@ -19,8 +19,8 @@
         <el-button  size="small" @click="downData()">同步数据</el-button>
         <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
-          <el-button type="primary"  @click="getRList" style="margin-left: 10px;">远程搜索</el-button>
-          <el-button type="primary"  @click="saveall" style="margin-left: 10px;">保存产品</el-button>
+          <el-button  v-if="$process.env.NODE_ENV=='development'" type="primary"  @click="getRList" style="margin-left: 10px;">远程搜索</el-button>
+          <el-button  v-if="$process.env.NODE_ENV=='development'" type="primary"  @click="saveall" style="margin-left: 10px;">保存产品</el-button>
 
         </div>
       </div>
@@ -62,7 +62,7 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.create_time|formatDate }}</template>
     </el-table-column>
-    <el-table-column
+    <!-- <el-table-column
       prop="type"
       label="来源"
       sortable
@@ -81,7 +81,7 @@
       label="网站代码"
       sortable
       show-overflow-tooltip>
-    </el-table-column>
+    </el-table-column> -->
     <!-- <el-table-column
       prop="buy_date"
       label="建仓日期"
@@ -94,6 +94,12 @@
       label="公司"
       show-overflow-tooltip>
       <template slot-scope="scope">{{ scope.row.company }}</template>
+    </el-table-column>
+<el-table-column
+      prop="city"
+      label="所在地"
+      show-overflow-tooltip>
+      <template slot-scope="scope">{{ scope.row.city }}</template>
     </el-table-column>
 <el-table-column
       prop="remark"
@@ -338,7 +344,7 @@
     {"tilte":"简称","dataIndex":"short_name"},
     {"tilte":"基金类型","dataIndex":"class_type","param":"class_type"},
     {"tilte":"公司","dataIndex":"company"},
-
+    {"tilte":"所在地","dataIndex":"city"},
     {"tilte":"渠道","dataIndex":"type","param":"data_type"},
     {"tilte":"网站代码","dataIndex":"scode"},
     {"tilte":"备注","dataIndex":"remark","type":"textarea"} 
@@ -363,7 +369,7 @@
     data() {
       return {
           cForm,
-          vhost:"http://192.168.0.22",
+          vhost:"http://www.waddc.com",
           allSelect:false,
           selcode:"",
           diagName:"",
@@ -456,6 +462,21 @@
         this.savesqlite([this.current])
                   this.formVisible=false
                   this.getList()
+
+                  axis({
+      method: 'post',
+      url: this.vhost+"/fof/saveprod", // 请求地址
+      data: this.current, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then(
+      response => {
+         console.log(response)
+
+      },
+      err => {
+        reject(err)
+      }
+    )
 
       },
       downData(){
@@ -879,7 +900,7 @@ showResult(number,rate=100){
                qsql=qsql+ " and class_type='"+data.class_type+"'"
              }
              if(data&&data.name){
-               qsql=qsql+ " and ( name like'%"+data.name+"%' or short_name like '%"+data.name+"')"
+               qsql=qsql+ " and ( name like'%"+data.name+"%' or short_name like '%"+data.name+"% or city like '%"+data.name+"%')"
              }
                   const stmt = DB.prepare(qsql);
                   this.totaltableData = stmt.all();
@@ -919,6 +940,7 @@ showResult(number,rate=100){
               //
         },
     created(){
+        console.log(this.$process.env)
         console.log(this.$moment().date(-7))
          Bus.$on('cartchart',(arg)=> {
           console.log("========cartchart========")

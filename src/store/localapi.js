@@ -28,8 +28,13 @@ db = new sqlite3(dbPath, { verbose: console.log })
 //   });
 // });
 try {
+db.exec("create table sys_config(code varchar(10),value varchar(80),primary key (code))");
+db.exec("insert into sys_config (code,value) values('apihost','http://www.waddc.com')")
+db.exec("insert into sys_config (code,value) values('v_cnt','0')")
 db.exec("create table fund_val(code varchar(10),date varchar(10),sumval real,primary key (code,date))");
-db.exec("create table fund_info(code varchar(10) PRIMARY KEY     NOT NULL,name varchar(40),short_name varchar(40),create_time number ,type varchar(10),scode varchar(10) ,remark TEXT,class_type  varchar(10) )");
+db.exec("create table fund_info(code varchar(10) PRIMARY KEY     NOT NULL,name varchar(40),short_name varchar(40),create_time number ,type varchar(10),scode varchar(10) ,company varchar(80) ,city varchar(400) ,remark TEXT,class_type  varchar(10) )");
+db.exec("insert into fund_info (code,name,class_type,short_name) values('V_Temp','虚拟组合','虚拟','虚拟组合')")
+
 } catch (err) {
   console.log(err);
 }
@@ -41,6 +46,7 @@ db.reload=(data)=>{
     else{
       console.log("restore file:"+dbPath)
     }
+    db = new sqlite3(dbPath, { verbose: console.log })
   })
   db = new sqlite3(dbPath, { verbose: console.log })
 }
@@ -105,16 +111,21 @@ db.getSocres=(codes,rg)=>{
     datadf=df.merge({ left: datadf, right: idxdf, 
                           on: ["date"], how: "left"})
     const fval = datadf.head(1)['sumval'].values[0]
-    const fidx = datadf.head(1)['sumval_1'].values[0]      
-    let retsr = datadf['sumval'].div(fval).sub(datadf['sumval_1'].div(fidx)) 
+    const fidx = datadf.head(1)['sumval_1'].values[0] 
+    const schg=  db.get_pctchange(datadf['sumval'].values) 
+    const ichg=  db.get_pctchange(datadf['sumval_1'].values)  
+    let retsr=[]
+    for (var i in schg){
+      retsr.push(schg[i]-ichg[i])
+    }
     datadf.addColumn({ "column": "return", "values":retsr, inplace: true })
-
+    datadf.addColumn({ "column": "return_1", "values":datadf['sumval'].div(fval).sub(datadf['sumval_1'].div(fidx)) , inplace: true })
     }else{
     let ret=db.get_pctchange(datadf['sumval'].values)
     datadf.addColumn({ "column": "return", "values":ret, inplace: true })
 
     }
-    // datadf.print()
+    datadf.print()
     let stdval=datadf['return'].std()
     let mean=datadf['return'].mean()
 
@@ -123,7 +134,7 @@ db.getSocres=(codes,rg)=>{
     var nhigh=0,hidx=0,drop=1,didx=0,sdidx=0
     var key ='sumval'
     if(isExtra){
-      key='return'
+      key='return_1'
     }
     datadf['sumval'].values.forEach((mval,idx)=>{
           if(mval>nhigh){
@@ -146,8 +157,8 @@ db.getSocres=(codes,rg)=>{
     if(shp[0]>0){
       sharpe=mean/stdval*sqrt52
       if(isExtra){
-      y_r=datadf.tail(1)['return'].values[0]*52/shp[0]
-      volatility=new df.Series(db.get_pctchange(datadf['return'].values)).std()*sqrt52
+        y_r=(datadf.tail(1)['sumval'].values[0]/datadf.head(1)['sumval'].values[0]-datadf.tail(1)['sumval_1'].values[0]/datadf.head(1)['sumval_1'].values[0])*52/shp[0]
+        volatility=new df.Series(db.get_pctchange(datadf['return'].values)).std()*sqrt52
       }else{
       y_r=(datadf.tail(1)['sumval'].values[0]/datadf.head(1)['sumval'].values[0]-1)*52/shp[0]
       volatility=datadf['return'].std()*sqrt52
@@ -226,6 +237,13 @@ db.getSocres=(codes,rg)=>{
     }
     console.log(ret)
     return ret
+  }
+  db.save_fund_info=(name,wts)=>{
+    db.exec("update sys_config  set value=cast(value as signed)+1 where code='v_cnt'")
+    let cnt=db.prepare("select value from sys_config where code='v_cnt'").get()
+    let vname="V_F"+cnt['value']
+    db.prepare("insert into fund_info (code,name,short_name,remark,class_type) values (?,?,?,?,'虚拟')").run([vname,name,name,JSON.stringify(wts)])
+    db.prepare("update fund_val set code=? where code='V_Temp'").run([vname])
   }
   db.calc_simval=(splits)=>{
     let nextday='20100101'

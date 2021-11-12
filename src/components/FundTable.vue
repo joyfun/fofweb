@@ -157,7 +157,7 @@ export default {
             current: state => state.tab.currentMenu,
             nowcart: state =>state.nowcart,
         }),
-       ...mapGetters(['uproduct','allCart','token','uproductname',"allparam","sysparam"])
+       ...mapGetters(['allCart','token',"allparam","sysparam"])
 
     },
   watch: {
@@ -290,7 +290,7 @@ export default {
                 })
               console.log(old)
               if(old){
-                return
+                continue
               }
             this.foflist.push({code:afund["code"],name:afund["name"]})
         }

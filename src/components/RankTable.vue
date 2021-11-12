@@ -58,7 +58,7 @@
 
  <el-table-column>
               <template slot="header"><el-button size="mini" @click="calc_score(1)">打分1</el-button></template>
-              <template slot="header"><el-button size="mini" @click="calc_score(2)">打分2</el-button></template>
+              <template v-if="!$isElectron" slot="header"><el-button size="mini" @click="calc_score(2)">打分2</el-button></template>
 
                  <el-table-column 
         prop="score"
@@ -73,7 +73,7 @@
             <!-- </a> -->
             </template>
                  </el-table-column>
-              <el-table-column 
+              <el-table-column  v-if="!$isElectron" 
         prop="score2"
         min-width="70"
         sortable
@@ -349,7 +349,7 @@ export default {
           // })
           const rg=this.dateranges[this.range]
           this.tableData=DB.getSocres(this.code,rg)
-          this.calc_score()
+          this.calc_score(1)
           return
         }
         var param={code:this.code,range:this.range}

@@ -30,14 +30,14 @@
     </el-table-column>
  <!-- <el-table-column
       type="index"
-      :index="indexMethod"></el-table-column> 
+      :index="indexMethod"></el-table-column> -->
             <el-table-column
         prop="score"
         min-width="70"
         sortable
         label="score"
         show-overflow-tooltip
-      ></el-table-column>-->
+      ></el-table-column>
       <el-table-column
         prop="name"
         min-width="120"
@@ -157,6 +157,10 @@ export default {
           inputErrorMessage: '名称格式不正确'
         }).then(({ value }) => {
         console.log(this.buy_amts)
+        if(this.$isElectron){
+          DB.save_fund_info(value,this.buy_amts)
+        }
+        else{
         this.$axios({
         url: "/fof/savesimu",
         data:{"name":value,"buy_info":JSON.stringify(that.buy_amts)}, //          
@@ -166,7 +170,7 @@ export default {
             type: 'success',
             message: '保存名称: ' + value
           });
-        });
+        });}
 
         }).catch(() => {
           this.$message({

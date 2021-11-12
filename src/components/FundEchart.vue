@@ -529,9 +529,14 @@ export default {
          }
         }
         // datadf.print()
+        // datadf.sort_values({by: 'date', inplace:true})
+        let vdate=datadf.values.sort((a,b)=>{return parseInt(a[0])-parseInt(b[0])})
+        // console.log(vdate)
         datadf.set_index({column: "date", drop: true, inplace: true})
-        datadf.sort_index()
+        datadf.sort_index({ ascending: false , inplace: true})
+        // datadf.print()
         rst['date']=datadf.index
+        console.log(rst)
         rst.columns=datadf.axis.columns
         for(var col of datadf.axis.columns){
           // console.log(col)
@@ -617,8 +622,15 @@ var sdata = [...this.raw_data[cname]];
       this.startdate=this.chartData.xData[oneindex]
 
       var zz500data=[]
+      var zz10000data=[]
+      var hs300data=[]
       if(this.raw_data['中证500指数'])
       zz500data=this.getDividedData('中证500指数',oneindex)
+      if(this.raw_data['中证1000指数'])
+      zz10000data=this.getDividedData('中证1000指数',oneindex)
+      if(this.raw_data['沪深300指数'])
+      hs300data=this.getDividedData('沪深300指数',oneindex)
+
       for (var idx in this.raw_data["columns"]) {
         var cname = this.raw_data["columns"][idx];
        
@@ -657,7 +669,14 @@ var sdata = [...this.raw_data[cname]];
             var lastval=null
             for (var i in sdata){
                 if(sdata[i]>0){
-                    lastval=(sdata[i]-zz500data[i]).toFixed(4)
+                  let indexdata=zz500data
+                  if(cname.endsWith("I3")){
+                    indexdata=hs300data
+                  }else if(cname.endsWith("I0")){
+                    indexdata=zz10000data
+
+                  }
+                    lastval=(sdata[i]-indexdata[i]).toFixed(4)
                 }
                 result.push(lastval)
             }
