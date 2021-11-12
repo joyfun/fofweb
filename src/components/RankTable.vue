@@ -185,12 +185,13 @@ export default {
       }).then(response => {
           var data = new Uint8Array(response.data);
           var workbook = XLSX.read(data, {type:"array"});
+          console.log(workbook)
           var nwb= XLSX.utils.book_new();
           for (var sn of workbook.SheetNames){
               let tdata=XLSX.utils.sheet_to_json(workbook.Sheets[sn])
               if(tdata.length>2)
-              this.do_calc(tdata)
-              tdata.sort((a,b)=>{a['socre']-b['score']})
+              DB.do_calc(tdata,this.cols,this.limit_dic,this.wts)
+              tdata.sort((a,b)=>{b['socre']-a['score']})
               for(var i in this.cols){
                 this.samplerow[this.cols[i]]=this.wts[i]
               }
