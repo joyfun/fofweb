@@ -626,11 +626,15 @@ var sdata = [...this.raw_data[cname]];
       var hs300data=[]
       if(this.raw_data['中证500指数'])
       zz500data=this.getDividedData('中证500指数',oneindex)
+<<<<<<< HEAD
       if(this.raw_data['中证1000指数'])
       zz10000data=this.getDividedData('中证1000指数',oneindex)
       if(this.raw_data['沪深300指数'])
       hs300data=this.getDividedData('沪深300指数',oneindex)
 
+=======
+      var lowest=1
+>>>>>>> 9b2e1c8fa2f782c6c36ac4f6bf6ead4d16d84f02
       for (var idx in this.raw_data["columns"]) {
         var cname = this.raw_data["columns"][idx];
        
@@ -656,6 +660,9 @@ var sdata = [...this.raw_data[cname]];
             if(sdata[s]>high){
                 high=sdata[s]
                 hidx=s
+            }
+            if(sdata[s]<lowest){
+                lowest=sdata[s]
             }
             var ndrop=sdata[s]/high-1
             if(ndrop<maxdrop){
@@ -781,10 +788,11 @@ var sdata = [...this.raw_data[cname]];
             }
         }
         this.chartData.series.push(asery);
-        // this.axisOption.yAxis.min = min;
+        // 
       }}
+      lowest=Math.floor(lowest*10)/10
       this.axisOption.dataZoom[0].startValue = oneindex;
-
+      this.axisOption.yAxis.min = lowest;
       // this.refreshData(params)
     },
     start_init() {
