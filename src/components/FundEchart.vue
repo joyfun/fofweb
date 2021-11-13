@@ -204,6 +204,7 @@ export default {
   data() {
     return {
       raw_data: {},
+      lowest:0.9,
       startdate:'',
       tur:0,
       enddate:'',
@@ -768,9 +769,8 @@ var sdata = [...this.raw_data[cname]];
         this.chartData.series.push(asery);
         // 
       }}
-      lowest=Math.floor(lowest*10)/10
+      this.lowest=Math.floor(lowest*10)/10
       this.axisOption.dataZoom[0].startValue = oneindex;
-      this.axisOption.yAxis.min = lowest;
       // this.refreshData(params)
     },
     start_init() {
@@ -1003,6 +1003,7 @@ var sdata = [...this.raw_data[cname]];
       option.dataZoom[0].startValue = params.startValue;
       option.dataZoom[0].end = params.end;
       option.series = this.chartData.series;
+      option.yAxis.min=this.lowest
       this.echart.setOption(option, true);
     },
     getstart(vady) {
