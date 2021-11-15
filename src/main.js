@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import "./permission"
+import * as process from "process"
 
 
 import 'bootstrap'
@@ -21,7 +22,7 @@ import axios from 'axios'
 import tools from '@/store/tools.js'
 
 Vue.use(tools)
-
+Vue.prototype.$process=process
 Vue.prototype.$axios = axios
 Vue.prototype.$moment = moment
 Vue.prototype.$isElectron= tools.isElectron()
