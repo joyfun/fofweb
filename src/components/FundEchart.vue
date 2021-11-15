@@ -204,6 +204,7 @@ export default {
   data() {
     return {
       raw_data: {},
+      lowest:0.9,
       startdate:'',
       tur:0,
       enddate:'',
@@ -398,7 +399,7 @@ export default {
         yAxis: [
           {
             type: "value",
-            min: 0.8,
+            min: 1,
           },
           {
             type: "value",
@@ -580,7 +581,7 @@ export default {
           var len = $this.chartData.xData.length;
           if (len) {
             $this.max_date = $this.chartData.xData[len - 1];
-          }
+          } 
           this.initChart();
         })
         .catch((error) => {
@@ -657,7 +658,7 @@ var sdata = [...this.raw_data[cname]];
                 high=sdata[s]
                 hidx=s
             }
-            if(sdata[s]<lowest){
+            if(sdata[s]&&sdata[s]<lowest){
                 lowest=sdata[s]
             }
             var ndrop=sdata[s]/high-1
@@ -786,10 +787,9 @@ var sdata = [...this.raw_data[cname]];
         this.chartData.series.push(asery);
         // 
       }}
-      lowest=Math.floor(lowest*10)/10
+      this.lowest=Math.floor(lowest*10)/10
+      this.axisOption.yAxis[0]["min"] = this.lowest;
       this.axisOption.dataZoom[0].startValue = oneindex;
-      console.log(this.chartData)
-      // this.axisOption.yAxis[0].min = lowest;
       // this.refreshData(params)
     },
     start_init() {
@@ -1022,6 +1022,7 @@ var sdata = [...this.raw_data[cname]];
       option.dataZoom[0].startValue = params.startValue;
       option.dataZoom[0].end = params.end;
       option.series = this.chartData.series;
+      option.yAxis[0].min=this.lowest
       this.echart.setOption(option, true);
     },
     getstart(vady) {
