@@ -521,7 +521,7 @@
    
       },
       addInfo(){
-          this.current={stage:"入库"}
+          this.current={type:"渠道",scode:"",class_type:"指增",remark:"",company:""}
           this.formVisible=true
       },
         loadModel(file){
@@ -843,6 +843,7 @@ showResult(number,rate=100){
       },
       //
       savesqlite(data){
+        console.log(data)
         var now= (new Date()).getTime()
         const insert = DB.prepare('insert into fund_info(code ,name ,short_name ,create_time  ,type ,scode ,remark ,company,class_type ) VALUES (@code ,@name ,@short_name ,@create_time  ,@type ,@scode ,@remark ,@company,@class_type)');
         const insertMany = DB.transaction((data) => {
@@ -914,13 +915,14 @@ showResult(number,rate=100){
                  this.filter=param
              }
              var data=this.filter
-             var qsql='SELECT * FROM fund_info where 1=1 '
+             var qsql="SELECT * FROM fund_info where code !='V_Temp'"
              if(data&&data.class_type){
                qsql=qsql+ " and class_type='"+data.class_type+"'"
              }
              if(data&&data.name){
-               qsql=qsql+ " and ( name like'%"+data.name+"%' or short_name like '%"+data.name+"% or city like '%"+data.name+"%')"
+               qsql=qsql+ " and ( name like '%"+data.name+"%' or short_name like '%"+data.name+"%' or city like '%"+data.name+"%' )"
              }
+             console.log(qsql)
                   const stmt = DB.prepare(qsql);
                   this.totaltableData = stmt.all();
                   // this.savefundval(this.totaltableData)
