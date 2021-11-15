@@ -17,6 +17,8 @@
         <el-button  size="small" @click="showRank()">排名</el-button>
          <el-button  size="small" @click="showSimulate()">仿真</el-button>
         <el-button  size="small" @click="downData()">同步数据</el-button>
+        <el-button  size="small" @click="delAll()">删除</el-button>
+
         <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
           <el-button  v-if="$process.env.NODE_ENV=='development'" type="primary"  @click="getRList" style="margin-left: 10px;">远程搜索</el-button>
@@ -489,14 +491,31 @@
           this.confirmVisible=true
           this.current=row
       },
+      delAll(){
+        this.confirmVisible=true
+        this.current=this.multipleSelection
+      },
+      deleteOne(code){
+        console.log("delete product:"+code)
+        if(code.startsWith("V_T")){
+          return
+        }
+        DB.prepare('delete from  fund_info where code =?').run(code);
+      },
       delFund(row) {
+        console.log(row)
         if(!row){
           row=this.current
+          if(Array.isArray(row)){
+            for (var arow of row){
+             this.deleteOne(arow.code)
+            }
+            this.toggleSelection()
+          }else{
+             this.deleteOne(row.code)
         }
-    var now= (new Date()).getTime()
-        const stmt = DB.prepare('delete from  fund_info where scode =?');
-        const info =stmt.run(row['scode'])
-        console.log(info)
+        }
+       
         this.confirmVisible=false
         this.getList()
    

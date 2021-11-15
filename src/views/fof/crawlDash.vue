@@ -50,11 +50,20 @@
           }}</a></template
         >
       </el-table-column>
+      <el-table-column
+        prop="start_date"
+        width="100"
+        label="开始日期"
+        sortable
+        show-overflow-tooltip
+      >
+             <template slot-scope="scope">{{ scope.row['start_date'] }}</template>
+                   </el-table-column>
 
       <el-table-column
         prop="lastval_date"
         width="100"
-        label="最后更新日期"
+        label="最后更新"
         sortable
         show-overflow-tooltip
       >
@@ -79,6 +88,16 @@
         show-overflow-tooltip
       >
              <template slot-scope="scope">{{ scope.row['ncnt'] }}</template>
+
+      </el-table-column>
+                        <el-table-column
+        prop="scode"
+        width="140"
+        label="网站代码"
+        sortable
+        show-overflow-tooltip
+      >
+             <template slot-scope="scope">{{ scope.row['scode'] }}</template>
 
       </el-table-column>
       <el-table-column
