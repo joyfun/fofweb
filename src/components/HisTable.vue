@@ -12,6 +12,19 @@
   <el-button type="primary">本年</el-button>
 </el-button-group> -->
   <el-button v-show="temp==1" @click="confirmData">确认数据</el-button>
+    <el-button @click="downloadData" size="small" >下载数据</el-button>
+    <el-upload
+              class="upload-demo"
+              accept=".xlsx,.xls"
+              action="#"
+              :data="{code:code}"
+              :before-upload="(file)=>loadModel(file)"
+              auto-upload
+            >
+              <el-button id="uploadButton" size="small" >导入净值</el-button>
+    </el-upload>
+  <span>&nbsp;&nbsp;&nbsp;&nbsp;注意:净值日期格式为YYYYmmDD格式 即 20210304格式 </span>
+
         </div>
  </div>
     <el-table
@@ -56,6 +69,8 @@
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
 import axis from 'axios'
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
 import DB from '@/store/localapi.js';
 var echarts = require('echarts');
 // 引入柱状图
@@ -134,6 +149,49 @@ export default {
                             if(response.data.status=="success")
                             $this.getTable(this.code)
                         })
+    },
+    loadModel(file){
+      var that=this
+      console.log(file)
+        const insert = DB.prepare('replace into fund_val(code,date ,sumval ) VALUES (? ,? ,?)');
+        const insertMany = DB.transaction((data) => {
+          data.forEach((ele,index)=>{
+              insert.run(ele);
+            })
+          })
+        var reader = new FileReader();
+          reader.onload = function(e) {
+          var workbook = XLSX.read(e.target.result);
+          console.log(workbook)
+          let rst=XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]).map((row)=>{return [that.code,row["date"].replaceAll("-",""),row["累计净值"]]})
+          insertMany(rst)
+          that.$message({
+                message: '成功导入'+rst.length+"条数据",
+                type: 'success',
+                center: true
+        });
+        that.getTable(that.code)
+    /* DO SOMETHING WITH workbook HERE */
+         };
+  reader.readAsArrayBuffer(file);
+  return false
+    },
+     uploadData(){
+
+     },
+    downloadData(){
+      // if(this.$isElectron){
+          var nwb= XLSX.utils.book_new();
+          var nst=XLSX.utils.json_to_sheet(this.tableData.map((row)=>{return {date:row["date"],"累计净值":row['sumval']}}),{header:["date","累计净值"],skipHeader:false})
+          XLSX.utils.book_append_sheet(nwb, nst, "Sheet1");
+          var wbout = XLSX.write(nwb, { bookType: 'xlsx', bookSST: true, type: 'array' })
+        var title='净值历史'+new Date().getTime()
+        FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
+      // }else{
+      //       const options = {code:this.code}
+      //       this.$tools.exportExcel("/fof/report",options)
+      // }
+
     },
     getTable(code){
               if(code&&code.length>2){

@@ -16,6 +16,8 @@ export default new Vuex.Store({
     Person
   },
   state: {
+    syswts: [6, 0, 2, 1, 2, -1, 0, 0],
+    cols: ['yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility'],
     nowcart:'default',
     allCart:{},
     token: Cookies.get("token"),

@@ -228,12 +228,11 @@
     :close-on-press-escape="false"
     :visible.sync="tableVisible"
   >
-    <el-button  @click="downFile('/fof/jreport_down')">下载数据</el-button>
-    <el-button  @click="downPDF('comparediv')">导出PDF</el-button>
+    <el-button  @click="downFile('/fof/jreport_down')" size="small">下载数据</el-button>
+    <el-button  @click="downPDF('comparediv')" size="small">导出PDF</el-button>
 <div ref="comparediv">
-    <report-table    ref="compdata"  :titles="current.name"   :tableData="compData"  ></report-table>
-
-     <fund-echart    ref="hischart1"  :titles="current.name"  style="height: 600px" :code="selcode"  ></fund-echart>
+    <report-table  ref="compdata"  :titles="current.name"   :tableData="compData"  ></report-table>
+    <fund-echart    ref="hischart1"  :titles="current.name"  style="height: 480px" :code="selcode"  ></fund-echart>
 </div>
         </el-dialog>
 

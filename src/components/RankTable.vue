@@ -101,6 +101,7 @@
  <script>
 // import echarts from 'echarts'
 import Vue from 'vue'
+import { mapState } from 'vuex'
 import Bus from '../store/bus.js';
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
@@ -140,6 +141,9 @@ export default {
               }
     },
   },
+  computed: mapState([
+  'syswts','cols'
+]),
   data() {
     return {
       dateranges:[],
@@ -147,11 +151,10 @@ export default {
       zz500idx:[],
       tmaxh:720,
       limit_dic:{'sharpe': 3, 'calmar': 5, 'sortino': 5, 'yeaily_return': 0.7},
-      wts: [6, 0, 2, 1, 2, -1, 0, 0],
+      wts: [],
       wtsdict:{'yeaily_return':1, 'sharpe':2, 'calmar':1, 'sortino':3, 'dd':1, 'dd_week':2, 'win_ratio':2, 'volatility':1},
       tableData:[],
       tags: ["近一月","近季度","近半年","近一年","近2年","近3年","全部","今年","去年","前年"],
-      cols: ['yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility'],
       samplerow:{"rank":"",'fundname':'','name':'','class_type':'','sub_type':'','yeaily_return':1, 'sharpe':2, 'calmar':1, 'sortino':3, 'dd':1, 'dd_week':2, 'win_ratio':2, 'volatility':1},
       names: ['年化收益', 'sharpe', 'calmar', 'sortino', '最大回撤', '回撤(周)', '胜率', '波动率']
     }
@@ -191,15 +194,15 @@ export default {
               let tdata=XLSX.utils.sheet_to_json(workbook.Sheets[sn])
               if(tdata.length>2)
               DB.do_calc(tdata,this.cols,this.limit_dic,this.wts)
-              tdata.sort((a,b)=>{b['socre']-a['score']})
               for(var i in this.cols){
                 this.samplerow[this.cols[i]]=this.wts[i]
               }
               const headers=['rank','fundname','name','class_type','sub_type','yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','score']
-              tdata.map(t=>{t['rank']=t['__EMPTY']+1
+              tdata.sort((a,b)=>{return b['score']-a['score']})
+              tdata.map((t,i)=>{t['rank']=i+1
               delete t['__EMPTY']})
               var nst=XLSX.utils.json_to_sheet([this.samplerow],{header:headers, skipHeader:true})
-               XLSX.utils.sheet_add_json(nst,tdata,{header:headers,  skipHeader: false, origin: -1})
+              XLSX.utils.sheet_add_json(nst,tdata,{header:headers,  skipHeader: false, origin: -1})
               XLSX.utils.book_append_sheet(nwb, nst, sn);
 
               
@@ -373,6 +376,7 @@ export default {
     this.getTable()
   },
   mounted() {
+    this.wts=this.syswts
     //window.addEventListener('resize', this.resizeChart)
   },
   destroyed() {

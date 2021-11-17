@@ -7,6 +7,11 @@
       <el-button  @click="saveSimulate">保存模拟</el-button>
     </el-col>
   </el-row>
+   <el-row>
+    <el-col  :key="item" v-for="(item,i) in cols" :span="3">
+      {{item}}:<el-input   style="width:80px"   size="mini" v-model="wts[i]" :placeholder="item" clearable  ></el-input>
+    </el-col>
+   </el-row>
          <el-collapse :value="collapseItem" >
   <el-collapse-item title="配置产品" name="prodcollapse">
       <el-row class="home" :gutter="1">
@@ -31,13 +36,13 @@
  <!-- <el-table-column
       type="index"
       :index="indexMethod"></el-table-column> -->
-            <el-table-column
+            <!-- <el-table-column
         prop="score"
         min-width="70"
         sortable
         label="score"
         show-overflow-tooltip
-      ></el-table-column>
+      ></el-table-column> -->
       <el-table-column
         prop="name"
         min-width="120"
@@ -64,6 +69,7 @@
 // <script>
 // import Echart from "../../components/Echart.vue";
 import DB from '@/store/localapi.js';
+import { mapState } from 'vuex'
 import FundEchart from "@/components/FundEchart.vue";
 export default {
   components: {
@@ -104,14 +110,16 @@ export default {
   },
       data() {
               return {
-      wts: [6, 0, 2, 1, 2, -1, 0, 0],
-      cols: ['yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility'],
+      wts: [],
       limit_dic:{'sharpe': 3, 'calmar': 5, 'sortino': 5, 'yeaily_return': 0.7},
       buy_amts:null,
       collapseItem:"prodcollapse",
       showchart:false,
       tableData:[]}
       },
+        computed: mapState([
+  'syswts','cols'
+]),
       methods: {
                indexMethod(index) {
         return index +1
@@ -131,7 +139,7 @@ export default {
         }
         this.showchart=false
         if(this.$isElectron){
-          DB.calc_simval(ret)
+          // DB.calc_simval(ret,this.wts)
           this.buy_amts=DB.calc_simval(ret)
           this.collapseItem=""
           this.showchart=true
@@ -208,17 +216,22 @@ export default {
                 let scores=DB.getSocres(this.code,rg)
                 DB.do_calc(scores,this.cols,this.limit_dic,this.wts)
                 this.tableData[day]=scores.sort((a,b)=>{return b['score']-a['score']})
-
               }
                 console.log(dts)
              }else{
 
 
-                this.$axios.get('/fof/fundsimu',{params:{code:this.code}})//axis后面的.get可以省略；
+                this.$axios.get('/fof/fundsimu',{params:{code:this.code,wts:this.wts}})//axis后面的.get可以省略；
             .then(
                 (response) => {
                     console.log(response.data)
                     $this.tableData=response.data
+                    console.log($this.tableData)
+                    for(var a in $this.tableData){
+                      $this.tableData
+                    DB.do_calc($this.tableData[a],this.cols,this.limit_dic,this.wts)
+                    $this.tableData[a].sort((x,y)=>{return y["score"]-x["score"]})
+                    }
                     // this.calc_score(1)
                     // this.calc_score(2)
 
@@ -230,6 +243,7 @@ export default {
           }
       },
       mounted(){
+        this.wts=this.syswts
         //   this.getRankGap()
       },
         created(){

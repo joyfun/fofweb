@@ -23,14 +23,13 @@
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
           <el-button  v-if="$process.env.NODE_ENV=='development'" type="primary"  @click="getRList" style="margin-left: 10px;">远程搜索</el-button>
           <el-button  v-if="$process.env.NODE_ENV=='development'" type="primary"  @click="saveall" style="margin-left: 10px;">保存产品</el-button>
-
         </div>
       </div>
       <el-table
     ref="multipleTable"
     :data="tableData"
     :max-height="tmaxh"
-    :row-key="(row)=>{ return row.scode}"
+    :row-key="(row)=>{ return row.code}"
     tooltip-effect="dark"
     style="width: 100%;margin-top:20px;"
     @select-all="onselectAll"
@@ -115,20 +114,21 @@
       width="160">
         <template slot-scope="scope">
             <el-button @click.native.prevent="viewHis(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看净值历史" placement="left-start"><i class="el-icon-info"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="savefundval(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="同步数据" placement="left-start"><i class="el-icon-download"></i></el-tooltip></el-button>
+            <!-- <el-button @click.native.prevent="savefundval(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="同步数据" placement="left-start"><i class="el-icon-download"></i></el-tooltip></el-button> -->
 
 <!-- <el-button @click.native.prevent="viewAudit(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start"><i class="el-icon-s-order"></i></el-tooltip></el-button> 
             <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button>
             <el-button v-if="usermenu.indexOf('info-audit')>-1" @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
             --><el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
-            <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="信息维护" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
+            <!-- <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="信息维护" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button> -->
             <el-button @click.native.prevent="savefundval(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="同步数据" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
 
             <!--<el-button v-if="usermenu.indexOf('info-edit')>-1"  @click.native.prevent="uploadFile(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.filename"  type="text" size="small"><el-tooltip class="item" effect="dark" content="下载报告" placement="left-start"><a :href=" '/fof/downfile?code='+scope.row.code "><i class="el-icon-download"></i></a></el-tooltip></el-button>
            <el-button v-show="scope.row.combine" @click.native.prevent="viewConcat(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="拼接历史" placement="left-start"><i class="el-icon-link"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
-            --><el-button @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            -->
+            <!-- <el-button @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button> -->
 
         </template>
     </el-table-column>
@@ -461,10 +461,24 @@
           this.formVisible=true
       },
       submitForm(formName) {
+        let info=  DB.prepare('select * from  fund_info where code =?').get(this.current.code)
+        console.log(info)
+        if(info){
+          this.$message({
+                message: '产品已存在 名称:'+info.name,
+                type: 'warning',
+                center: true
+        });
+        return
+        }
         this.savesqlite([this.current])
                   this.formVisible=false
                   this.getList()
-
+        this.$message({
+                message: '添加产品成功',
+                type: 'success',
+                center: true
+        });
                   axis({
       method: 'post',
       url: this.vhost+"/fof/saveprod", // 请求地址
@@ -501,6 +515,8 @@
           return
         }
         DB.prepare('delete from  fund_info where code =?').run(code);
+        DB.prepare('delete from  fund_val where code =?').run(code);
+
       },
       delFund(row) {
         console.log(row)
@@ -843,9 +859,8 @@ showResult(number,rate=100){
       },
       //
       savesqlite(data){
-        console.log(data)
         var now= (new Date()).getTime()
-        const insert = DB.prepare('insert into fund_info(code ,name ,short_name ,create_time  ,type ,scode ,remark ,company,class_type ) VALUES (@code ,@name ,@short_name ,@create_time  ,@type ,@scode ,@remark ,@company,@class_type)');
+        const insert = DB.prepare('replace into fund_info(code ,name ,short_name ,create_time  ,type ,scode ,remark ,company,class_type ) VALUES (@code ,@name ,@short_name ,@create_time  ,@type ,@scode ,@remark ,@company,@class_type)');
         const insertMany = DB.transaction((data) => {
           for (const row of data) {
               row['create_time']=now
@@ -855,7 +870,7 @@ showResult(number,rate=100){
         insertMany(data)
       },
       savefundval(row){
-        const insert = DB.prepare('insert into fund_val(date,code ,sumval ) VALUES (@date ,@code ,@sumval)');
+        const insert = DB.prepare('replace into fund_val(date,code ,sumval ) VALUES (@date ,@code ,@sumval)');
         const insertMany = DB.transaction((data) => {
           data.index.forEach((ele,index)=>{
               insert.run({"date":ele,"code":data.columns[0],"sumval":data.data[index][0]});
@@ -976,15 +991,18 @@ showResult(number,rate=100){
     },
      filters: {
    formatDate: function(time) {
-        if(time&&time.length>10)
+        if(time)
         {
-          var date = new Date(time);
-          return time.substring(0,10).replaceAll("-","")
+          let date=new Date(time)
+          return ""+date.getFullYear()+(date.getMonth()+1)+date.getDate()
         }else{
           return "";
         }
       }},
     mounted() {
+      if(this.$process.env.NODE_ENV=='development'){
+        this.vhost="http://192.168.0.22"
+      }
             // window.addEventListener("resize", this.resizeChart);
     },
     //   async mounted() {

@@ -223,13 +223,16 @@ export default {
           })
     },
      delCartTag(tag) {
+       let that=this
              this.$axios({
         url: "/sys/delcart",
         data:{"user":this.token,"name":tag}, //          
         method: "POST"
       }).then((response) => {
-        this.$store.dispatch('delCartTag',tag).then(()=>Vue.set(this,'foflist',this.allCart[this.nowcart]))
-        console.log(response.data)
+        this.$store.dispatch('delCartTag',tag).then(()=>{
+              that.$refs.multipleTable.clearSelection();
+              that.sel=[]
+              Vue.set(this,'foflist',this.allCart[this.nowcart])})
         });
         // this.allCart.splice(this.dynamicTags.indexOf(tag), 1);
       },

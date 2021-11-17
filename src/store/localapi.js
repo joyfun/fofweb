@@ -283,8 +283,11 @@ db.getSocres=(codes,rg)=>{
 }
 // });
 db.do_calc=(tableData,cols,limit_dic,wts)=>{
+  var maxlen=0
+  
   var rawdata = JSON.parse(JSON.stringify(tableData));
   for(var ret_df of rawdata){
+    maxlen=maxlen<ret_df['length']?ret_df['length']:maxlen
   //去极值
   for(var item in limit_dic){
       ret_df[item] = (ret_df[item] >= limit_dic[item]) * limit_dic[item] + (ret_df[item] < limit_dic[item]) * ret_df[item]
@@ -318,6 +321,9 @@ for(var ridx in rawdata){
      }
     row[item]=(row[item]-maxmin[item+"_min"])/diff
     ascore+=row[item]*wts[idx]
+   }
+   if(row['length']<maxlen-3&&row['length']<maxlen*0.8){
+     ascore=ascore-100
    }
    tableData[ridx]['score']=ascore
 }
