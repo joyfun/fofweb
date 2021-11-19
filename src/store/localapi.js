@@ -125,7 +125,6 @@ db.getSocres=(codes,rg)=>{
     datadf.addColumn({ "column": "return", "values":ret, inplace: true })
 
     }
-    datadf.print()
     let stdval=datadf['return'].std()
     let mean=datadf['return'].mean()
 
@@ -310,8 +309,11 @@ for (var item of cols){
 for (var item of cols){
  maxmin[item+"_diff"]=maxmin[item+"_max"]-maxmin[item+"_min"]
 }
+
+
 for(var ridx in rawdata){ 
   var row=rawdata[ridx]
+
   var ascore=0
    for (var idx in cols){
      var item=cols[idx]

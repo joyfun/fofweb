@@ -529,8 +529,7 @@
       },
       submitForm(formName) {
           if(this.current.type && this.current.class_type){
-            
-          
+            this.current.code=this.current.code.trim()
           axis({
       method: 'post',
       url: "/fof/saveinfo", // 请求地址

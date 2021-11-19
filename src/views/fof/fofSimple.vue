@@ -345,10 +345,10 @@
     {"tilte":"名称","dataIndex":"name"},
     {"tilte":"简称","dataIndex":"short_name"},
     {"tilte":"基金类型","dataIndex":"class_type","param":"class_type"},
-    {"tilte":"公司","dataIndex":"company"},
-    {"tilte":"所在地","dataIndex":"city"},
     {"tilte":"渠道","dataIndex":"type","param":"data_type"},
     {"tilte":"网站代码","dataIndex":"scode"},
+    {"tilte":"公司","dataIndex":"company"},
+    {"tilte":"所在地","dataIndex":"city"},
     {"tilte":"备注","dataIndex":"remark","type":"textarea"} 
 
 ]
@@ -471,15 +471,8 @@
         });
         return
         }
-        this.savesqlite([this.current])
-                  this.formVisible=false
-                  this.getList()
-        this.$message({
-                message: '添加产品成功',
-                type: 'success',
-                center: true
-        });
-                  axis({
+        if(!this.current.create_time){
+          axis({
       method: 'post',
       url: this.vhost+"/fof/saveprod", // 请求地址
       data: this.current, // 参数
@@ -493,6 +486,16 @@
         reject(err)
       }
     )
+        }
+        this.savesqlite([this.current])
+                  this.formVisible=false
+                  this.getList()
+        this.$message({
+                message: '添加产品成功',
+                type: 'success',
+                center: true
+        });
+                  
 
       },
       downData(){
@@ -1001,7 +1004,7 @@ showResult(number,rate=100){
       }},
     mounted() {
       if(this.$process.env.NODE_ENV=='development'){
-        this.vhost="http://192.168.0.22"
+        this.vhost="http://localhost:8080"
       }
             // window.addEventListener("resize", this.resizeChart);
     },

@@ -4,6 +4,18 @@
   <el-row>
     <el-col :span="24">
       <el-button  @click="doSimulate">开始模拟</el-button>
+          <el-date-picker
+      v-model="startdate"
+      value-format="yyyyMMdd"
+      format="yyyyMMdd"
+      align="right"
+      type="date"
+      placeholder="选择日期">
+    </el-date-picker>
+          <el-button  @click="addRangeDate">+调仓日</el-button>
+
+          <el-button  @click="doRefresh">刷新产品</el-button>
+
       <el-button  @click="saveSimulate">保存模拟</el-button>
     </el-col>
   </el-row>
@@ -17,7 +29,7 @@
       <el-row class="home" :gutter="1">
 
     <el-col :span="4" v-for="(data,rg) in tableData" :key="rg">
-       <span>{{rg}}</span>
+       <span>{{rg}}                       <el-button  @click.native.prevent="deleteRange(rg)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button></span>
  <!--   <el-card shadow="hover" >
          <span>{{rg}}</span> -->
 <el-table
@@ -36,13 +48,13 @@
  <!-- <el-table-column
       type="index"
       :index="indexMethod"></el-table-column> -->
-            <!-- <el-table-column
+            <!--<el-table-column
         prop="score"
         min-width="70"
         sortable
         label="score"
         show-overflow-tooltip
-      ></el-table-column> -->
+      ></el-table-column> --> 
       <el-table-column
         prop="name"
         min-width="120"
@@ -69,6 +81,7 @@
 // <script>
 // import Echart from "../../components/Echart.vue";
 import DB from '@/store/localapi.js';
+import Vue from 'vue'
 import { mapState } from 'vuex'
 import FundEchart from "@/components/FundEchart.vue";
 export default {
@@ -110,6 +123,7 @@ export default {
   },
       data() {
               return {
+      startdate:"",
       wts: [],
       limit_dic:{'sharpe': 3, 'calmar': 5, 'sortino': 5, 'yeaily_return': 0.7},
       buy_amts:null,
@@ -121,6 +135,29 @@ export default {
   'syswts','cols'
 ]),
       methods: {
+        doRefresh(){
+          let rgs=Object.keys(this.tableData)
+          this.getTable(rgs)
+        },
+        addRangeDate(){
+          if(this.startdate){
+            let rgs=Object.keys(this.tableData)
+            rgs.push(this.startdate)
+            rgs.sort()
+            this.getTable(rgs)
+          }
+        },
+        deleteRange(rg){
+          if(this.tableData[rg]){
+            console.log(rg)
+            delete this.tableData[rg]
+          }
+          Vue.set(this,"tableData",this.tableData)
+          this.$forceUpdate()
+          //  this.$nextTick(() => { 
+          //         console.log(this.tableData)})
+          
+        },
                indexMethod(index) {
         return index +1
       },
@@ -201,7 +238,7 @@ export default {
       }
       return rst.sort()
       },
-          getTable(){
+          getTable(rgs=null){
             console.log("rpc call started")
             if(this.code&&this.code.length>10){
               
@@ -209,7 +246,13 @@ export default {
              if(this.$isElectron){
 
                //let ret=DB.getSocres(this.code,['20000101','20210101'])
-              let dts=this.getDateArray()
+
+              let dts=[]
+              if(rgs){
+                dts=rgs
+              }else{
+                dts=this.getDateArray()
+              }
                this.tableData={}
               for (var day of dts){
                 const rg=[this.$moment(day).add(-2,'y').format("YYYYMMDD"),day]
@@ -217,18 +260,20 @@ export default {
                 DB.do_calc(scores,this.cols,this.limit_dic,this.wts)
                 this.tableData[day]=scores.sort((a,b)=>{return b['score']-a['score']})
               }
-                console.log(dts)
              }else{
 
-
-                this.$axios.get('/fof/fundsimu',{params:{code:this.code,wts:this.wts}})//axis后面的.get可以省略；
+                let param={code:this.code,wts:this.wts.join(",")}
+                if(rgs){
+                  param['range']=rgs.join(",")
+                }
+                this.$axios.get('/fof/fundsimu',{params:param})//axis后面的.get可以省略；
             .then(
                 (response) => {
                     console.log(response.data)
                     $this.tableData=response.data
                     console.log($this.tableData)
                     for(var a in $this.tableData){
-                      $this.tableData
+                    console.log(a)
                     DB.do_calc($this.tableData[a],this.cols,this.limit_dic,this.wts)
                     $this.tableData[a].sort((x,y)=>{return y["score"]-x["score"]})
                     }
@@ -240,13 +285,15 @@ export default {
                 (error) => {
                     console.log(error);
         });}}
+        // console.log(this.tableData)
+                    this.$forceUpdate()
           }
       },
       mounted(){
-        this.wts=this.syswts
         //   this.getRankGap()
       },
         created(){
+          this.wts=this.syswts
           this.getTable()
 
   },

@@ -158,6 +158,19 @@ tools.install = function (Vue, options) {
   Vue.prototype.$tools = tools
   Vue.tools = tools
 }
+tools.JsonSort=(jsonData)=> {
+  try {
+    let tempJsonObj = {};
+    let sdic = Object.keys(jsonData).sort();
+    sdic.map((item, index)=>{
+      tempJsonObj[item] = jsonData[sdic[index]]
+    })
+    console.log('将返回的数据进行输出',tempJsonObj);
+    return tempJsonObj;
+  } catch(e) {
+    return jsonData;
+  }
+}
 
 tools.isElectron = ()=>{
   return window && window.process && window.process.versions && window.process.versions['electron'];
