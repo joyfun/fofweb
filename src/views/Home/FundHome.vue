@@ -5,6 +5,14 @@
       
     </el-col> -->
     <el-col :span="24">
+              <el-select v-model="cur_fof" @change="changeFOF" style="width:160px"  clearable placeholder="基金选择">
+    <el-option
+      v-for="item in sysparam.FOF"
+      :key="item.value"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
       <!-- <div class="num">
                 <el-card shadow="hover" v-for="item in countData" :key="item.name"
                          :body-style="{ display: 'flex', padding: 0 }">
@@ -128,17 +136,17 @@ export default {
     FundEchart,
   },
    computed: {
-     ...mapGetters(['class_order','token'])
+     ...mapGetters(['class_order','token','sysparam'])
 
    },
   data() {
     return {
       cur_code:"",
+      cur_fof:"SY9620",
       current:{},
       mcols:["年份","一月","二月","三月", "四月","五月", "六月","七月","八月","九月", "十月", "十一月","十二月","年收益"],
       mindx:["year","m01","m02","m03","m04","m05","m06","m07","m08","m09","m10","m11","m12","vyear"],
       dialogVisible:false,
-      cur_code:"",
       code: "",
       subtype:"",
       tableData: [],
@@ -196,7 +204,15 @@ export default {
       },
     };
   },
+    watch: {
+    cur_fof: {
+      handler: function (val) {
+        this.code=this.cur_fof+",000300.SH,000905.SH,000852.SH";
+        this.getTableData();
+      },
+    }},
   methods: {
+      changeFOF(fofcode){},
       getSummaries(param) {
 			const { columns, data } = param;
 			const sums = [];
@@ -245,6 +261,7 @@ export default {
       return this.$tools.formatMoney(value,3)
     },
     getSpanArr(data) {
+      this.spanArr=[]
       for (var i = 0; i < data.length; i++) {
         if (i === 0) {
           this.spanArr.push(1);
@@ -320,7 +337,7 @@ export default {
         axis({
         url: "/fof/profit",
         method: "GET",
-        params: {code:"SY9620"},
+        params: {code:this.cur_fof},
       })
         .then((response) => {
             this.profitlist=response.data
@@ -328,12 +345,13 @@ export default {
       axis({
         url: "/fof/summary",
         method: "GET",
-        params: {},
+        params: {fof:this.cur_fof},
       })
         .then((response) => {
           this.tableData = response.data.datas.sort((a,b)=>{
               return this.class_order.indexOf(a['class_type'])-this.class_order.indexOf(b['class_type'])
           });
+          console.log(this.tableData)
           this.subData.series[0].data=this.getPieDataOuter(this.tableData)
           this.pieData.series.data=this.getPieData(this.tableData)
           this.pieData.legend.data=this.getLegend(this.pieData.series.data)
@@ -362,7 +380,7 @@ this.pieData.action["click"]=(params)=>{
         this.$refs.subPie.initChart() 
 
       })
-    this.code = "SY9620,000300.SH,000905.SH,000852.SH";
+    this.code = this.cur_fof+",000300.SH,000905.SH,000852.SH";
       Bus.$on('cartchart',(arg)=> {
           console.log("========cartchart========")
           this.showChartByCodes(arg)

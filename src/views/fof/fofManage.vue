@@ -601,15 +601,15 @@
         if(durl){
             url=durl
         }
-        if(this.multipleSelection.length<1){
+        if( this.selcode.length<1){
             return
         }
-        var selcode=""
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-              selcode+=","+this.multipleSelection[i].code;
-        }
-        console.log(url)
-        const options = {code:selcode}
+        // var selcode=""
+        // for (let i = 0; i < this.multipleSelection.length; i++) {
+        //       selcode+=","+this.multipleSelection[i].code;
+        // }
+        // console.log(url)
+        const options = {code:this.selcode}
             this.$tools.exportExcel(url,options)
         },
         downPDF(exportRef){
@@ -876,6 +876,7 @@ showResult(number,rate=100){
             curl=vcomp
         this.tableVisible=true
         this.selcode=selcode
+        this.cur_code=selcode
         // console.log(this.multipleSelection)
           axis( {
                 url: curl,

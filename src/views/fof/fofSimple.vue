@@ -1004,7 +1004,7 @@ showResult(number,rate=100){
       }},
     mounted() {
       if(this.$process.env.NODE_ENV=='development'){
-        this.vhost="http://localhost:8080"
+        this.vhost="http://192.168.0.22"
       }
             // window.addEventListener("resize", this.resizeChart);
     },

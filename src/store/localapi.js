@@ -171,7 +171,7 @@ db.getSocres=(codes,rg)=>{
       calmar =-(y_r / max_dd)
     }
   
-  let rst= {"sharpe":sharpe, "calmar":calmar, "sortino":sortino, "dd":max_dd, "dd_week":dd_week, "win_ratio":win_ratio, "yeaily_return":y_r, "volatility":volatility,"std":stdval,'mean':mean,'drops':nhigh+"_"+sdidx+"_"+drop+"_"+didx,"length":shp[0]}
+  let rst= {"sharpe":sharpe, "calmar":calmar, "sortino":sortino, "dd":max_dd, "dd_week":dd_week, "win_ratio":win_ratio, "yeaily_return":y_r, "volatility":volatility,"std":stdval,'mean':mean,"length":shp[0]}
   console.log(rst)
   return rst
   }
@@ -324,7 +324,7 @@ for(var ridx in rawdata){
     row[item]=(row[item]-maxmin[item+"_min"])/diff
     ascore+=row[item]*wts[idx]
    }
-   if(row['length']<maxlen-3&&row['length']<maxlen*0.8){
+   if(row['length']<maxlen-3&&row['length']<maxlen*0.8&&maxlen<160){
      ascore=ascore-100
    }
    tableData[ridx]['score']=ascore
