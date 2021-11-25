@@ -27,10 +27,11 @@
     :popper-append-to-body="true"
     clearable
     filterable
+    :filter-method="filterMethod"
     placeholder="名称"
     >
     <el-option
-      v-for="item in alllist"
+      v-for="item in fofoptions"
       :key="item.code"
       :label="item.name"
       :value="item.code">
@@ -190,6 +191,7 @@ export default {
     return {
       foflist:[],
       filter:{},
+      fofoptions:[],
       inputVisible: false,
       nTagName: '',
       zz500:5,
@@ -203,6 +205,38 @@ export default {
     }
   },
   methods: {
+    filterMethod(query){
+      console.log(query)
+      console.log(this.alllist)
+      if(query){
+        this.fofoptions=[]
+      let qrys=query.split(" ")
+
+      let result=[]
+      let codes=[]
+      for (var qry of qrys)
+      this.alllist.forEach(val=>{
+                      if(val.name.indexOf(qry)!=-1){
+                            result.push(val)
+                            if(val.name==qry)
+                            codes.push(val.code)
+                            } 
+                        }) 
+      // if(qrys.length==codes.length){
+        Vue.set(this,"fofoptions",result)
+        // this.$nextTick(()=>{
+          for(var cd of codes){
+　　          this.mult.push(cd);
+          }
+        // })
+
+      }
+      // }
+      else{
+        this.fofoptions=this.alllist 
+      }
+
+    },
     handleInputConfirm(){
       console.log(this.nTagName)
       var message=""
@@ -339,6 +373,8 @@ export default {
               }else{
                 this.alllist=this.rawlist
               }
+              this.fofoptions=this.alllist 
+
             },
     remoteMethod(query){
       this.$axios({

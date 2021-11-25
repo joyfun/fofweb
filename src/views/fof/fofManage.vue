@@ -310,7 +310,8 @@
     :close-on-press-escape="false"
     :visible.sync="formVisible"
   >
-<el-form :model="current" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
+  <wad-form :cForm="cForm"></wad-form>
+<!-- <el-form :model="current" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
     <template v-for="(row,index)  in cForm" >
 
      <el-row  :key="index"   v-show="index%2==0">
@@ -346,7 +347,7 @@
     <el-button v-if="usermenu.indexOf('info-edit')>-1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
     <el-button v-if="usermenu.indexOf('info-edit')>-1" @click="resetForm('dynamicValidateForm')">重置</el-button>
   </el-form-item>
-</el-form>
+</el-form> -->
     </el-dialog>
 
     <el-dialog
@@ -381,6 +382,7 @@
     import HisTable from '../../components/HisTable.vue';
     import RankTable from '../../components/RankTable.vue';
     import FofSimulate from '../../components/FofSimulate';
+    import WadForm from '../../components/WadForm';
 
     import ReportTable from '../../components/ReportTable';
     import {mapGetters} from 'vuex'
@@ -430,9 +432,12 @@
             ConcatLog,
             FofSimulate,
             ReportTable,
-            FundCorr
+            WadForm,
+            FundCorr,
+            WadForm
         },
-        props: {filters:{
+ 
+    props: {filters:{
       type: Object,
       default:null
     },},
