@@ -21,6 +21,7 @@ const compare2 =()=> import('@/views/fof/fofCompare.vue')
 const compare3 =()=> import('@/views/fof/fofCompare.vue')
         //component:() => import('@/views/fof/fofSimple.vue')
 var home = () => import('@/views/Home/FundHome.vue')
+// var home = () => import('@/views/sys/userCart.vue')
 if(tools.isElectron()){
   home = () => import('@/views/fof/fofSimple.vue')
 }
@@ -33,6 +34,11 @@ const routes = [
         path: '/',
         name: 'home',
         component:home
+      },
+      {
+        path: '/trade',
+        name: 'trade',
+        component:() => import('@/views/fof/fofTrade.vue'),
       },
       {
         path: '/fundinfo',
@@ -108,6 +114,11 @@ const routes = [
         props:{
             filters:{class_type:'混合'}
        }
+      },
+      {
+        path: '/listrank',
+        name: 'list-rank',
+        component:() => import('@/views/fof/listRank.vue')
       },
       {
         path: '/fundcalc',
@@ -245,6 +256,14 @@ const routes = [
         },
       }
       ,
+  {
+    path: '/sys/mycart',
+    name: 'my-cart',
+    component:() => import('@/views/sys/userCart.vue'),
+    children:[
+    ]
+  }
+      ,
       {
         path: '/sysparam',
         name: 'sys-param',
@@ -313,12 +332,6 @@ const routes = [
         name: 'page4',
         component:() => import('@/views/Other/PageFour.vue')
       },
-    ]
-  },
-  {
-    path: '/register',
-    component:() => import('@/views/User/register.vue'),
-    children:[
     ]
   },  {
     path: "/login",

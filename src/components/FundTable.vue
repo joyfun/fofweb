@@ -46,7 +46,7 @@
    <div class="block" style="display: flex;justify-content: space-between">
             <el-button type="primary"   size="small" @click="addCart">添加</el-button>
            <el-button type="primary"   size="small" @click="showCart">对比</el-button>
-            <el-button type="primary"   size="small" @click="showRank">排名</el-button>
+            <el-button v-if="usermenu.indexOf('rank-btn')>-1" type="primary"   size="small" @click="showRank">排名</el-button>
             <!-- <el-button type="primary"   size="small" @click="showSimu">仿真</el-button> -->
 
   </div>
@@ -102,6 +102,24 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.name }}</template>
     </el-table-column>
+    <el-table-column v-if="full"
+      label="类别"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row['class_type'] }}</template>
+    </el-table-column>
+    <el-table-column v-if="full"
+      label="子类别"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row['sub_type'] }}</template>
+    </el-table-column>
+    <el-table-column v-if="full"
+      label="阶段"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row['stage'] }}</template>
+    </el-table-column>
     <el-table-column
     width="40"
             fixed="right"
@@ -114,7 +132,7 @@
   </div>
 </template>
 
-// <script>
+ <script>
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
 import { mapState,mapGetters,mapMutations } from 'vuex'
@@ -128,7 +146,7 @@ import Vue from 'vue'
 // require('echarts/lib/component/title');
 export default {
   props: {
-    visable:{
+    full:{
       type: Boolean,
       default: false
     },
@@ -158,7 +176,7 @@ export default {
             current: state => state.tab.currentMenu,
             nowcart: state =>state.nowcart,
         }),
-       ...mapGetters(['allCart','token',"allparam","sysparam"])
+       ...mapGetters(['allCart','token',"allparam","sysparam",'usermenu'])
 
     },
   watch: {
@@ -274,8 +292,29 @@ export default {
       showInput() {
         this.inputVisible = true;
       },
+
+    get_info(code){
+      console.log('get info:'+code)
+      for(var af of this.rawlist){
+        if(af['code']==code){
+          console.log(af)
+          return af
+        }
+      }
+      return null
+    },
     changeCart(row){
       this.$store.dispatch('changeCart',row)
+      let ret=this.allCart[row]
+      console.log(ret)
+      for (var i in ret){
+        console.log(ret[i])
+        let aret=this.get_info(ret[i]['code'])
+        if(aret){
+        Vue.set(ret,i,aret)
+
+        }
+      }
       Vue.set(this,'foflist',this.allCart[row])
       console.log(this.foflist)
     },

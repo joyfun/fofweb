@@ -8,7 +8,7 @@
             <router-view :key="$route.fullPath"></router-view>
         </el-main>
       </el-container>
-      <right-panel >
+      <right-panel v-if="!$isElectron">
         <fund-table/>
       </right-panel>
     </el-container>

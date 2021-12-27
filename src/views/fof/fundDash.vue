@@ -368,6 +368,7 @@ export default {
         .get('/fof/funddash') //axis后面的.get可以省略；
         .then((response) => {
              this.tableData=response.data
+             this.resizeChart()
           //this.tableData = this.totaltableData;
         })
         .catch((error) => {
@@ -377,7 +378,6 @@ export default {
     //
   },
  mounted() {
-           this.resizeChart();
             window.addEventListener("resize", this.resizeChart);
     },
   async created() {

@@ -26,14 +26,14 @@
 <!--      测试ID-->
     <el-table-column
       prop="name"
-      label="名称"
+      label="显示名"
       width="120">
       <template slot-scope="scope">{{ scope.row.name }}</template>
     </el-table-column>
 <!--      用例编号-->
      <el-table-column
       prop="user"
-      label="值"
+      label="登录名"
       show-overflow-tooltip>
       <template slot-scope="scope">{{ scope.row.user }}</template>
     </el-table-column>
@@ -137,8 +137,8 @@
 import {mapGetters} from 'vuex'
     
 const cForm=[
-    {"tilte":"用户","dataIndex":"user"},
-    {"tilte":"名称","dataIndex":"name"}]
+    {"tilte":"登录名","dataIndex":"user"},
+    {"tilte":"显示名","dataIndex":"name"}]
   export default {
       components: {
         },

@@ -54,7 +54,7 @@ export default {
         }
         
 
-//         ["fund-comp","fund-info","fund-info1","fund-info2","fund-info3","fund-info4","fund-info5","fund-info6","fund-compare","fund-info","fund-info4","fund-calc","fund-comb","fund-pressure","fund-compare","fund-report","fund-analysis","fund-jcomp","fund-reason","fund-rank1","fund-rank2","fund-info","sys-param","sys-cfg","fund-concat","fund-alarm","fof-action","fof-crawl","fof-dash","fund-return","user-manage"
+//         ["fund-comp","fund-info","fund-info1","fund-info2","fund-info3","fund-info4","fund-info5","fund-info6","fund-compare","fund-info","fund-info4","fund-calc","fund-comb","fund-pressure","fund-compare","fund-report","fund-analysis","fund-jcomp","fund-reason","fund-rank1","fund-rank2","fund-info","sys-param","sys-cfg","fund-concat","fund-alarm","fof-action","fof-crawl","fof-dash","fund-return","user-manage",""
 // ]
         // for(var key in this.allMenu){
         //     this.allMenu[key]=this.allMenu[key]
@@ -73,7 +73,16 @@ export default {
                     name:'home',
                     icon: 's-home'
                 }]
-        this.asideMenu=this.asideMenu.concat(this.allMenu[arg].filter(this.checkMenu))
+                // if(this.$isElectron){
+                //    this.asideMenu.push({
+                //     path: '/',
+                //     label: '模拟交易',
+                //     name:'trade',
+                //     icon: 's-home'
+                // }) 
+                // }else{
+                    this.asideMenu=this.asideMenu.concat(this.allMenu[arg].filter(this.checkMenu))
+                // }
           console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
       })
     },
@@ -149,10 +158,16 @@ export default {
                             label: '期权',
                             name:'fund-info5',
                             icon:'setting'
-                        },{
+                        }
+                        ,{
                             path: '/fundinfo6',
                             label: '混合',
                             name:'fund-info6',
+                            icon:'setting'
+                        }, {
+                            path: '/listrank',
+                            label: '清单分析',
+                            name:'list-rank',
                             icon:'setting'
                         },{
                             path: '/fundextra',
@@ -327,6 +342,15 @@ export default {
                         }
                         ],
                         "sys":[
+                             {
+                            path: '/sys/mycart',
+                            label: '我的购物车',
+                            name:'my-cart',
+                            params:{
+                                parent:0,
+                            },
+                            icon:'setting'
+                        },
                         {
                             path: '/sysparam',
                             label: '系统字典',

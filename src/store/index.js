@@ -56,14 +56,19 @@ export default new Vuex.Store({
         {lable:"已投尽调排名",value:"fund-rank1"},
         {lable:"已投备投排名",value:"fund-rank2"},
         {lable:"系统字典",value:"sys-param"},
+        {lable:"购物车",value:"my-cart"},
+
         {lable:"系统参数",value:"sys-cfg"},
         {lable:"基金拼接",value:"fund-concat"},
         {lable:"业绩预警",value:"fund-alarm"},
         {lable:"刷新参数",value:"fof-action"},
         {lable:"三方数据",value:"fof-crawl"},
         {lable:"数据时效",value:"fof-dash"},
+        {lable:"清单分析",value:"list-rank"},
         {lable:"编辑信息",value:"info-edit"},
         {lable:"审核信息",value:"info-audit"},
+        {lable:"基金排名",value:"rank-btn"},
+        {lable:"基金仿真",value:"sim-btn"},
         {lable:"用户管理",value:"user-manage"}]
   },
   mutations: {

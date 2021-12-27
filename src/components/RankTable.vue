@@ -6,6 +6,8 @@
     <!-- <el-button type="info" @click="downFile('/fof/jscore_down')">下载数据</el-button> -->
     <el-button type="info" @click="exportExcel">导出评分</el-button>
     <el-button type="info" @click="exportExcelAll()">下载数据</el-button> 
+        <!-- <el-button type="info" @click="downFile('/fof/jscore_down')">原始</el-button>  -->
+
 
    <el-table
       ref="multipleTable"
@@ -106,7 +108,6 @@ import Bus from '../store/bus.js';
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
 import DB from '@/store/localapi.js';
-import * as df from "danfojs/dist/index";
 export default {
   props: {
      code:{
@@ -155,14 +156,46 @@ export default {
       wtsdict:{'yeaily_return':1, 'sharpe':2, 'calmar':1, 'sortino':3, 'dd':1, 'dd_week':2, 'win_ratio':2, 'volatility':1},
       tableData:[],
       tags: ["近一月","近季度","近半年","近一年","近2年","近3年","全部","今年","去年","前年"],
-      samplerow:{"rank":"",'fundname':'','name':'','class_type':'','sub_type':'','yeaily_return':1, 'sharpe':2, 'calmar':1, 'sortino':3, 'dd':1, 'dd_week':2, 'win_ratio':2, 'volatility':1},
-      names: ['年化收益', 'sharpe', 'calmar', 'sortino', '最大回撤', '回撤(周)', '胜率', '波动率']
-    }
+      samplerow:{"rank":"",'fundname':'','name':'','class_type':'','sub_type':'','yeaily_return':1, 'sharpe':2, 'calmar':1, 'sortino':3, 'dd':1, 'dd_week':2, 'win_ratio':2, 'volatility':1,"level":"","numeric_type":""},
+      names: ['年化收益', 'sharpe', 'calmar', 'sortino', '最大回撤', '回撤(周)', '胜率', '波动率'],
+      cls_gap:{"AAS":{"limit":{"dd":[-0.1,0],"volatility":[0,0.15]},"level":{"dd":[-0.07,-0.05,-0.03]}},
+               "CTA":{"limit":{"dd":[-0.2,0],"dd_week":[0,60]},"level":{"dd":[-0.15,-0.07,-0.03]}}}
+      }
   },
   methods: {
      indexMethod(index) {
         return index +1
       },
+     classify(row){
+       let key=""
+        if(row["class_type"]=="CTA"){
+          key="CTA"
+        }else if (["混合","中性","套利","期权"].indexOf(row["class_type"])>-1){
+          key="AAS"
+        }
+        row["numeric_type"]=key
+        if(key){
+          let conf=this.cls_gap[key]
+          for (var lk in conf["limit"]){
+              if(lk && conf["limit"][lk][0]<row[lk] && row[lk] <conf["limit"][lk][1]){
+
+              }else{
+                return
+              }
+          }
+          row["level"]="丁"
+          let ranks=["丙","乙","甲"]
+          for(var lvk  in  conf["level"]){
+            let alvs=conf["level"][lvk]
+            for (var i in alvs){
+              if(row[lvk]>alvs[i]){
+                row["level"]=ranks[i]
+              }
+            }
+          }
+        }
+        
+     },
     addCart(row){
       if(row['fundname']){
         row['code']=row['fundname']
@@ -234,15 +267,14 @@ export default {
               for(var i in this.cols){
                 this.samplerow[this.cols[i]]=this.wts[i]
               }
-              const headers=['rank','fundname','name','class_type','sub_type','yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','score']
+              const headers=['rank','fundname','name','class_type','sub_type','yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','score','numeric_type','level','stage','scale']
               tdata.sort((a,b)=>{return b['score']-a['score']})
               tdata.map((t,i)=>{t['rank']=i+1
+              this.classify(t)
               delete t['__EMPTY']})
               var nst=XLSX.utils.json_to_sheet([this.samplerow],{header:headers, skipHeader:true})
               XLSX.utils.sheet_add_json(nst,tdata,{header:headers,  skipHeader: false, origin: -1})
-              XLSX.utils.book_append_sheet(nwb, nst, sn);
-
-              
+              XLSX.utils.book_append_sheet(nwb, nst, sn);             
           }
             var wbout = XLSX.write(nwb, { bookType: 'xlsx', bookSST: true, type: 'array' })
         var title='评分下载'+new Date().getTime()

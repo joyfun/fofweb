@@ -26,6 +26,15 @@
             tags: state => state.tab.tablist
         })
     },
+    created(){
+        if(this.$isElectron){
+            this.$store.commit('selectMenu',{
+          path: '/',
+          label: '模拟交易',
+          name:'trade',
+          icon: 'home'
+        });
+        }    },
         data() {
       return {
         dynamicTags: ['标签一', '标签二', '标签三'],

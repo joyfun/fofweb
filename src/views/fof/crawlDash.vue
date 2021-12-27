@@ -2,11 +2,9 @@
   <div ref="tableContainer" style="	height : 100%;">
     <div class="block" style="display: flex; justify-content: space-between">
       <div style=" width: 480px;">
-        <el-button size="small" @click="delSelection()">删除</el-button>
-        <el-button size="small" @click="toggleSelection()">取消选择</el-button>
-        <el-button size="small" @click="compare()">对比</el-button>
-        <el-button size="small" @click="downFile()">下载业绩对比</el-button>
-        <el-button  size="small" @click="downNetFile()">下载净值</el-button>
+      <el-radio-group v-model="reqType">
+         <el-radio-button type="primary" :key="i"  :label="item" icon="el-icon-edit" v-for="(item,i) in types">{{tags[i]}}</el-radio-button>
+      </el-radio-group>
       </div>
     </div>
     <el-table
@@ -100,6 +98,16 @@
              <template slot-scope="scope">{{ scope.row['scode'] }}</template>
 
       </el-table-column>
+       <el-table-column
+        prop="miss"
+        width="140"
+        label="缺失日期"
+        sortable
+        show-overflow-tooltip
+      >
+             <template slot-scope="scope">{{ scope.row['miss'] }}</template>
+
+      </el-table-column>
       <el-table-column
         prop="code"
         width="120"
@@ -184,9 +192,13 @@ export default {
       default: "/fof/jreport"
     },
     },
+
   data() {
     return {
+      tags:["SiMuWang","GeShang",'邮件其它'],
+      types:["SiMuWang","GeShang",'1'],
       current: {},
+      reqType: 'GeShang,SiMuWang',
       cur_code: "",
       dialogVisible: false,
       hisVisible:false,
@@ -213,6 +225,12 @@ export default {
     };
   },
   watch: {
+    reqType:{
+    handler: function(reqType) {
+            console.log(reqType)
+                this.getList()
+              }
+    },
     $route:{
       handler(n){
           console.log(n)
@@ -397,7 +415,7 @@ export default {
     //
     getList() {
       axis
-        .get('/fof/crawl?type=GeShang,SiMuWang') //axis后面的.get可以省略；
+        .get('/fof/crawl',{params:{'type':this.reqType}}) //axis后面的.get可以省略；
         .then((response) => {
              this.tableData=response.data
              this.resizeChart();

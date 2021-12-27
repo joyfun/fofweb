@@ -653,7 +653,14 @@ export default {
         }
       } else if (code && code.length > 2) {
         charturl = "/fof/hisdata";
-        data = { code: code ,w:this.wts};
+        let cds=code.split(",")
+        let car=[]
+        for (var acd of cds ){
+          if(acd &&car.indexOf(acd)<0 ){
+            car.push(acd)
+          }
+        }
+        data = { code: car.join(",") ,w:this.wts};
       }
       axis
         .get(charturl, { params: data }) //axis后面的.get可以省略；
@@ -1150,7 +1157,10 @@ var sdata = [...this.raw_data[cname]];
   },
   mounted() {
     window.addEventListener("resize", this.resizeChart);
+    if(this.code){
+      console.log("mount call")
     this.getChart(this.code);
+    }
   },
   unmounted() {
     window.removeEventListener("resize", this.resizeChart);

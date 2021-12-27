@@ -8,8 +8,8 @@
         <el-button  size="small" @click="allrun()">对比</el-button>
         <el-button  size="small" @click="showcorr()">相关性</el-button>
         <el-button  size="small" @click="compare()">业绩对标</el-button>
-        <el-button  size="small" @click="showRank()">排名</el-button>
-        <el-button  size="small" @click="showSimulate()">仿真</el-button>
+        <el-button   v-if="usermenu.indexOf('rank-btn')>-1" size="small" @click="showRank()">排名</el-button>
+        <el-button   v-if="usermenu.indexOf('sim-btn')>-1" size="small" @click="showSimulate()">仿真</el-button>
 
         <el-select v-model="filter.stage" @change="getList" style="width:80px"  clearable placeholder="阶段">
     <el-option
@@ -40,33 +40,33 @@
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button>
         </div>
       </div>
-   <!-- <el-collapse  @change="handlecollapse">
+   <!-- --><el-collapse  @change="handlecollapse">
   <el-collapse-item title="高级搜索" name="1">
     <div>
-      <el-row>
+      <!-- <el-row>
         <el-col :span="4">年化收益<el-input @input="forceUpdate" v-model="filter['yavg']" clearable placeholder="年化收益" style="width:80px"></el-input></el-col>
         <el-col :span="6">近三年平均收益<el-input @input="forceUpdate" v-model="filter['y3avg']" clearable placeholder="近3年均收益" style="width:80px"></el-input></el-col>
-      </el-row>
+      </el-row> -->
       <el-row>
-        <el-col :span="4">年份</el-col>
+        <el-col :span="1">年份</el-col>
         <el-col :span="4">收益</el-col>
         <el-col :span="4">波动率</el-col>
         <el-col :span="4">夏普</el-col>
         <el-col :span="4">卡玛</el-col>
         <el-col :span="4">最大回撤</el-col>
       </el-row>
-        <el-row  :key="year" v-for=" year in  ['2021','2020','2019','2018']"  >
+        <el-row  :key="year" v-for=" year in  ['2021','2020','2019','2018','all']"  >
     <el-col :span="1">{{year}}</el-col>
-    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_y'+year]" clearable :placeholder="year+'收益'" style="width:180px"></el-input></el-col>
-    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_vola'+year]" clearable :placeholder="year+'波动率'" style="width:180px"></el-input></el-col>
-    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_sharp'+year]" clearable :placeholder="year+'夏普'" style="width:180px"></el-input></el-col>
-    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_calmar'+year]" clearable :placeholder="year+'卡玛'" style="width:180px"></el-input></el-col>
-    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_dd'+year]" clearable :placeholder="year+'最大回撤'" style="width:180px"></el-input></el-col>
+    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_yr_'+year]" clearable :placeholder="'收益例:20'" style="width:100px"></el-input>-<el-input @input="forceUpdate" v-model="filter['e_yr@lt_'+year]" clearable :placeholder="'收益例:20'" style="width:100px"></el-input></el-col>
+    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_volatility_'+year]" clearable :placeholder="'波动率'" style="width:100px"></el-input>-<el-input @input="forceUpdate" v-model="filter['e_volatility@lt_'+year]" clearable :placeholder="'波动率'" style="width:100px"></el-input></el-col>
+    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_sharpe_'+year]" clearable :placeholder="'夏普'" style="width:100px"></el-input>-<el-input @input="forceUpdate" v-model="filter['e_sharp@lt_'+year]" clearable :placeholder="'夏普'" style="width:100px"></el-input></el-col>
+    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_calmar_'+year]" clearable :placeholder="'卡玛'" style="width:100px"></el-input>-<el-input @input="forceUpdate" v-model="filter['e_calmar@lt_'+year]" clearable :placeholder="'卡玛'" style="width:100px"></el-input></el-col>
+    <el-col :span="4"><el-input @input="forceUpdate" v-model="filter['e_dd_'+year]" clearable :placeholder="'回撤:-10'" style="width:100px"></el-input>-<el-input @input="forceUpdate" v-model="filter['e_dd@lt_'+year]" clearable :placeholder="'最大回撤例:-10'" style="width:100px"></el-input></el-col>
            </el-row>
 
     </div>
   </el-collapse-item>
-   </el-collapse> -->
+   </el-collapse> 
       <el-table
     ref="multipleTable"
     :data="tableData"
@@ -310,8 +310,8 @@
     :close-on-press-escape="false"
     :visible.sync="formVisible"
   >
-  <wad-form :cForm="cForm"></wad-form>
-<!-- <el-form :model="current" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
+ <!-- <wad-form :cForm="cForm"></wad-form>
+ --><el-form :model="current" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
     <template v-for="(row,index)  in cForm" >
 
      <el-row  :key="index"   v-show="index%2==0">
@@ -347,7 +347,7 @@
     <el-button v-if="usermenu.indexOf('info-edit')>-1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
     <el-button v-if="usermenu.indexOf('info-edit')>-1" @click="resetForm('dynamicValidateForm')">重置</el-button>
   </el-form-item>
-</el-form> -->
+</el-form> 
     </el-dialog>
 
     <el-dialog
@@ -876,6 +876,7 @@ showResult(number,rate=100){
           this.showcomapre(row.code,'/fof/jcompare')
       },
       showcomapre(selcode,vcomp){
+        console.log(selcode)
         let curl='/fof/jreport'
         if(vcomp)
             curl=vcomp

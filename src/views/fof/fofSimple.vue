@@ -16,6 +16,7 @@
           <el-button  size="small" @click="allrun()">对比</el-button>
         <el-button  size="small" @click="showRank()">排名</el-button>
          <el-button  size="small" @click="showSimulate()">仿真</el-button>
+          <!-- <el-button  size="small" @click="calcvirt()">同步仿真</el-button> -->
         <el-button  size="small" @click="downData()">同步数据</el-button>
         <el-button  size="small" @click="delAll()">删除</el-button>
 
@@ -463,13 +464,14 @@
       submitForm(formName) {
         let info=  DB.prepare('select * from  fund_info where code =?').get(this.current.code)
         console.log(info)
+        let msg="保存产品成功"
         if(info){
-          this.$message({
-                message: '产品已存在 名称:'+info.name,
-                type: 'warning',
-                center: true
-        });
-        return
+        //   this.$message({
+        //         message: '产品已存在 名称:'+info.name,
+        //         type: 'warning',
+        //         center: true
+        // });
+        // return
         }
         if(!this.current.create_time){
           axis({
@@ -491,7 +493,7 @@
                   this.formVisible=false
                   this.getList()
         this.$message({
-                message: '添加产品成功',
+                message: msg   ,
                 type: 'success',
                 center: true
         });
@@ -503,6 +505,9 @@
         for (var row of this.totaltableData){
           this.savefundval(row)
         }
+        setTimeout(() => {
+        DB.calc_virt()
+      }, 60000)
       },
       delFund0(row){
           this.confirmVisible=true
@@ -872,7 +877,25 @@ showResult(number,rate=100){
         });
         insertMany(data)
       },
+      // calcvirt(){
+      //   const virts=DB.prepare("select * from fund_info where class_type='虚拟'").all()
+      //   const indexdate=DB.getFundVal("000905.SHW")
+      //   const nowdate=new Date().toLocaleDateString('zh-CN').replaceAll("/","")
+      //   for (let avrit of virts){
+      //     if(avrit.remark){
+      //     let ldate=""
+      //     let amts=JSON.parse(avrit.remark)
+      //     for(var day in Object.keys(amts).sort()){
+      //       if(ldate<day){
+      //         ldate=day
+      //       }
+      //     }
+      //     DB.getVirt(amts[ldate],ldate,nowdate,indexdate,avrit.code)
+          
+      //   }}
+      // },
       savefundval(row){
+              
         const insert = DB.prepare('replace into fund_val(date,code ,sumval ) VALUES (@date ,@code ,@sumval)');
         const insertMany = DB.transaction((data) => {
           data.index.forEach((ele,index)=>{

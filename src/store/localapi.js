@@ -28,6 +28,7 @@ db = new sqlite3(dbPath, { verbose: console.log })
 //   });
 // });
 try {
+db.exec("CREATE TABLE fund_order (pcode varchar(10),date varchar(10),tcode varchar(10),tname varchar(40),amount real,direction varchar(10) ,status varchar(10))");
 db.exec("create table sys_config(code varchar(10),value varchar(80),primary key (code))");
 db.exec("insert into sys_config (code,value) values('apihost','http://www.waddc.com')")
 db.exec("insert into sys_config (code,value) values('v_cnt','0')")
@@ -50,6 +51,23 @@ db.reload=(data)=>{
   })
   db = new sqlite3(dbPath, { verbose: console.log })
 }
+db.calc_virt=()=>{
+  const virts=db.prepare("select * from fund_info where class_type='虚拟'").all()
+  const indexdate=db.getFundVal("000905.SHW")
+  const nowdate=new Date().toLocaleDateString('zh-CN').replaceAll("/","")
+  for (let avrit of virts){
+    if(avrit.remark){
+    let ldate=""
+    let amts=JSON.parse(avrit.remark)
+    for(var day of Object.keys(amts).sort()){
+      if(ldate<day){
+        ldate=day
+      }
+    }
+    db.getVirt(amts[ldate],ldate,nowdate,indexdate,avrit.code)
+    
+  }}
+},
 db.getFundVal=(code,erg="")=>{
   var qsql='SELECT * FROM fund_val where code=?' 
   if(erg){
@@ -179,7 +197,12 @@ db.getSocres=(codes,rg)=>{
 
   db.sell_fund=(day,codes)=>{
     let cash=0
+    console.log(codes)
     for (var code in codes){
+      if(code=="cash"){
+        cash=cash+codes[code]
+        continue
+      }
       const ret=db.getFundVal(code,day)
       const lret=ret.length
       cash=cash+ret[lret-1]['sumval']*codes[code]
@@ -204,6 +227,85 @@ db.getSocres=(codes,rg)=>{
     let vname="V_F"+cnt['value']
     db.prepare("insert into fund_info (code,name,short_name,remark,class_type) values (?,?,?,?,'虚拟')").run([vname,name,name,JSON.stringify(wts)])
     db.prepare("update fund_val set code=? where code='V_Temp'").run([vname])
+    return vname
+  }
+  db.deal_Orders=(amt,code,ldate,indexdate)=>{
+    let basecash=0
+    if(amt["cash"]){
+      basecash=amt["cash"]
+    }
+    let sells=[]
+    let sdate=""
+    let orders=db.prepare("select * from  fund_order where pcode=? and status='0' order by date,direction desc").all(code)
+    if(orders.length<1){
+      return
+    }
+    for(var ord of orders){
+      if(ord["direction"]=="卖"){
+        sells.push(ord["tcode"])
+      }
+      sdate=ord["date"]
+    }
+    let samts={}
+    for (var scode of sells){
+      //if(amt[scode])
+      samts[scode]=amt[scode]
+      delete amt[scode]
+    }
+    console.log(samts)
+    for(var row of indexdate){
+      let idate=row['date']
+      if(idate>=sdate){
+        basecash=basecash+db.sell_fund(idate,samts)
+        for(var ord of orders){
+          if(ord["direction"]=="买"){
+              let  ret = db.prepare("SELECT date,sumval FROM fund_val where code =? order by date desc limit 1").get(ord["tcode"])
+              let  bamt= ord["amount"]*10000/ret["sumval"]
+              basecash=basecash-ord["amount"]*10000
+              if(amt[ord["tcode"]]){
+                amt[ord["tcode"]]=amt[ord["tcode"]]+bamt
+              }else{
+                amt[ord["tcode"]]=bamt
+              }
+          }
+        }
+        amt['cash']=basecash
+        let info =db.prepare('SELECT * FROM fund_info where code=? ').get(code)
+        let plan=JSON.parse(info["remark"])
+        plan[idate]=amt
+        db.prepare("update fund_info set remark=? where code=?").run([JSON.stringify(plan),code])
+        db.prepare("update fund_order set status='1' where pcode=?").run([code])
+
+        break;
+      }
+
+    }
+    
+
+  }
+  db.getVirt=(amt,ldate,nowdate,indexdate,code="V_Temp")=>{
+    db.deal_Orders(amt,code,ldate,indexdate)
+    let rval=[]
+    for(var idt of indexdate){
+      const idate=idt['date']
+      if(idate>=ldate && idate<nowdate){
+        console.log(idate)
+        let fval=db.sell_fund(idate,amt)
+        if(fval>100000){
+          fval=fval/10000000
+        }
+        rval.push({"code":code,"date":idate,"sumval":fval})
+      }
+    }
+    const insert = db.prepare('replace into fund_val(date,code ,sumval ) VALUES (@date ,@code ,@sumval)');
+    const insertMany = db.transaction((data) => {
+      data.forEach((ele,index)=>{
+          insert.run(ele)
+        })
+      })
+    //console.log(rval)
+    insertMany(rval)
+    
   }
   db.calc_simval=(splits)=>{
     let nextday='20100101'
@@ -220,9 +322,12 @@ db.getSocres=(codes,rg)=>{
     })
     let rval=[]
     let rret={}
+    db.prepare("delete from fund_val where code='V_Temp'").run()
     dts.forEach((date,idx)=>{
       if(idx+1<bcnt){
         nextday=dts[idx+1]
+      }else{
+        nextday=new Date().toLocaleDateString('zh-CN').replaceAll("/","")
       }
       if(amt){
         cash=db.sell_fund(date,amt)
@@ -235,21 +340,15 @@ db.getSocres=(codes,rg)=>{
       }
       amt=db.buy_fund(cash,date,tbuys)
       rret[date]=amt
-      for(var idt of indexdate){
-        const idate=idt['date']
-        if(idate>=date && idate<=nextday){
-          rval.push({"code":"V_Temp","date":idate,"sumval":db.sell_fund(idate,amt)})
-        }
-      }
+      db.getVirt(amt,date,nextday,indexdate)
+      // for(var idt of indexdate){
+      //   const idate=idt['date']
+      //   if(idate>=date && idate<=nextday){
+      //     rval.push({"code":"V_Temp","date":idate,"sumval":db.sell_fund(idate,amt)})
+      //   }
+      // }
     })
-    db.prepare("delete from fund_val where code='V_Temp'").run()
-    const insert = db.prepare('insert into fund_val(date,code ,sumval ) VALUES (@date ,@code ,@sumval)');
-    const insertMany = db.transaction((data) => {
-      data.forEach((ele,index)=>{
-          insert.run(ele)
-        })
-      })
-    insertMany(rval)
+
     return rret
   }
 
