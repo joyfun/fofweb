@@ -607,12 +607,16 @@
             url=durl
         }
         if( this.selcode.length<1){
-            return
+          this.selcode=""
+            for (let i = 0; i < this.multipleSelection.length; i++) {
+              this.selcode+=","+this.multipleSelection[i].code;
+        }
+        }
+        if(this.selcode.length<1){
+          return
         }
         // var selcode=""
-        // for (let i = 0; i < this.multipleSelection.length; i++) {
-        //       selcode+=","+this.multipleSelection[i].code;
-        // }
+
         // console.log(url)
         const options = {code:this.selcode}
             this.$tools.exportExcel(url,options)
@@ -1038,6 +1042,7 @@ showResult(number,rate=100){
                                     for (var row in this.totaltableData){
                                         this.totaltableData[row]["name"]=this.totaltableData[row]["mcode"]
                                         this.totaltableData[row]["short_name"]=this.totaltableData[row]["mcode"]
+                                        this.totaltableData[row]["company"]=''
 
                                     }
                                 }

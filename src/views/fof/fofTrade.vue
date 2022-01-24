@@ -190,7 +190,8 @@ FundEchart
   },
   computed: {
     holdoingList(){
-                    let today=new Date().toLocaleDateString('zh-CN').replaceAll("/","")
+      var date= new Date();
+      let today = this.$tools.getToday()
 
       let list=[{"code":"cash","name":"现金","total_val":this.get10th(this.holding["cash"])}]
       for (var key in this.holding){
@@ -210,8 +211,9 @@ FundEchart
               ret= this.latest_val*this.holding[this.code]/10000
           }else{
               if(!this.code){
-              let today=new Date().toLocaleDateString('zh-CN').replaceAll("/","")
-             ret= DB.sell_fund(today,this.holding)}
+      var date= new Date();
+      let today = this.$tools.getToday()
+                   ret= DB.sell_fund(today,this.holding)}
           }
           return this.get10th(ret)
       },
@@ -243,7 +245,6 @@ FundEchart
       fofplans:[],
       code:"",
       pcode:"",
-      cash:10000000,
       fund_name:"",
       buy_amt:0,
       latest_val:0,
@@ -297,6 +298,7 @@ FundEchart
         for (var ord of this.orders){
           ord['pcode']=this.pcode
         }
+        DB.prepare("delete from  fund_order  where status='0' and pcode=?").run(this.pcode);
       const insert = DB.prepare('insert into fund_order(pcode ,date ,tcode ,tname  ,amount,direction ,status ) VALUES (@pcode ,@date,@tcode,@tname ,@amount ,@direction  ,@status)');
         const insertMany = DB.transaction((data) => {
           for (const row of data) {
@@ -321,12 +323,14 @@ FundEchart
           // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
           inputErrorMessage: '名称格式不正确'
         }).then(({ value }) => {
-            let today=new Date().toLocaleDateString('zh-CN').replaceAll("/","")
-            let cashs=DB.sell_fund(today,this.plan[today])
-            if(cashs<1){
-              cashs=this.holding.cash
+            let today = this.$tools.getToday()
+            let cashs=this.holding.cash
+            for (var ord of this.orders){
+              cashs=cashs+ord['amount']*10000
             }
-            let vname=DB.save_fund_info(value,{today:cashs})
+            var ret={}
+            ret[today]={'cash':cashs}
+            let vname=DB.save_fund_info(value,ret)
             this.getAllFund()
             this.pcode=vname
             this.saveOrder()
@@ -347,8 +351,8 @@ FundEchart
         return (val/10000).toFixed(0)
       },
       tradeAmt(){
-          let today=new Date().toLocaleDateString('zh-CN').replaceAll("/","")
-          let hold=this.holding[this.code]
+      let today = this.$tools.getToday()
+                let hold=this.holding[this.code]
           if(!hold){
               hold=0
           }
@@ -377,11 +381,11 @@ FundEchart
                     hold=hold+this.buy_amt*10000 / this.latest_val
           }
         }
-          if(hold){
-             this.holding[this.code] =hold
-          }else{
-            delete this.holding[this.code]
-          }
+          // if(hold){
+          //    this.holding[this.code] =hold
+          // }else{
+          //   delete this.holding[this.code]
+          // }
 
           this.plan[today]=this.holding
       },

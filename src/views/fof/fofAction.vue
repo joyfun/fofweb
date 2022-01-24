@@ -4,12 +4,24 @@
       <div >
 
        
-
-        <el-button type="primary" @click="doaction">刷新最新净值</el-button>
-        <el-button type="primary" @click="updateparam">刷新参数</el-button>
+<el-row>
+  <el-select v-model="cur_fof"  style="width:160px"  clearable placeholder="基金选择">
+    <el-option
+      v-for="item in sysparam.FOF"
+      :key="item.value"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
         <el-button type="primary" @click="genWeekly">生成周报</el-button>
         <el-button type="primary" @click="downWeekly">下载周报</el-button>
+</el-row>
+<el-row>
+        <el-button type="primary" @click="doaction">刷新最新净值</el-button>
+        <el-button type="primary" @click="updateparam">刷新参数</el-button>
         <el-button type="primary" @click="sendmail">发送邮件</el-button>
+</el-row>
+
 
       
       </div>
@@ -47,6 +59,7 @@ export default {
     return {
       temp: -1,
       comb1: "",
+      cur_fof:"SY9620",
       comb2: "",
       combine:null,
       corr:0,
@@ -110,13 +123,13 @@ export default {
        genWeekly(){
 this.$axios({
         url: "/fof/action",
-        data:{"code":"weekly"}, //          
+        data:{"code":"weekly","fof":this.cur_fof}, //          
         method: "POST"
       }).then((response) => {
             console.log(response.data)
         });       },
       downWeekly(){
-          window.location.href="/fof/downfile?code=SY9620&r="+Math.random()
+          window.location.href="/fof/downfile?code="+this.cur_fof+"&r="+Math.random()
       },
       updateparam(){
           var that=this

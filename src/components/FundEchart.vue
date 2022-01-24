@@ -3,8 +3,8 @@
       <!-- <rank-table       ref="ranktable"  :titles="compare"  style="height: 800px"  :code="code"  ></rank-table> -->
 
 <div class="block">
-    <span class="demonstration">起始日期</span>
-    <el-date-picker
+    <span class="demonstration">起</span>
+    <el-date-picker style="width:130px"
       v-model="startdate"
       value-format="yyyyMMdd"
       format="yyyyMMdd"
@@ -14,9 +14,9 @@
       placeholder="选择日期"
       :picker-options="pickerOptions">
     </el-date-picker>
-    <span class="demonstration">截止日期</span>
-    <el-date-picker
-      v-model="enddate"
+    <span class="demonstration">止</span>
+    <el-date-picker style="width:130px"
+      v-model="enddate" 
       value-format="yyyyMMdd"
       format="yyyyMMdd"
       align="right"
@@ -25,6 +25,9 @@
       placeholder="截止日期"
       :picker-options="pickerOptions">
     </el-date-picker>
+    <el-radio-group v-model="range" size="small">
+  <el-radio-button type="primary" :key="i"  :label="i" icon="el-icon-edit" v-for="(item,i) in tags">{{item}}</el-radio-button>
+  </el-radio-group>
     <el-button  @click="downPDF('echartdiv')">保存图表</el-button>
 
   </div>
@@ -39,8 +42,7 @@
   </div>
 </div>
 </template>
-
-// <script>
+ <script>
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
 import axis from "axios";
@@ -132,6 +134,44 @@ export default {
         if (!this.compares) this.getChart(val);
       },
     },
+    range: {
+      handler: function (rg) {
+        var vday='20000101'
+        if(this.raw_data["date"]){
+      
+        switch (rg) {
+            case 0:
+              vday= this.raw_data["date"][0];
+              break
+            case 1:
+              vday = this.$moment(this.max_date).add(-30, "d").format("YYYYMMDD");
+              break
+            case 2:
+              vday = this.$moment(this.max_date).add(-90, "d").format("YYYYMMDD");
+              break
+            case 3:
+              vday = this.$moment(this.max_date).add(-180, "d").format("YYYYMMDD");
+              break
+            case 4:
+              vday = this.$moment(this.max_date).add(-1, "y").format("YYYYMMDD");
+              break
+            case 5:
+              vday = this.$moment(this.max_date).add(-2, "y").format("YYYYMMDD");
+              break
+            case 6:
+              vday = this.$moment(this.max_date).add(-3, "y").format("YYYYMMDD");
+              break
+            case 7:
+              vday = this.$moment(this.max_date).dayOfYear(1).format("YYYYMMDD")
+              break
+            default:
+              vday="20000101"
+              break
+        }}
+        this.changeDate(vday)
+        console.log(rg)
+      },
+    },
     combine: {
       handler: function (val) {
         if (val) {
@@ -206,6 +246,9 @@ export default {
       raw_data: {},
       lowest:0.9,
       startdate:'',
+      range:'',
+      showdrop:false,
+      tags:["全部","月","90天","半年","近1年","近2年","近3年","本年"],
       tur:0,
       enddate:'',
       pickerOptions:{
@@ -290,6 +333,19 @@ export default {
         toolbox: {
           left: "left",
           feature: {
+             myDrop: {
+              show: true,
+              title: "回撤",
+              emphasis: {
+              iconStyle: {
+              textPosition:'right',
+              textBackgroundColor: "rgba(255, 255, 255, 1)"
+              }
+              },
+              icon:
+                "path://M866.742857 762.148571l-20.48-170.788571a6.948571 6.948571 0 0 0-11.702857-4.022857l-50.834286 51.2-232.594285-232.594286a14.262857 14.262857 0 0 0-19.382858 0l-87.04 87.04L207.36 256a6.948571 6.948571 0 0 0-9.508571 0L159.085714 294.765714a6.948571 6.948571 0 0 0 0 9.508572l275.748572 276.114285a13.531429 13.531429 0 0 0 19.382857 0l87.405714-87.405714 193.828572 193.828572-50.834286 50.834285a6.948571 6.948571 0 0 0 4.022857 11.702857l170.422857 20.48a6.582857 6.582857 0 0 0 7.68-7.68z",
+            },
+            /** 
             myTool1: {
               show: true,
               title: "原始值",
@@ -301,9 +357,6 @@ export default {
               },
               icon:
                 "path://M958.976 27.136h-893.44c-36.352 0-65.536 29.696-65.536 65.536V793.6c0 36.352 29.696 65.536 65.536 65.536h893.44c36.352 0 65.536-29.696 65.536-65.536V92.16c0-35.84-29.696-65.024-65.536-65.024z m0 742.4h-0.512c0 12.288-10.24 22.528-22.528 22.528h-845.824c-12.288 0-22.528-10.24-22.528-23.04V116.224c0-12.288 10.24-22.528 22.528-22.528h846.336c12.288 0 22.528 10.24 22.528 22.528v653.312zM880.128 963.584c0 18.432-14.848 33.28-33.28 33.28h-669.184c-18.432 0-33.28-14.848-33.28-33.28s14.848-33.28 33.28-33.28h669.184c18.432 0.512 33.28 15.36 33.28 33.28z",
-              // onclick: function (){
-              //     this.rawData()
-              // }
             },
             // myday7: {
             //   show: true,
@@ -418,7 +471,7 @@ export default {
               // onclick: function (){
               //     this.rawData()
               // }
-            },
+            },*/
             mycombine: {
               show: true,
               emphasis: {
@@ -471,7 +524,7 @@ export default {
         yAxis: [
           {
             type: "value",
-            min: 1,
+            min: "dataMin",
           },
           {
             type: "value",
@@ -515,6 +568,16 @@ export default {
   //         smooth: true
   //     }]
   methods: {
+        // chgRange(vday){
+        //   // var vday = this
+        //   //   .$moment(this.max_date)
+        //   //   .add(-30, "d")
+        //   //   .format("YYYYMMDD");
+        //   var sidx = this.getstart(vday);
+        //   var datasize = this.echart.getModel().option.xAxis[0].data.length;
+        //   this.divideBy(sidx, { start: (sidx * 100) / datasize, end: 100 });
+        //   this.refreshData({ startValue: sidx, end: 100 });
+        // },
     //   close() {
     //   this.$emit('close')
     // },
@@ -689,9 +752,7 @@ export default {
           oneval = this.raw_data[cname][startindx];
           startindx++
         }
-var sdata = [...this.raw_data[cname]];
-
-
+        var sdata = [...this.raw_data[cname]];
         for (var i = 0; i < this.raw_data[cname].length; i++) {
           if(this.raw_data[cname][i]==null){
             sdata[i]=null
@@ -738,6 +799,7 @@ var sdata = [...this.raw_data[cname]];
         // });
         }else{
         var sdata=this.getDividedData(cname,oneindex)
+        var ddata=[...sdata]
         var sidx= this.raw_data.date.indexOf(this.startdate);
         var eidx= this.raw_data.date.indexOf(this.enddate)
         var high=1
@@ -745,7 +807,7 @@ var sdata = [...this.raw_data[cname]];
         var midx=sidx
         var mhidx=sidx
         var maxdrop=0
-        for(var s=sidx;s<eidx;s++){
+        for(var s=sidx;s<=eidx;s++){
             if(sdata[s]>high){
                 high=sdata[s]
                 hidx=s
@@ -754,6 +816,9 @@ var sdata = [...this.raw_data[cname]];
                 lowest=sdata[s]
             }
             var ndrop=sdata[s]/high-1
+            if(sdata[s]){
+            ddata[s]=sdata[s]/high-1
+            }
             if(ndrop<maxdrop){
                 maxdrop=ndrop
                 midx=s
@@ -877,10 +942,28 @@ var sdata = [...this.raw_data[cname]];
             }
         }
         this.chartData.series.push(asery);
+        if(this.showdrop && !cname.endsWith('指数')){
+                  var dsery={
+          data: ddata,
+          type: "line",
+          name: cname+"_d",
+          areaStyle:{},
+          connectNulls: true,
+          yAxisIndex:1,
+        }
+        // this.axisOption.yAxis[0]["min"] = this.lowest;
+        this.chartData.series.push(dsery);
+        }
         // 
       }}
       this.lowest=Math.floor(lowest*10)/10
-      this.axisOption.yAxis[0]["min"] = this.lowest;
+      // if(this.showdrop){
+      //       this.axisOption.yAxis[0]["min"] = -1;
+      //       this.axisOption.yAxis[0]["max"] = 0;
+      // }else{
+      // console.log(this.lowest)
+      // this.axisOption.yAxis[0]["min"] = this.lowest;
+      // }
       this.axisOption.dataZoom[0].startValue = oneindex;
       // this.refreshData(params)
     },
@@ -919,6 +1002,11 @@ var sdata = [...this.raw_data[cname]];
         this.echart.setOption(this.options, true);
       } else {
         this.echart = echarts.init(this.$refs.echart);
+        this.axisOption.toolbox.feature.myDrop.onclick = () => {
+          this.showdrop=!this.showdrop
+          this.changeDate(this.startdate)
+        };
+        /**
         this.axisOption.toolbox.feature.myTool1.onclick = () => {
           console.log("rawData click");
           $this.divideBy(0, { startValue: 0, end: 100 });
@@ -1008,6 +1096,7 @@ var sdata = [...this.raw_data[cname]];
           $this.divideBy(sidx, { start: (sidx * 100) / datasize, end: 100 });
           $this.refreshData({ startValue: sidx, end: 100 });
         };
+         */
         this.axisOption.toolbox.feature.mycombine.onclick = () => {
           console.log($this.echart.getModel().option)
           var validx=[]
@@ -1110,9 +1199,6 @@ var sdata = [...this.raw_data[cname]];
              }
             wdict[validx[ivn]]=wts[ivn]/wsum/cval
           }
-         console.log(wts)
-         console.log(wsum)
-          console.log(wdict)
           for(var j=indx;j<dlen;j++){
             var sval=0
             for(var vn of validx){

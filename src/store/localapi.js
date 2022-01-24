@@ -33,7 +33,7 @@ db.exec("create table sys_config(code varchar(10),value varchar(80),primary key 
 db.exec("insert into sys_config (code,value) values('apihost','http://www.waddc.com')")
 db.exec("insert into sys_config (code,value) values('v_cnt','0')")
 db.exec("create table fund_val(code varchar(10),date varchar(10),sumval real,primary key (code,date))");
-db.exec("create table fund_info(code varchar(10) PRIMARY KEY     NOT NULL,name varchar(40),short_name varchar(40),create_time number ,type varchar(10),scode varchar(10) ,company varchar(80) ,city varchar(400) ,remark TEXT,class_type  varchar(10) )");
+db.exec("create table fund_info(code varchar(10) PRIMARY KEY     NOT NULL,name varchar(40),short_name varchar(40),create_time number ,latest_date varchar(10),type varchar(10),scode varchar(10) ,company varchar(80) ,city varchar(400) ,remark TEXT,class_type  varchar(10) )");
 db.exec("insert into fund_info (code,name,class_type,short_name) values('V_Temp','虚拟组合','虚拟','虚拟组合')")
 
 } catch (err) {
@@ -54,7 +54,7 @@ db.reload=(data)=>{
 db.calc_virt=()=>{
   const virts=db.prepare("select * from fund_info where class_type='虚拟'").all()
   const indexdate=db.getFundVal("000905.SHW")
-  const nowdate=new Date().toLocaleDateString('zh-CN').replaceAll("/","")
+  const nowdate=db.getToday()
   for (let avrit of virts){
     if(avrit.remark){
     let ldate=""
@@ -283,6 +283,13 @@ db.getSocres=(codes,rg)=>{
     
 
   }
+  db.getToday = function(){
+    const myDate=new Date();
+   var year=myDate.getFullYear()
+   var Day=myDate.getDate()>9?myDate.getDate().toString():'0'+myDate.getDate();
+   var Month=myDate.getMonth()+1>9?(myDate.getMonth()+1).toString():'0'+(myDate.getMonth()+1);
+   return ''+year+Month+Day;
+   }
   db.getVirt=(amt,ldate,nowdate,indexdate,code="V_Temp")=>{
     db.deal_Orders(amt,code,ldate,indexdate)
     let rval=[]
@@ -327,7 +334,7 @@ db.getSocres=(codes,rg)=>{
       if(idx+1<bcnt){
         nextday=dts[idx+1]
       }else{
-        nextday=new Date().toLocaleDateString('zh-CN').replaceAll("/","")
+        nextday=db.getToday()
       }
       if(amt){
         cash=db.sell_fund(date,amt)

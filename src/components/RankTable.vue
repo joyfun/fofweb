@@ -1,8 +1,16 @@
 <template>
-  <div>
+  <div ref="tableContainer" style="	height : 100%;">
 <el-radio-group v-model="range">
   <el-radio-button type="primary" :key="i"  :label="i" icon="el-icon-edit" v-for="(item,i) in tags">{{item}}</el-radio-button>
 </el-radio-group>
+        <el-select v-if="!$isElectron" v-model="curwts" @change="chgwts" style="width:120px"  clearable placeholder="评分权重">
+    <el-option
+      v-for="item in allwts"
+      :key="item.id"
+      :label="item.sub_type+':'+item.style"
+      :value="item.id">
+    </el-option>
+  </el-select>
     <!-- <el-button type="info" @click="downFile('/fof/jscore_down')">下载数据</el-button> -->
     <el-button type="info" @click="exportExcel">导出评分</el-button>
     <el-button type="info" @click="exportExcelAll()">下载数据</el-button> 
@@ -147,6 +155,8 @@ export default {
 ]),
   data() {
     return {
+      allwts:[],
+      curwts:null,
       dateranges:[],
       range:3,
       zz500idx:[],
@@ -400,6 +410,26 @@ export default {
         [vday10,vday9],
         ]
     },
+    chgwts(id){
+      let nwts=[]
+      for (var row of this.allwts){
+        if (row.id==id){
+          console.log(row)
+          for (var col of this.cols){
+            nwts.push(row[col])
+          }
+          console.log(nwts)
+          Vue.set(this,"wts",nwts)
+        }
+      }
+
+    },
+    getWts(){
+      let $this=this
+      this.$axios.get('/sys/getwts').then(response=>{
+        $this.allwts=response.data
+      })
+    },
     getTable(){
         var $this=this
         if(this.$isElectron){
@@ -425,6 +455,7 @@ export default {
           this.calc_score(1)
           return
         }
+        this.getWts()
         var param={code:this.code,range:this.range}
         this.$axios.get('/fof/fundrank',{params:{code:this.code,range:this.range}})//axis后面的.get可以省略；
             .then(
@@ -432,6 +463,7 @@ export default {
                     $this.tableData=this.$tools.pandasToJson(response.data)
                     this.calc_score(1)
                     this.calc_score(2)
+                    this.tmaxh=this.$refs['tableContainer'].clientHeight-40
 
                 })
             .catch(

@@ -58,11 +58,11 @@
      <template slot-scope="scope">{{ scope.row.class_type }}</template>
     </el-table-column>
        <el-table-column
-      prop="create_time"
-      label="添加时间"
+      prop="latest_date"
+      label="净值时间"
       sortable
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.create_time|formatDate }}</template>
+     <template slot-scope="scope">{{ scope.row.latest_date }}</template>
     </el-table-column>
     <!-- <el-table-column
       prop="type"
@@ -906,6 +906,7 @@ showResult(number,rate=100){
                         .then(
                           (response) => {
                             insertMany(response.data)
+                            DB.prepare("update fund_info  set latest_date = (select max(fv.date) from fund_val fv where fv.code=fund_info.code) where fund_info.code= ? ").run(row["code"])
                             this.$message({
                 message: '成功同步'+response.data.index.length+"条数据",
                 type: 'success',

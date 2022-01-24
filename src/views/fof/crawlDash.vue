@@ -5,9 +5,11 @@
       <el-radio-group v-model="reqType">
          <el-radio-button type="primary" :key="i"  :label="item" icon="el-icon-edit" v-for="(item,i) in types">{{tags[i]}}</el-radio-button>
       </el-radio-group>
+        <el-button type="primary" @click="exportExcel">导出</el-button>
       </div>
     </div>
     <el-table
+      id="out-table"
       ref="multipleTable"
       :data="tableData"
       :max-height="tmaxh"
@@ -88,6 +90,16 @@
              <template slot-scope="scope">{{ scope.row['ncnt'] }}</template>
 
       </el-table-column>
+                           <el-table-column
+        prop="code"
+        width="140"
+        label="备案号"
+        sortable
+        show-overflow-tooltip
+      >
+             <template slot-scope="scope">{{ scope.row['code'] }}</template>
+                   </el-table-column>
+
                         <el-table-column
         prop="scode"
         width="140"
@@ -176,7 +188,8 @@
 import axis from "axios";
 import FundEchart from "../../components/FundEchart.vue";
 import HisTable from '../../components/HisTable.vue';
-
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
 import {mapGetters} from 'vuex'
 
 export default {
@@ -250,6 +263,22 @@ export default {
     }
   },
   methods: {
+
+    exportExcel(){
+      var title='数据面板'+new Date().getTime()
+      var workbook = XLSX.utils.book_new();
+         var st = XLSX.utils.json_to_sheet(this.tableData)
+      XLSX.utils.book_append_sheet(workbook, st, "数据缺失情况");
+      var wbout = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'array' })
+         try {
+      FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
+   }    catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+
+    },
+    genSheet() {
+  var st = XLSX.utils.table_to_sheet(document.querySelector('#out-table'))
+  return st
+    },
       resizeChart(){
                 this.tmaxh=this.$refs.tableContainer.clientHeight-120
 

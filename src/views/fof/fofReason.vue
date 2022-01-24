@@ -6,6 +6,17 @@
   <el-button type="primary" @click="changeDate(-180)">近180天</el-button>
   <el-button type="primary" @click="changeDate(-365)">近365天</el-button>
 {{"自" + startDate +"开始"}}
+
+    <el-date-picker
+      v-model="startDate"
+      value-format="yyyyMMdd"
+      format="yyyyMMdd"
+      align="right"
+      @change="startFrom"
+      type="date"
+      placeholder="选择日期"
+      :picker-options="pickerOptions">
+    </el-date-picker>
 </el-button-group>
 <el-row>
     <el-col :span="12">
@@ -180,6 +191,9 @@ export default {
 
         var vday=this.$moment().add(num,"d").format("YYYYMMDD")
         this.startDate=vday
+        this.getTableData({"start":vday})
+    },
+    startFrom(vday){
         this.getTableData({"start":vday})
     },
     cellMerge({ row, column, rowIndex, columnIndex }) {
