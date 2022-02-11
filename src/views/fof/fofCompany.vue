@@ -93,6 +93,7 @@
       show-overflow-tooltip>
         <template slot-scope="scope">
             <el-button @click.native.prevent="editStatus(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
+            <el-button @click.native.prevent="searchProd(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="查询" placement="left-start"><i class="el-icon-search"></i></el-tooltip></el-button>
             <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delCompany0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
 
         </template>
@@ -139,6 +140,16 @@
   </el-form-item>
 </el-form>
     </el-dialog>
+<el-dialog
+    width="80%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+     :visible.sync="dialogCompVisible"
+     >
+      <prod-table       @close="editClose" ref="simtable"  :foflist="foflist" :full="true"    v-if="diagName=='prodDiag'"></prod-table>
+
+    </el-dialog>
 
 
     <el-dialog
@@ -169,6 +180,8 @@
     import {mapGetters} from 'vuex'
 
     import FundEchart from '../../components/FundEchart.vue';
+    import ProdTable from '../../components/ProdTable.vue';
+
   const cForm=[
  {"tilte":"名称","dataIndex":"name"},
  {"tilte":"状态","dataIndex":"status"},
@@ -186,13 +199,17 @@
 ]
   export default {
       components: {
-            FundEchart
+            FundEchart,
+            ProdTable
         },
             computed:{...mapGetters(['sysparam','class_order','token','usermenu'])},
     data() {
       return {
         cForm,
         multipleSelection: [],
+        foflist:[],
+        dialogCompVisible:false,
+        diagName:"",
         curCompany:{},
         confirmVisible:false,
         cur_id:0,
@@ -226,6 +243,17 @@
     }
   },
     methods: {
+        searchProd(row){
+            axis( {
+                url: '/fof/list',
+                method: 'GET',
+                params: {company:row.short_name}
+                }).then((response) => {
+                    this.foflist=response.data
+                    this.dialogCompVisible=true
+                    this.diagName="prodDiag"
+                })
+        },
          editClose() {
         this.dialogVisible = false
         this.resetForm('dynamicValidateForm')
@@ -282,19 +310,6 @@
           console.log(formName)
         this.$refs[formName].resetFields();
       },
-
-        downFile(){
-        var url="/fof/report"
-        if(this.multipleSelection.length<1){
-            return
-        }
-        var selcode=""
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-              selcode+=","+this.multipleSelection[i].code;
-        }
-        const options = {code:selcode}
-            exportExcel(url,options)
-        },
 
        editStatus(row){
           this.cur_id=row.id
@@ -436,41 +451,6 @@
     //         console.log(this.$route.params)
     //         this.getList(this.$route.params.type);
     //   }
-  }
-  export function exportExcel(url, options = {}) {
-  return new Promise((resolve, reject) => {
-    console.log(`${url} 请求数据，参数=>`, JSON.stringify(options))
-    axis.defaults.headers['content-type'] = 'application/json;charset=UTF-8'
-    axis({
-      method: 'post',
-      url: url, // 请求地址
-      data: options, // 参数
-      responseType: 'blob' // 表明返回服务器返回的数据类型
-    }).then(
-      response => {
-        resolve(response.data)
-        let blob = new Blob([response.data], {
-          type: 'application/vnd.ms-excel'
-        })
-        console.log(blob)
-        let fileName = Date.parse(new Date()) + '.xlsx'
-        if (window.navigator.msSaveOrOpenBlob) {
-          // console.log(2)
-          navigator.msSaveBlob(blob, fileName)
-        } else {
-          // console.log(3)
-          var link = document.createElement('a')
-          link.href = window.URL.createObjectURL(blob)
-          link.download = fileName
-          link.click()
-          //释放内存
-          window.URL.revokeObjectURL(link.href)
-        }
-      },
-      err => {
-        reject(err)
-      }
-    )
-  })
+  
 }
 </script>

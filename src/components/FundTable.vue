@@ -135,7 +135,7 @@
  <script>
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
-import { mapState,mapGetters,mapMutations } from 'vuex'
+import { mapState,mapGetters,mapMutations, Store } from 'vuex'
 import Bus from '../store/bus.js';
 import Vue from 'vue'
 // 引入柱状图
@@ -223,6 +223,9 @@ export default {
     }
   },
   methods: {
+          ...mapMutations({
+          setFoflist : 'setFoflist'
+      }),
     filterMethod(query){
       console.log(query)
       console.log(this.alllist)
@@ -423,6 +426,7 @@ export default {
         .then((response) => {
             this.rawlist=response.data
             this.changeSub(this.filter.class_type)
+            this.setFoflist(this.rawlist)
             console.log("####init####")
           this.tmaxh=this.$refs.tableContainer.clientHeight-120
 

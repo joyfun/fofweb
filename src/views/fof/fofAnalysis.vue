@@ -62,7 +62,7 @@
     </el-option>
   </el-select>
   
-       <el-button type="primary"  size="small" @click="searchRank">查询</el-button>
+       <el-button type="primary"  size="small" @click="searchHis">查询</el-button>
        <!-- <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
           <el-button type="primary"  @click="getList" style="margin-left: 10px;">搜索</el-button> -->
         </div>
@@ -77,7 +77,7 @@
 <script>
 import axis from 'axios'
     import FundEchart from '../../components/FundEchart.vue';
-    import HisTable from '../../components/RankTable.vue';
+    import RankTable from '../../components/RankTable.vue';
     import {mapGetters} from 'vuex'
 
   export default {
@@ -102,6 +102,7 @@ import axis from 'axios'
      data() {
       return {
           temp:-1,
+          cur_code:"",
           addition:"",
           compares:"",
           mult:[],

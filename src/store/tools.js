@@ -166,6 +166,15 @@ var Day=myDate.getDate()>9?myDate.getDate().toString():'0'+myDate.getDate();
 var Month=myDate.getMonth()+1>9?(myDate.getMonth()+1).toString():'0'+(myDate.getMonth()+1);
 return ''+year+Month+Day;
 }
+
+tools.showName=function(code,sysparam){
+  for (var item of sysparam.FOF){
+      if (code==item['code']){
+        return item['value']
+      }
+  }
+  return ""
+},
 tools.JsonSort=(jsonData)=> {
   try {
     let tempJsonObj = {};

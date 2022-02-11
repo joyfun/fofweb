@@ -83,6 +83,18 @@ export default new Vuex.Store({
       // this.commit('setCart',state.allCart[cartname])
 
     },
+    showFundName(state,code) {
+      for (var item of state.foflist){
+          if (code==item['code']){
+            return item['name']
+          }
+      }
+      return ""
+    },
+    setFoflist(state, foflist){
+      Vue.set(state,"foflist",foflist)
+      console.log(foflist)
+    },
     setAllCart (state, allcart) {
       console.log("start set allChart")
       console.log(allcart)

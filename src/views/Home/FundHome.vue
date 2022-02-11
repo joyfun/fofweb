@@ -12,6 +12,11 @@
       :label="item.value"
       :value="item.code">
     </el-option>
+    <!-- <el-option
+      key="全部"
+      label="全部"
+      value="SY9620,SSN818,SSN369,SSS105,STE599">
+    </el-option> -->
   </el-select>
       <!-- <div class="num">
                 <el-card shadow="hover" v-for="item in countData" :key="item.name"
@@ -35,6 +40,7 @@
         <el-table
     ref="profiltTable"
     :data="profitlist"
+    :span-method="cellMergep"
     tooltip-effect="dark"
     max-height="480"
     :default-sort="{prop:'year',order:'descending'}"
@@ -44,6 +50,15 @@
       sortable
       prop="year"
       show-overflow-tooltip>
+    </el-table-column>
+        <el-table-column
+      label="产品"
+      sortable
+      min-width="100"
+      show-overflow-tooltip>
+            <template slot-scope="scope">
+                   {{ $tools.showName(scope.row['code'],sysparam) }}
+        </template>
     </el-table-column>
     <el-table-column
     v-for=" n in 13" :key="'col'+n"
@@ -126,7 +141,7 @@
 import Echart from "../../components/Echart.vue";
 import FundEchart from "../../components/FundEchart.vue";
 import Bus from '@/store/bus.js';
-
+import Vue from 'vue';
 import axis from "axios";
 import {mapGetters} from 'vuex'
 
@@ -192,6 +207,7 @@ export default {
         }]
       },
       spanArr:[],
+      pspanArr:[],
       curId: 0,
 
       userImg: require("../../assets/images/user.png"),
@@ -212,6 +228,15 @@ export default {
       },
     }},
   methods: {
+     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+        if (rowIndex % 2 === 0) {
+          if (columnIndex === 0) {
+            return [1, 2];
+          } else if (columnIndex === 1) {
+            return [0, 0];
+          }
+        }
+      },
       changeFOF(fofcode){},
       getSummaries(param) {
 			const { columns, data } = param;
@@ -260,24 +285,30 @@ export default {
       return this.$tools.formatMoney(value,3)+'\n(α:'+this.$tools.formatMoney(value-row['irate'],3)+'  β:'+this.$tools.formatMoney(row['irate'],3)+')'
       return this.$tools.formatMoney(value,3)
     },
-    getSpanArr(data) {
-      this.spanArr=[]
+    getSpanArr(data,rname) {
+      var sar=[]
+
       for (var i = 0; i < data.length; i++) {
         if (i === 0) {
-          this.spanArr.push(1);
+          sar.push(1);
           this.pos = 0;
         } else {
           // 判断当前元素与上一个元素是否相同
-          if (data[i].class_type === data[i - 1].class_type) {
-            this.spanArr[this.pos] += 1;
-            this.spanArr.push(0);
+          if (data[i][rname] === data[i - 1][rname]) {
+            sar[this.pos] += 1;
+            sar.push(0);
           } else {
-            this.spanArr.push(1);
+            sar.push(1);
             this.pos = i;
           }
         }
       }
-      console.log(this.spanArr)
+      if(rname=='class_type'){
+        Vue.set(this,"spanArr",sar)
+      }else if(rname=='year'){
+        Vue.set(this,"pspanArr",sar)
+      }
+      console.log(sar)
     },
     getPieDataOuter(data){
         var ret=[]
@@ -333,14 +364,34 @@ export default {
         };
       }
     },
+    cellMergep({ row, column, rowIndex, columnIndex }) {
+      if (columnIndex === 0) {
+        const _row = this.pspanArr[rowIndex];
+        const _col = _row > 0 ? 1 : 0;
+        return {
+          rowspan: _row,
+          colspan: _col,
+        };
+      }
+    },
     getTableData() {
+       //const acode=["SY9620","SSN818","SSN369","SSS105","STE599"]
+       const acode=this.cur_fof.split(",")
+
         axis({
-        url: "/fof/profit",
+        url: "/fof/profits",
         method: "GET",
-        params: {code:this.cur_fof},
+        params: {codes:this.cur_fof},
       })
         .then((response) => {
-            this.profitlist=response.data
+            //this.profitlist=response.data[this.cur_fof]
+            let profitlist=[]
+              for(var code of acode){
+                if(response.data[code])
+                profitlist=profitlist.concat(response.data[code])
+              }
+            this.profitlist=profitlist.sort((a,b)=>b['year']-a['year'])
+            this.getSpanArr(this.profitlist,"year")
         }),
       axis({
         url: "/fof/summary",
@@ -360,7 +411,7 @@ export default {
 
           this.subData.legend.data=this.getLegend(this.subData.series.data)
           this.$refs.subPie.initChart()   //子组件$on中的名字
-          this.getSpanArr(this.tableData)
+          this.getSpanArr(this.tableData,"class_type")
           
         })
         .catch((error) => {

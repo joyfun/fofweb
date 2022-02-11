@@ -39,8 +39,7 @@
     </el-table>
   </div>
 </template>
-
-// <script>
+ <script>
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
 import axis from 'axios'
