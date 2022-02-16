@@ -3,7 +3,104 @@
     <el-tabs type="border-card">
       <el-tab-pane>
         <span slot="label"><i class="el-icon-date"></i> 资金状况</span>
-        <el-table
+<!-- 
+        <vxe-table
+          :align="allAlign"
+          :data="tableData1">
+          <vxe-column type="seq" width="60"></vxe-column>
+          <vxe-column field="name" title="Name"></vxe-column>
+          <vxe-column field="sex" title="Sex"></vxe-column>
+          <vxe-column field="age" title="Age"></vxe-column>
+        </vxe-table> -->
+
+
+        <vxe-table
+          border
+          :align="allAlign"
+          style="width:800px"
+          size="small"
+          :mouse-config="{selected: true}"
+          show-overflow
+          :data="compData1"
+          :edit-config="{trigger: 'dblclick', mode: 'cell', activeMethod: activeCellMethod}"
+          :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
+          <!-- <vxe-column type="seq" width="60"></vxe-column> -->
+          <vxe-column width="160" field="name" title="募集层一" :edit-render="{autofocus: '.myinput'}">
+            <template #edit="{ row }">
+              <vxe-input v-model="row.name" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SY9620']"  :field="af" :title="showFundName(af)" :edit-render="{}">
+            <template #default="{ row }">
+              <span>{{ row[af] }}</span>
+            </template>
+            <template #edit="{ row }">
+              <vxe-input v-model="row[af]" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
+          <!-- <vxe-column field="date" title="Date" :edit-render="{}">
+            <template #edit="{ row }">
+              <vxe-input v-model="row.date" type="week" placeholder="请选择日期" transfer></vxe-input>
+            </template>
+          </vxe-column> -->
+        </vxe-table> 
+
+              <vxe-table
+          border
+          style="width:600px"
+          :mouse-config="{selected: true}"
+          show-overflow
+          :data="compData2"
+          :edit-config="{trigger: 'dblclick', mode: 'cell', activeMethod: activeCellMethod}"
+          :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
+          <!-- <vxe-column type="seq" width="60"></vxe-column> -->
+          <vxe-column width="160" field="name" title="募集层二" :edit-render="{autofocus: '.myinput'}">
+            <template #edit="{ row }">
+              <vxe-input v-model="row.name" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SSS105']"  :field="af" :title="showFundName(af)" :edit-render="{}">
+            <template #default="{ row }">
+              {{ row[af] }}<span>{{ row[af] }}</span>
+            </template>
+            <template #edit="{ row }">
+              <vxe-input v-model="row[af]" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
+          <!-- <vxe-column field="date" title="Date" :edit-render="{}">
+            <template #edit="{ row }">
+              <vxe-input v-model="row.date" type="week" placeholder="请选择日期" transfer></vxe-input>
+            </template>
+          </vxe-column> -->
+        </vxe-table> 
+        <vxe-table
+          border
+          show-overflow
+                              style="width:600px"
+          :data="compData3"
+          :edit-config="{trigger: 'dblclick', mode: 'cell', activeMethod: activeCellMethod}"
+          :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
+          <!-- <vxe-column type="seq" width="60"></vxe-column> -->
+          <vxe-column width="160" field="name" title="交易层" :edit-render="{autofocus: '.myinput'}">
+            <template #edit="{ row }">
+              <vxe-input v-model="row.name" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599']"  :field="af" :title="showFundName(af)" :edit-render="{}" :class-name="cellClass">
+            <template #default="{ row }" style="row['name']=='待分配合计'?'background-color: red;':''">
+              <span  >{{ row[af] }}</span>
+            </template>
+            <template #edit="{ row }">
+              <vxe-input v-model="row[af]" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
+          <!-- <vxe-column field="date" title="Date" :edit-render="{}">
+            <template #edit="{ row }">
+              <vxe-input v-model="row.date" type="week" placeholder="请选择日期" transfer></vxe-input>
+            </template>
+          </vxe-column> -->
+        </vxe-table> 
+         <el-table
           :data="finalData"
           style="width: 100%; margin-bottom: 20px"
           :row-key="getRowKeys"
@@ -67,7 +164,6 @@
       </el-tab-pane>
       <el-tab-pane label="资金预操作"
         ><div style="display: flex; justify-content: space-between">
-          {{actionData}}
           <el-button size="small" @click="addAction()">添加操作</el-button>
         </div>
         <el-table
@@ -277,6 +373,7 @@
 </template>
  <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
+import fofSimpleVue from './fofSimple.vue';
 
 export default {
   props: {
@@ -287,6 +384,9 @@ export default {
   },
   watch: {},
   computed: {
+    gridOptions1(){
+      
+    },
     combineDate() {
       return this.detailData.concat(this.actionData);
     },
@@ -294,7 +394,21 @@ export default {
     ...mapGetters(["sysparam","showFundName"]),
   },
   data() {
-    return {
+    return {  allAlign: 'right',
+              tableData1: [
+                { id: 10001, name: 'Test1', role: 'Develop', sex: 'Man', age: 28, address: 'test abc' },
+                { id: 10002, name: 'Test2', role: 'Test', sex: 'Women', age: 22, address: 'Guangzhou' },
+                { id: 10003, name: 'Test3', role: 'PM', sex: 'Man', age: 32, address: 'Shanghai' },
+                { id: 10004, name: 'Test4', role: 'Designer', sex: 'Women', age: 24, address: 'Shanghai' }
+              ],
+              compData1: [],
+              compData2: [],
+              compData3: [],
+              sexList: [
+                { label: '', value: '' },
+                { label: '男', value: '1' },
+                { label: '女', value: '0' }
+              ],
       rules: {
         code: [{ required: true, message: "请选择基金", trigger: "blur" }],
         name: [{ required: true, message: "请选择基金", trigger: "blur" }],
@@ -330,6 +444,80 @@ export default {
     };
   },
   methods: {
+    cellClass(row){
+      console.log(row)
+      if(row.row['name']=='待分配合计'){
+        return 'background-yellow'
+      }
+return ''
+    },
+    formatSex (value) {
+              if (value === '1') {
+                return '男'
+              }
+              if (value === '0') {
+                return '女'
+              }
+              return ''
+            },
+            activeCellMethod ({ row, rowIndex }) {
+              if (rowIndex === 0) {
+                return true
+              }
+              return false
+            },
+            editDisabledEvent ({ row, column }) {
+              //if(row['name']==)
+              // this.$XModal.message({ content: '禁止编辑', status: 'error' })
+            },
+    changeIncome(){
+
+    },
+    genTitleData1(){
+      const cols=["预入款","预赎回","现金","在投","清算款","负债","待分配合计"]
+      const keys=["income","redeem","cash","marketval","process","debet","unused"]
+      const fofs=["SSN818","SSN369","STE599","SY9620"]
+      let rets=[]
+      for(var col in cols){
+        var ret={"name":cols[col]}
+        for (var af of fofs ){
+        ret[af]=Math.floor(this.finalData.filter((row)=>row['code']==af)[0][keys[col]]/10000)
+        // ret["name"]=this.finalData.filter((row)=>row['code']==af)[0]
+      }
+      rets.push(ret)
+      }
+      this.compData1=rets
+    },
+    genTitleData2(){
+      const cols=["预入款","预赎回","现金","在投","清算款","负债","待分配合计"]
+      const keys=["income","redeem","cash","marketval","process","debet","unused"]
+      const fofs=["SSN818","SSN369","STE599","SSS105"]
+      let rets=[]
+      for(var col in cols){
+        var ret={"name":cols[col]}
+        for (var af of fofs ){
+        ret[af]=Math.floor(this.finalData.filter((row)=>row['code']==af)[0][keys[col]]/10000)
+        // ret["name"]=this.finalData.filter((row)=>row['code']==af)[0]
+      }
+      rets.push(ret)
+      }
+      this.compData2=rets
+    },
+    genTitleData3(){
+      const cols=["预入款","预赎回","现金","在投","预投","清算款","负债","待分配合计","总管理规模","核对"]
+      const keys=["income","redeem","cash","marketval","buy","process","debet","unused","managed","check"]
+      const fofs=["SSN818","SSN369","STE599"]
+      let rets=[]
+      for(var col in cols){
+        var ret={"name":cols[col]}
+        for (var af of fofs ){
+        ret[af]=Math.floor(this.finalData.filter((row)=>row['code']==af)[0][keys[col]]/10000)
+        // ret["name"]=this.finalData.filter((row)=>row['code']==af)[0]
+      }
+      rets.push(ret)
+      }
+      this.compData3=rets
+    },
     changeFOF(val){
           console.log(this.showFundName(val))
       this.curAction.name=this.showFundName(val)
@@ -381,6 +569,7 @@ export default {
           }
           this.actionDiagShow = !this.actionDiagShow;
           this.calcFinal();
+          
         } else {
           console.log("error submit!!");
           return false;
@@ -421,14 +610,19 @@ export default {
             income: 0,
             redeem: 0,
             cash: 0,
+            debet:0,
+            process:0,
+            unused:0,
             children: [],
           };
           rdict[row["code"]] = pdict;
         }
-        if (row["b_code"].startsWith("SUBJECT10")) {
+        if (row["b_code"].startsWith("SUBJECT10")&&row["b_code"]!='SUBJECT1021') {
           pdict["cash"] += row["marketval"];
         } else if (row["b_code"].startsWith("SUBJECT11")) {
           pdict["marketval"] += row["marketval"];
+        }else if (row["b_code"].startsWith("SUBJECT22")) {
+          pdict["debet"] += row["marketval"];
         } else if (row["b_code"].length == 6) {
           row["name"] = this.showFundName(row.code);
           row["stage"] = "已投";
@@ -453,6 +647,8 @@ export default {
             buy: 0,
             income: 0,
             redeem: 0,
+            managed:0,
+            check:0,
             cash: 0,
           };
           rdict[row["code"]] = pdict;
@@ -469,6 +665,10 @@ export default {
       for (var key in rdict) {
         this.finalData.push(rdict[key]);
       }
+      this.genTitleData1()
+      this.genTitleData2()
+      this.genTitleData3()
+
     },
     showholding(row) {
       if (row["b_code"].startsWith("SUBJECT110")) {
@@ -496,3 +696,16 @@ export default {
   created() {},
 };
 </script>
+<style lang="scss" >
+.background-yellow {
+            background-color: yellow;
+            color: red
+
+}
+tr {
+  vertical-align: center
+}
+//  .reverse-table .vxe-body--row .vxe-body--column:first-child {
+//           background-color: #222279;
+//         }
+</style>

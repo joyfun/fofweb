@@ -283,6 +283,15 @@ export default {
                             },
                             icon:'setting'
                         },
+                        {
+                            path: '/fofdash',
+                            label: '资金情况',
+                            name:'fof-dash',
+                            params:{
+                                class_type:'1',
+                            },
+                            icon:'setting'
+                        },
                                          {
                             path: '/fund-analysis',
                             label: '基金分析',

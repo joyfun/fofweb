@@ -21,7 +21,7 @@ const compare2 =()=> import('@/views/fof/fofCompare.vue')
 const compare3 =()=> import('@/views/fof/fofCompare.vue')
         //component:() => import('@/views/fof/fofSimple.vue')
 var home = () => import('@/views/Home/FundHome.vue')
-// var home = () => import('@/views/sys/userCart.vue')
+//  var home = () => import('@/views/fof/fofDash.vue')
 if(tools.isElectron()){
   home = () => import('@/views/fof/fofSimple.vue')
 }
@@ -188,6 +188,14 @@ const routes = [
         props:{
             url:"/fof/jcompare"
         },
+      },
+      {
+        path: '/fofdash',
+        name: 'fof-dash',
+        component:() => import('@/views/fof/fofDash.vue')
+        // props:{
+        //     url:"/fof/jcompare"
+        // },
       },
       {
         path: '/fundextra',

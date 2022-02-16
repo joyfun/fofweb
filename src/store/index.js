@@ -57,7 +57,6 @@ export default new Vuex.Store({
         {lable:"已投备投排名",value:"fund-rank2"},
         {lable:"系统字典",value:"sys-param"},
         {lable:"购物车",value:"my-cart"},
-
         {lable:"系统参数",value:"sys-cfg"},
         {lable:"基金拼接",value:"fund-concat"},
         {lable:"业绩预警",value:"fund-alarm"},
@@ -69,6 +68,7 @@ export default new Vuex.Store({
         {lable:"审核信息",value:"info-audit"},
         {lable:"基金排名",value:"rank-btn"},
         {lable:"基金仿真",value:"sim-btn"},
+        {lable:"资金情况",value:"fof-dash"},
         {lable:"用户管理",value:"user-manage"}]
   },
   mutations: {
@@ -82,14 +82,6 @@ export default new Vuex.Store({
       state.nowcart = cartname
       // this.commit('setCart',state.allCart[cartname])
 
-    },
-    showFundName(state,code) {
-      for (var item of state.foflist){
-          if (code==item['code']){
-            return item['name']
-          }
-      }
-      return ""
     },
     setFoflist(state, foflist){
       Vue.set(state,"foflist",foflist)

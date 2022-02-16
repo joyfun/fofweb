@@ -20,7 +20,11 @@ import ElementUI from 'element-ui'
 import axios from 'axios'
 
 import tools from '@/store/tools.js'
+import 'xe-utils'
+import VXETable from 'vxe-table'
+import 'vxe-table/lib/style.css'
 
+Vue.use(VXETable)
 Vue.use(tools)
 Vue.prototype.$process=process
 Vue.prototype.$axios = axios
