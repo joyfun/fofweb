@@ -37,7 +37,7 @@ const getters = {
         return item['name']
       }
   }
-  return ""
+  return code
   },
   info: state => state.role.info,
   logoShow: state => state.layout.logoShow,

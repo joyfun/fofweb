@@ -18,7 +18,7 @@
           border
           :align="allAlign"
           style="width:800px"
-          size="small"
+          size="mini"
           :mouse-config="{selected: true}"
           show-overflow
           :data="compData1"
@@ -30,24 +30,21 @@
               <vxe-input v-model="row.name" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SY9620']"  :field="af" :title="showFundName(af)" :edit-render="{}">
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','多策略FOF直投','SY9620']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass1">
             <template #default="{ row }">
               <span>{{ row[af] }}</span>
             </template>
             <template #edit="{ row }">
-              <vxe-input v-model="row[af]" class="myinput"></vxe-input>
+              <vxe-input type="number" @change="changeIncome1" v-model="row[af]" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <!-- <vxe-column field="date" title="Date" :edit-render="{}">
-            <template #edit="{ row }">
-              <vxe-input v-model="row.date" type="week" placeholder="请选择日期" transfer></vxe-input>
-            </template>
-          </vxe-column> -->
         </vxe-table> 
 
-              <vxe-table
+       <vxe-table
           border
-          style="width:600px"
+          :align="allAlign"
+          style="width:800px"
+          size="mini"
           :mouse-config="{selected: true}"
           show-overflow
           :data="compData2"
@@ -59,24 +56,22 @@
               <vxe-input v-model="row.name" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SSS105']"  :field="af" :title="showFundName(af)" :edit-render="{}">
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SSS105']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass1">
             <template #default="{ row }">
-              {{ row[af] }}<span>{{ row[af] }}</span>
+              <span>{{ row[af] }}</span>
             </template>
             <template #edit="{ row }">
-              <vxe-input v-model="row[af]" class="myinput"></vxe-input>
+              <vxe-input type="number" @change="changeIncome2" v-model="row[af]" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <!-- <vxe-column field="date" title="Date" :edit-render="{}">
-            <template #edit="{ row }">
-              <vxe-input v-model="row.date" type="week" placeholder="请选择日期" transfer></vxe-input>
-            </template>
-          </vxe-column> -->
         </vxe-table> 
         <vxe-table
           border
+          :align="allAlign"
+          style="width:800px"
+          size="mini"
+          :mouse-config="{selected: true}"
           show-overflow
-                              style="width:600px"
           :data="compData3"
           :edit-config="{trigger: 'dblclick', mode: 'cell', activeMethod: activeCellMethod}"
           :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
@@ -86,19 +81,14 @@
               <vxe-input v-model="row.name" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599']"  :field="af" :title="showFundName(af)" :edit-render="{}" :class-name="cellClass">
-            <template #default="{ row }" style="row['name']=='待分配合计'?'background-color: red;':''">
-              <span  >{{ row[af] }}</span>
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass">
+            <template #default="{ row }">
+              <span>{{ row[af] }}</span>
             </template>
             <template #edit="{ row }">
-              <vxe-input v-model="row[af]" class="myinput"></vxe-input>
+              <vxe-input type="number" @change="changeIncome3" v-model="row[af]" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <!-- <vxe-column field="date" title="Date" :edit-render="{}">
-            <template #edit="{ row }">
-              <vxe-input v-model="row.date" type="week" placeholder="请选择日期" transfer></vxe-input>
-            </template>
-          </vxe-column> -->
         </vxe-table> 
          <el-table
           :data="finalData"
@@ -195,7 +185,9 @@
             sortable
             prop="b_code"
             show-overflow-tooltip
-          >{{showFundName(b_code)}}
+          ><template slot-scope="scope">{{
+              showFundName(scope.row.b_code)
+            }}</template>
           </el-table-column>
           <el-table-column
             label="金额(万)"
@@ -257,7 +249,7 @@
             <template slot-scope="scope">{{ scope.row["act_amount"] }}</template>
           </el-table-column>
 
-          <el-table-column
+          <!----> <el-table-column
             label="操作"
             sortable
             prop="b_code"
@@ -274,11 +266,9 @@
               <el-button v-if="scope.row['id']" @click="delAction(scope.row)"
                 >删除</el-button
               >
-              <!---->
             </template>
-          </el-table-column>
-        </el-table></el-tab-pane
-      >
+          </el-table-column> 
+        </el-table></el-tab-pane>
       <!-- <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane> -->
     </el-tabs>
     <el-dialog
@@ -432,6 +422,24 @@ export default {
           marketval: 2000,
         },
         {
+          id: 3,
+          code: "SY9620",
+          name: "华道多策略",
+          stage: "预赎回",
+          b_name: "EIF",
+          b_code: "SSN818",
+          marketval: 101,
+        },
+          {
+          id: 4,
+          code: "SY9620",
+          name: "华道多策略",
+          stage: "预赎回",
+          b_name: "CTA",
+          b_code: "SSN369",
+          marketval: 202,
+        },
+        {
           id: 2,
           code: "SY9620",
           stage: "预赎回",
@@ -444,22 +452,19 @@ export default {
     };
   },
   methods: {
+    cellClass1(row){
+      let colsize=row.$table.getColumns().length
+      if(row.row['name']=='待分配合计' &&row.columnIndex==colsize-1){
+        return 'background-yellow'
+      }
+      return ''
+    },
     cellClass(row){
-      console.log(row)
       if(row.row['name']=='待分配合计'){
         return 'background-yellow'
       }
 return ''
     },
-    formatSex (value) {
-              if (value === '1') {
-                return '男'
-              }
-              if (value === '0') {
-                return '女'
-              }
-              return ''
-            },
             activeCellMethod ({ row, rowIndex }) {
               if (rowIndex === 0) {
                 return true
@@ -470,42 +475,169 @@ return ''
               //if(row['name']==)
               // this.$XModal.message({ content: '禁止编辑', status: 'error' })
             },
-    changeIncome(){
+    changeIncome1(row,cell){
+        this.genNoUsed1()
+        this.genNoUsed3()
+    },
+    changeIncome2(row,cell){
+        this.genNoUsed2()
+        this.genNoUsed3()
+
+    },
+    changeIncome3(row,cell){
+        this.genNoUsed2()
+
+    },
+    genNoUsed1(){
+      let toinvest=0
+      let toredeem=0
+      for(var key of ["SSN818","SSN369","STE599","多策略FOF直投"]){
+      this.compData1[4][key]=this.compData1[0][key]
+      if(this.compData1[0][key]){
+          toinvest+=parseFloat(this.compData1[0][key])
+      }
+      if(this.compData1[1][key]){
+          toredeem+=parseFloat(this.compData1[1][key])
+      }
+      }
+      this.compData1[1]['SY9620']=toredeem
+      this.compData1[3]["SY9620"]=Math.round(this.detailData.reduce((prev,next)=>{if(next['code']=='SY9620'){
+        return prev+next['marketval']
+      }return prev},0)/10000)
+      this.compData1[2]["SY9620"]=Math.round(this.finalData.filter(row=>row["code"]=='SY9620')[0]['cash']/10000)
+      this.compData1[2]["多策略FOF直投"]=Math.round(this.finalData.filter(row=>row["code"]=='SY9620')[0]['cash']/10000)
+      this.compData1[4]["多策略FOF直投"]=0
+      for (let i=0;i<3;i++){
+                if(this.compData1[i]["多策略FOF直投"])
+      this.compData1[4]["多策略FOF直投"]+=parseFloat(this.compData1[i]["多策略FOF直投"])
+      }
+      this.compData1[4]["SY9620"]=-toinvest
+      for (let i=0;i<3;i++){
+        console.log(this.compData1[i]["SY9620"])
+        if(this.compData1[i]["SY9620"])
+        this.compData1[4]["SY9620"]+=parseFloat(this.compData1[i]["SY9620"])
+        console.log(this.compData1[4]["SY9620"])
+      }
+      // this.genNoUsed3()
+    },
+    genNoUsed2(){
+      let toinvest=0
+      let toredeem=0
+      for(var key of ["SSN818","SSN369","STE599"]){
+      this.compData2[4][key]=this.compData2[0][key]
+      if(this.compData2[0][key]){
+          toinvest+=parseFloat(this.compData2[0][key])
+      }
+      if(this.compData2[1][key]){
+          toredeem+=parseFloat(this.compData2[1][key])
+      }
+      }
+      this.compData2[1]['SSS105']=toredeem
+      this.compData2[3]["SSS105"]=Math.round(this.detailData.reduce((prev,next)=>{if(next['code']=='SSS105'){
+        return prev+next['marketval']
+      }return prev},0)/10000)
+      this.compData2[2]["SSS105"]=Math.round(this.finalData.filter(row=>row["code"]=='SSS105')[0]['cash']/10000)
+      console.log(toinvest)
+      this.compData2[4]["SSS105"]=-toinvest
+      for (let i=0;i<3;i++){
+        console.log(this.compData2[4]["SSS105"])
+        if(this.compData2[i]["SSS105"])
+        this.compData2[4]["SSS105"]+=parseFloat(this.compData2[i]["SSS105"])
+        console.log(this.compData2[4]["SSS105"])
+      }
+
+    },
+
+      genNoUsed3(){
+      let toinvest=0
+      let toredeem=0
+      for(var key of ["SSN818","SSN369","STE599"]){
+      this.compData3[5][key]=parseFloat(this.compData1[4][key])+parseFloat(this.compData2[4][key])-parseFloat(this.compData3[4][key])
+      }
+      // this.compData2[1]['SSS105']=toredeem
+      // this.compData2[3]["SSS105"]=Math.round(this.detailData.reduce((prev,next)=>{if(next['code']=='SSS105'){
+      //   return prev+next['marketval']
+      // }return prev},0)/10000)
+      // this.compData2[2]["SSS105"]=Math.round(this.finalData.filter(row=>row["code"]=='SSS105')[0]['cash']/10000)
+
+      // this.compData2[4]["SSS105"]=-toinvest
+      // for (let i=0;i<3;i++){
+      //   if(this.compData2[i]["SSS105"])
+      //   this.compData2[4]["SSS105"]+=parseFloat(this.compData2[i]["SSS105"])
+      // }
 
     },
     genTitleData1(){
-      const cols=["预入款","预赎回","现金","在投","清算款","负债","待分配合计"]
-      const keys=["income","redeem","cash","marketval","process","debet","unused"]
-      const fofs=["SSN818","SSN369","STE599","SY9620"]
+      const cols=["预入款","预赎回","现金","在投","待分配合计"]
+      const keys=["income","redeem","cash","marketval","unused"]
+      const fofs=["SSN818","SSN369","STE599"] //["SY9620"]
       let rets=[]
       for(var col in cols){
         var ret={"name":cols[col]}
         for (var af of fofs ){
-        ret[af]=Math.floor(this.finalData.filter((row)=>row['code']==af)[0][keys[col]]/10000)
-        // ret["name"]=this.finalData.filter((row)=>row['code']==af)[0]
+          var doact=this.detailData.filter((row)=>row['b_code']&&row['b_code']==af&&row['code']=='SY9620')
+          if(doact&&doact.length>0){
+            if(doact[0]['stage']==ret["name"]){
+                ret[af]=doact[0]["act_amount"]
+            }else if(ret["name"]=="在投"){
+                ret[af]=Math.round(doact[0]["marketval"]/10000)
+            } else{
+              ret[af]=0
+            }           
+          }else{
+              ret[af]=0
+            }  
       }
+      let holds=this.detailData.filter((row)=>(fofs.indexOf(row['b_code'])<0) &&row['code']=='SY9620')
+      if(ret["name"]=='在投'){
+          ret["多策略FOF直投"]=Math.round(holds.reduce(function (prev, next) {
+          return prev + next['marketval']}, 0)/10000)
+      }
+      if(ret["name"]=='预赎回'){
+          ret["多策略FOF直投"]=holds.filter((row)=>row['stage']=="预赎回").reduce(function (prev, next) {
+          return prev + next['act_amount']}, 0)
+      }
+      
       rets.push(ret)
       }
       this.compData1=rets
+      this.genNoUsed1()
     },
     genTitleData2(){
-      const cols=["预入款","预赎回","现金","在投","清算款","负债","待分配合计"]
-      const keys=["income","redeem","cash","marketval","process","debet","unused"]
-      const fofs=["SSN818","SSN369","STE599","SSS105"]
+           const cols=["预入款","预赎回","现金","在投","待分配合计"]
+      const keys=["income","redeem","cash","marketval","unused"]
+      const fofs=["SSN818","SSN369","STE599"] //["SY9620"]
       let rets=[]
       for(var col in cols){
         var ret={"name":cols[col]}
         for (var af of fofs ){
-        ret[af]=Math.floor(this.finalData.filter((row)=>row['code']==af)[0][keys[col]]/10000)
-        // ret["name"]=this.finalData.filter((row)=>row['code']==af)[0]
+          var doact=this.detailData.filter((row)=>row['b_code']&&row['b_code']==af&&row['code']=='SSS105')
+          if(doact&&doact.length>0){
+            if(doact[0]['stage']==ret["name"]){
+              console.log(doact)
+                ret[af]=doact[0]["act_amount"]
+            }else if(ret["name"]=="在投"){
+                ret[af]=Math.round(doact[0]["marketval"]/10000)
+            } else{
+              ret[af]=0
+            }                      
+          }else{
+              ret[af]=0
+            }   
+      }
+      let holds=this.detailData.filter((row)=>(row['code']=='SSS105'))
+        if(ret["name"]=='在投'){
+          ret["SSS105"]=Math.round(holds.reduce(function (prev, next) {
+          return prev + next['marketval']}, 0)/10000)
       }
       rets.push(ret)
       }
       this.compData2=rets
+      this.genNoUsed2()
     },
     genTitleData3(){
-      const cols=["预入款","预赎回","现金","在投","预投","清算款","负债","待分配合计","总管理规模","核对"]
-      const keys=["income","redeem","cash","marketval","buy","process","debet","unused","managed","check"]
+      const cols=["预入款","预赎回","现金","在投","预投","待分配合计","总管理规模","核对"]
+      const keys=["income","redeem","cash","marketval","buy","unused","managed","check"]
       const fofs=["SSN818","SSN369","STE599"]
       let rets=[]
       for(var col in cols){
@@ -517,6 +649,7 @@ return ''
       rets.push(ret)
       }
       this.compData3=rets
+      this.genNoUsed3()
     },
     changeFOF(val){
           console.log(this.showFundName(val))
@@ -702,8 +835,11 @@ return ''
             color: red
 
 }
-tr {
-  vertical-align: center
+.vxe-body--column.col--ellipsis .vxe-body--column {
+  height:32px;
+}
+tr td {
+  vertical-align: middle
 }
 //  .reverse-table .vxe-body--row .vxe-body--column:first-child {
 //           background-color: #222279;

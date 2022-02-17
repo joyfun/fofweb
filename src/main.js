@@ -6,7 +6,6 @@ import "./permission"
 import * as process from "process"
 
 
-import 'bootstrap'
 
 //全局配置
 import '@/assets/scss/reset.scss'

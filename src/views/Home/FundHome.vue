@@ -441,7 +441,6 @@ this.pieData.action["click"]=(params)=>{
 </script>
 
 <style lang="scss" scoped>
-
 .tab-tit {
   font-size: 0;
   width: 345px;

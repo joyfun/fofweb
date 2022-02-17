@@ -3,6 +3,7 @@
 <el-radio-group v-model="range">
   <el-radio-button type="primary" :key="i"  :label="i" icon="el-icon-edit" v-for="(item,i) in tags">{{item}}</el-radio-button>
 </el-radio-group>
+
         <el-select v-if="!$isElectron" v-model="curwts" @change="chgwts" style="width:120px"  clearable placeholder="评分权重">
     <el-option
       v-for="item in allwts"
@@ -177,23 +178,30 @@ export default {
         return index +1
       },
      classify(row){
-       let key=""
-        if(row["class_type"]=="CTA"){
-          key="CTA"
-        }else if (["混合","中性","套利","期权"].indexOf(row["class_type"])>-1){
-          key="AAS"
-        }
-        row["numeric_type"]=key
+       let key="AAS"
+       let cw=this.allwts.filter(row=>row.id==this.curwts)
+       if(cw.length>0&&cw[0]['sub_type'].startsWith('CTA')){
+         key="CTA"
+       }
+
+       row["numeric_type"]=key
+      if(this.lvs[row['name']]){
+         row['level']=this.lvs[row['name']]
+        //  console.log("cached"+row['name'])
+         return 
+       }
+        row["level"]="丁"
+        // console.log("default"+row['name'])
+
         if(key){
           let conf=this.cls_gap[key]
-          for (var lk in conf["limit"]){
-              if(lk && conf["limit"][lk][0]<row[lk] && row[lk] <conf["limit"][lk][1]){
+          // for (var lk in conf["limit"]){
+          //     if(lk && conf["limit"][lk][0]<row[lk] && row[lk] <conf["limit"][lk][1]){
 
-              }else{
-                return
-              }
-          }
-          row["level"]="丁"
+          //     }else{
+          //       return
+          //     }
+          // }
           let ranks=["丙","乙","甲"]
           for(var lvk  in  conf["level"]){
             let alvs=conf["level"][lvk]
@@ -268,24 +276,41 @@ export default {
       }).then(response => {
           var data = new Uint8Array(response.data);
           var workbook = XLSX.read(data, {type:"array"});
-          console.log(workbook)
           var nwb= XLSX.utils.book_new();
-          for (var sn of workbook.SheetNames){
+          this.lvs={}
+          let sheets={}
+          let caclsns=JSON.parse(JSON.stringify(workbook.SheetNames))
+          for (let i in caclsns){
+            if(caclsns[i]=="近2年"){
+              caclsns.splice(i,1)
+            }
+          }
+          caclsns.unshift("近2年")
+          console.log(caclsns)
+          for (var sn of caclsns){
               let tdata=XLSX.utils.sheet_to_json(workbook.Sheets[sn])
               if(tdata.length>2)
               DB.do_calc(tdata,this.cols,this.limit_dic,this.wts)
               for(var i in this.cols){
                 this.samplerow[this.cols[i]]=this.wts[i]
               }
-              const headers=['rank','fundname','name','class_type','sub_type','yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','score','numeric_type','level','stage','scale']
               tdata.sort((a,b)=>{return b['score']-a['score']})
               tdata.map((t,i)=>{t['rank']=i+1
               this.classify(t)
+              if(sn=="近2年"){
+                console.log(t)
+                this.lvs[t['name']]=t['level']
+              }
               delete t['__EMPTY']})
-              var nst=XLSX.utils.json_to_sheet([this.samplerow],{header:headers, skipHeader:true})
-              XLSX.utils.sheet_add_json(nst,tdata,{header:headers,  skipHeader: false, origin: -1})
-              XLSX.utils.book_append_sheet(nwb, nst, sn);             
+              sheets[sn]=tdata          
           }
+          const headers=['rank','fundname','name','class_type','sub_type','yeaily_return', 'sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','score','numeric_type','level','stage','scale']
+          for (var sn of workbook.SheetNames){
+              var nst=XLSX.utils.json_to_sheet([this.samplerow],{header:headers, skipHeader:true})
+              XLSX.utils.sheet_add_json(nst,sheets[sn],{header:headers,  skipHeader: false, origin: -1})
+              XLSX.utils.book_append_sheet(nwb, nst, sn);   
+          }
+          console.log(this.lvs)
             var wbout = XLSX.write(nwb, { bookType: 'xlsx', bookSST: true, type: 'array' })
         var title='评分下载'+new Date().getTime()
         FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
