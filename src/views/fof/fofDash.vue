@@ -13,7 +13,8 @@
           <vxe-column field="age" title="Age"></vxe-column>
         </vxe-table> -->
 
-
+<el-row>
+  <el-col span="14">
         <vxe-table
           border
           :align="allAlign"
@@ -90,7 +91,40 @@
             </template>
           </vxe-column>
         </vxe-table> 
-         <el-table
+        </el-col><el-col span="10">
+    <vxe-table
+          align="right"
+          :data="finalData">
+          <vxe-column field="name" title="基金名称" width="160"> </vxe-column>
+          <vxe-column field="marketval" title="市值">
+            <template #default="{ row }">
+              {{ showMoney(row.marketval) }}
+            </template>
+            </vxe-column>
+          <!-- <vxe-column field="cash" title="可用资金"> <template #default="{ row }">
+              {{ showMoney(row.cash) }}
+            </template>
+            </vxe-column>
+          <vxe-column field="income" title="预入款"> <template #default="{ row }">
+              {{ showMoney(row.income) }}
+            </template>
+            </vxe-column>
+          <vxe-column field="redeem" title="预赎回"> <template #default="{ row }">
+              {{ showMoney(row.redeem) }}
+            </template>
+            </vxe-column>
+          <vxe-column field="buy" title="待投资"> <template #default="{ row }">
+              {{ showMoney(row.buy) }}
+            </template>
+            </vxe-column>
+          <vxe-column field="process" title="其它"> <template #default="{ row }">
+              {{ showMoney(row.process) }}
+            </template>
+            </vxe-column> -->
+
+        </vxe-table>
+
+         <!-- <el-table
           :data="finalData"
           style="width: 100%; margin-bottom: 20px"
           :row-key="getRowKeys"
@@ -112,7 +146,7 @@
             align="right"
             show-overflow-tooltip
           >
-            <template slot-scope="scope">{{ scope.row["marketval"] }}</template>
+            <template slot-scope="scope">{{ showMoney(scope.row["marketval"]) }}</template>
           </el-table-column>
           <el-table-column
             label="可用资金"
@@ -121,7 +155,7 @@
             align="right"
             show-overflow-tooltip
           >
-            <template slot-scope="scope">{{ scope.row["cash"] }}</template>
+            <template slot-scope="scope">{{ showMoney(scope.row["cash"]) }}</template>
           </el-table-column>
           <el-table-column
             label="预入款"
@@ -130,7 +164,7 @@
             align="right"
             show-overflow-tooltip
           >
-            <template slot-scope="scope">{{ scope.row["income"] }}</template>
+            <template slot-scope="scope">{{ showMoney(scope.row["income"]) }}</template>
           </el-table-column>
           <el-table-column
             label="预赎回"
@@ -139,7 +173,7 @@
             align="right"
             show-overflow-tooltip
           >
-            <template slot-scope="scope">{{ scope.row["redeem"] }}</template>
+            <template slot-scope="scope">{{ showMoney(scope.row["redeem"]) }}</template>
           </el-table-column>
           <el-table-column
             label="待投资"
@@ -148,12 +182,24 @@
             align="right"
             show-overflow-tooltip
           >
-            <template slot-scope="scope">{{ scope.row["buy"] }}</template>
+            <template slot-scope="scope">{{ showMoney(scope.row["buy"]) }}</template>
           </el-table-column>
-        </el-table>
+          <el-table-column
+            label="其它资产"
+            sortable
+            prop="process"
+            align="right"
+            show-overflow-tooltip
+          >            <template slot-scope="scope">{{ showMoney(scope.row["process"]) }}</template>
+
+          </el-table-column>
+        </el-table> -->
+        </el-col>
+      </el-row>
       </el-tab-pane>
       <el-tab-pane label="资金预操作"
-        ><div style="display: flex; justify-content: space-between">
+        >
+        <div style="display: flex; justify-content: space-between">
           <el-button size="small" @click="addAction()">添加操作</el-button>
         </div>
         <el-table
@@ -196,7 +242,8 @@
             show-overflow-tooltip
           >
           </el-table-column> </el-table
-      ></el-tab-pane>
+      >
+      </el-tab-pane>
       <el-tab-pane label="资金明细">
         <el-button @click="addAction">添加</el-button>
         <el-table
@@ -223,14 +270,14 @@
           </el-table-column>
 
           <el-table-column
-            label="市值(万)"
+            label="市值"
             sortable
             prop="marketval"
             align="right"
             show-overflow-tooltip
           >
             <template slot-scope="scope">{{
-              showMoney(scope.row["marketval"])
+              $tools.formatMoney(scope.row["marketval"],0)
             }}</template>
           </el-table-column>
           <el-table-column
@@ -243,26 +290,26 @@
           </el-table-column>
             <el-table-column
             label="预操作金额"
+            align="right"
             sortable
             prop="act_amount"
             show-overflow-tooltip>
-            <template slot-scope="scope">{{ scope.row["act_amount"] }}</template>
+             <template slot-scope="scope">
+               {{$tools.formatMoney(scope.row["act_amount"]*10000,0)}}  
+            </template>
+           
           </el-table-column>
 
           <!----> <el-table-column
             label="操作"
-            sortable
-            prop="b_code"
             align="right"
             show-overflow-tooltip
           >
             <template slot-scope="scope">
-              {{ scope.row["b_code"] }}
-              <el-button
+               <el-button
                 v-if="scope.row['b_code'].length == 6"
                 @click="fundAction(scope.row)"
-                >操作</el-button
-              >
+                >操作</el-button>
               <el-button v-if="scope.row['id']" @click="delAction(scope.row)"
                 >删除</el-button
               >
@@ -381,7 +428,7 @@ export default {
       return this.detailData.concat(this.actionData);
     },
     ...mapState(["foflist"]),
-    ...mapGetters(["sysparam","showFundName"]),
+    ...mapGetters(["sysparam","token","showFundName"]),
   },
   data() {
     return {  allAlign: 'right',
@@ -412,41 +459,41 @@ export default {
       detailData: [],
       tableData: [],
       actionData: [
-        {
-          id: 1,
-          code: "SY9620",
-          name: "华道多策略",
-          stage: "预入款",
-          b_name: "预入款",
-          b_code: "CASH",
-          marketval: 2000,
-        },
-        {
-          id: 3,
-          code: "SY9620",
-          name: "华道多策略",
-          stage: "预赎回",
-          b_name: "EIF",
-          b_code: "SSN818",
-          marketval: 101,
-        },
-          {
-          id: 4,
-          code: "SY9620",
-          name: "华道多策略",
-          stage: "预赎回",
-          b_name: "CTA",
-          b_code: "SSN369",
-          marketval: 202,
-        },
-        {
-          id: 2,
-          code: "SY9620",
-          stage: "预赎回",
-          b_name: "同亨多策略五号私募证券投资基金",
-          b_code: "SCF687",
-          marketval: 800,
-        },
+        // {
+        //   id: 1,
+        //   code: "SY9620",
+        //   name: "华道多策略",
+        //   stage: "预入款",
+        //   b_name: "预入款",
+        //   b_code: "CASH",
+        //   marketval: 2000,
+        // },
+        // {
+        //   id: 3,
+        //   code: "SY9620",
+        //   name: "华道多策略",
+        //   stage: "预赎回",
+        //   b_name: "EIF",
+        //   b_code: "SSN818",
+        //   marketval: 101,
+        // },
+        //   {
+        //   id: 4,
+        //   code: "SY9620",
+        //   name: "华道多策略",
+        //   stage: "预赎回",
+        //   b_name: "CTA",
+        //   b_code: "SSN369",
+        //   marketval: 202,
+        // },
+        // {
+        //   id: 2,
+        //   code: "SY9620",
+        //   stage: "预赎回",
+        //   b_name: "同亨多策略五号私募证券投资基金",
+        //   b_code: "SCF687",
+        //   marketval: 800,
+        // },
       ],
       tmaxh: 600,
     };
@@ -505,9 +552,9 @@ return ''
         return prev+next['marketval']
       }return prev},0)/10000)
       this.compData1[2]["SY9620"]=Math.round(this.finalData.filter(row=>row["code"]=='SY9620')[0]['cash']/10000)
-      this.compData1[2]["多策略FOF直投"]=Math.round(this.finalData.filter(row=>row["code"]=='SY9620')[0]['cash']/10000)
+      this.compData1[2]["多策略FOF直投"]='-'
       this.compData1[4]["多策略FOF直投"]=0
-      for (let i=0;i<3;i++){
+      for (let i=0;i<2;i++){
                 if(this.compData1[i]["多策略FOF直投"])
       this.compData1[4]["多策略FOF直投"]+=parseFloat(this.compData1[i]["多策略FOF直投"])
       }
@@ -586,7 +633,10 @@ return ''
             }           
           }else{
               ret[af]=0
-            }  
+            }
+          if(col==2){
+              ret[af]='-'
+            }   
       }
       let holds=this.detailData.filter((row)=>(fofs.indexOf(row['b_code'])<0) &&row['code']=='SY9620')
       if(ret["name"]=='在投'){
@@ -623,6 +673,9 @@ return ''
             }                      
           }else{
               ret[af]=0
+            }
+          if(col==2){
+              ret[af]='-'
             }   
       }
       let holds=this.detailData.filter((row)=>(row['code']=='SSS105'))
@@ -642,11 +695,17 @@ return ''
       let rets=[]
       for(var col in cols){
         var ret={"name":cols[col]}
-        for (var af of fofs ){
+        for (let af of fofs ){
         ret[af]=Math.floor(this.finalData.filter((row)=>row['code']==af)[0][keys[col]]/10000)
-        // ret["name"]=this.finalData.filter((row)=>row['code']==af)[0]
       }
+      
       rets.push(ret)
+      }
+      for (let af of fofs ){
+        let afin=this.finalData.filter(a=>a['code']==af)[0]
+        rets[6][af]=Math.floor((afin['marketval']+afin['cash']+afin['process'])/10000)   //总管理规模=基金在投+现金+ETF
+        rets[3][af]=rets[6][af]-rets[2][af]    //在投=总管理规模-现金
+        rets[7][af]=Math.floor((rets[3][af]+rets[2][af]-this.compData2[3][af]-this.compData1[3][af])) //check市值差
       }
       this.compData3=rets
       this.genNoUsed3()
@@ -669,10 +728,10 @@ return ''
       this.curAction.b_name=this.showFundName(val)
     },
     showMoney(money) {
-      if (money > 20000) {
+      // if (money > 20000) {
         return Math.round(money / 10000);
-      }
-      return money;
+      // }
+      // return money;
     },
     findAction(code,b_code){
       for(let row of this.actionData){
@@ -702,7 +761,12 @@ return ''
           }
           this.actionDiagShow = !this.actionDiagShow;
           this.calcFinal();
-          
+          this.$axios({
+      method: 'post',
+      url: "/sys/misc", // 请求地址
+      data: {"code":"fof_action","info":JSON.stringify(this.actionData),"user":this.token}, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then((response)=>console.log(response.data))
         } else {
           console.log("error submit!!");
           return false;
@@ -733,6 +797,7 @@ return ''
       let rdict = {};
       this.detailData = [];
       for (var row of this.tableData) {
+        row['act_amount']=''
         let pdict = rdict[row["code"]];
         if (!pdict) {
           pdict = {
@@ -750,20 +815,25 @@ return ''
           };
           rdict[row["code"]] = pdict;
         }
-        if (row["b_code"].startsWith("SUBJECT10")&&row["b_code"]!='SUBJECT1021') {
+        if ((row["b_code"].startsWith("SUBJECT10")&&row["b_code"]!='SUBJECT1021')||row["b_code"]=='SUBJECT3003') {
           pdict["cash"] += row["marketval"];
         } else if (row["b_code"].startsWith("SUBJECT11")) {
           pdict["marketval"] += row["marketval"];
-        }else if (row["b_code"].startsWith("SUBJECT22")) {
+        }else if (row["b_code"].startsWith("SUBJECT3")||row["b_code"]=='SUBJECT1021') {//ETF资产和备付金 清算款计入其它资产
+          pdict["process"] += row["marketval"];
+        }
+        else if (row["b_code"].startsWith("SUBJECT22")) {
           pdict["debet"] += row["marketval"];
         } else if (row["b_code"].length == 6) {
           row["name"] = this.showFundName(row.code);
           row["stage"] = "已投";
-          let act=this.findAction(row['code'],row['b_code'])
-          if(act){
+          let acts=this.actionData.filter(a=>a['code']==row['code']&&a['b_code']==row['b_code'])
+          if(acts.length>0){
+            row['act_amount']=0
+          for (let act of acts){
             row['stage']=act['stage']
-            row['act_amount']=act['marketval']
-          }
+            row['act_amount']=row['act_amount']+parseFloat(act['marketval'])
+          } }
           this.detailData.push(row);
           // row['name']=row['b_name']
           // pdict.children.push(row)
@@ -809,6 +879,16 @@ return ''
       }
       return row["b_name"];
     },
+    getMisc(code){
+      this.$axios
+        .get("/sys/misc", { params: { "code": code } }) //axis后面的.get可以省略；
+        .then((response) => {
+          this.actionData =response.data
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     getProducts() {
       this.$axios
         .get("/fof/holding", { params: { code: "" } }) //axis后面的.get可以省略；
@@ -826,7 +906,10 @@ return ''
   mounted() {
     this.getProducts();
   },
-  created() {},
+  created() {
+    this.getMisc("fof_action")
+
+  },
 };
 </script>
 <style lang="scss" >
