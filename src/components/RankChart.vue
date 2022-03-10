@@ -15,7 +15,6 @@
  <script>
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
-import axis from "axios";
 import Bus from '@/store/bus.js';
 import {mapGetters} from 'vuex'
 import '@/utils/infographic.js'
@@ -32,29 +31,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    total:{
-      type:Number,
-      default:0
-    },
-    finalData: {
-      type: Array,
-      default: null,
-    },
-    combine: {
-      type: Object,
-      default: null,
-    },
-    titles: {
+    code: {
       type: String,
       default: "",
-    },
-    width: {
-      type: String,
-      default: "80%",
-    },
-    isAxisChart: {
-      type: Boolean,
-      default: true,
     },
   },
   computed: {
@@ -74,12 +53,6 @@ export default {
     columns:{get() {
       return []
     }},
-    dates:{get() {
-      return  ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    }},
-    datas:{get() {
-      return [120, 132, 101, 134, 90, 230, 210]
-    }},
     isCollapse() {
       return this.$store.state.tab.isCollapse;
     },
@@ -92,10 +65,10 @@ export default {
         }
       },
     },
-    finalData: {
+    code: {
       handler: function (val) {
         if (val) {
-          this.initChart("")
+          this.getChartData()
         }
       },
     },
@@ -127,8 +100,17 @@ export default {
         },
       },
       axisOption:  {
+          legend: [{
+          //option.legend[0].selected[basename+"_超额"] = params.selected[basename];
+          selected:{},
+          type: "scroll",
+          align :"right",
+          orient: "vertical",
+          top: "middle",
+          right: 0,
+        }],
       title: {
-        text: '投资一览图'
+        text: '基金排名图'
       },
       tooltip: {
         trigger: 'item',
@@ -137,12 +119,13 @@ export default {
       xAxis: {
     type: 'category',
     boundaryGap: false,
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    data: []
   },
   yAxis: {
     type: 'value',
+    inverse: true,
     axisLabel: {
-      formatter: '{value} °C'
+      formatter: '{value} %'
     }
   },
       series: [
@@ -222,15 +205,44 @@ export default {
         this.normalOption.series = this.chartData.series;
       }
     },
+    getChartData(){
+      let that=this
+      this.$axios
+        .get("/fof/hisrank", { params: { "code": this.code } }) //axis后面的.get可以省略；
+        .then((response) => {
+          let option = that.echart.getOption();
+          option.xAxis[0].data=response.data.index
+          option.series=[]
+          for (let col in response.data.columns){
+            let cnames=response.data.columns[col].split('_')
+            let sname=""
+            if(cnames.length==2){
+              sname=this.showFundName(cnames[0])+"_"+cnames[1]
+            }
+            option.series.push({
+          type: 'line',
+          name: sname,
+          data: response.data.data.map(row=>row[col]*100),
+        })
+          }
+          console.log(option)
+          that.echart.setOption(option, true);
+   
+
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     resizeChart() {
       this.echart ? this.echart.resize() : "";
     },
   },
   mounted() {
     window.addEventListener("resize", this.resizeChart);
+    this.initChart()
      this.$nextTick(() => { 
-    this.initChart("");
-
+           this.getChartData()
      })
   
   },
