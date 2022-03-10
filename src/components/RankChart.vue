@@ -112,10 +112,19 @@ export default {
       title: {
         text: '基金排名图'
       },
-      tooltip: {
-        trigger: 'item',
-        triggerOn: 'mousemove'
-      },
+       tooltip: {
+          trigger: "axis",
+          valueFormatter: (value) => value.toFixed(2)
+
+        //     formatter: function (datas, ticket, callback) {
+        //              var res = datas[0].name + '<br/>'
+        //              console.log(datas)
+        //       for (var i = 0, length = datas.length; i < length; i++) {
+        //           res += datas[i].seriesName + '：'  + datas[i].value.toFixed(4) + '<br/>'
+        //           }
+        //       return res
+        //   }
+        },
       xAxis: {
     type: 'category',
     boundaryGap: false,

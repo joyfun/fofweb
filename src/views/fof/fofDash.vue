@@ -271,6 +271,7 @@
       <el-tab-pane label="资金明细">
         <el-button @click="addAction">添加</el-button>
         <vxe-table
+          ref="detailTable"
           align="right"
           size="small"
           :sort-config="{trigger: 'cell', defaultSort: {field: 'rank', order: 'asc'}, orders: ['desc', 'asc', null]}"
@@ -289,8 +290,9 @@
             </template>
             </vxe-column>
                     <vxe-colgroup title="排名信息" align="center">
-          <vxe-column :key="type" :field="type" width="80" sortable :title="type" v-for=" type of ['aas','cta0','cta1','指增','中性']"> <template #default="{ row }">
-             {{ row[type] }}
+          <vxe-column :key="type" :field="type" width="80" sortable :title="type+'('+rlen[type]+')'" v-for=" type of this.types"> <template #default="{ row }">
+             {{ showRank(row,type) }}
+
             </template>
             </vxe-column>
                     </vxe-colgroup>
@@ -457,43 +459,9 @@ export default {
       finalData: [],
       detailData: [],
       tableData: [],
-      actionData: [
-        // {
-        //   id: 1,
-        //   code: "SY9620",
-        //   name: "华道多策略",
-        //   stage: "预入款",
-        //   b_name: "预入款",
-        //   b_code: "CASH",
-        //   marketval: 2000,
-        // },
-        // {
-        //   id: 3,
-        //   code: "SY9620",
-        //   name: "华道多策略",
-        //   stage: "预赎回",
-        //   b_name: "EIF",
-        //   b_code: "SSN818",
-        //   marketval: 101,
-        // },
-        //   {
-        //   id: 4,
-        //   code: "SY9620",
-        //   name: "华道多策略",
-        //   stage: "预赎回",
-        //   b_name: "CTA",
-        //   b_code: "SSN369",
-        //   marketval: 202,
-        // },
-        // {
-        //   id: 2,
-        //   code: "SY9620",
-        //   stage: "预赎回",
-        //   b_name: "同亨多策略五号私募证券投资基金",
-        //   b_code: "SCF687",
-        //   marketval: 800,
-        // },
-      ],
+      actionData: [],
+      rlen:{},
+      types: ['aas','cta0','cta1','指增','中性'],
       tmaxh: 600,
     };
   },
@@ -911,7 +879,15 @@ return ''
           // row['name']=row['b_name']
           // pdict.children.push(row)
         }
-        // console.log(pdict)
+         this.detailData.map(r=>{
+           for(let k of this.types){
+             if(r[k]){
+               this.rlen[k]=r[k].split('-')[1]
+             }
+           }
+         })
+
+         console.log(this.rlen)
       }
       for (var row of this.actionData) {
         let pdict = rdict[row["code"]];
@@ -962,6 +938,13 @@ return ''
           console.log(error);
         });
     },
+    showRank(row,key){
+      if(row[key]){
+        return row[key].split("-")[0]
+      }
+      return ''
+
+    },
     getProducts() {
       this.$axios
         .get("/fof/holding", { params: { code: "" } }) //axis后面的.get可以省略；
@@ -982,6 +965,7 @@ return ''
   },
   created() {
     this.getMisc("fof_action")
+    this.types.map(t=>{this.rlen[t]=0})
 
   },
 };
