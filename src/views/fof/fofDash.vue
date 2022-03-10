@@ -15,6 +15,7 @@
 
 <el-row>
   <el-col :span="14">
+    <el-card>
         <vxe-table
           border
           :align="allAlign"
@@ -39,6 +40,8 @@
             </template>
           </vxe-column>
         </vxe-table> 
+    </el-card>
+    <el-card>
 
        <vxe-table
           border
@@ -64,6 +67,8 @@
             </template>
           </vxe-column>
         </vxe-table> 
+      </el-card>
+    <el-card>
         <vxe-table
           border
           :align="allAlign"
@@ -88,6 +93,7 @@
             </template>
           </vxe-column>
         </vxe-table> 
+        </el-card>
         </el-col><el-col :span="10">
     <vxe-table
           align="right"
@@ -121,7 +127,8 @@
             </vxe-column> 
 
         </vxe-table>
- 
+                    <sankey-chart    ref="vchart"  titles="虚拟FOF"  style="height: 600px" :finalData="detailData" :total="compData1.length" ></sankey-chart>
+
          <!-- <el-table
           :data="finalData"
           style="width: 100%; margin-bottom: 20px"
@@ -263,66 +270,41 @@
       </el-tab-pane>
       <el-tab-pane label="资金明细">
         <el-button @click="addAction">添加</el-button>
-        <el-table
-          :data="detailData"
-          style="width: 100%; margin-bottom: 20px"
-          :row-key="getRowKeys"
-          border
-        >
-          <el-table-column
-            label="基金名称"
-            sortable
-            prop="code"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">{{ scope.row["name"] }}</template>
-          </el-table-column>
-          <el-table-column
-            label="持仓名称"
-            sortable
-            prop="code"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">{{ scope.row["b_name"] }}</template>
-          </el-table-column>
-
-          <el-table-column
-            label="市值"
-            sortable
-            prop="marketval"
-            align="right"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">{{
-              $tools.formatMoney(scope.row["marketval"],0)
-            }}</template>
-          </el-table-column>
-          <el-table-column
-            label="状态"
-            sortable
-            prop="stage"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">{{ scope.row["stage"] }}</template>
-          </el-table-column>
-            <el-table-column
-            label="预操作金额"
-            align="right"
-            sortable
-            prop="act_amount"
-            show-overflow-tooltip>
-             <template slot-scope="scope">
-               {{$tools.formatMoney(scope.row["act_amount"]*10000,0)}}  
+        <vxe-table
+          align="right"
+          size="small"
+          :sort-config="{trigger: 'cell', defaultSort: {field: 'rank', order: 'asc'}, orders: ['desc', 'asc', null]}"
+          :data="detailData">
+          <vxe-column field="name" title="产品"  sortable width="160"> </vxe-column>
+          <vxe-column field="b_name" align="left" title="基金名称" width="200">  
+            <template #default="{ row }">
+                   <el-button  @click.native.prevent="addCart(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
+       <a href="javascript:;" @click="showHis(row)">{{ row.b_name }}</a>
             </template>
-           
-          </el-table-column>
 
-          <!----> <el-table-column
-            label="操作"
-            align="right"
+             </vxe-column>
+          <vxe-column field="marketval" title="市值" width="80">
+            <template #default="{ row }">
+              {{ showMoney(row.marketval) }}
+            </template>
+            </vxe-column>
+                    <vxe-colgroup title="排名信息" align="center">
+          <vxe-column :key="type" :field="type" width="80" sortable :title="type" v-for=" type of ['aas','cta0','cta1','指增','中性']"> <template #default="{ row }">
+             {{ row[type] }}
+            </template>
+            </vxe-column>
+                    </vxe-colgroup>
+          <vxe-column field="stage" title="状态" width="60"></vxe-column>
+          <vxe-column field="act_amount" title="操作金额" width="80">
+            <template #default="{ row }">
+              {{ showMoney(row.act_amount) }}
+            </template>
+            </vxe-column>
+          <vxe-column
+            title="操作"
+             width="120"
             show-overflow-tooltip
-          >
-            <template slot-scope="scope">
+          ><template slot-scope="scope">
                <el-button
                 v-if="scope.row['b_code'].length == 6"
                 @click="fundAction(scope.row)"
@@ -331,8 +313,10 @@
                 >删除</el-button
               >
             </template>
-          </el-table-column> 
-        </el-table></el-tab-pane>
+          </vxe-column>
+        </vxe-table>
+     
+        </el-tab-pane>
       <!-- <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane> -->
     </el-tabs>
     <el-dialog
@@ -427,9 +411,13 @@
 </template>
  <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
-import fofSimpleVue from './fofSimple.vue';
+import SankeyChart from "@/components/SankeyChart.vue";
+import Bus from '@/store/bus.js';
 
 export default {
+          components: {
+            SankeyChart,
+        },
   props: {
     full: {
       type: Boolean,
@@ -449,12 +437,6 @@ export default {
   },
   data() {
     return {  allAlign: 'right',
-              tableData1: [
-                { id: 10001, name: 'Test1', role: 'Develop', sex: 'Man', age: 28, address: 'test abc' },
-                { id: 10002, name: 'Test2', role: 'Test', sex: 'Women', age: 22, address: 'Guangzhou' },
-                { id: 10003, name: 'Test3', role: 'PM', sex: 'Man', age: 32, address: 'Shanghai' },
-                { id: 10004, name: 'Test4', role: 'Designer', sex: 'Women', age: 24, address: 'Shanghai' }
-              ],
               compData1: [],
               compData2: [],
               compData3: [],
@@ -521,6 +503,12 @@ export default {
       this.saveAction()
 
     },
+     showHis(row){
+          console.log(row)
+          Bus.$emit("showChart",{"cur_code":row.b_code,"diagName":"rankChart"})
+
+      },
+
     cellClass1(row){
       let colsize=row.$table.getColumns().length
       if(row.row['name']=='待分配合计' &&row.columnIndex==colsize-1){
@@ -544,6 +532,35 @@ return ''
               //if(row['name']==)
               // this.$XModal.message({ content: '禁止编辑', status: 'error' })
             },
+
+    updateCash(code,row){
+            if(row['value']&&row['value'].length>1){
+
+        let old=this.actionData.filter(row=>row["code"]==code&&row["stage"]=="预入款")
+        if(old.length==1){
+          old[0]["marketval"]=row['value']
+        }else{
+          this.actionData.push({"code":code,"stage":"预入款","b_code":"CASH","marketval":row['value']})
+        }}
+    },
+    updateInvest(code,b_code,row){
+      if(row['value']&&row['value'].length>1){
+        let old=this.actionData.filter(row=>row["code"]==code&&row["b_code"]==b_code&&row["stage"]=="待投资")
+        if(old.length==1){
+          old[0]["marketval"]=row['value']
+        }else if(old.length==0){
+          this.actionData.push({"code":code,"stage":"待投资","b_code":b_code,"marketval":row['value']})
+        }}
+    },
+
+    getCash(code){
+      return this.actionData.reduce((prev,row)=> {
+              if(row["code"]==code&&row["stage"]=="预入款"){
+                prev=prev+parseFloat(row['marketval'])
+              }
+              return prev
+      },0)
+    },
     changeIncome1(row,cell){
         this.genNoUsed1()
         this.genNoUsed3()
@@ -551,7 +568,7 @@ return ''
     changeIncome2(row,cell){
         this.genNoUsed2()
         this.genNoUsed3()
-
+        // this.updateCash("SSS105",row)
     },
     changeIncome3(row,cell){
         this.genNoUsed2()
@@ -568,7 +585,9 @@ return ''
       if(this.compData1[1][key]){
           toredeem+=parseFloat(this.compData1[1][key])
       }
+      this.updateInvest("SY9620",key,{"value":this.compData1[0][key]})
       }
+      this.updateCash("SY9620",{"value":this.compData1[0]["SY9620"]})
       this.compData1[1]['SY9620']=toredeem
       this.compData1[3]["SY9620"]=Math.round(this.detailData.reduce((prev,next)=>{if(next['code']=='SY9620'){
         return prev+next['marketval']
@@ -582,10 +601,8 @@ return ''
       }
       this.compData1[4]["SY9620"]=-toinvest
       for (let i=0;i<3;i++){
-        console.log(this.compData1[i]["SY9620"])
         if(this.compData1[i]["SY9620"])
         this.compData1[4]["SY9620"]+=parseFloat(this.compData1[i]["SY9620"])
-        console.log(this.compData1[4]["SY9620"])
       }
       // this.genNoUsed3()
     },
@@ -593,6 +610,7 @@ return ''
       let toinvest=0
       let toredeem=0
       for(var key of ["SSN818","SSN369","STE599"]){
+      this.updateInvest("SSS105",key,{"value":this.compData2[0][key]})
       this.compData2[4][key]=this.compData2[0][key]
       if(this.compData2[0][key]){
           toinvest+=parseFloat(this.compData2[0][key])
@@ -601,18 +619,16 @@ return ''
           toredeem+=parseFloat(this.compData2[1][key])
       }
       }
+      this.updateCash("SSS105",{"value":this.compData2[0]["SSS105"]})
       this.compData2[1]['SSS105']=toredeem
       this.compData2[3]["SSS105"]=Math.round(this.detailData.reduce((prev,next)=>{if(next['code']=='SSS105'){
         return prev+next['marketval']
       }return prev},0)/10000)
       this.compData2[2]["SSS105"]=Math.round(this.finalData.filter(row=>row["code"]=='SSS105')[0]['cash']/10000)
-      console.log(toinvest)
       this.compData2[4]["SSS105"]=-toinvest
       for (let i=0;i<3;i++){
-        console.log(this.compData2[4]["SSS105"])
         if(this.compData2[i]["SSS105"])
         this.compData2[4]["SSS105"]+=parseFloat(this.compData2[i]["SSS105"])
-        console.log(this.compData2[4]["SSS105"])
       }
 
     },
@@ -640,6 +656,7 @@ return ''
       const cols=["预入款","预赎回","现金","在投","待分配合计"]
       const keys=["income","redeem","cash","marketval","unused"]
       const fofs=["SSN818","SSN369","STE599"] //["SY9620"]
+
       let rets=[]
       for(var col in cols){
         var ret={"name":cols[col]}
@@ -671,6 +688,16 @@ return ''
       }
       
       rets.push(ret)
+      }
+      rets[0]["SY9620"]=this.getCash("SY9620")
+      for (let key of fofs){
+                rets[0][key]=this.actionData.reduce((prev,row)=> {
+              if(row["code"]=="SY9620"&&row["stage"]=="待投资"&&row["b_code"]==key){
+                prev=prev+parseFloat(row['marketval'])
+              }
+              return prev
+      },0)
+
       }
       this.compData1=rets
       this.genNoUsed1()
@@ -707,6 +734,14 @@ return ''
       }
       rets.push(ret)
       }
+      rets[0]["SSS105"]=this.getCash("SSS105")
+      for (let key of fofs){
+                rets[0][key]=this.actionData.reduce((prev,row)=> {
+              if(row["code"]=="SSS105"&&row["stage"]=="待投资"&&row["b_code"]==key){
+                prev=prev+parseFloat(row['marketval'])
+              }
+              return prev
+      },0)}
       this.compData2=rets
       this.genNoUsed2()
     },
@@ -779,6 +814,18 @@ return ''
           if (this.curAction.stage == "预入款") {
             this.curAction["b_code"] = "CASH";
             this.curAction["b_name"] = "现金";
+            if(this.curAction["code"]=="SY9620"||this.curAction["code"]=="SSS105"){
+              this.updateCash(this.curAction["code"],{"value":this.curAction["marketval"]})
+              this.saveAction()
+            }else{
+               this.$message({
+            showClose: true,
+            message: "只有多策略和进取预入资金",
+            type: "error"
+          })
+                        return false;
+
+            }
           }
           // if (this.curAction.id) {
           //   for (let i in this.actionData) {
@@ -921,7 +968,8 @@ return ''
         .then((response) => {
           this.tableData = this.$tools
             .pandasToJson(response.data)
-            .filter((item) => !item.b_code.startsWith("SUBJECT2"));
+            .filter((item) => !item.b_code.startsWith("SUBJECT2")).map(row=>{row["b_name"]=row['b_name'].replace(/(指数增强|证券|私募).+基金/,"")
+            return row});
           this.calcFinal();
         })
         .catch((error) => {

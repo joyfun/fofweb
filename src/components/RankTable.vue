@@ -451,9 +451,13 @@ export default {
     },
     getWts(){
       let $this=this
-      this.$axios.get('/sys/getwts').then(response=>{
+
+      this.$axios.get('/sys/misc', { params: { "code": 'fof_weight' } }).then(response=>{
         $this.allwts=response.data
       })
+      // this.$axios.get('/sys/getwts').then(response=>{
+      //   $this.allwts=response.data
+      // })
     },
     getTable(){
         var $this=this

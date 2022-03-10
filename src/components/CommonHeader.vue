@@ -73,6 +73,22 @@
 </el-form>
 
     </el-dialog>
+
+  <el-dialog
+    width="80%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+     :visible.sync="dialogVisible"
+     >
+    <rank-chart       @close="editClose" ref="rankchart"    style="height: 600px" :code="cur_code"   v-if="diagName=='rankChart'"></rank-chart>
+    <fund-echart       @close="editClose" ref="hischart"    style="height: 600px" :code="cur_code"   v-if="diagName=='hisChart'"></fund-echart>
+    <his-table       @close="editClose" ref="histable"    style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
+    <rank-table       @close="editClose" ref="ranktable"    style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
+    <fof-simulate       @close="editClose" ref="simtable"   style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
+
+    </el-dialog>
+
 </div>
 </template>
 
@@ -83,12 +99,25 @@ import tools from '../store/tools.js';
 import axis from 'axios'
 const fs = require('fs')
 import DB from '@/store/localapi.js';
-
+import FundEchart from '@/components/FundEchart.vue';
+import HisTable from '@/components/HisTable.vue';
+import RankTable from '@/components/RankTable.vue';
+import RankChart from '@/components/RankChart.vue';
+import FofSimulate from '@/components/FofSimulate';
+import ReportTable from '@/components/ReportTable';
 
 const os = require('os')
 
 
 export default {
+        components: {
+            FundEchart,
+            HisTable,
+            RankTable,
+            FofSimulate,
+            RankChart,
+            ReportTable,
+        },
     computed: {
         ...mapState({
             current: state => state.tab.currentMenu
@@ -97,6 +126,9 @@ export default {
 
     },
       methods: {
+        editClose() {
+        this.dialogVisible = false
+        },
         loadDB(){
             const { dialog } = require('electron').remote
             console.log(dialog)
@@ -200,9 +232,24 @@ export default {
     data(){
         return{
             activeName:"首页",
+            dialogVisible:false,
+            cur_code:"",
+            diagName:"",
+            temp:"",
             resetVisible:false,
            userImg:require('../assets/images/user.png')
         }
+    },
+    created(){
+              Bus.$on('showChart',(arg)=> {
+                console.log("===============CHART show==================")
+                console.log(arg)
+              for(let key in arg){
+                this[key]=arg[key]
+              }
+              this.dialogVisible=true
+          console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
+      })
     }
 }
 </script>
