@@ -41,7 +41,9 @@
           </vxe-column>
             <vxe-column width="80" field="date" title="数据日期" >
           </vxe-column>
-          <vxe-column :key="af" sortable v-for="af of ['rank','rankF','rankR','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio','yeaily_return', 'volatility']"  :title="af" :field="af"  >
+           <vxe-column width="80" field="rank" sortable :title="rankTitle" >
+          </vxe-column>
+          <vxe-column :key="af" sortable v-for="af of ['sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio','yeaily_return', 'volatility']"  :title="af" :field="af"  >
             <template #default="{ row }">
               <span>{{ row[af] }}</span>
             </template>
@@ -78,6 +80,11 @@ export default {
     }
   },
   computed: {
+    rankTitle: {
+      get() {
+        return '排名('+this.tableData.length+')';
+      }
+    },
     ...mapState(["foflist"]),
     ...mapGetters(["sysparam","token","showFundName"]),
   },

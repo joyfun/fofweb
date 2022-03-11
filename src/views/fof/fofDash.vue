@@ -97,6 +97,8 @@
         </el-col><el-col :span="10">
     <vxe-table
           align="right"
+          show-footer
+          :footer-method="footerMethod1"
           size="mini"
           :data="finalData">
           <vxe-column field="name" title="基金名称" width="160"> </vxe-column>
@@ -395,6 +397,7 @@ export default {
       curAction: {},
       prodDisabled:false,
       finalData: [],
+      footerData:[],
       detailData: [],
       tableData: [],
       actionData: [],
@@ -566,6 +569,9 @@ return ''
       for(var key of ["SSN818","SSN369","STE599"]){
       this.compData3[5][key]=parseFloat(this.compData1[4][key])+parseFloat(this.compData2[4][key])-parseFloat(this.compData3[4][key])
       }
+      let fofs=["SY9620","SSS105","SSN818","SSN369","STE599"]
+      this.finalData.sort((a,b)=>{return fofs.indexOf(a.code)-fofs.indexOf(b.code)})
+
       // this.compData2[1]['SSS105']=toredeem
       // this.compData2[3]["SSS105"]=Math.round(this.detailData.reduce((prev,next)=>{if(next['code']=='SSS105'){
       //   return prev+next['marketval']
@@ -577,6 +583,18 @@ return ''
       //   if(this.compData2[i]["SSS105"])
       //   this.compData2[4]["SSS105"]+=parseFloat(this.compData2[i]["SSS105"])
       // }
+
+    },
+    footerMethod1(columns,data){
+     let cols=columns.columns
+     let ret=["总投资规模"]
+let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1 )
+     for (let cidx=1;cidx<cols.length;cidx++){
+      let cf=cols[cidx].field
+      let csum=selffund.reduce((prev,row)=>prev+row[cf],0)
+       ret.push(this.showMoney(Math.round(csum)))
+     }
+      return [ret]
 
     },
     genTitleData1(){
