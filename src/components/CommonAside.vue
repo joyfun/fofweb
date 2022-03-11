@@ -164,7 +164,14 @@ export default {
                             label: '混合',
                             name:'fund-info6',
                             icon:'setting'
-                        }, {
+                        },
+                        {
+                            path: '/rankinfo',
+                            label: '排名信息',
+                            name:'rank-info',
+                            icon:'setting'
+                        },
+                        {
                             path: '/listrank',
                             label: '清单分析',
                             name:'list-rank',

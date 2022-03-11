@@ -140,7 +140,7 @@ export default {
       series: [
         {
           type: 'line',
-          data: [120, 132, 101, 134, 90, 230, 210],
+          data: [],
         }
       ]
     },
@@ -228,11 +228,15 @@ export default {
             if(cnames.length==2){
               sname=this.showFundName(cnames[0])+"_"+cnames[1]
             }
+            let rval=response.data.data.map(row=>row[col]*100)
+            // if(rval.filter(row=>row).length>0){
             option.series.push({
           type: 'line',
           name: sname,
-          data: response.data.data.map(row=>row[col]*100),
+          data: rval,
         })
+            // }
+            
           }
           console.log(option)
           that.echart.setOption(option, true);

@@ -129,76 +129,6 @@
         </vxe-table>
                     <sankey-chart    ref="vchart"  titles="虚拟FOF"  style="height: 600px" :finalData="detailData" :total="compData1.length" ></sankey-chart>
 
-         <!-- <el-table
-          :data="finalData"
-          style="width: 100%; margin-bottom: 20px"
-          :row-key="getRowKeys"
-          border
-          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-        >
-          <el-table-column
-            label="基金名称"
-            sortable
-            prop="code"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">{{ scope.row["name"] }}</template>
-          </el-table-column>
-          <el-table-column
-            label="市值"
-            sortable
-            prop="marketval"
-            align="right"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">{{ showMoney(scope.row["marketval"]) }}</template>
-          </el-table-column>
-          <el-table-column
-            label="可用资金"
-            sortable
-            prop="cash"
-            align="right"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">{{ showMoney(scope.row["cash"]) }}</template>
-          </el-table-column>
-          <el-table-column
-            label="预入款"
-            sortable
-            prop="income"
-            align="right"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">{{ showMoney(scope.row["income"]) }}</template>
-          </el-table-column>
-          <el-table-column
-            label="预赎回"
-            sortable
-            prop="redeem"
-            align="right"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">{{ showMoney(scope.row["redeem"]) }}</template>
-          </el-table-column>
-          <el-table-column
-            label="待投资"
-            sortable
-            prop="buy"
-            align="right"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">{{ showMoney(scope.row["buy"]) }}</template>
-          </el-table-column>
-          <el-table-column
-            label="其它资产"
-            sortable
-            prop="process"
-            align="right"
-            show-overflow-tooltip
-          >            <template slot-scope="scope">{{ showMoney(scope.row["process"]) }}</template>
-
-          </el-table-column>
-        </el-table> -->
         </el-col>
       </el-row>
       </el-tab-pane>
@@ -269,13 +199,21 @@
            </vxe-table>
       </el-tab-pane>
       <el-tab-pane label="资金明细">
-        <el-button @click="addAction">添加</el-button>
+        <!-- <el-button @click="addAction">添加</el-button> -->
+
+          <vxe-toolbar>
+          <template #buttons>
+            <vxe-button @click="showRankHis">排名对比</vxe-button>
+            <vxe-button @click="addAction">添加</vxe-button>
+          </template>
+        </vxe-toolbar>
         <vxe-table
           ref="detailTable"
           align="right"
           size="small"
-          :sort-config="{trigger: 'cell', defaultSort: {field: 'rank', order: 'asc'}, orders: ['desc', 'asc', null]}"
+          :sort-config="{trigger: 'cell', defaultSort: {field: 'name', order: 'asc'}, orders: ['desc', 'asc', null]}"
           :data="detailData">
+          <vxe-column type="checkbox" width="30"></vxe-column>
           <vxe-column field="name" title="产品"  sortable width="160"> </vxe-column>
           <vxe-column field="b_name" align="left" title="基金名称" width="200">  
             <template #default="{ row }">
@@ -290,17 +228,17 @@
             </template>
             </vxe-column>
                     <vxe-colgroup title="排名信息" align="center">
-          <vxe-column :key="type" :field="type" width="80" sortable :title="type+'('+rlen[type]+')'" v-for=" type of this.types"> <template #default="{ row }">
-             {{ showRank(row,type) }}
-
-            </template>
+          <vxe-column :key="type" :field="type+'_r'" width="80" sortable :title="type+'('+rlen[type]+')'" :filters="[{label: '减退', value: 0.5},{label: '正常', value: 0}]" :filter-method="filterStatusMethod"   v-for=" type of this.types">
             </vxe-column>
                     </vxe-colgroup>
           <vxe-column field="stage" title="状态" width="60"></vxe-column>
-          <vxe-column field="act_amount" title="操作金额" width="80">
-            <template #default="{ row }">
+          <vxe-column field="mstatus" title="减退" width="60" sortable>
+          </vxe-column>
+
+          <vxe-column field="act_amount" title="操作金额(万)" width="80">
+            <!-- <template #default="{ row }">
               {{ showMoney(row.act_amount) }}
-            </template>
+            </template> -->
             </vxe-column>
           <vxe-column
             title="操作"
@@ -471,12 +409,20 @@ export default {
       this.saveAction()
 
     },
+    addCart(row){
+      if(row['b_code']){
+        Bus.$emit("addcart",{code:row['b_code'],name:row['b_name']})
+      }
+    },
      showHis(row){
-          console.log(row)
           Bus.$emit("showChart",{"cur_code":row.b_code,"diagName":"rankChart"})
 
       },
+     showRankHis(){
+          let sels=this.$refs.detailTable.getCheckboxRecords()
+          Bus.$emit("showChart",{"cur_code":sels.map(r=>r["b_code"]).join(','),"diagName":"rankChart"})
 
+      },
     cellClass1(row){
       let colsize=row.$table.getColumns().length
       if(row.row['name']=='待分配合计' &&row.columnIndex==colsize-1){
@@ -511,6 +457,19 @@ return ''
           this.actionData.push({"code":code,"stage":"预入款","b_code":"CASH","marketval":row['value']})
         }}
     },
+    filterStatusMethod({value, row, column} ) {
+             console.log(row)
+              //  for (let tp of this.types){
+              //    let lower= row[tp+'_r']>value
+              //    if(lower){
+              //     console.log(row)
+              //      return  lower
+              //    }
+              //  }
+              console.log(column)
+              return row[column.field] >= value
+            },
+
     updateInvest(code,b_code,row){
       if(row['value']&&row['value'].length>1){
         let old=this.actionData.filter(row=>row["code"]==code&&row["b_code"]==b_code&&row["stage"]=="待投资")
@@ -881,13 +840,17 @@ return ''
         }
          this.detailData.map(r=>{
            for(let k of this.types){
+             if(r['mstatus']){
+               break
+             }
              if(r[k]){
-               this.rlen[k]=r[k].split('-')[1]
+               let sps=r[k].split('-')
+               r[k+"_r"]=sps[0]
+               this.rlen[k]=sps[1]
+               r['mstatus']=sps[0]/sps[1]>0.5?"减退":""
              }
            }
          })
-
-         console.log(this.rlen)
       }
       for (var row of this.actionData) {
         let pdict = rdict[row["code"]];
@@ -947,7 +910,7 @@ return ''
     },
     getProducts() {
       this.$axios
-        .get("/fof/holding", { params: { code: "" } }) //axis后面的.get可以省略；
+        .get("/fof/holding", { params: { code: "",extra:"1" } }) //axis后面的.get可以省略；
         .then((response) => {
           this.tableData = this.$tools
             .pandasToJson(response.data)

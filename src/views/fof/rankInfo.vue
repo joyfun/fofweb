@@ -1,7 +1,9 @@
 <template>
   <div ref="tableContainer" style="	height : 100%;">
-{{type}}{{date}}
-    <el-date-picker style="width:130px"
+          <vxe-toolbar>
+          <template #buttons>
+            <vxe-button @click="showRankHis">排名对比</vxe-button>
+            <el-date-picker style="width:130px"
       v-model="date"
       value-format="yyyyMMdd"
       format="yyyyMMdd"
@@ -18,19 +20,24 @@
             <vxe-radio-button label="中性" content="中性"></vxe-radio-button>
 
           </vxe-radio-group>
+          </template>
+        </vxe-toolbar>    
        <vxe-table
           border
+          ref="rankTable"
           :align="allAlign"
           size="mini"
           show-overflow
           :sort-config="{trigger: 'cell', defaultSort: {field: 'rank', order: 'asc'}, orders: ['desc', 'asc', null]}"
           :data="tableData"
         >
+                  <vxe-column type="checkbox" width="30"></vxe-column>
           <!-- <vxe-column type="seq" width="60"></vxe-column> -->
           <vxe-column width="160" field="code" title="产品名称" >
-            <template #default="{ row }">{{
-              showFundName(row.code)
-            }}</template>
+        <template #default="{ row }">
+                   <el-button  @click.native.prevent="addCart(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
+       <a href="javascript:;" @click="showHis(row)">{{ showFundName(row.code) }}</a>
+            </template>
           </vxe-column>
             <vxe-column width="80" field="date" title="数据日期" >
           </vxe-column>
@@ -45,6 +52,7 @@
 
  <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
+import Bus from '@/store/bus.js';
 export default {
         //   components: {
         //     SankeyChart,
@@ -82,6 +90,21 @@ export default {
     };
   },
   methods: {
+
+        addCart(row){
+      if(row['code']){
+        Bus.$emit("addcart",{code:row['code'],name:this.showFundName(row['code'])})
+      }
+    },
+         showHis(row){
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"rankChart"})
+
+      },
+     showRankHis(){
+          let sels=this.$refs.rankTable.getCheckboxRecords()
+          Bus.$emit("showChart",{"cur_code":sels.map(r=>r["code"]).join(','),"diagName":"rankChart"})
+
+      },
     getProducts() {
       this.$axios
         .get("/fof/rankbyType", { params: { date: this.date,type:this.type } })

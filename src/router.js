@@ -21,7 +21,7 @@ const compare2 =()=> import('@/views/fof/fofCompare.vue')
 const compare3 =()=> import('@/views/fof/fofCompare.vue')
         //component:() => import('@/views/fof/fofSimple.vue')
 var home = () => import('@/views/Home/FundHome.vue')
-//  var home = () => import('@/views/fof/fofDash.vue')
+// var home = () => import('@/views/fof/rankInfo.vue')
 if(tools.isElectron()){
   home = () => import('@/views/fof/fofSimple.vue')
 }
@@ -114,6 +114,10 @@ const routes = [
         props:{
             filters:{class_type:'混合'}
        }
+      },{
+        path: '/rankinfo',
+        name: 'rank-info',
+        component:() => import('@/views/fof/rankInfo.vue')
       },
       {
         path: '/listrank',
@@ -193,9 +197,6 @@ const routes = [
         path: '/fofdash',
         name: 'fof-dash',
         component:() => import('@/views/fof/fofDash.vue')
-        // props:{
-        //     url:"/fof/jcompare"
-        // },
       },
       {
         path: '/fundextra',
@@ -279,7 +280,12 @@ const routes = [
             parent:0,
         },
         component:() => import('@/views/sys/sysParam.vue')
-      }
+      },
+      // {
+      //   path: '/sysconfig',
+      //   name: 'sys-config',
+      //   component:() => import('@/views/sys/sysConfig.vue')
+      // },
       ,
       {
         path: '/syscfg',
@@ -287,7 +293,7 @@ const routes = [
         params:{
             cfg:1,
         },
-        component:() => import('@/views/sys/sysParam.vue')
+        component:() => import('@/views/sys/sysConfig.vue')
       }
       ,
       {
