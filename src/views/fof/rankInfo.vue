@@ -37,6 +37,8 @@
         <template #default="{ row }">
                    <el-button  @click.native.prevent="addCart(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
        <a href="javascript:;" @click="showHis(row)">{{ showFundName(row.code) }}</a>
+                           <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="历史" placement="left-start"><i class="el-icon-s-marketing" ></i></el-tooltip></el-button>
+
             </template>
           </vxe-column>
             <vxe-column width="80" field="date" title="数据日期" >
@@ -102,6 +104,14 @@ export default {
       if(row['code']){
         Bus.$emit("addcart",{code:row['code'],name:this.showFundName(row['code'])})
       }
+    },
+     showFundHis(row){
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisChart"})
+
+      },
+    showHis(row){
+       Bus.$emit("showChart",{"cur_code":row.code,"diagName":"rankChart"})
+
     },
          showHis(row){
           Bus.$emit("showChart",{"cur_code":row.code,"diagName":"rankChart"})

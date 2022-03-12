@@ -1,14 +1,13 @@
 <template>
 <div ref="echartdiv">
       <!-- <rank-table       ref="ranktable"  :titles="compare"  style="height: 800px"  :code="code"  ></rank-table> -->
-  <div style="height: 420px" ref="echart">
+  <div style="height: 480px" ref="echart">
     <!-- <el-button-group>
   <el-button type="primary">7天</el-button>
   <el-button type="primary">30天</el-button>
   <el-button type="primary">90天</el-button>
   <el-button type="primary">本年</el-button>
 </el-button-group> -->
-    基金排名信息
   </div>
 </div>
 </template>
@@ -109,9 +108,9 @@ export default {
           top: "middle",
           right: 0,
         }],
-      title: {
-        text: '基金排名图'
-      },
+      // title: {
+      //   text: '基金排名图'
+      // },
        tooltip: {
           trigger: "axis",
           valueFormatter: (value) => value.toFixed(2)
@@ -135,7 +134,8 @@ export default {
     inverse: true,
     axisLabel: {
       formatter: '{value} %'
-    }
+    },
+    max:100
   },
       series: [
         {

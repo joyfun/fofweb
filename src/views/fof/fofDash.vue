@@ -221,6 +221,8 @@
             <template #default="{ row }">
                    <el-button  @click.native.prevent="addCart(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
        <a href="javascript:;" @click="showHis(row)">{{ row.b_name }}</a>
+                    <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="历史" placement="left-start"><i class="el-icon-s-marketing" ></i></el-tooltip></el-button>
+
             </template>
 
              </vxe-column>
@@ -417,7 +419,11 @@ export default {
         Bus.$emit("addcart",{code:row['b_code'],name:row['b_name']})
       }
     },
-     showHis(row){
+     showFundHis(row){
+          Bus.$emit("showChart",{"cur_code":row.b_code,"diagName":"hisChart"})
+
+      },
+      showHis(row){
           Bus.$emit("showChart",{"cur_code":row.b_code,"diagName":"rankChart"})
 
       },
