@@ -235,21 +235,6 @@
     <fund-echart    ref="hischart1"  :titles="current.name"  style="height: 480px" :code="selcode"  ></fund-echart>
 </div>
         </el-dialog>
-
-        <el-dialog
-    width="80%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-     :visible.sync="dialogVisible"
-     >
-    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='hisChart'"></fund-echart>
-    <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
-    <rank-table       @close="editClose" ref="ranktable"  :titles="current.name"  style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
-    <fof-simulate       @close="editClose" ref="simtable"  :titles="current.name"  style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
-
-    </el-dialog>
-
         <el-dialog
     width="50%"
     top="50px"
@@ -690,13 +675,8 @@ showResult(number,rate=100){
         return this.$tools.formatMoney(number*rate,3)
     },
       showHis(row){
-          console.log(this.diagName)
-          this.cur_code=""
-          this.current=row
-          this.dialogVisible=true
-          this.diagName="hisChart"
-          this.cur_code=row.code
-          console.log(this.diagName)
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisChart"})
+
       },
       showRank(){
           this.cur_code=""
@@ -709,12 +689,11 @@ showResult(number,rate=100){
               }
           }
           this.cur_code=selcode
-          console.log(this.cur_code)
+          Bus.$emit("showChart",{"cur_code":this.cur_code,"diagName":"rankDialog"})
+
       },
       showSimulate(){
           this.cur_code=""
-          this.dialogVisible=true
-          this.diagName="simuDialog"
           var selcode=""
           for (let i = 0; i < this.multipleSelection.length; i++) {
             if(this.multipleSelection[i].stage!='非卖'){
@@ -723,6 +702,8 @@ showResult(number,rate=100){
           }
           this.cur_code=selcode
           console.log(this.cur_code)
+        Bus.$emit("showChart",{"cur_code":this.cur_code,"diagName":"simuDialog"})
+
       },
       onSubmit(){
           
@@ -812,15 +793,7 @@ showResult(number,rate=100){
           this.cur_code=codes
       },
       viewHis(row){
-          this.temp=-1
-          this.cur_code=""
-          this.current=row
-          this.dia=true
-          this.cur_code=row.code
-          this.dialogVisible=true
-          this.diagName="hisTable"
-
-
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisTable","temp":-1})
       },
       viewAudit(row){
           this.temp=-1
@@ -840,13 +813,8 @@ showResult(number,rate=100){
       },
       
       viewHisTemp(row){
-          this.temp=1
-          this.cur_code=""
-          this.current=row
-          this.hisVisible=true
-          this.cur_code=row.code
-          this.dialogVisible=true
-          this.diagName="hisTable"
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisTable","temp":1})
+
       },
        editStatus(row){
           this.cur_code=""
