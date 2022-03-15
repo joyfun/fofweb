@@ -114,24 +114,6 @@
         </el-pagination>
       </div>
     </div>
-
-        <el-dialog
-    width="80%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="hisVisible">
-    <his-table       @close="editClose" ref="histable"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  :visable="dialogVisible"></his-table>
-    </el-dialog>
-     <el-dialog
-    width="80%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="dialogVisible"
-  >
-    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  :code="cur_code"  :visable="dialogVisible"></fund-echart>
-    </el-dialog>
   </div>
 </template>
 
@@ -145,15 +127,13 @@
 <!--8、预期输出-->
 <script>
 import axis from "axios";
-import FundEchart from "../../components/FundEchart.vue";
-import HisTable from '../../components/HisTable.vue';
 
 import {mapGetters} from 'vuex'
 
 export default {
-  components: {
-    FundEchart,HisTable
-  },
+  // components: {
+  //   FundEchart,HisTable
+  // },
    computed: {
      ...mapGetters(['class_order','sysparam'])
    },
@@ -167,8 +147,6 @@ export default {
     return {
       current: {},
       cur_code: "",
-      dialogVisible: false,
-      hisVisible:false,
       temp:0,
       rowdata: "",
       value2: "",
@@ -215,18 +193,9 @@ export default {
                 this.tmaxh=this.$refs.tableContainer.clientHeight-120
 
       },
-            viewHisTemp(row){
-          this.temp=1
-          this.cur_code=""
-          this.current=row
-          this.hisVisible=true
-          this.cur_code=row.code
-
+      viewHisTemp(row){
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisTable","temp":1})
       },
-    editClose() {
-      this.hisVisible=false;
-      this.dialogVisible = false;
-    },
     showResult(number,rate=100){
        if (null == number)
           return '' 
@@ -246,12 +215,8 @@ export default {
         }
     },
 
-    showHis(row){
-          this.cur_code=""
-          this.current=row
-          this.dialogVisible=true
-          this.cur_code=row.code
-        //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
+      showHis(row){
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisChart"})
       },
     handleClose(done) {
       done();

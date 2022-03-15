@@ -109,7 +109,7 @@ export default {
                         },{
                             path: '/funddash',
                             label: '数据时效',
-                            name:'fof-dash',
+                            name:'fund-dash',
                             icon:'setting'
                         } ],
                 "company":[{

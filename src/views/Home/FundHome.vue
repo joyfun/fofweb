@@ -126,14 +126,6 @@
             </div> -->
     </el-col>
   </el-row>
-   <el-dialog
-    width="80%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="dialogVisible"
-  >  <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
-    </el-dialog>
 </div> 
 </template>
 
@@ -266,11 +258,10 @@ export default {
         this.dialogVisible = false
         },
          showHis(row){
-          console.log(row)
           this.cur_code=""
           this.current=row
-          this.dialogVisible=true
           this.cur_code=row.code
+          Bus.$emit("showChart",{"cur_code":this.cur_code,"diagName":"hisChart"})
         //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
       },
             showChartByCodes(codes){

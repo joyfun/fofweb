@@ -520,6 +520,7 @@
       submitForm(formName) {
           if(this.current.type && this.current.class_type){
             this.current.code=this.current.code.trim()
+            this.current.user=this.token
           axis({
       method: 'post',
       url: "/fof/saveinfo", // 请求地址

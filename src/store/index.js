@@ -62,7 +62,7 @@ export default new Vuex.Store({
         {lable:"业绩预警",value:"fund-alarm"},
         {lable:"刷新参数",value:"fof-action"},
         {lable:"三方数据",value:"fof-crawl"},
-        {lable:"数据时效",value:"fof-dash"},
+        {lable:"数据时效",value:"fund-dash"},
         {lable:"清单分析",value:"list-rank"},
         {lable:"编辑信息",value:"info-edit"},
         {lable:"审核信息",value:"info-audit"},

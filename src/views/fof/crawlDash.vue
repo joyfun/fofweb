@@ -39,16 +39,17 @@
 
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="amount"
+        sortable
         width="200"
         label="基金名称"
         show-overflow-tooltip
       >
-        <template slot-scope="scope"
-          ><a href="javascript:;" @click="showHis(scope.row)">{{
+        <template slot-scope="scope">
+          <a href="javascript:;" @click="showHis(scope.row)"><span :style="'text-align:right;color:'+(scope.row['amount']>0?'red':'black') " >{{
             scope.row["name"]
-          }}</a></template
-        >
+          }}</span></a>
+          </template>
       </el-table-column>
       <el-table-column
         prop="start_date"
@@ -121,6 +122,16 @@
 
       </el-table-column>
       <el-table-column
+        prop="miss"
+        width="160"
+        label="说明"
+        sortable
+        show-overflow-tooltip
+      >
+             <template slot-scope="scope">{{ scope.row['remark'] }}</template>
+
+      </el-table-column>
+      <el-table-column
         prop="code"
         width="120"
         label="原始值"
@@ -186,16 +197,12 @@
 <!--8、预期输出-->
 <script>
 import axis from "axios";
-import FundEchart from "../../components/FundEchart.vue";
-import HisTable from '../../components/HisTable.vue';
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
 import {mapGetters} from 'vuex'
+import Bus from '@/store/bus.js';
 
 export default {
-  components: {
-    FundEchart,HisTable
-  },
    computed: {
      ...mapGetters(['class_order','sysparam'])
    },
@@ -283,13 +290,8 @@ export default {
                 this.tmaxh=this.$refs.tableContainer.clientHeight-120
 
       },
-            viewHisTemp(row){
-          this.temp=1
-          this.cur_code=""
-          this.current=row
-          this.hisVisible=true
-          this.cur_code=row.code
-
+      viewHisTemp(row){
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisTable","temp":1})
       },
     editClose() {
       this.hisVisible=false;
@@ -315,11 +317,7 @@ export default {
     },
 
     showHis(row){
-          this.cur_code=""
-          this.current=row
-          this.dialogVisible=true
-          this.cur_code=row.code
-        //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisChart"})
       },
     handleClose(done) {
       done();
