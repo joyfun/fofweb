@@ -20,6 +20,12 @@
             <vxe-radio-button label="中性" content="中性"></vxe-radio-button>
 
           </vxe-radio-group>
+
+          <vxe-radio-group v-model="range" :strict="false">
+            <vxe-radio label="hyr" content="半年"></vxe-radio>
+            <vxe-radio label="1yr" content="1年"></vxe-radio>
+            <vxe-radio label="2yr" content="2年"></vxe-radio>
+          </vxe-radio-group>
           </template>
         </vxe-toolbar>    
        <vxe-table
@@ -50,6 +56,11 @@
               <span>{{ row[af] }}</span>
             </template>
           </vxe-column>
+            <vxe-column sortable  title="级别"  field="level" >
+            <template #default="{ row }">
+              <span>{{ classify(row) }}</span>
+            </template>
+          </vxe-column>
         </vxe-table> 
     </div>
 </template>
@@ -69,6 +80,12 @@ export default {
   },
   watch: {
     type :{
+              handler(n){
+                  this.getProducts()
+            },
+    
+    },
+    range :{
               handler(n){
                   this.getProducts()
             },
@@ -94,11 +111,34 @@ export default {
     return {  
         allAlign:"right",
         tableData:[],
+        range:"1yr",
         date: '',
         type: 'aas',
+       cls_gap:{"aas":{"limit":{"dd":[-0.1,0],"volatility":[0,0.15]},"level":{"dd":[-0.07,-0.05,-0.03]}},
+                "cta0":{"limit":{"dd":[-0.2,0],"dd_week":[0,60]},"level":{"dd":[-0.15,-0.07,-0.03]}},
+               "cta1":{"limit":{"dd":[-0.2,0],"dd_week":[0,60]},"level":{"dd":[-0.15,-0.07,-0.03]}}}
     };
   },
   methods: {
+
+     classify(row){
+       let key=this.type
+       row["level"]="丁"
+       let conf=this.cls_gap['aas']
+       if(this.cls_gap[this.type]){
+         conf=this.cls_gap[this.type]
+       }
+        let ranks=["丙","乙","甲"]
+          for(var lvk  in  conf["level"]){
+            let alvs=conf["level"][lvk]
+            for (var i in alvs){
+              if(row[lvk]>alvs[i]){
+                row["level"]=ranks[i]
+              }
+            }
+          }
+          return row['level']
+        },
 
         addCart(row){
       if(row['code']){
@@ -124,7 +164,7 @@ export default {
       },
     getProducts() {
       this.$axios
-        .get("/fof/rankbyType", { params: { date: this.date,type:this.type } })
+        .get("/fof/rankbyType", { params: { date: this.date,type:this.type ,range:this.range} })
         .then((response) => {
           this.tableData =response.data
         })

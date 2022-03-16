@@ -212,6 +212,7 @@
         <vxe-table
           ref="detailTable"
           align="right"
+          height="auto"
           size="small"
           :sort-config="{trigger: 'cell', defaultSort: {field: 'name', order: 'asc'}, orders: ['desc', 'asc', null]}"
           :data="detailData">
@@ -468,6 +469,8 @@ return ''
     },
     filterStatusMethod({value, row, column} ) {
              console.log(row)
+             console.log(column.field)
+
               //  for (let tp of this.types){
               //    let lower= row[tp+'_r']>value
               //    if(lower){
@@ -475,8 +478,11 @@ return ''
               //      return  lower
               //    }
               //  }
-              console.log(column)
-              return row[column.field] >= value
+              let fld=column.field.split("_")[0]
+              if(this.rlen[fld]){
+              return row[column.field]/this.rlen[fld] >= value
+              }
+              return false
             },
 
     updateInvest(code,b_code,row){
@@ -934,7 +940,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
     },
     getProducts() {
       this.$axios
-        .get("/fof/holding", { params: { code: "",extra:"1" } }) //axis后面的.get可以省略；
+        .get("/fof/holding", { params: { code: "",extra:"1yr" } }) //axis后面的.get可以省略；
         .then((response) => {
           this.tableData = this.$tools
             .pandasToJson(response.data)

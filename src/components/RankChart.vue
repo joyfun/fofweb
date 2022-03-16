@@ -1,6 +1,11 @@
 <template>
 <div ref="echartdiv">
       <!-- <rank-table       ref="ranktable"  :titles="compare"  style="height: 800px"  :code="code"  ></rank-table> -->
+            <vxe-radio-group v-model="range" :strict="false">
+            <vxe-radio label="hyr" content="半年"></vxe-radio>
+            <vxe-radio label="1yr" content="1年"></vxe-radio>
+            <vxe-radio label="2yr" content="2年"></vxe-radio>
+          </vxe-radio-group>
   <div style="height: 480px" ref="echart">
     <!-- <el-button-group>
   <el-button type="primary">7天</el-button>
@@ -57,10 +62,10 @@ export default {
     },
   },
   watch: {
-    isVisible: {
+    range:{
       handler: function (val) {
         if (val) {
-          this.getChart(this.code);
+          this.getChartData()
         }
       },
     },
@@ -83,7 +88,7 @@ export default {
       lv1:["SY9620","SSS105"],
       lowest:0.9,
       startdate:'',
-      range:'',
+      range:'1yr',
       showdrop:false,
       startidx: 0,
       max_date: "",
@@ -217,7 +222,7 @@ export default {
     getChartData(){
       let that=this
       this.$axios
-        .get("/fof/hisrank", { params: { "code": this.code } }) //axis后面的.get可以省略；
+        .get("/fof/hisrank", { params: { "code": this.code ,"range":this.range} }) //axis后面的.get可以省略；
         .then((response) => {
           let option = that.echart.getOption();
           option.xAxis[0].data=response.data.index
