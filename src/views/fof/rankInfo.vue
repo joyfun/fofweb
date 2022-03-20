@@ -35,7 +35,7 @@
           :align="allAlign"
           size="mini"
           show-overflow
-          :sort-config="{trigger: 'cell', defaultSort: {field: 'rank_1yr', order: 'asc'}, orders: ['desc', 'asc', null]}"
+          :sort-config="{trigger: 'cell', defaultSort: {field: 'rankF_1yr_r', order: 'asc'}, orders: ['desc', 'asc', null]}"
           :data="tableData"
         >
                   <vxe-column  type="checkbox" width="30"></vxe-column>
@@ -203,6 +203,7 @@ export default {
             }
           })
           this.$refs.rankTable.reloadData(this.tableData)
+          this.$refs.rankTable.sort({field: 'rankF_1yr_r', order: 'asc'})
         })
         .catch((error) => {
           console.log(error);
