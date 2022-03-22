@@ -271,7 +271,7 @@ export default {
                 (response) => {
                     console.log(response.data)
                     $this.tableData=response.data
-                    console.log($this.tableData)
+
                     for(var a in $this.tableData){
                     console.log(a)
                     DB.do_calc($this.tableData[a],this.cols,this.limit_dic,this.wts)

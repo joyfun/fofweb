@@ -776,15 +776,17 @@ showResult(number,rate=100){
             return
         }
         var selcode=""
-        console.log(this.multipleSelection)
+        // console.log(this.multipleSelection)
         for (let i = 0; i < this.multipleSelection.length; i++) {
               selcode+=","+this.multipleSelection[i].code;
         }
-          this.cur_code=""
-          this.current=this.multipleSelection[0]
-          this.dialogVisible=true
-          this.diagName="hisChart"
-          this.cur_code=selcode
+          // this.cur_code=""
+          // this.current=this.multipleSelection[0]
+          // this.dialogVisible=true
+          // this.diagName="hisChart"
+          // this.cur_code=selcode
+          Bus.$emit("showChart",{"cur_code":selcode,"diagName":"hisChart"})
+
         //   this.$refs.hischart.$emit("getChart",selcode)  
       },
       showChartByCodes(codes){

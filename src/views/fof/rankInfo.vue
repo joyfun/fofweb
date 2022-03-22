@@ -26,6 +26,7 @@
             <vxe-radio label="1yr" content="1年"></vxe-radio>
             <vxe-radio label="2yr" content="2年"></vxe-radio>
           </vxe-radio-group>
+                              <vxe-button @click="exportDataEvent">导出</vxe-button>
           </template>
         </vxe-toolbar>   
        <vxe-table
@@ -48,15 +49,20 @@
 
             </template>
           </vxe-column>
-            <vxe-column  sortable  title="级别"  field="lscore" >
-            <template #default="{ row }">
+            <vxe-column  sortable  title="级别"  field="level" sort-by="lscore" >
+            <!-- <template #default="{ row }">
               <span>{{ nclassify(row) }}</span>
-            </template>
+            </template> -->
           </vxe-column> 
            <vxe-colgroup  :key="type" :title="type+'排名信息('+rgdict[type]+')'" align="center" v-for=" type of ['hyr','1yr','2yr']">
                <vxe-column   :field="'rankF_'+type+'_r'" width="60" sortable :title="'rank'" >
+                               <!-- <span>{{ row['rankF_'+type+'_r'].toFixed(3) }}</span> -->
+
             </vxe-column>
                <vxe-column :key="dkey" :field="dkey+'_'+type" width="60" sortable :title="dkey"  v-for="dkey in ['std','mean','slope','listrate']">
+                             <!-- <template #default="{ row }">
+              <span>{{ row[dkey+'_'+type].toFixed(3) }}</span>
+            </template> -->
             </vxe-column>
                 </vxe-colgroup>
 
@@ -64,7 +70,7 @@
                 
          <vxe-column :key="af" width="60" sortable v-for="af of ['sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio','yeaily_return', 'volatility']"  :title="af" :field="af"  >
             <template #default="{ row }">
-              <span>{{ row[af] }}</span>
+              <span>{{ row[af].toFixed(3) }}</span>
             </template>
           </vxe-column>
           </vxe-colgroup>
@@ -80,6 +86,8 @@
            'cta1': [[-0.13, -0.15, -0.2], [0.15, 0.2, 0.25]]}
 const lvs=["丁","丙","乙","甲"]
 import { mapGetters, mapMutations, mapState } from "vuex";
+import XLSX from 'xlsx'
+import FileSaver from 'file-saver'
 import Bus from '@/store/bus.js';
 export default {
         //   components: {
@@ -149,6 +157,7 @@ export default {
          }
        }
       row['lscore']=score
+      row['level']=lvs[score-1]
       return lvs[score-1]
      },
      classify(row){
@@ -192,15 +201,36 @@ export default {
           Bus.$emit("showChart",{"cur_code":sels.map(r=>r["code"]).join(','),"diagName":"rankChart"})
 
       },
+    exportDataEvent () {
+      var title='排名信息'+this.type+'_'+this.date
+      console.log(this.$refs.rankTable)
+      var workbook = XLSX.utils.book_new();
+      var st = XLSX.utils.table_to_sheet(this.$refs.rankTable.$el)
+      XLSX.utils.book_append_sheet(workbook, st, "评分");
+      var wbout = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'array' })
+         try {
+      FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
+   }    catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+              // this.$refs.rankTable.exportData({
+              //   filename: '排名信息'+this.type+'_'+this.date,
+              //   sheetName: 'Sheet1',
+              //   type: 'xlsx'
+              // })
+            },
     getBaseInfo(){
+     let that=this
      this.$axios
         .get("/fof/baseinfo", { params: { date: this.date,type:this.type ,range:this.range,code:this.tableData.map(row=>row.code).join()} })
         .then((response) => {
           this.baseData =response.data
           this.tableData.map(row=>{
+            if(this.baseData[row.code]){
             for (let af of ['sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio','yeaily_return', 'volatility']){
               row[af]=this.baseData[row.code][af]
             }
+            that.nclassify(row)
+            }
+            return row
           })
           this.$refs.rankTable.reloadData(this.tableData)
           this.$refs.rankTable.sort({field: 'rankF_1yr_r', order: 'asc'})
