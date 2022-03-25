@@ -26,6 +26,7 @@ export default new Vuex.Store({
     cart:[],
     
     allparam:{},
+    holding:{},
     usermenu:Cookies.get("umenu"),
 
     param:{"class_type":[],"stage":[]},
@@ -128,6 +129,9 @@ export default new Vuex.Store({
     setAllParam(state,params){
         state.allparam=params
     },
+    setHolding(state,params){
+      state.holding=params
+  },
     updateUserMenu(state,params){  
         Cookies.set("umenu", params, { expires: 1 / 24 })
         if(params)

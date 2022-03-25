@@ -231,7 +231,8 @@
     <el-button  @click="downFile('/fof/jreport_down')" size="small">下载数据</el-button>
     <el-button  @click="downPDF('comparediv')" size="small">导出PDF</el-button>
 <div ref="comparediv">
-    <report-table  ref="compdata"  :titles="current.name"   :tableData="compData"  ></report-table>
+    <!-- <report-table  ref="compdata"  :titles="current.name"   :tableData="compData"  ></report-table> -->
+    <compare-table  ref="compdata"  :titles="current.name"  :code="selcode"   ></compare-table>
     <fund-echart    ref="hischart1"  :titles="current.name"  style="height: 480px" :code="selcode"  ></fund-echart>
 </div>
         </el-dialog>
@@ -370,6 +371,8 @@
     import WadForm from '../../components/WadForm';
 
     import ReportTable from '../../components/ReportTable';
+    import CompareTable from '../../components/CompareTable';
+
     import {mapGetters} from 'vuex'
 
     import FundCorr from '../../components/FundCorr.vue';
@@ -417,6 +420,7 @@
             ConcatLog,
             FofSimulate,
             ReportTable,
+            CompareTable,
             WadForm,
             FundCorr,
             WadForm
@@ -857,20 +861,20 @@ showResult(number,rate=100){
             curl=vcomp
         this.tableVisible=true
         this.selcode=selcode
-        this.cur_code=selcode
-        // console.log(this.multipleSelection)
-          axis( {
-                url: curl,
-                method: 'GET',
-                params: {code:selcode}
-                })//axis后面的.get可以省略；
-        .then((response) => {
-          this.compData = this.$tools.pandasToJson(response.data);
-          //this.tableData = this.totaltableData;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        // this.cur_code=selcode
+        // // console.log(this.multipleSelection)
+        //   axis( {
+        //         url: curl,
+        //         method: 'GET',
+        //         params: {code:selcode}
+        //         })//axis后面的.get可以省略；
+        // .then((response) => {
+        //   this.compData = this.$tools.pandasToJson(response.data);
+        //   //this.tableData = this.totaltableData;
+        // })
+        // .catch((error) => {
+        //   console.log(error);
+        // });
       },
       compare() {
         // console.log(this.multipleSelection)

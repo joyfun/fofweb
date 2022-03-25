@@ -32,9 +32,14 @@ const getters = {
 
   },
   showFundName: (state) => (code) => {
+    let blen=state.holding.filter(row=>row['b_code']==code).length
+    let name=""
+    if(blen>0){
+      name="💰"
+    }
     for (var item of state.foflist){
       if (code==item['code']){
-        return item['name']
+        return name+item['name']
       }
   }
   return code

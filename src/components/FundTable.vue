@@ -335,9 +335,13 @@ export default {
       this.sel.forEach((row)=>{
         codes=codes+row['code']+","
       })
-      console.log(codes)
+      console.log(this.$route.path)
+      if(this.$route.path.indexOf('fundinfo')>-1){
       Bus.$emit('cartchart',codes)
-
+      }
+      else{
+      Bus.$emit("showChart",{"cur_code":codes,"diagName":"compareTable"})
+      }
     },
     showRank(rows){
       var codes=""

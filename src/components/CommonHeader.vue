@@ -81,12 +81,29 @@
     :close-on-press-escape="false"
      :visible.sync="dialogVisible"
      >
+    
     <rank-chart       @close="editClose" ref="rankchart"    style="height: 600px" :code="cur_code"   v-if="diagName=='rankChart'"></rank-chart>
-    <fund-echart       @close="editClose" ref="hischart"    style="height: 600px" :code="cur_code"   v-if="diagName=='hisChart'"></fund-echart>
+    <compare-table      @close="editClose" ref="comparetable"  :code="cur_code"   v-if="diagName=='compareTable'"></compare-table>
+    <fund-echart       @close="editClose" ref="hischart"    style="height: 500px" :code="cur_code"   v-if="diagName=='hisChart'||diagName=='compareTable'"></fund-echart>
     <his-table       @close="editClose" ref="histable"    style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
     <rank-table       @close="editClose" ref="ranktable"    style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
-    <fof-simulate       @close="editClose" ref="simtable"   style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
+    <fof-simulate     @close="editClose" ref="simtable"   style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
+<el-tabs type="border-card"  v-if="diagName=='fullDialog'">
+      <el-tab-pane>
+        <span slot="label"><i class="el-icon-date"></i> 净值曲线</span> 
+    <fund-echart       @close="editClose" ref="hischart"    style="height: 500px" :code="cur_code" ></fund-echart>
 
+      </el-tab-pane>
+            <el-tab-pane>
+        <span slot="label"><i class="el-icon-date"></i> 指标信息</span> 
+    <compare-table      @close="editClose" ref="comparetable"  :code="cur_code"   ></compare-table>
+
+      </el-tab-pane>
+          <!-- <el-tab-pane>
+        <span slot="label"><i class="el-icon-date"></i> 排名曲线</span> 
+            <rank-chart       @close="editClose" ref="rankchart"    style="height: 600px" :code="cur_code"  ></rank-chart>
+      </el-tab-pane> -->
+</el-tabs>
     </el-dialog>
 
 </div>
@@ -105,6 +122,7 @@ import RankTable from '@/components/RankTable.vue';
 import RankChart from '@/components/RankChart.vue';
 import FofSimulate from '@/components/FofSimulate';
 import ReportTable from '@/components/ReportTable';
+import CompareTable from '@/components/CompareTable';
 
 const os = require('os')
 
@@ -116,6 +134,7 @@ export default {
             RankTable,
             FofSimulate,
             RankChart,
+            CompareTable,
             ReportTable,
         },
     computed: {

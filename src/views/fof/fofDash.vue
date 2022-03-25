@@ -2,7 +2,8 @@
   <div id="tableContainer" style="height: 100%">
     <el-tabs type="border-card">
       <el-tab-pane>
-        <span slot="label"><i class="el-icon-date"></i> 资金状况</span>
+        <span slot="label"><i class="el-icon-date"></i> 资金状况</span>                               <vxe-button @click="jumptodash">排名信息</vxe-button>
+
 <!-- 
         <vxe-table
           :align="allAlign"
@@ -377,7 +378,7 @@ export default {
     combineDate() {
       return this.detailData.concat(this.actionData);
     },
-    ...mapState(["foflist"]),
+    ...mapState(["foflist","holding"]),
     ...mapGetters(["sysparam","token","showFundName"]),
   },
   data() {
@@ -410,6 +411,15 @@ export default {
     };
   },
   methods: {
+          jumptodash(){
+            this.$router.push({name:'rank-info'})  
+            this.$store.commit('selectMenu',{
+		"path": "/rankinfo",
+		"label": "排名信息",
+		"name": "rank-info",
+		"icon": "setting"
+	});
+      },
     delAction(row,idx){
       this.actionData.splice(idx,1)
       this.saveAction()
@@ -939,18 +949,20 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
 
     },
     getProducts() {
-      this.$axios
-        .get("/fof/holding", { params: { code: "",extra:"1yr" } }) //axis后面的.get可以省略；
-        .then((response) => {
-          this.tableData = this.$tools
-            .pandasToJson(response.data)
-            .filter((item) => !item.b_code.startsWith("SUBJECT2")).map(row=>{row["b_name"]=row['b_name'].replace(/(指数增强|证券|私募).+基金/,"")
-            return row});
-          this.calcFinal();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      this.tableData=this.holding
+      this.calcFinal()
+    //   this.$axios
+    //     .get("/fof/holding", { params: { code: "",extra:"1yr" } }) //axis后面的.get可以省略；
+    //     .then((response) => {
+    //       this.tableData = this.$tools
+    //         .pandasToJson(response.data)
+    //         .filter((item) => !item.b_code.startsWith("SUBJECT2")).map(row=>{row["b_name"]=row['b_name'].replace(/(指数增强|证券|私募).+基金/,"")
+    //         return row});
+    //       this.calcFinal();
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
     },
   },
   mounted() {

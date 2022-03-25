@@ -54,6 +54,13 @@ tools.checkModi= (modi,orig)=>{
     }
     return result
 }
+tools.isNumber=(val)=>{
+  if (parseFloat(val).toString() == "NaN") {
+    return false;
+  } else {
+    return true;
+}
+}
 tools.isNull=(value)=>{
     if (!value && typeof value != "undefined" && value != 0) {
         return true;
