@@ -20,6 +20,7 @@
             <vxe-radio-button label="cta1" content="CTA1"></vxe-radio-button>
             <vxe-radio-button label="指增" content="指增"></vxe-radio-button>
             <vxe-radio-button label="中性" content="中性"></vxe-radio-button>
+            <vxe-radio-button label="套利" content="套利"></vxe-radio-button>
             <vxe-radio-button label="高费率" content="高费率"></vxe-radio-button>
 
           </vxe-radio-group>
@@ -43,7 +44,7 @@
           :align="allAlign"
           :cell-style="cellClassBg"
           size="mini"
-          :row-config="{keyField:'code'}"
+          :row-config="{keyField:'code',isCurrent: true, isHover: true}"
           show-overflow
           :sort-config="{trigger: 'cell', defaultSort: {field: 'rankF_1yr_r', order: 'asc'}, orders: ['desc', 'asc', null]}"
           :data="tableList"
@@ -218,7 +219,7 @@ export default {
         tableData:[],
         tableList:[],
         showList:true,
-        range:"1yr",
+        range:"2yr",
         calcdate:"",
         baseData:{},
         rgdict:{},
@@ -534,7 +535,7 @@ return ''
   },
 };
 </script>
-<style lang="scss" >
+<style lang="scss"  >
         .mytable-style .col--group {
           border:2px ;
         }

@@ -11,7 +11,7 @@
           align="right"
           size="mini"
           show-overflow
-          :sort-config="{trigger: 'cell', defaultSort: {field: '当月收益', order: 'desc'}, orders: ['desc', 'asc', null]}"
+          :sort-config="{trigger: 'cell', orders: ['desc', 'asc', null]}"
           :data="tableData"
         >
       <!-- <vxe-column  type="checkbox" width="30" fixed="left"></vxe-column> -->
@@ -114,6 +114,15 @@ export default {
         //       }
         //       return row
         //   });
+        this.tableData.sort((b,a)=>{
+            let ret= a['类型']>b['类型']?1:-1
+            if(a['类型']==b['类型']){
+                ret= a['当年收益']-b['当年收益']
+            }
+            return ret
+        })
+
+    
           console.log(this.tableData)
           //this.tableData = this.totaltableData;
         })

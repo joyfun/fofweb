@@ -61,6 +61,10 @@ tools.isNumber=(val)=>{
     return true;
 }
 }
+tools.sleep=(time)=>{
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
 tools.isNull=(value)=>{
     if (!value && typeof value != "undefined" && value != 0) {
         return true;

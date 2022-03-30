@@ -56,7 +56,7 @@
         </div>
     </header>
      <el-dialog
-    width="80%"
+    width="50%"
     top="50px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -74,6 +74,116 @@
 
     </el-dialog>
 
+
+     <el-dialog
+    width="50%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="buyVisible"
+  >
+ <!-- <vxe-form :data="formData1" @submit="searchEvent" @reset="resetEvent">
+          <vxe-form-item title="名称" field="name" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-input v-model="data.name" placeholder="请输入名称" clearable></vxe-input>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item title="昵称" field="nickname" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-input v-model="data.nickname" placeholder="请输入昵称"></vxe-input>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item title="性别" field="sex" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-select v-model="data.sex" placeholder="请选择性别" clearable>
+                <vxe-option value="1" label="女"></vxe-option>
+                <vxe-option value="2" label="男"></vxe-option>
+              </vxe-select>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item>
+            <template #default>
+              <vxe-button type="submit" status="primary">默认尺寸</vxe-button>
+            </template>
+          </vxe-form-item>
+        </vxe-form>
+        <vxe-form :data="formData1" @submit="searchEvent" @reset="resetEvent" size="medium">
+          <vxe-form-item title="名称" field="name" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-input v-model="data.name" placeholder="请输入名称" clearable></vxe-input>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item title="昵称" field="nickname" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-input v-model="data.nickname" placeholder="请输入昵称" clearable></vxe-input>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item title="性别" field="sex" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-select v-model="data.sex" placeholder="请选择性别" clearable>
+                <vxe-option value="1" label="女"></vxe-option>
+                <vxe-option value="2" label="男"></vxe-option>
+              </vxe-select>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item>
+            <template #default>
+              <vxe-button type="submit" status="primary">中等尺寸</vxe-button>
+            </template>
+          </vxe-form-item>
+        </vxe-form>
+        <vxe-form :data="formData1" @submit="searchEvent" @reset="resetEvent" size="small">
+          <vxe-form-item title="名称" field="name" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-input v-model="data.name" placeholder="请输入名称" clearable></vxe-input>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item title="昵称" field="nickname" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-input v-model="data.nickname" placeholder="请输入昵称" clearable></vxe-input>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item title="性别" field="sex" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-select v-model="data.sex" placeholder="请选择性别" clearable>
+                <vxe-option value="1" label="女"></vxe-option>
+                <vxe-option value="2" label="男"></vxe-option>
+              </vxe-select>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item>
+            <template #default>
+              <vxe-button type="submit" status="primary">小型尺寸</vxe-button>
+            </template>
+          </vxe-form-item>
+        </vxe-form>
+        <vxe-form :data="formData1" @submit="searchEvent" @reset="resetEvent" size="mini">
+          <vxe-form-item title="名称" field="name" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-input v-model="data.name" placeholder="请输入名称" clearable></vxe-input>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item title="昵称" field="nickname" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-input v-model="data.nickname" placeholder="请输入昵称" clearable></vxe-input>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item title="性别" field="sex" :item-render="{}">
+            <template #default="{ data }">
+              <vxe-select v-model="data.sex" placeholder="请选择性别" clearable>
+                <vxe-option value="1" label="女"></vxe-option>
+                <vxe-option value="2" label="男"></vxe-option>
+              </vxe-select>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item>
+            <template #default>
+              <vxe-button type="submit" status="primary">超小尺寸</vxe-button>
+            </template>
+          </vxe-form-item>
+        </vxe-form> -->
+
+    </el-dialog>
   <el-dialog
     width="80%"
     top="50px"
@@ -251,11 +361,13 @@ export default {
     data(){
         return{
             activeName:"首页",
+            formData1:{},
             dialogVisible:false,
             cur_code:"",
             diagName:"",
             temp:"",
             resetVisible:false,
+            buyVisible:false,
            userImg:require('../assets/images/user.png')
         }
     },

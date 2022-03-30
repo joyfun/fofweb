@@ -118,7 +118,7 @@ export default {
       // },
        tooltip: {
           trigger: "axis",
-          valueFormatter: (value) => value.toFixed(2)
+          valueFormatter: (value) => {if(value!=null){return value.toFixed(2)}else{ return ""}}
 
         //     formatter: function (datas, ticket, callback) {
         //              var res = datas[0].name + '<br/>'
@@ -142,6 +142,21 @@ export default {
     },
     max:100
   },
+  markLine:[{
+             symbol:"none",           //去掉警戒线最后面的箭头
+          silent: true,
+          lineStyle: {
+            type:'solid',
+            width:2
+
+          },
+          data: [
+            {
+              yAxis: 30
+            },
+           
+          ]
+        }],
       series: [
         {
           type: 'line',
@@ -220,12 +235,28 @@ export default {
       }
     },
     getChartData(){
+      let markLine={
+             symbol:"none",           //去掉警戒线最后面的箭头
+          silent: true,
+          lineStyle: {
+            type:'solid',
+            width:2
+
+          },
+          data: [
+            {
+              yAxis: 30
+            },
+           
+          ]
+        }
       let that=this
       this.$axios
         .get("/fof/hisrank", { params: { "code": this.code ,"range":this.range} }) //axis后面的.get可以省略；
         .then((response) => {
           let option = that.echart.getOption();
           option.xAxis[0].data=response.data.index
+          option.markLine[0]=markLine
           option.series=[]
           for (let col in response.data.columns){
             let cnames=response.data.columns[col].split('_')
@@ -233,16 +264,22 @@ export default {
             if(cnames.length==2){
               sname=this.showFundName(cnames[0])+"_"+cnames[1]
             }
-            let rval=response.data.data.map(row=>row[col]*100)
-            // if(rval.filter(row=>row).length>0){
-            option.series.push({
+            let rval=response.data.data.map(row=>{if(row[col]==null){return null} return row[col]*100})
+            let asery={
+          yAxisIndex:0,
           type: 'line',
           name: sname,
           data: rval,
-        })
-            // }
+        }
+        // if(col==0){
+        //   asery['markLine']=markLine
+        // }
+        
+            option.series.push(asery)
+ 
             
           }
+
           console.log(option)
           that.echart.setOption(option, true);
    

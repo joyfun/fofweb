@@ -26,7 +26,7 @@ export default new Vuex.Store({
     cart:[],
     
     allparam:{},
-    holding:{},
+    holding:[],
     usermenu:Cookies.get("umenu"),
 
     param:{"class_type":[],"stage":[]},

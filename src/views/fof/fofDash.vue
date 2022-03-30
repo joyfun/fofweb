@@ -1,5 +1,5 @@
 <template>
-  <div id="tableContainer" style="height: 100%">
+  <div id="tableContainer" ref="tableContainer" style="height: 100%">
     <el-tabs type="border-card">
       <el-tab-pane>
         <span slot="label"><i class="el-icon-date"></i> 资金状况</span>                               <vxe-button @click="jumptodash">排名信息</vxe-button>
@@ -25,6 +25,7 @@
           show-overflow
           :data="compData1"
           :edit-config="{trigger: 'dblclick', mode: 'cell', activeMethod: activeCellMethod}"
+          @edit-closed="saveAction"
           :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
           <!-- <vxe-column type="seq" width="60"></vxe-column> -->
           <vxe-column width="140" field="name" title="募集层一" :edit-render="{autofocus: '.myinput'}">
@@ -52,6 +53,7 @@
           show-overflow
           :data="compData2"
           :edit-config="{trigger: 'dblclick', mode: 'cell', activeMethod: activeCellMethod}"
+          @edit-closed="saveAction"
           :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
           <!-- <vxe-column type="seq" width="60"></vxe-column> -->
           <vxe-column width="160" field="name" title="募集层二" :edit-render="{autofocus: '.myinput'}">
@@ -78,6 +80,7 @@
           show-overflow
           :data="compData3"
           :edit-config="{trigger: 'dblclick', mode: 'cell', activeMethod: activeCellMethod}"
+          @edit-closed="saveAction"
           :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
           <!-- <vxe-column type="seq" width="60"></vxe-column> -->
           <vxe-column width="160" field="name" title="交易层" :edit-render="{autofocus: '.myinput'}">
@@ -141,11 +144,11 @@
           <el-button size="small" @click="addAction()">添加操作</el-button>
         </div>
         <vxe-table
+          border
           ref="actionTable"
           :data="actionData"
           tooltip-effect="dark"
           :max-height="tmaxh"
-          style="width: 100%; margin-top: 20px"
         >
           <vxe-column
             title="基金名称"
@@ -210,16 +213,20 @@
             <vxe-button @click="addAction">添加</vxe-button>
           </template>
         </vxe-toolbar>
+                  <!-- {{detailData}} -->
         <vxe-table
+          border="full"
           ref="detailTable"
           align="right"
           height="auto"
-          size="small"
-          :sort-config="{trigger: 'cell', defaultSort: {field: 'name', order: 'asc'}, orders: ['desc', 'asc', null]}"
+          class="mytable-style"
+          :max-height="tmaxh"
+          size="mini"
+          :sort-config="{trigger: 'cell', orders: ['desc', 'asc', null]}"
           :data="detailData">
           <vxe-column type="checkbox" width="30"></vxe-column>
           <vxe-column field="name" title="产品"  sortable width="160"> </vxe-column>
-          <vxe-column field="b_name" align="left" title="基金名称" width="200">  
+          <vxe-column field="b_name" align="left" title="基金名称" width="260">  
             <template #default="{ row }">
                    <el-button  @click.native.prevent="addCart(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
        <a href="javascript:;" @click="showHis(row)">{{ row.b_name }}</a>
@@ -228,17 +235,31 @@
             </template>
 
              </vxe-column>
-          <vxe-column field="marketval" title="市值" width="80">
+          <vxe-column field="marketval" title="市值" width="80" sortable>
             <template #default="{ row }">
               {{ showMoney(row.marketval) }}
             </template>
             </vxe-column>
-                    <vxe-colgroup title="排名信息" align="center">
-          <vxe-column :key="type" :field="type+'_r'" width="80" sortable :title="type+'('+rlen[type]+')'" :filters="[{label: '减退', value: 0.5},{label: '正常', value: 0}]" :filter-method="filterStatusMethod"   v-for=" type of this.types">
+            <vxe-column field=" " width="2"  :title="' '"  >
+            </vxe-column>
+              <vxe-colgroup title="排名信息" align="center">
+                                      <template #header>
+          <vxe-radio-group v-model="range" :strict="false">
+            <vxe-radio label="hyr" content="半年"></vxe-radio>
+            <vxe-radio label="1yr" content="1年"></vxe-radio>
+            <vxe-radio label="2yr" :content="titleDate"></vxe-radio>
+          </vxe-radio-group>
+                        </template>   
+          <vxe-column :key="type" :field="type+'_r'" width="80" sortable :title="type+'('+rlen[type]+')'"   v-for=" type of this.types">
             </vxe-column>
                     </vxe-colgroup>
+                      <vxe-column field=" " width="2"  :title="' '"  >
+            </vxe-column>
           <vxe-column field="stage" title="状态" width="60"></vxe-column>
-          <vxe-column field="mstatus" title="减退" width="60" sortable>
+          <vxe-column field="list" title="观察状态"  :class-name="cellClass3" :filters="statuslabel" :filter-method="filterStatusMethod"  width="60" sortable :title-help="{message: '近期窗口（半年），mean <=0.5 且三个窗口中，至少有一个listratio >0.7 进入list，观察状态为 维持\n近期窗口（半年），mean <= 0.5 但不满足维持状态的，叫做观察\n近期窗口（半年），mean >0.5,  但中（1年）长（2年）窗口都有 mean < 0.5的，预警\n近期窗口（半年），mean > 0.5 且 中长 至少有一个 > 0.5 的，减退'}">
+               <template #default="{ row }">
+              {{ status[row['list']] }}
+            </template>
           </vxe-column>
 
           <vxe-column field="act_amount" title="操作金额(万)" width="80">
@@ -261,9 +282,8 @@
             </template>
           </vxe-column>
         </vxe-table>
-     
+    
         </el-tab-pane>
-      <!-- <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane> -->
     </el-tabs>
     <el-dialog
       width="80%"
@@ -359,6 +379,7 @@
 import { mapGetters, mapMutations, mapState } from "vuex";
 import SankeyChart from "@/components/SankeyChart.vue";
 import Bus from '@/store/bus.js';
+import { t } from 'vxe-table';
 
 export default {
           components: {
@@ -370,10 +391,29 @@ export default {
       default: false,
     },
   },
-  watch: {},
+  watch: {
+        holding:{handler(n){
+          if(this.holding.length>0){
+                  this.getProducts()
+
+          }
+            },},
+        range :{
+              handler(n){
+                  this.getRanks()
+            },
+    
+    },
+  },
   computed: {
     gridOptions1(){
       
+    },
+    titleDate(){
+      return '2年 排名信息('+this.data_time+")"
+    },
+    statuFilters(){
+      return this.status.map((r,i)=>{return {"lable":r,"value":i}})
     },
     combineDate() {
       return this.detailData.concat(this.actionData);
@@ -383,9 +423,31 @@ export default {
   },
   data() {
     return {  allAlign: 'right',
+              range:"hyr",
+              timeout: null,
+              data_time:"",
               compData1: [],
               compData2: [],
+              status:["维投","观察","预警","减退"],
               compData3: [],
+              statuslabel:[
+    {
+        "label": "维投",
+        "value": 0
+    },
+    {
+        "label": "观察",
+        "value": 1
+    },
+    {
+        "label": "预警",
+        "value": 2
+    },
+    {
+        "label": "减退",
+        "value": 3
+    }
+],
               sexList: [
                 { label: '', value: '' },
                 { label: '男', value: '1' },
@@ -406,7 +468,7 @@ export default {
       tableData: [],
       actionData: [],
       rlen:{},
-      types: ['aas','cta0','cta1','指增','中性'],
+      types: ['aas','cta0','cta1','指增','中性','套利'],
       tmaxh: 600,
     };
   },
@@ -422,6 +484,7 @@ export default {
       },
     delAction(row,idx){
       this.actionData.splice(idx,1)
+      this.calcFinal()
       this.saveAction()
 
     },
@@ -450,6 +513,14 @@ export default {
       }
       return ''
     },
+    cellClass3 ({ row, rowIndex, column, columnIndex }) {
+     if(row[column['field']]==3){
+        return 'cell-red'
+      }else if(row[column['field']]==2){
+        return 'cell-orange'
+      }
+      
+      },
     cellClass(row){
       if(row.row['name']=='待分配合计'){
         return 'background-yellow'
@@ -478,21 +549,7 @@ return ''
         }}
     },
     filterStatusMethod({value, row, column} ) {
-             console.log(row)
-             console.log(column.field)
-
-              //  for (let tp of this.types){
-              //    let lower= row[tp+'_r']>value
-              //    if(lower){
-              //     console.log(row)
-              //      return  lower
-              //    }
-              //  }
-              let fld=column.field.split("_")[0]
-              if(this.rlen[fld]){
-              return row[column.field]/this.rlen[fld] >= value
-              }
-              return false
+              return row[column.field]== value
             },
 
     updateInvest(code,b_code,row){
@@ -767,7 +824,6 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       return null
     },
     saveAction(){
-      this.calcFinal();
           this.$axios({
       method: 'post',
       url: "/sys/misc", // 请求地址
@@ -784,6 +840,8 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
             if(this.curAction["code"]=="SY9620"||this.curAction["code"]=="SSS105"){
               this.updateCash(this.curAction["code"],{"value":this.curAction["marketval"]})
               this.saveAction()
+              this.actionDiagShow = !this.actionDiagShow;
+              return true
             }else{
                this.$message({
             showClose: true,
@@ -806,6 +864,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
           this.actionData.push(JSON.parse(JSON.stringify(this.curAction)));
           // }
           this.actionDiagShow = !this.actionDiagShow;
+          this.calcFinal()
           this.saveAction()
         } else {
           console.log("error submit!!");
@@ -880,14 +939,10 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
         }
          this.detailData.map(r=>{
            for(let k of this.types){
-             if(r['mstatus']){
-               break
-             }
              if(r[k]){
                let sps=r[k].split('-')
                r[k+"_r"]=sps[0]
                this.rlen[k]=sps[1]
-               r['mstatus']=sps[0]/sps[1]>0.5?"减退":""
              }
            }
          })
@@ -923,7 +978,13 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       this.genTitleData1()
       this.genTitleData2()
       this.genTitleData3()
-
+      this.detailData.sort((b,a)=>{
+           let ret= a['list']-b['list']
+           if(ret==0){
+             ret= a['marketval']-b['marketval']
+           }
+           return ret
+         })
     },
     showholding(row) {
       if (row["b_code"].startsWith("SUBJECT110")) {
@@ -948,25 +1009,80 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       return ''
 
     },
+    resizeChart(){
+                this.tmaxh=this.$refs.tableContainer.clientHeight-140
+
+  },
+  getRanks(){
+this.$axios
+        .get("/fof/rankinfo", { params: { 'code': this.holding.map(r=>r['b_code']).join(","),'range':this.range } }) //axis后面的.get可以省略；
+        .then((response) => {
+            let rdict=response.data
+            this.tableData.map(row=>{
+              if(rdict[row['b_code']]){
+                for (let key in rdict[row['b_code']]){
+                  row[key]=rdict[row['b_code']][key]
+                }
+              }
+              return row
+            })
+            console.log(this.tableData)
+            this.calcFinal()
+
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+  },
     getProducts() {
-      this.tableData=this.holding
-      this.calcFinal()
-    //   this.$axios
-    //     .get("/fof/holding", { params: { code: "",extra:"1yr" } }) //axis后面的.get可以省略；
-    //     .then((response) => {
-    //       this.tableData = this.$tools
-    //         .pandasToJson(response.data)
-    //         .filter((item) => !item.b_code.startsWith("SUBJECT2")).map(row=>{row["b_name"]=row['b_name'].replace(/(指数增强|证券|私募).+基金/,"")
-    //         return row});
-    //       this.calcFinal();
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
+      // while(this.holding.length<1){
+      //   console.log("######wait holding init")
+      //   this.$tools.sleep(1)
+      // }
+      // this.getRanks()
+      let that=this
+      console.log(this.holding)
+      if(this.holding.length<1){
+        console.log("######wait holding init")
+        return
+      }
+      console.log("###### holding  done")
+this.tableData=this.holding
+this.$axios
+        .get("/fof/last_calcdate") //axis后面的.get可以省略；
+        .then((response) => {
+          this.data_time=response.data['latest_date']
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      this.$axios
+        .get("/fof/holdinglist") //axis后面的.get可以省略；
+        .then((response) => {
+            let rdict=response.data
+            this.tableData.map(row=>{
+              if(rdict[row['b_code']]){
+                    row['list']=rdict[row['b_code']]['list']
+                    // console.log(row)
+              }else{
+                row['list']=0
+              }
+              return row
+            })
+                  // setTimeout(() => {
+            this.getRanks()
+      // }, 1000);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
     },
   },
   mounted() {
     this.getProducts();
+    window.addEventListener('resize', this.resizeChart)
+    this.resizeChart()
   },
   created() {
     this.getMisc("fof_action")
@@ -976,9 +1092,20 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
 };
 </script>
 <style lang="scss" >
+        .mytable-style .col--group {
+          border:2px ;
+        }
 .background-yellow {
             background-color: yellow;
             color: red
+
+}
+.cell-red {
+            color: red
+
+}
+.cell-orange {
+            color: orange
 
 }
 .vxe-body--column.col--ellipsis .vxe-body--column {
