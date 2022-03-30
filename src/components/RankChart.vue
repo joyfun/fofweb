@@ -142,21 +142,6 @@ export default {
     },
     max:100
   },
-  markLine:[{
-             symbol:"none",           //去掉警戒线最后面的箭头
-          silent: true,
-          lineStyle: {
-            type:'solid',
-            width:2
-
-          },
-          data: [
-            {
-              yAxis: 30
-            },
-           
-          ]
-        }],
       series: [
         {
           type: 'line',
@@ -239,6 +224,7 @@ export default {
              symbol:"none",           //去掉警戒线最后面的箭头
           silent: true,
           lineStyle: {
+            color:'#000',
             type:'solid',
             width:2
 
@@ -256,7 +242,7 @@ export default {
         .then((response) => {
           let option = that.echart.getOption();
           option.xAxis[0].data=response.data.index
-          option.markLine[0]=markLine
+          option.markLine=markLine
           option.series=[]
           for (let col in response.data.columns){
             let cnames=response.data.columns[col].split('_')
@@ -270,6 +256,7 @@ export default {
           type: 'line',
           name: sname,
           data: rval,
+          markLine:markLine
         }
         // if(col==0){
         //   asery['markLine']=markLine
