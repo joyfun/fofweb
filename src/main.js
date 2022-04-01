@@ -30,6 +30,8 @@ Vue.use(VXETable)
 Vue.use(tools)
 Vue.prototype.$process=process
 Vue.prototype.$axios = axios
+var dayOfYear = require('dayjs/plugin/dayOfYear')
+dayjs.extend(dayOfYear)
 Vue.prototype.$moment = dayjs
 Vue.prototype.$isElectron= tools.isElectron()
 Vue.config.productionTip = false

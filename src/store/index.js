@@ -98,8 +98,8 @@ export default new Vuex.Store({
 
     },
     setAllCart (state, allcart) {
-      console.log("start set allChart")
-      console.log(allcart)
+      // console.log("start set allChart")
+      // console.log(allcart)
       for (var a in allcart){
         if(typeof(allcart[a])=='string')
         allcart[a]=JSON.parse(allcart[a])
