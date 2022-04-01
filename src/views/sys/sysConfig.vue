@@ -21,6 +21,7 @@
 <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
 import FofMisc from "@/components/FofMisc.vue";
+import MarkdownIt from 'markdown-it';
 
 export default {
           components: {

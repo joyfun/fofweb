@@ -1,0 +1,29 @@
+@font-face {
+  font-family: "iconfont"; /* Project id  */
+  src: url('iconfont.ttf?t=1648710571183') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-yijiangoumai:before {
+  content: "\e608";
+}
+
+.icon-mairu:before {
+  content: "\e660";
+}
+
+.icon-mairu1:before {
+  content: "\e616";
+}
+
+.icon-combination:before {
+  content: "\e67d";
+}
+

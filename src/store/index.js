@@ -31,6 +31,7 @@ export default new Vuex.Store({
 
     param:{"class_type":[],"stage":[]},
     foflist:[],
+    actionData:[],
     allmenu:[
         {lable:"基金公司",value:"fund-comp"},
         {lable:"初选基金",value:"fund-info"},
@@ -88,6 +89,13 @@ export default new Vuex.Store({
     setFoflist(state, foflist){
       Vue.set(state,"foflist",foflist)
       console.log(foflist)
+    },
+    addAction(state, action){
+      Vue.set(state,"actionData",state.actionData.concat(action))
+      // console.log(foflist)
+    },
+    delAction(state,action){
+
     },
     setAllCart (state, allcart) {
       console.log("start set allChart")

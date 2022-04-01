@@ -40,7 +40,7 @@
           class="mytable-style"
           border
           ref="rankTable"
-          height="auto"
+          :height="height"
           :align="allAlign"
           :cell-style="cellClassBg"
           size="mini"
@@ -58,44 +58,44 @@
                   <vxe-switch v-model="showList" open-label="List" :open-value="true" close-label="所有" :close-value="false"></vxe-switch>
               </template>
         <template #default="{ row }">
-                   <el-button  @click.native.prevent="addCart(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
+                                      <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
+                            <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
+                            &nbsp;<vxe-button  @click.native.prevent="oneKeyBuy(row)" type="text" status="primary" size="small"><i class="iconfont icon-yijiangoumai" ></i></vxe-button>
        <a href="javascript:;" @click="showHis(row)">{{ showFundName(row.code)}}</a>
-                           <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="历史" placement="left-start"><i class="el-icon-s-marketing" ></i></el-tooltip></el-button>
+                           <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing" ></i></el-button>
 
             </template>
           </vxe-column>
-            <vxe-column  sortable  title="级别"  field="level" sort-by="lscore"  :filters="[{label: '甲', value: '甲'}, {label: '乙', value: '乙'}, {label: '丙', value: '丙'}, {label: '丁', value: '丁'}]" :title-help="{message: '根据产品波动率和最大回撤对产品进行分级'}" >
-            <!-- <template #default="{ row }">
-              <span>{{ nclassify(row) }}</span>
-            </template> -->
+          <!-- -->
+          <vxe-column  sortable  title="级别"  width="40" field="level" sort-by="lscore"  :filters="[{label: '甲', value: '甲'}, {label: '乙', value: '乙'}, {label: '丙', value: '丙'}, {label: '丁', value: '丁'}]" :title-help="{message: '根据产品波动率和最大回撤对产品进行分级'}" >
           </vxe-column> 
+          <template  v-if="type=='高费率'">
+              <vxe-column field="fee" width="60"  title="fee"  ></vxe-column>
+              <vxe-column align="left" field="carry" width="160"  title="carry"  ></vxe-column>
+              <!-- <vxe-column field="perf_comp" width="80"  title="业绩提计方式"  ></vxe-column> -->
+              <vxe-column align="left" field="remark" width="240"  title="备注"  ></vxe-column>
+          </template>
+          <template  v-else>
             <vxe-column field=" " width="2" sortable :title="' '"  >
             </vxe-column>
-            <template  v-for=" type of ['hyr','1yr','2yr']">
-           <vxe-colgroup  :key="type" :title="yrdict[type]+'排名信息('+rgdict[type]+')平均'+avgcnt[type]+'个'" align="center" >
-               <vxe-column   :field="'rankF_'+type+'_r'" width="60" sortable :title="'rank'" >
-                               <!-- <span>{{ row['rankF_'+type+'_r'].toFixed(3) }}</span> -->
-
+            <template  v-for=" tp of ['hyr','1yr','2yr']">
+           <vxe-colgroup  :key="tp" :title="yrdict[tp]+'排名信息('+rgdict[tp]+')平均'+avgcnt[tp]+'个'" align="center" >
+               <vxe-column   :field="'rankF_'+tp+'_r'" width="60" sortable :title="'rank'" >
             </vxe-column>
 
-             <vxe-column :field="'mean_'+type" width="60" sortable :title="'mean(%)'"  >
+             <vxe-column :field="'mean_'+tp" width="60" sortable :title="'mean(%)'"  >
             </vxe-column>
-              <vxe-column :field="'listrate_'+type" width="60" sortable :title="'listrate'" >
+              <vxe-column :field="'listrate_'+tp" width="60" sortable :title="'listrate'" >
             </vxe-column>
-            <vxe-column :key="dkey" :field="dkey+'_'+type" width="60" sortable :title="dkey"  v-for="dkey in ['std']">
-                             <!-- <template #default="{ row }">
-              <span>{{ row[dkey+'_'+type].toFixed(3) }}</span>
-            </template> -->
+            <vxe-column :key="dkey" :field="dkey+'_'+tp" width="60" sortable :title="dkey"  v-for="dkey in ['std']">
             </vxe-column>
-            <vxe-column  :field="'meand_'+type" width="60" sortable :title="'Δrank'" >
-                             <!-- <template #default="{ row }">
-              <span>{{ row[dkey+'_'+type].toFixed(3) }}</span>
-            </template> -->
+            <vxe-column  :field="'meand_'+tp" width="60" sortable :title="'Δrank'" >
             </vxe-column>
                 </vxe-colgroup>
-          <vxe-column  :key="'blank_'+type" field=" " width="2" sortable :title="' '"  >
+          <vxe-column  :key="'blank_'+tp" field=" " width="2" sortable :title="' '"  >
             </vxe-column>
             </template>
+          </template> 
           <vxe-colgroup :title="yrdict[range]+'指标数据'" align="center">
                 <template #header>
           <vxe-radio-group v-model="range" :strict="false">
@@ -104,7 +104,7 @@
             <vxe-radio label="2yr" content="2年 指标数据"></vxe-radio>
           </vxe-radio-group>
                         </template>   
-         <vxe-column :key="af" width="54" sortable v-for="af of ['length','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio','yeaily_return', 'volatility']"  :title="af" :field="af"  >
+         <vxe-column :key="af" width="50" sortable v-for="af of ['length','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio','yeaily_return', 'volatility']"  :title="af" :field="af"  >
             <template #default="{ row }">
               <span>{{ row[af]}}</span>
             </template>
@@ -145,10 +145,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    height: {
+      type: String,
+      default: 'auto',
+    },
   },
   watch: {
     type :{
               handler(n){
+                if(this.type=='高费率'){
+                  this.showList=false
+                }
                   this.getProducts()
             },
     
@@ -233,6 +240,12 @@ export default {
     };
   },
   methods: {
+    oneKeyBuy(row){
+            if(row['code']){
+        Bus.$emit("oneKeyBuy",{b_code:row['code'],stage:"待投资"})
+      }
+
+    },
     filterList(){
        if(this.showList){
           this.tableList= this.tableData.filter(row=>{
@@ -439,6 +452,21 @@ return ''
 	          ("0" + b.toString(16)).slice(-2);
 	    },
     genColor(n) {
+            //       黄色（深黄）#FFB90F
+            // 黄色（中黄）#EEC900
+            // 绿色（深绿）#0ce91f69
+            // 绿色（中绿）#88b924d3
+      let color='#0B5345'
+      if(n>=0.7){
+        color='#ff0000'
+      }
+      else if(n>=0.5){
+        color='#FFB90F'
+      }
+      else if(n>=0.3){
+        color='#229954'
+      }
+      return color
 
 	    	let halfMax = 0.5  //最大数值的二分之一
 	        //var 百分之一 = (单色值范围) / halfMax;  单颜色的变化范围只在50%之内
@@ -519,6 +547,26 @@ return ''
         }
         })
           this.getBaseInfo()
+          if(this.type=='高费率'){
+                 this.$axios
+        .get("/fof/list", { params: { scale:this.type} })
+        .then((response) => {
+          let scalelist=response.data
+        this.tableData.map(row=>{
+          let infos=scalelist.filter(info=>info['code']==row['code'])
+          if(infos.length==1){
+            let finfo=infos[0]
+            row['fee']=finfo['fee']
+            row['carry']=finfo['carry']
+            row['perf_comp']=finfo['perf_comp']
+            row['remark']=finfo['remark']
+
+          }
+          return row
+        })
+        
+        }) 
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -536,6 +584,14 @@ return ''
 };
 </script>
 <style lang="scss"  >
+.vxe-button+.vxe-button{
+  margin-left: 0px;
+  padding-right: 0px;
+  padding-left: 0px;
+    margin-right: 0px;
+
+}
+
         .mytable-style .col--group {
           border:2px ;
         }
@@ -548,7 +604,7 @@ return ''
           color: rgb(170, 8, 8);
         }
         .mytable-style .vxe-body--column.col-red {
-         color: red;
+         color: #ff0000;
           // color: #fff;
         }
         .mytable-style .vxe-body--column.col-yellow {
@@ -556,11 +612,12 @@ return ''
           // color: #000;
         }
         .mytable-style .vxe-body--column.col-green {
-          color: darkgreen;
+          color: #006400;
           //color: #000;
         }
         .mytable-style .vxe-body--column.col-yellowgreen {
           color: yellowgreen;
           //color: #fff;
         }
+        
 </style>

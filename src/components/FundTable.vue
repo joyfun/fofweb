@@ -175,6 +175,7 @@ export default {
         ...mapState({
             current: state => state.tab.currentMenu,
             nowcart: state =>state.nowcart,
+            rawlist: state=>state.foflist
         }),
        ...mapGetters(['allCart','token',"allparam","sysparam",'usermenu'])
 
@@ -215,7 +216,7 @@ export default {
       zz500:5,
       tmaxh:600,
       tlist:[{"name":"名称","code":"code1"},{"name":"名称2","code":"code2"}],
-      rawlist:[],
+      // rawlist:[],
       mult:[],
       sel:[],
       alllist:[],
@@ -423,18 +424,20 @@ export default {
 
             },
     remoteMethod(query){
-      this.$axios({
-        url: "/fof/foflist",
-        method: "GET",
-      })
-        .then((response) => {
-            this.rawlist=response.data
+      // this.$axios({
+      //   url: "/fof/foflist",
+      //   method: "GET",
+      // })
+      //   .then((response) => {
+      //       this.rawlist=response.data
             this.changeSub(this.filter.class_type)
-            this.setFoflist(this.rawlist)
-            console.log("####init####")
-          this.tmaxh=this.$refs.tableContainer.clientHeight-120
+      //       this.setFoflist(this.rawlist)
+      //       console.log("####init####")
 
-        })
+      //   })
+                  // this.rawlist=this.foflist
+                  this.tmaxh=this.$refs.tableContainer.clientHeight-120
+
     },
     handleSelectionChange(val) {
         this.sel = val;
@@ -442,7 +445,6 @@ export default {
   },
   created(){   
     //this.changeCart(this.nowcart)
-    this.remoteMethod();
 },
 
   mounted() {
@@ -455,7 +457,8 @@ export default {
           console.log(arg)
           this.changeCart(arg)
   })
-  
+      this.remoteMethod();
+
   }
   ,
   destroyed() {

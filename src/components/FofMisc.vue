@@ -48,11 +48,17 @@
             </template>
           </vxe-column>
         </vxe-table> 
+  <div>
+    <markdown-it-vue-light class="md-body" :content="content" />
+  </div>
 </div>
 </template>
  <script>
  import { mapGetters, mapMutations, mapState } from "vuex";
  import VXETable from 'vxe-table'
+import MarkdownItVueLight from 'markdown-it-vue/dist/markdown-it-vue-light.umd.min.js'
+import 'markdown-it-vue/dist/markdown-it-vue-light.css'
+
  export default {
   props: {
     visable: {
@@ -123,6 +129,7 @@
       lowest:0.9,
       startdate:'',
       range:'',
+      content:'',
       showdrop:false,
       startidx: 0,
       max_date: "",
@@ -178,6 +185,24 @@
   },
   mounted() {
       this.getWts(this.code)
+      this.content=`
+# h1 Heading 8-)
+## h2 Heading
+### h3 Heading
+#### h4 Heading
+##### h5 Heading
+###### h6 Heading
+
+## Lists
+Unordered
+
++ Sub-lists are made by indenting 2 spaces:
+  - Marker character change forces new list start:
+    * Ac tristique libero volutpat at
+    + Facilisis in pretium nisl aliquet
+    - Nulla volutpat aliquam velit
++ Very easy!
+`
     // window.addEventListener("resize", this.resizeChart);
   },
   unmounted() {

@@ -6,7 +6,7 @@
             <vxe-radio label="1yr" content="1年"></vxe-radio>
             <vxe-radio label="2yr" content="2年"></vxe-radio>
           </vxe-radio-group>
-  <div style="height: 480px" ref="echart">
+  <div style="height: 100%" ref="echart">
     <!-- <el-button-group>
   <el-button type="primary">7天</el-button>
   <el-button type="primary">30天</el-button>
@@ -113,6 +113,13 @@ export default {
           top: "middle",
           right: 0,
         }],
+              brush: {
+        xAxisIndex: 'all',
+        brushLink: 'all',
+        outOfBrush: {
+          colorAlpha: 0.1
+        }
+      },
       // title: {
       //   text: '基金排名图'
       // },
@@ -269,7 +276,28 @@ export default {
 
           console.log(option)
           that.echart.setOption(option, true);
-   
+          let dlen=option.xAxis[0].data.length
+          let yrago=this.$moment(option.xAxis[0].data[dlen-1]).add(-1,"y").format("YYYYMMDD")
+          let sidx=0;
+          for (let ad in option.xAxis[0].data){
+            if(option.xAxis[0].data[ad]>=yrago){
+              sidx=ad-1
+              break
+            }
+          }
+          if(sidx<0){
+            sidx=0
+          }
+     that.echart.dispatchAction({
+    type: 'brush',
+    areas: [
+      {
+        brushType: 'lineX',
+        coordRange: [option.xAxis[0].data[sidx], option.xAxis[0].data[dlen-1]],
+        xAxisIndex: 0
+      }
+    ]
+  });
 
         })
         .catch((error) => {

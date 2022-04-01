@@ -1,7 +1,7 @@
 <template>
 <div ref="echartdiv">
       <!-- <rank-table       ref="ranktable"  :titles="compare"  style="height: 800px"  :code="code"  ></rank-table> -->
-  <div style="height: 420px" ref="echart">
+  <div style="height: 100%" ref="echart">
     <!-- <el-button-group>
   <el-button type="primary">7天</el-button>
   <el-button type="primary">30天</el-button>

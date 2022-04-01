@@ -18,6 +18,9 @@
       value="SY9620,SSN818,SSN369,SSS105,STE599">
     </el-option> -->
   </el-select>
+      <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptodash">资金明细</vxe-button>
+      <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptorank">排名信息</vxe-button>
+
       <!-- <div class="num">
                 <el-card shadow="hover" v-for="item in countData" :key="item.name"
                          :body-style="{ display: 'flex', padding: 0 }">
@@ -143,7 +146,7 @@ export default {
     FundEchart,
   },
    computed: {
-     ...mapGetters(['class_order','token','sysparam'])
+     ...mapGetters(['class_order','token','sysparam','usermenu'])
 
    },
   data() {
@@ -220,6 +223,23 @@ export default {
       },
     }},
   methods: {
+      jumptodash(){
+            this.$router.push({name:'fof-dash'})  
+            this.$store.commit('selectMenu',{
+		"path": "/fofdash",
+		"label": "资金明细",
+		"name": "fof-dash",
+	})},
+     jumptorank(){
+            this.$router.push({name:'rank-info'})  
+            this.$store.commit('selectMenu',{
+		"path": "/rankinfo",
+		"label": "排名信息",
+		"name": "rank-info",
+		"icon": "setting"
+	});
+      },
+
      arraySpanMethod({ row, column, rowIndex, columnIndex }) {
         if (rowIndex % 2 === 0) {
           if (columnIndex === 0) {
@@ -299,7 +319,6 @@ export default {
       }else if(rname=='year'){
         Vue.set(this,"pspanArr",sar)
       }
-      console.log(sar)
     },
     getPieDataOuter(data){
         var ret=[]

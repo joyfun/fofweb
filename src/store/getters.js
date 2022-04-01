@@ -33,7 +33,7 @@ const getters = {
   },
   showFundName: (state) => (code) => {
     let extra="" 
-    if(code.endsWith("_E")){
+    if(code&&code.endsWith("_E")){
       code=code.substring(0,code.length-2)
       extra="_超额"
     }

@@ -2,7 +2,7 @@
   <div id="tableContainer" ref="tableContainer" style="height: 100%">
     <el-tabs type="border-card">
       <el-tab-pane>
-        <span slot="label"><i class="el-icon-date"></i> 资金状况</span>                               <vxe-button @click="jumptodash">排名信息</vxe-button>
+         <span slot="label"><i class="el-icon-date"></i> 资金状况</span>                               <!--<vxe-button @click="jumptodash">排名信息</vxe-button> -->
 
 <!-- 
         <vxe-table
@@ -25,7 +25,7 @@
           show-overflow
           :data="compData1"
           :edit-config="{trigger: 'dblclick', mode: 'cell', activeMethod: activeCellMethod}"
-          @edit-closed="saveAction"
+          @edit-closed="changeIncome1"
           :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
           <!-- <vxe-column type="seq" width="60"></vxe-column> -->
           <vxe-column width="140" field="name" title="募集层一" :edit-render="{autofocus: '.myinput'}">
@@ -38,7 +38,7 @@
               <span>{{ row[af] }}</span>
             </template>
             <template #edit="{ row }">
-              <vxe-input type="number" @change="changeIncome1" v-model="row[af]" class="myinput"></vxe-input>
+              <vxe-input type="number" v-model="row[af]" class="myinput"></vxe-input>
             </template>
           </vxe-column>
         </vxe-table> 
@@ -53,7 +53,7 @@
           show-overflow
           :data="compData2"
           :edit-config="{trigger: 'dblclick', mode: 'cell', activeMethod: activeCellMethod}"
-          @edit-closed="saveAction"
+          @edit-closed="changeIncome2"
           :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
           <!-- <vxe-column type="seq" width="60"></vxe-column> -->
           <vxe-column width="160" field="name" title="募集层二" :edit-render="{autofocus: '.myinput'}">
@@ -66,7 +66,7 @@
               <span>{{ row[af] }}</span>
             </template>
             <template #edit="{ row }">
-              <vxe-input type="number" @change="changeIncome2" v-model="row[af]" class="myinput"></vxe-input>
+              <vxe-input type="number" v-model="row[af]" class="myinput"></vxe-input>
             </template>
           </vxe-column>
         </vxe-table> 
@@ -80,7 +80,7 @@
           show-overflow
           :data="compData3"
           :edit-config="{trigger: 'dblclick', mode: 'cell', activeMethod: activeCellMethod}"
-          @edit-closed="saveAction"
+          @edit-closed="changeIncome3"
           :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
           <!-- <vxe-column type="seq" width="60"></vxe-column> -->
           <vxe-column width="160" field="name" title="交易层" :edit-render="{autofocus: '.myinput'}">
@@ -93,13 +93,13 @@
               <span>{{ row[af] }}</span>
             </template>
             <template #edit="{ row }">
-              <vxe-input type="number" @change="changeIncome3" v-model="row[af]" class="myinput"></vxe-input>
+              <vxe-input type="number" v-model="row[af]" class="myinput"></vxe-input>
             </template>
           </vxe-column>
         </vxe-table> 
         </el-card>
         </el-col><el-col :span="10">
-    <vxe-table
+            <vxe-table
           align="right"
           show-footer
           :footer-method="footerMethod1"
@@ -109,6 +109,11 @@
           <vxe-column field="marketval" title="市值" width="80">
             <template #default="{ row }">
               {{ showMoney(row.marketval) }}
+            </template>
+            </vxe-column>
+            <vxe-column field="total" title="总规模(预)" width="80">
+            <template #default="{ row }">
+              {{ showMoney(row.total) }}
             </template>
             </vxe-column>
          <!-- --><vxe-column field="cash" title="可用资金"> <template #default="{ row }">
@@ -133,7 +138,7 @@
             </vxe-column> 
 
         </vxe-table>
-                    <sankey-chart    ref="vchart"  titles="虚拟FOF"  style="height: 600px" :finalData="detailData" :total="compData1.length" ></sankey-chart>
+                    <sankey-chart    ref="vchart"  titles="虚拟FOF"  style="height: 640px" :finalData="detailData" :total="compData1.length" ></sankey-chart>
 
         </el-col>
       </el-row>
@@ -284,8 +289,11 @@
         </vxe-table>
     
         </el-tab-pane>
+              <el-tab-pane label="排名信息">
+<rank-info :height="tmaxh+'px'"></rank-info>
+              </el-tab-pane>
     </el-tabs>
-    <el-dialog
+    <!-- <el-dialog
       width="80%"
       top="50px"
       :close-on-click-modal="false"
@@ -299,7 +307,6 @@
         label-width="120px"
       >
         <el-form-item label="基金名称" prop="code">
-          <!-- <el-input placeholder="基金名称" v-model="curAction.name" ></el-input> -->
           <el-select
             v-model="curAction.code"
             style="width: 160px"
@@ -318,7 +325,6 @@
         </el-form-item>
 
         <el-form-item label="操作类型">
-          <!-- <el-input placeholder="操作类型" v-model="curAction.stage" ></el-input> -->
           <el-select
             v-model="curAction.stage"
             style="width: 160px"
@@ -345,10 +351,6 @@
             clearable
             placeholder="标的选择"
           >
-          <!-- <el-option   :key="'CASH'"
-              :label="'现金'"
-              :value="'CASH'">
-          </el-option> -->
             <el-option
               v-for="item in foflist"
               :key="item.code"
@@ -364,7 +366,6 @@
             v-model="curAction.marketval"
           ></el-input>
         </el-form-item>
-        <!-- -->
         <el-form-item>
           <el-button type="primary" @click="submitForm('actionForm')"
             >提交</el-button
@@ -372,18 +373,21 @@
           <el-button @click="resetForm('actionForm')">重置</el-button>
         </el-form-item>
       </el-form>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
  <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
 import SankeyChart from "@/components/SankeyChart.vue";
+import rankInfo from "./rankInfo.vue";
+
 import Bus from '@/store/bus.js';
 import { t } from 'vxe-table';
 
 export default {
           components: {
             SankeyChart,
+            rankInfo
         },
   props: {
     full: {
@@ -392,6 +396,16 @@ export default {
     },
   },
   watch: {
+        actionData:{
+              handler(n){
+                  this.calcFinal()
+                  if(this.adinit){
+                  this.saveAction()
+                  }
+                  // this.$refs.actionTable.reloadData(this.actionData)
+                  this.adinit=1
+                  }
+            },
         holding:{handler(n){
           if(this.holding.length>0){
                   this.getProducts()
@@ -418,12 +432,13 @@ export default {
     combineDate() {
       return this.detailData.concat(this.actionData);
     },
-    ...mapState(["foflist","holding"]),
+    ...mapState(["foflist","holding","actionData"]),
     ...mapGetters(["sysparam","token","showFundName"]),
   },
   data() {
     return {  allAlign: 'right',
               range:"hyr",
+              adinit:0,
               timeout: null,
               data_time:"",
               compData1: [],
@@ -466,7 +481,6 @@ export default {
       footerData:[],
       detailData: [],
       tableData: [],
-      actionData: [],
       rlen:{},
       types: ['aas','cta0','cta1','指增','中性','套利'],
       tmaxh: 600,
@@ -573,14 +587,17 @@ return ''
     changeIncome1(row,cell){
         this.genNoUsed1()
         this.genNoUsed3()
+        this.saveAction()
     },
     changeIncome2(row,cell){
         this.genNoUsed2()
         this.genNoUsed3()
+        this.saveAction()
         // this.updateCash("SSS105",row)
     },
     changeIncome3(row,cell){
         this.genNoUsed2()
+        this.saveAction()
 
     },
     genNoUsed1(){
@@ -770,8 +787,8 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       this.genNoUsed2()
     },
     genTitleData3(){
-      const cols=["预入款","预赎回","现金","在投","预投","待分配合计","总管理规模","核对"]
-      const keys=["income","redeem","cash","marketval","buy","unused","managed","check"]
+      const cols=["预入款","预赎回","现金","在投","预投","待分配合计","总管理规模","管理规模(预)","核对"]
+      const keys=["income","redeem","cash","marketval","buy","unused","managed","total","check"]
       const fofs=["SSN818","SSN369","STE599"]
       let rets=[]
       for(var col in cols){
@@ -831,63 +848,61 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       responseType: 'json' // 表明返回服务器返回的数据类型
     }).then((response)=>console.log(response.data))
     },
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          if (this.curAction.stage == "预入款") {
-            this.curAction["b_code"] = "CASH";
-            this.curAction["b_name"] = "现金";
-            if(this.curAction["code"]=="SY9620"||this.curAction["code"]=="SSS105"){
-              this.updateCash(this.curAction["code"],{"value":this.curAction["marketval"]})
-              this.saveAction()
-              this.actionDiagShow = !this.actionDiagShow;
-              return true
-            }else{
-               this.$message({
-            showClose: true,
-            message: "只有多策略和进取预入资金",
-            type: "error"
-          })
-                        return false;
+    // submitForm(formName) {
+    //   this.$refs[formName].validate((valid) => {
+    //     if (valid) {
+    //       if (this.curAction.stage == "预入款") {
+    //         this.curAction["b_code"] = "CASH";
+    //         this.curAction["b_name"] = "现金";
+    //         if(this.curAction["code"]=="SY9620"||this.curAction["code"]=="SSS105"){
+    //           this.updateCash(this.curAction["code"],{"value":this.curAction["marketval"]})
+    //           this.saveAction()
+    //           this.actionDiagShow = !this.actionDiagShow;
+    //           return true
+    //         }else{
+    //            this.$message({
+    //         showClose: true,
+    //         message: "只有多策略和进取预入资金",
+    //         type: "error"
+    //       })
+    //                     return false;
 
-            }
-          }
-          // if (this.curAction.id) {
-          //   for (let i in this.actionData) {
-          //     if (this.actionData[i]["id"] == curAction.id) {
-          //       this.actionData[i] = JSON.parse(JSON.stringify(this.curAction));
-          //       return;
-          //     }
-          //   }
-          // } else {
-          this.curAction.add_time=new Date().getTime()
-          this.actionData.push(JSON.parse(JSON.stringify(this.curAction)));
-          // }
-          this.actionDiagShow = !this.actionDiagShow;
-          this.calcFinal()
-          this.saveAction()
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
-    },
+    //         }
+    //       }
+    //       // if (this.curAction.id) {
+    //       //   for (let i in this.actionData) {
+    //       //     if (this.actionData[i]["id"] == curAction.id) {
+    //       //       this.actionData[i] = JSON.parse(JSON.stringify(this.curAction));
+    //       //       return;
+    //       //     }
+    //       //   }
+    //       // } else {
+    //       this.curAction.add_time=new Date().getTime()
+    //       this.actionData.push(JSON.parse(JSON.stringify(this.curAction)));
+    //       // }
+    //       this.actionDiagShow = !this.actionDiagShow;
+    //       this.calcFinal()
+    //       this.saveAction()
+    //     } else {
+    //       console.log("error submit!!");
+    //       return false;
+    //     }
+    //   });
+    // },
     resetForm(formName) {
       console.log(formName);
       this.$refs[formName].resetFields();
     },
     addAction() {
       this.prodDisabled=false
-      this.actionDiagShow = !this.actionDiagShow;
       this.curAction = {};
+      Bus.$emit("oneKeyBuy",this.curAction)
     },
     fundAction(row) {
-      this.prodDisabled=false
-      this.actionDiagShow = !this.actionDiagShow;
       this.curAction = JSON.parse(JSON.stringify(row));
       this.curAction.stage="预赎回"
       this.curAction.marketval=this.showMoney(this.curAction.marketval)
-      console.log(this.curAction);
+      Bus.$emit("oneKeyBuy",this.curAction)
     },
     getRowKeys(row) {
       return row.code + row.stage + row.b_code;
@@ -910,6 +925,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
             debet:0,
             process:0,
             unused:0,
+            total:0,
             children: [],
           };
           rdict[row["code"]] = pdict;
@@ -973,6 +989,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       }
       this.finalData = [];
       for (var key in rdict) {
+        rdict[key]["total"]=rdict[key]["marketval"]-rdict[key]["redeem"]+rdict[key]["buy"]+rdict[key]["income"]
         this.finalData.push(rdict[key]);
       }
       this.genTitleData1()
@@ -1085,7 +1102,7 @@ this.$axios
     this.resizeChart()
   },
   created() {
-    this.getMisc("fof_action")
+    // this.getMisc("fof_action")
     this.types.map(t=>{this.rlen[t]=0})
 
   },

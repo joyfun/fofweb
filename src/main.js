@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import "./permission"
 import * as process from "process"
+import dayjs from "dayjs"
 
 
 
@@ -12,7 +13,6 @@ import '@/assets/scss/reset.scss'
 import 'element-ui/lib/theme-chalk/index.css';
 // import http from '@/api/config'
 // import './mock'
-var moment = require('moment');
 
 //第三方包
 import ElementUI from 'element-ui'
@@ -22,6 +22,7 @@ import tools from '@/store/tools.js'
 import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
+import '@/assets/iconfont/iconfont.css'
 // import VXETablePluginExportXLSX from 'vxe-table-plugin-export-xlsx'
 
 // VXETable.use(VXETablePluginExportXLSX)
@@ -29,7 +30,7 @@ Vue.use(VXETable)
 Vue.use(tools)
 Vue.prototype.$process=process
 Vue.prototype.$axios = axios
-Vue.prototype.$moment = moment
+Vue.prototype.$moment = dayjs
 Vue.prototype.$isElectron= tools.isElectron()
 Vue.config.productionTip = false
 

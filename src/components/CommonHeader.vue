@@ -82,6 +82,87 @@
     :close-on-press-escape="false"
     :visible.sync="buyVisible"
   >
+  <el-form
+        :rules="rules"
+        :model="curAction"
+        ref="actionForm"
+        label-width="120px"
+      >
+        <el-form-item label="基金名称" prop="code">
+          <!-- <el-input placeholder="基金名称" v-model="curAction.name" ></el-input> -->
+          <el-select
+            v-model="curAction.code"
+            style="width: 160px"
+            @change="changeFOF"
+            clearable
+            placeholder="基金选择"
+          >
+            <el-option
+              v-for="item in sysparam.FOF"
+              :key="item.value"
+              :label="item.value"
+              :value="item.code"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="操作类型">
+          <!-- <el-input placeholder="操作类型" v-model="curAction.stage" ></el-input> -->
+          <el-select
+            v-model="curAction.stage"
+            style="width: 160px"
+            clearable
+            @change="changeStage"
+            placeholder="操作类型"
+          >
+            <el-option
+              v-for="item in stages"
+              :key="item"
+              :label="item"
+              :value="item"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="标的">
+                    <el-select
+            v-model="curAction.b_code"
+            filterable
+            :disabled="curAction.prodDisabled"
+            @change="changeTarget"
+            style="width: 160px"
+            clearable
+            placeholder="标的选择"
+          >
+          <!-- <el-option   :key="'CASH'"
+              :label="'现金'"
+              :value="'CASH'">
+          </el-option> -->
+            <el-option
+              v-for="item in foflist"
+              :key="item.code"
+              :label="item.name"
+              :value="item.code"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="操作金额(万)" prop="marketval">
+          <el-input
+            placeholder="操作金额"
+            v-model="curAction.marketval"
+          ></el-input>
+        </el-form-item>
+        <!-- -->
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('actionForm')"
+            >提交</el-button
+          >
+          <el-button @click="resetForm('actionForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
+  
  <!-- <vxe-form :data="formData1" @submit="searchEvent" @reset="resetEvent">
           <vxe-form-item title="名称" field="name" :item-render="{}">
             <template #default="{ data }">
@@ -220,7 +301,7 @@
 </template>
 
 <script>
-import { mapState,mapGetters } from 'vuex'
+import { mapState,mapGetters, mapMutations } from 'vuex'
 import Bus from '../store/bus.js';
 import tools from '../store/tools.js';
 import axis from 'axios'
@@ -249,12 +330,16 @@ export default {
         },
     computed: {
         ...mapState({
-            current: state => state.tab.currentMenu
+            current: state => state.tab.currentMenu,
+            foflist:state => state.foflist
         }),
-       ...mapGetters(['token']),
+       ...mapGetters(['token','sysparam']),
 
     },
       methods: {
+      ...mapMutations({
+          addAction : 'addAction'
+      }),
         editClose() {
         this.dialogVisible = false
         },
@@ -328,6 +413,57 @@ export default {
             
 
         },
+            changeStage(val){
+      if(val=='预入款'){
+        this.curAction.prodDisabled=true
+        this.curAction.b_code='CASH'
+      }else{
+        this.curAction.prodDisabled=false
+
+      }
+    },
+        changeTarget(){},
+        changeFOF(){},
+         submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          console.log(this.curAction)
+          if (this.curAction.stage == "预入款") {
+            this.curAction["b_code"] = "CASH";
+            this.curAction["b_name"] = "现金";
+            if(this.curAction["code"]=="SY9620"||this.curAction["code"]=="SSS105"){
+              //this.updateCash(this.curAction["code"],{"value":this.curAction["marketval"]})
+              //this.saveAction()
+              // this.actionDiagShow = !this.actionDiagShow;
+              // return true
+            }else{
+               this.$message({
+            showClose: true,
+            message: "只有多策略和进取预入资金",
+            type: "error"
+          })
+                        return false;
+
+            }
+          }
+          // if (this.curAction.id) {
+          //   for (let i in this.actionData) {
+          //     if (this.actionData[i]["id"] == curAction.id) {
+          //       this.actionData[i] = JSON.parse(JSON.stringify(this.curAction));
+          //       return;
+          //     }
+          //   }
+          // } else {
+          this.curAction.add_time=new Date().getTime()
+          this.addAction(JSON.parse(JSON.stringify(this.curAction)));
+          // }
+          this.buyVisible = !this.buyVisible;
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
         submitPass(formName){
             if(this.current&&this.current.user){
                 axis({
@@ -361,9 +497,16 @@ export default {
     data(){
         return{
             activeName:"首页",
-            formData1:{},
+            curAction: {},
+            rules: {
+        code: [{ required: true, message: "请选择基金", trigger: "blur" }],
+        name: [{ required: true, message: "请选择基金", trigger: "blur" }],
+        marketval: [{ required: true, message: "请输入金额", trigger: "blur" }],
+      },
             dialogVisible:false,
             cur_code:"",
+            prodDisabled:false,
+            stages: ["预赎回", "待投资", "预入款"],
             diagName:"",
             temp:"",
             resetVisible:false,
@@ -379,6 +522,11 @@ export default {
                 this[key]=arg[key]
               }
               this.dialogVisible=true
+          console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
+      })
+              Bus.$on('oneKeyBuy',(arg)=> {
+              this.buyVisible=true
+              this.curAction=arg
           console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
       })
     }
