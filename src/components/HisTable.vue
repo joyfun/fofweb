@@ -11,9 +11,12 @@
   <el-button type="primary">90天</el-button>
   <el-button type="primary">本年</el-button>
 </el-button-group> -->
-  <el-button v-show="temp==1" @click="confirmData">确认数据</el-button>
-    <el-button @click="downloadData" size="small" >下载数据</el-button>
-    <el-upload
+            <vxe-button icon="fa fa-plus" @click="insertEvent()">新增</vxe-button>
+  <vxe-button v-show="temp==1" @click="confirmData">确认数据</vxe-button>
+    <vxe-button @click="downloadData" size="small" >下载数据</vxe-button>
+    <vxe-button @click="uploadFile({ multiple : false,types:	['csv', 'xlsx',] })">导入净值</vxe-button>
+
+    <!-- <el-upload
               class="upload-demo"
               accept=".xlsx,.xls"
               action="#"
@@ -21,47 +24,45 @@
               :before-upload="(file)=>loadModel(file)"
               auto-upload
             >
-              <el-button id="uploadButton" size="small" >导入净值</el-button>
-    </el-upload>
+              <vxe-button id="uploadButton" size="small" >导入净值</vxe-button>
+    </el-upload> -->
+    <vxe-button @click="saveHis">保存净值</vxe-button>
   <span>&nbsp;&nbsp;&nbsp;&nbsp;注意:净值日期格式为YYYYmmDD格式 即 20210304格式 </span>
 
         </div>
  </div>
-    <el-table
-    ref="multipleTable"
-    :data="tableData"
-    tooltip-effect="dark"
-    max-height="480"
-    style="width: 100%;margin-top:20px;">
-    <el-table-column
-      prop="date"
-      label="日期"
-      sortable
-      show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.date }}</template>
-    </el-table-column>
-    <el-table-column v-if="!$isElectron"
-      prop="net_val"
-      label="当前净值"
-      sortable
-      show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.net_val }}</template>
-    </el-table-column>
-    <el-table-column
-      prop="sumval"
-      label="累计净值"
-      sortable
-      show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.sumval }}</template>
-    </el-table-column>
-        <el-table-column  v-if="!$isElectron"
-      prop="reval"
-      label="复权净值"
-      sortable
-      show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.reval }}</template>
-    </el-table-column>
-    </el-table>
+        <vxe-table
+          ref="hisTable"
+          border
+          align="right"
+          size="mini"
+          :mouse-config="{selected: true}"
+          show-overflow
+          :data="tableData"
+          :edit-config="{trigger: 'dblclick', mode: 'cell'}"
+          :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
+          <!-- <vxe-column type="seq" width="60"></vxe-column> -->
+          <vxe-column width="140" field="date" title="日期" :edit-render="{autofocus: '.myinput'}">
+            <template #edit="{ row }">
+              <vxe-input v-model="row.date" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
+           <vxe-column width="140" field="netval" title="当前净值" :edit-render="{autofocus: '.myinput'}">
+            <template #edit="{ row }">
+              <vxe-input v-model="row.netval" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
+            <vxe-column width="140" field="sumval" title="累计净值" :edit-render="{autofocus: '.myinput'}">
+            <template #edit="{ row }">
+              <vxe-input v-model="row.sumval" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
+            <vxe-column width="140" field="reval" title="复权净值" :edit-render="{autofocus: '.myinput'}">
+            <template #edit="{ row }">
+              <vxe-input v-model="row.reval" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
+        </vxe-table> 
   </div>
 </template>
 
@@ -142,6 +143,63 @@ export default {
     }
   },
   methods: {
+
+     uploadFile (opts) {
+       let that=this
+              const $table = this.$refs.hisTable
+              $table.readFile(opts).then(params => {
+                const { file } = params
+                       var reader = new FileReader();
+          reader.onload = function(e) {
+          var workbook = XLSX.read(e.target.result);
+          console.log(workbook)
+          console.log(XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]))
+          // let rst=XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]).map((row)=>{return [that.code,row["date"].replaceAll("-",""),row["累计净值"]]})
+          // console.log(rst)
+        //   that.$message({
+        //         message: '成功导入'+rst.length+"条数据",
+        //         type: 'success',
+        //         center: true
+        // });
+    /* DO SOMETHING WITH workbook HERE */
+         };
+          reader.readAsArrayBuffer(file);
+                $table.insert(records)
+              })
+            },
+     async insertEvent (row) {
+              const $table = this.$refs.hisTable
+              const record = {
+                date:""
+              }
+              const { row: newRow } = await $table.insertAt(record, row)
+              await $table.setActiveCell(newRow, 'name')
+            },
+    saveHis(){
+       const $table = this.$refs.hisTable
+       let { insertRecords, removeRecords, updateRecords } = $table.getRecordset()
+       let tosave=insertRecords.concat(updateRecords)
+       console.log(tosave)
+      // axis.post('/fof/savehis',{params:{code:this.code}})//axis后面的.get可以省略；
+      //                   .then((response) => {
+      //                       if(response.data.status=="success")
+      //                       $this.getTable(this.code)
+      //                   })
+                   axis({
+      method: 'post',
+      url: "/fof/savehis", // 请求地址
+      data: {code:this.code,data:tosave}, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then(
+      response => {
+          console.log(response.data)
+
+      },
+      err => {
+        reject(err)
+      }
+    )
+    },
     confirmData(){
          var $this=this
          axis.get('/fof/confirm',{params:{code:this.code}})//axis后面的.get可以省略；
@@ -227,7 +285,7 @@ export default {
                                 $this.tableData.push({
                                     date:response.data.datas[i-1][0],
                                     code:response.data.datas[i-1][1],
-                                    net_val:response.data.datas[i-1][2],
+                                    netval:response.data.datas[i-1][2],
                                     sumval:response.data.datas[i-1][3],
                                     reval:response.data.datas[i-1][4]
 

@@ -255,7 +255,7 @@
             <vxe-radio label="2yr" :content="titleDate"></vxe-radio>
           </vxe-radio-group>
                         </template>   
-          <vxe-column :key="type" :field="type+'_r'" width="80" sortable :title="type+'('+rlen[type]+')'"   v-for=" type of this.types">
+          <vxe-column :key="type" :field="type+'_r'" max-width="100" sortable :title="type+'('+rlen[type]+')'"   v-for=" type of this.types">
             </vxe-column>
                     </vxe-colgroup>
                       <vxe-column field=" " width="2"  :title="' '"  >
@@ -274,7 +274,7 @@
             </vxe-column>
           <vxe-column
             title="操作"
-             width="120"
+             width="80"
             show-overflow-tooltip
           ><template slot-scope="scope">
                <el-button
