@@ -2,6 +2,7 @@
   <div ref="tableContainer" style="	height : 100%;">
           <vxe-toolbar>
           <template #buttons>
+            <vxe-button @click="clearSelect">取消选择</vxe-button>
             <vxe-button @click="showRankHis">排名对比</vxe-button>
             <vxe-button @click="compareData">业绩对比</vxe-button>
             <vxe-button @click="compareInvest">已投对比</vxe-button>
@@ -37,6 +38,7 @@
           </template>
         </vxe-toolbar>  
        <vxe-table
+          @checkbox-change="selectChangeEvent1"
           class="mytable-style"
           border
           ref="rankTable"
@@ -56,12 +58,14 @@
                 {{prodTitle}}
                 <br>{{tableList.length}}
                   <vxe-switch v-model="showList" open-label="List" :open-value="true" close-label="所有" :close-value="false"></vxe-switch>
+                  <vxe-input v-model="filter"  @keyup="filterNames"></vxe-input>
+
               </template>
         <template #default="{ row }">
                                       <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
                             <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
                             &nbsp;<vxe-button  @click.native.prevent="oneKeyBuy(row)" type="text" status="primary" size="small"><i class="iconfont icon-yijiangoumai" ></i></vxe-button>
-       <a href="javascript:;" @click="showHis(row)">{{ showFundName(row.code)}}</a>
+       <a href="javascript:;" @click="showHis(row)">{{ row['name']}}</a>
                            <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing" ></i></el-button>
 
             </template>
@@ -160,6 +164,16 @@ export default {
             },
     
     },
+    tableList:{
+          handler(n){
+            this.setSelect()
+          }
+    },
+    // filter :{
+    //           handler(n){
+    //              this.filterNames()
+    //           }
+    // },
     showList:{
             handler(n){
                   this.filterList()
@@ -222,9 +236,11 @@ export default {
   data() {
     return {  
         statdict:{},
+        filter:"",
         allAlign:"right",
         tableData:[],
         tableList:[],
+        multipleSelection: [],
         showList:true,
         range:"2yr",
         calcdate:"",
@@ -240,11 +256,36 @@ export default {
     };
   },
   methods: {
+    setSelect(){
+      let selrow=this.tableData.filter(row=>this.multipleSelection.indexOf(row['code'])>-1)
+      this.$refs.rankTable.setCheckboxRow(selrow, true)
+
+    },
+    clearSelect(){
+      this.$refs.rankTable.clearCheckboxRow()
+      this.multipleSelection=[]
+    },
+    selectChangeEvent1({ checked, row, rowIndex, $rowIndex, column, columnIndex, $columnIndex, $event }){
+      if(checked&&this.multipleSelection.indexOf(row['code']<0)){
+        this.multipleSelection.push(row["code"])
+      }else{
+        this.multipleSelection=this.multipleSelection.filter(r=>r!=row['code'])
+      }
+    },
     oneKeyBuy(row){
             if(row['code']){
         Bus.$emit("oneKeyBuy",{b_code:row['code'],stage:"待投资"})
       }
 
+    },
+    filterNames(){
+      if(this.filter){
+        this.tableList=this.tableData.filter(row=>{
+          return row["name"].indexOf(this.filter)>-1
+        })
+      }else{
+      this.filterList()
+      }
     },
     filterList(){
        if(this.showList){
@@ -372,24 +413,25 @@ return ''
 
     },
      showRankHis(){
-          let sels=this.$refs.rankTable.getCheckboxRecords()
-          Bus.$emit("showChart",{"cur_code":sels.map(r=>r["code"]).join(','),"diagName":"rankChart"})
+          // let sels=this.$refs.rankTable.getCheckboxRecords()
+          if(this.multipleSelection.length>0)
+          Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"diagName":"rankChart"})
 
       },
     compareData(){
-          let sels=this.$refs.rankTable.getCheckboxRecords()
-          Bus.$emit("showChart",{"cur_code":sels.map(r=>r["code"]).join(','),"diagName":"compareTable"})
+          if(this.multipleSelection.length>0)
+          Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"diagName":"compareTable"})
 
       },
     compareInvest(){
           let clss=class_dict[this.type]
-          let sels=this.$refs.rankTable.getCheckboxRecords()
-          if(sels.length==0){
-            sels=this.tableList
-          }
-          let holds=this.foflist.filter(row=>this.holding.filter(hd=>hd['b_code']==row['code']).length>0).filter(row=>clss.indexOf( row['class_type'])>-1)
-          sels=sels.concat(holds)
-          Bus.$emit("showChart",{"cur_code":sels.map(r=>r["code"]).join(','),"diagName":"compareTable"})
+          // let sels=this.$refs.rankTable.getCheckboxRecords()
+          // if(sels.length==0){
+          //   sels=this.tableList
+          // }
+          let holds=this.foflist.filter(row=>this.holding.filter(hd=>hd['b_code']==row['code']).length>0).filter(row=>clss.indexOf( row['class_type'])>-1).map(row=>row['code'])
+          let sels=this.multipleSelection.concat(holds)
+          Bus.$emit("showChart",{"cur_code":sels.join(','),"diagName":"compareTable"})
 
 
     },
@@ -502,6 +544,7 @@ return ''
         .then((response) => {
           this.rgdict={}
           this.tableData =response.data.map(row=>{
+            row['name']=this.showFundName(row['code'])
             for(let rg of ['hyr','1yr','2yr']){
               if(row['rankF_'+rg]){
                 row['rankF_'+rg+'_r']=row['rankF_'+rg].split("-")[0]

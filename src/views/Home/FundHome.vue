@@ -20,6 +20,7 @@
   </el-select>
       <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptodash">资金明细</vxe-button>
       <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptorank">排名信息</vxe-button>
+      <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptopressure">压力测试</vxe-button>
 
       <!-- <div class="num">
                 <el-card shadow="hover" v-for="item in countData" :key="item.name"
@@ -146,11 +147,15 @@ export default {
     FundEchart,
   },
    computed: {
-     ...mapGetters(['class_order','token','sysparam','usermenu'])
+     ...mapGetters(['class_order','token','sysparam','usermenu','showFundName'])
 
    },
   data() {
     return {
+      subsum:{},
+      subresult:{},
+      holdings:[],
+      rawData:[],
       cur_code:"",
       cur_fof:"SY9620",
       current:{},
@@ -177,7 +182,7 @@ export default {
             },
     tooltip: {
         trigger: 'item',
-        formatter: '{a} <br/>{b} : {c} ({d}%)'
+        valueFormatter: (value) =>   (value/10000).toFixed(1)+"万"
     },
                     data:[
             
@@ -195,8 +200,8 @@ export default {
             return params.name+":\n"+(params.value/10000).toFixed(1)+"万 "+params.percent+"%" 
               }          },
           tooltip: {
-            trigger: "item",
-            formatter: "{a} <br/>{b} : {c} ({d}%)",
+                   trigger: 'item',
+                  valueFormatter: (value) =>   (value/10000).toFixed(1)+"万"
           },
           data: [],
         }]
@@ -236,6 +241,15 @@ export default {
 		"path": "/rankinfo",
 		"label": "排名信息",
 		"name": "rank-info",
+		"icon": "setting"
+	});
+      },
+    jumptopressure(){
+            this.$router.push({name:'fund-pressure'})  
+            this.$store.commit('selectMenu',{
+		"path": "/fundpressure",
+		"label": "压力测试",
+		"name": "fund-pressure",
 		"icon": "setting"
 	});
       },
@@ -412,32 +426,86 @@ export default {
           this.tableData = response.data.datas.sort((a,b)=>{
               return this.class_order.indexOf(a['class_type'])-this.class_order.indexOf(b['class_type'])
           });
-          console.log(this.tableData)
-          this.subData.series[0].data=this.getPieDataOuter(this.tableData)
-          this.pieData.series.data=this.getPieData(this.tableData)
-          this.pieData.legend.data=this.getLegend(this.pieData.series.data)
-          console.log(this.pieData.legend)
-          this.$refs.piechart.initChart()   //子组件$on中的名字
-
-          this.subData.legend.data=this.getLegend(this.subData.series.data)
-          this.$refs.subPie.initChart()   //子组件$on中的名字
+          // this.subData.series[0].data=this.getPieDataOuter(this.tableData)
+          // this.pieData.series.data=this.getPieData(this.tableData)
+          // this.pieData.legend.data=this.getLegend(this.pieData.series.data)
+          // this.$refs.piechart.initChart()   //子组件$on中的名字
+          // this.subData.legend.data=this.getLegend(this.subData.series.data)
+          // this.$refs.subPie.initChart()   //子组件$on中的名字
           this.getSpanArr(this.tableData,"class_type")
           
         })
         .catch((error) => {
           console.log(error);
         });
+
+        this.changePie()
     },
+    changePie(){
+          if(this.subresult[this.cur_fof]){
+          this.holdings= JSON.parse(JSON.stringify(this.subresult[this.cur_fof]))
+          this.holdings.filter(row=> !row["type"]).forEach((srow,idx)=>{
+              if(srow["code"]){
+              let rt=srow["marketval"]/this.subsum[srow["code"]]
+              this.subresult[srow["code"]].map(prow=>{
+                  let nrow=JSON.parse(JSON.stringify(prow))
+                  nrow["omarketval"]=nrow["marketval"]
+                  nrow["rt"]=rt
+                  nrow["marketval"]=nrow["marketval"]*rt
+                  this.holdings.push(nrow)
+              })
+              }
+
+          })
+          
+          let cdata={}
+          this.holdings.map(row=>{
+            row["name"]=this.showFundName(row["code"]).substring(2)
+            if(row["type"]){
+              let ov=cdata[row["class_type"]]
+              if(!ov){
+                ov=0
+              }
+              ov+=row["marketval"]
+              cdata[row["class_type"]]=ov
+            }
+          })
+          let chartdata=[]
+          for (let key in cdata){
+            chartdata.push({"name":key,"value":cdata[key]})
+
+          }
+          this.pieData.series.data=chartdata
+          this.$refs.piechart.initChart()   //子组件$on中的名字
+          this.subData.series[0].data=this.holdings.filter(row=>!row["rt"]).map(row=>{return {"name":row["name"],"value":row["marketval"]}})
+          this.$refs.subPie.initChart() 
+    }}
   },
   created() {
+    axis({
+        url: "/fof/holdingType",
+        method: "GET"
+      })
+        .then((response) => {
+         this.rawData=response.data
+        this.subsum={}
+         for(let fof of this.sysparam.FOF){
+             this.subresult[fof['code']]=this.rawData.filter(row=>row['mcode']==fof['code'])
+             this.subsum[fof['code']]=this.rawData.filter(row=>row['mcode']==fof['code']).reduce((preVal, row) => { return preVal + row["marketval"];}, 0)
+         }
+         this.changePie() 
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
 this.pieData.action["click"]=(params)=>{
             this.$emit("mainpieClick",params)
         }
     this.getTableData();
     this.$on('mainpieClick',(arg)=> {
         this.subtype=arg.name
-        this.subData.series[0].data=this.getPieDataOuter(this.tableData)
-        this.subData.legend.data=this.getLegend(this.subData.series.data)
+        this.subData.series[0].data=this.holdings.filter(row=>row["class_type"]==this.subtype).map(row=>{return {"name":row["name"],"value":row["marketval"]}})
         this.$refs.subPie.initChart() 
 
       })

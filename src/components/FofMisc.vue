@@ -60,6 +60,9 @@ import MarkdownItVueLight from 'markdown-it-vue/dist/markdown-it-vue-light.umd.m
 import 'markdown-it-vue/dist/markdown-it-vue-light.css'
 
  export default {
+     components: {
+    MarkdownItVueLight,
+  },
   props: {
     visable: {
       type: Boolean,
@@ -146,6 +149,9 @@ import 'markdown-it-vue/dist/markdown-it-vue-light.css'
             this.$axios.get('/sys/misc', { params: { "code": this.code } }).then(response=>{
         $this.tableData=response.data
       })
+            this.$axios.get('/sys/misc', { params: { "code": 'doc_'+this.code } }).then(response=>{
+        $this.content=response.data
+      })
     }, 
     async insertEvent (row) {
               const $table = this.$refs.xTable
@@ -185,24 +191,18 @@ import 'markdown-it-vue/dist/markdown-it-vue-light.css'
   },
   mounted() {
       this.getWts(this.code)
-      this.content=`
-# h1 Heading 8-)
-## h2 Heading
-### h3 Heading
-#### h4 Heading
-##### h5 Heading
-###### h6 Heading
+//       this.content=`
+// ## 说明
+// + yeaily return 年化收益
+//     $$ 分子 \\over 分 $$
+//     据计算
+//     $$ \\frac{(期末-期初)}{期初} \\times \\frac{52}{期数} $$
 
-## Lists
-Unordered
+    
+//      (($期末-期初$) \\div $期初$ -1)*52/周数$
+// + sharpe :
 
-+ Sub-lists are made by indenting 2 spaces:
-  - Marker character change forces new list start:
-    * Ac tristique libero volutpat at
-    + Facilisis in pretium nisl aliquet
-    - Nulla volutpat aliquam velit
-+ Very easy!
-`
+// `
     // window.addEventListener("resize", this.resizeChart);
   },
   unmounted() {
@@ -211,4 +211,12 @@ Unordered
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.katex .mfrac .frac-line {
+  display: inline-block;
+  width: 100%;
+  border-style: solid;
+  border-top-width: 1px;
+}
+
+</style>

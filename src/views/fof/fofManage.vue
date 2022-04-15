@@ -577,7 +577,7 @@
     )
       },
       addInfo(){
-          this.current={stage:"入库"}
+          this.current={stage:"入库",scale:"可投"}
           this.formVisible=true
       },
         loadModel(file){

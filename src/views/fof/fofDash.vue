@@ -100,12 +100,13 @@
         </el-card>
         </el-col><el-col :span="10">
             <vxe-table
+          border
           align="right"
           show-footer
           :footer-method="footerMethod1"
           size="mini"
-          :data="finalData">
-          <vxe-column field="name" title="基金名称" width="160"> </vxe-column>
+          :data="finalDataf">
+          <vxe-column field="name" align="left" title="基金名称" width="160"> </vxe-column>
           <vxe-column field="marketval" title="市值" width="80">
             <template #default="{ row }">
               {{ showMoney(row.marketval) }}
@@ -292,6 +293,9 @@
               <el-tab-pane label="排名信息">
 <rank-info :height="tmaxh+'px'"></rank-info>
               </el-tab-pane>
+              <!-- <el-tab-pane label="压力测试">
+<fof-cast :height="tmaxh+'px'"></fof-cast>
+              </el-tab-pane> -->
     </el-tabs>
     <!-- <el-dialog
       width="80%"
@@ -380,6 +384,7 @@
 import { mapGetters, mapMutations, mapState } from "vuex";
 import SankeyChart from "@/components/SankeyChart.vue";
 import rankInfo from "./rankInfo.vue";
+import fofCast from "./fofCast.vue";
 
 import Bus from '@/store/bus.js';
 import { t } from 'vxe-table';
@@ -387,7 +392,8 @@ import { t } from 'vxe-table';
 export default {
           components: {
             SankeyChart,
-            rankInfo
+            rankInfo,
+            fofCast
         },
   props: {
     full: {
@@ -422,6 +428,9 @@ export default {
   computed: {
     gridOptions1(){
       
+    },
+    finalDataf(){
+      return this.finalData.filter( row=>["SSN818","SSN369","STE599","多策略FOF直投"].indexOf(row["code"])<0)
     },
     titleDate(){
       return '2年 排名信息('+this.data_time+")"
@@ -664,7 +673,8 @@ return ''
       let toredeem=0
       for(var key of ["SSN818","SSN369","STE599"]){
       this.compData3[5][key]=parseFloat(this.compData1[4][key])+parseFloat(this.compData2[4][key])-parseFloat(this.compData3[4][key])
-      }
+      this.compData3[7][key]=this.compData3[6][key]+parseFloat(this.compData3[4][key])+parseFloat(this.compData3[5][key])
+     }
       let fofs=["SY9620","SSS105","SSN818","SSN369","STE599"]
       this.finalData.sort((a,b)=>{return fofs.indexOf(a.code)-fofs.indexOf(b.code)})
 
@@ -799,11 +809,14 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       
       rets.push(ret)
       }
+      console.log(rets)
       for (let af of fofs ){
         let afin=this.finalData.filter(a=>a['code']==af)[0]
         rets[6][af]=Math.floor((afin['marketval']+afin['cash']+afin['process'])/10000)   //总管理规模=基金在投+现金+ETF
         rets[3][af]=rets[6][af]-rets[2][af]    //在投=总管理规模-现金
-        rets[7][af]=Math.floor((rets[3][af]+rets[2][af]-this.compData2[3][af]-this.compData1[3][af])) //check市值差
+        rets[8][af]=rets[3][af]+rets[2][af]-this.compData2[3][af]-this.compData1[3][af]//check市值差
+        //rets[8][af]=rets[6][af]+parseFloat(rets[4][af])+parseFloat(rets[5][af])//check市值差
+
       }
       this.compData3=rets
       this.genNoUsed3()

@@ -240,7 +240,7 @@ const routes = [
       {
         path: '/fundpressure',
         name: 'fund-pressure',
-        component:() => import('@/views/fof/fofPressure.vue')
+        component:() => import('@/views/fof/fofCast.vue')
       },
       {
         path: '/fundrank1',

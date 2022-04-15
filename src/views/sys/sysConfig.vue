@@ -12,8 +12,8 @@
     <el-tab-pane label="大类级别">   
      <fof-misc code="quant_type" :cols="['name', 'sharpe_', 'calmar_', 'sortino_', 'dd_', 'dd_week_', 'win_ratio_','yeaily_return_', 'volatility_']"></fof-misc>
       </el-tab-pane> 
-     <el-tab-pane label="List条件">   
-     <fof-misc code="list_cond" :cols="['name', 'length', 'goodR', 'listratio']"></fof-misc>
+     <el-tab-pane label="观察状态">   
+     <fof-misc code="watch_cond" :cols="['status',  'listrate', 'mean']"></fof-misc>
       </el-tab-pane> 
     </el-tabs>
 </div>
