@@ -190,6 +190,7 @@
             <el-button v-show="scope.row.combine" @click.native.prevent="viewConcat(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="拼接历史" placement="left-start"><i class="el-icon-link"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
             <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            <vxe-button v-if="usermenu.indexOf('info-edit')>-1"  @click="uploadInvest(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传尽调表" placement="left-start"><i class="iconfont icon-shangchuanbeiandanzheng"></i></el-tooltip></vxe-button >
 
         </template>
     </el-table-column>
@@ -198,8 +199,8 @@
   <el-upload
               class="upload-demo"
               style="display:none"
-              accept=".doc,.dot,.DOC,.DOT,DOCX,docx,.pdf,.PDF"
-              action="/fof/upload"
+              :accept="fileAccept"
+              :action="uploadUrl"
               :data="{code:cur_code}"
 
               :before-upload="(file)=>loadModel(file)"
@@ -374,6 +375,7 @@
     import CompareTable from '../../components/CompareTable';
 
     import {mapGetters} from 'vuex'
+    import VXETable from 'vxe-table'
 
     import FundCorr from '../../components/FundCorr.vue';
    const cForm=[
@@ -444,6 +446,8 @@
         sub_type:[],
         current:{},
         cur_code:"",
+        fileAccept:".doc,.dot,,docx,.pdf",
+        uploadUrl:"/fof/upload",
         diagName:"",
         dialogVisible: false,
         confirmVisible:false,
@@ -584,8 +588,27 @@
             console.log(file.name)
         },
         uploadFile(row){
+            this.fileAccept=".dot,.doc,docx,.pdf"
+            this.uploadUrl="/fof/upload"
             this.cur_code=row.code
             document.getElementById('uploadButton').click()
+
+        },
+        uploadInvest(row){
+            VXETable.readFile({multiple:false,types:["xlsx"]}).then((file)=>{
+          var formData = new FormData();
+        formData.append('file',file.file);
+        this.$axios({
+      method: 'post',
+      url: "/fof/upInvest", // 请求地址
+      data: formData, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then(res=>{
+              console.log(res) 
+            })
+
+            // document.getElementById('uploadButton').click()
+        })
         },
          editClose() {
         this.dialogVisible = false
@@ -929,8 +952,11 @@ showResult(number,rate=100){
         // console.log(val);
       },
       resizeChart(){
+                if(this.$refs['tableContainer']){
                 console.log(this.$refs['tableContainer'].clientHeight)
-                this.tmaxh=this.$refs['tableContainer'].clientHeight-120
+                this.tmaxh=this.$refs['tableContainer'].clientHeight-180
+                }
+                console.log(this.tmaxh)
 
       },
       delSelection(){

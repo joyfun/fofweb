@@ -32,6 +32,13 @@
       "font_class": "combination",
       "unicode": "e67d",
       "unicode_decimal": 59005
+    },
+    {
+      "icon_id": "13087833",
+      "name": "上传备案单证",
+      "font_class": "shangchuanbeiandanzheng",
+      "unicode": "e7c4",
+      "unicode_decimal": 59332
     }
   ]
 }

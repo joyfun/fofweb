@@ -36,6 +36,7 @@
           border
           align="right"
           size="mini"
+          max-height="480"
           :mouse-config="{selected: true}"
           show-overflow
           :data="tableData"
@@ -63,10 +64,20 @@
             </template>
           </vxe-column>
         </vxe-table> 
+        <div v-show="loaded">
+            <!-- <vxe-select v-model="keymap[key]" placeholder="选择列">
+              <vxe-option v-for="col of cols" :key="col" :value="col" :label="col"></vxe-option>
+              </vxe-select> -->
+              <vxe-select v-model="keymap[idx]" :placeholder="fcol"  style="width:140px" v-for="(fcol,idx) in cols" clearable :key="fcol" >
+              <vxe-option v-for="(v,col) in frecord" :key="col" :value="col" :label="col"></vxe-option>
+              </vxe-select> 
+              <vxe-button @click="importData">确认</vxe-button>
+        </div>
+
   </div>
 </template>
 
-// <script>
+<script>
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
 import axis from 'axios'
@@ -109,6 +120,7 @@ export default {
   watch: {
     code:{
     handler: function(val) {
+                this.loaded=false
                 this.getTable(val)
               }
     },
@@ -136,14 +148,44 @@ export default {
     return {
       raw_data:{},
       startidx:0,
+      loaded:false,
+      cols:["日期","当前净值","累计净值","复权净值"],
       max_date:'',
     //   width: this.initWidth(),
       echart: null,
+      impcols:[],
+      records:[],
+      frecord:{},
+      keymap:["","","",""],
       tableData:[]  
     }
   },
   methods: {
+     importData(){
+       console.log(this.frecord)
+       console.log(this.$moment("19000101").add(44620-2,"d").format("YYYYMMDD"))
 
+       if(this.keymap[0]&&this.keymap[2]){
+       this.tableData=this.records.map(rc=>{ 
+         let ret={"code":this.code,"date":rc[this.keymap[0]],"netval":null,"sumval":rc[this.keymap[2]],"reval":null}
+         if(ret["date"]>41000 &&  ret["date"]<46000){
+           this.$moment("20")
+         }
+        if(this.keymap[1]){
+          ret["netval"]=rc[this.keymap[1]]
+        }
+        if(this.keymap[3]){
+          ret["reval"]=rc[this.keymap[3]]
+        }
+         return ret
+         
+       })
+       }else{
+      VXETable.modal.alert(`日期和累计净值列不能为空`)
+
+       }
+       
+     },
      uploadFile (opts) {
        let that=this
               const $table = this.$refs.hisTable
@@ -151,9 +193,14 @@ export default {
                 const { file } = params
                        var reader = new FileReader();
           reader.onload = function(e) {
-          var workbook = XLSX.read(e.target.result);
-          console.log(workbook)
-          console.log(XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]))
+          var workbook = XLSX.read(e.target.result,{type:'binary',cellText:false,cellDates:true});
+          that.records=XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]],{raw:false,dateNF:'yyyymmdd'})
+          that.impcols=[]
+          if(that.records.length>0){
+            that.frecord=that.records[0]
+          }
+          that.loaded=true
+          // that.$refs.impTable.recalculate()
           // let rst=XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]).map((row)=>{return [that.code,row["date"].replaceAll("-",""),row["累计净值"]]})
           // console.log(rst)
         //   that.$message({
@@ -162,9 +209,10 @@ export default {
         //         center: true
         // });
     /* DO SOMETHING WITH workbook HERE */
+
          };
           reader.readAsArrayBuffer(file);
-                $table.insert(records)
+                // $table.insert(records)
               })
             },
      async insertEvent (row) {
@@ -179,6 +227,9 @@ export default {
        const $table = this.$refs.hisTable
        let { insertRecords, removeRecords, updateRecords } = $table.getRecordset()
        let tosave=insertRecords.concat(updateRecords)
+       if(this.loaded){
+         tosave=this.tableData
+       }
        console.log(tosave)
       // axis.post('/fof/savehis',{params:{code:this.code}})//axis后面的.get可以省略；
       //                   .then((response) => {
@@ -192,6 +243,7 @@ export default {
       responseType: 'json' // 表明返回服务器返回的数据类型
     }).then(
       response => {
+          this.loaded=false
           console.log(response.data)
 
       },

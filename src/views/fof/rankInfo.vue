@@ -108,7 +108,7 @@
             <vxe-radio label="2yr" content="2年 指标数据"></vxe-radio>
           </vxe-radio-group>
                         </template>   
-         <vxe-column :key="af" width="50" sortable v-for="af of ['length','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio','yeaily_return', 'volatility']"  :title="af" :field="af"  >
+         <vxe-column :key="af" width="50" sortable v-for="af of ['yeaily_return','length','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility']"  :title="af" :field="af"  >
             <template #default="{ row }">
               <span>{{ row[af]}}</span>
             </template>
@@ -617,7 +617,7 @@ return ''
     },
   },
   mounted() {
-    this.getProducts();
+    // this.getProducts();
   },
   created() {
       this.date=this.$moment().format("YYYYMMDD");

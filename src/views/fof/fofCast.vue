@@ -613,6 +613,7 @@ export default {
         }
         let prev={"vola":0,"yr":0,"yr_w":0,"dd":0}
         let nprev={"vola":0,"yr":0,"yr_w":0,"dd":0}
+        console.log(cmap)
         this.holdingData.map(row=>{
             let pct=(row["marketval"]+parseFloat(row['adj'])*10000)/this.total
             let ppct=row["marketval"]/this.ptotal
@@ -630,12 +631,18 @@ export default {
             prev.yr_w+=row["yeaily_return_w"]*pct
             })
         prev.vola=this.$tools.formatMoney(Math.sqrt(prev.vola)*100,2)
+        if(cmap["中证500"]){
         prev.dd=this.$tools.formatMoney((cmap["中证500"]["dd"]*(cmap["中证500"]["marketval"]+cmap["中证500"]["adj"])/this.total-prev.vola*0.6/100)*100,2)
+        nprev.dd=this.$tools.formatMoney((this.indexData["dd"]*cmap["中证500"]["marketval"]/this.ptotal-nprev.vola*0.6/100)*100,2)
+
+        }else{
+        prev.dd=this.$tools.formatMoney(-prev.vola*0.6,2)  
+        nprev.dd=this.$tools.formatMoney(-nprev.vola*0.6,2)  
+
+        }
         prev.yr=this.$tools.formatMoney(prev.yr*100,2)
         prev.yr_w=this.$tools.formatMoney(prev.yr_w*100,2)
-
         nprev.vola=this.$tools.formatMoney(Math.sqrt(nprev.vola)*100,2)
-        nprev.dd=this.$tools.formatMoney((this.indexData["dd"]*cmap["中证500"]["marketval"]/this.ptotal-nprev.vola*0.6/100)*100,2)
         nprev.yr=this.$tools.formatMoney(nprev.yr*100,2)
         nprev.yr_w=this.$tools.formatMoney(nprev.yr_w*100,2)
         this.precast=prev
