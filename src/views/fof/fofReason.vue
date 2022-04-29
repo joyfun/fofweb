@@ -1,5 +1,18 @@
 <template>
 <div>
+   <el-select v-model="cur_fof" style="width:160px"  clearable placeholder="基金选择">
+    <el-option
+      v-for="item in sysparam.FOF"
+      :key="item.value"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+    <!-- <el-option
+      key="全部"
+      label="全部"
+      value="SY9620,SSN818,SSN369,SSS105,STE599">
+    </el-option> -->
+  </el-select>
     <el-button-group>
   <el-button type="primary" @click="changeDate(-30)">近30天</el-button>
   <el-button type="primary" @click="changeDate(-90)">近3月</el-button>
@@ -14,8 +27,7 @@
       align="right"
       @change="startFrom"
       type="date"
-      placeholder="选择日期"
-      :picker-options="pickerOptions">
+      placeholder="选择日期">
     </el-date-picker>
 </el-button-group>
 <el-row>
@@ -86,7 +98,7 @@ export default {
     FundEchart,
   },
   computed: {
-     ...mapGetters(['class_order'])
+     ...mapGetters(['class_order',"sysparam"])
    },
   data() {
     return {
@@ -94,6 +106,7 @@ export default {
       startDate:"",
       spanArr:[],
       dict:{},
+      cur_fof:"SY9620",
       subdict:{},
       current:{},
       subtype:"",
@@ -142,11 +155,12 @@ export default {
     };
   },
   watch: {
-    // subtype:{
-    // handler: function(subtype) {
-    //             this.getTable(val)
-    //           }
-    // }
+    cur_fof:{
+    handler: function(val) {
+                this.startFrom(this.startDate)
+              }
+    }
+    
     },
     methods: {
         getSummaries(param) {
@@ -191,10 +205,10 @@ export default {
 
         var vday=this.$moment().add(num,"d").format("YYYYMMDD")
         this.startDate=vday
-        this.getTableData({"start":vday})
+        this.getTableData({"start":vday,"fof":this.cur_fof})
     },
     startFrom(vday){
-        this.getTableData({"start":vday})
+        this.getTableData({"start":vday,"fof":this.cur_fof})
     },
     cellMerge({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
@@ -297,7 +311,6 @@ getTableData(param) {
           this.tableData = response.data.datas.sort((a,b)=>{
               return this.class_order.indexOf(a['class_type'])-this.class_order.indexOf(b['class_type'])
           })
-          var cash=this.tableData.splice(0,1);
           this.subData.series[0].data=this.getPieDataOuter(this.tableData)
           this.subData.legend.data=this.getLegend(this.subData.series.data)
           this.pieData.series[0].data=this.getPieData(this.tableData)
@@ -321,7 +334,7 @@ getTableData(param) {
       this.pieData.action["click"]=(params)=>{
             this.$emit("pieClick",params)
         }
-    this.getTableData();
+    this.getTableData({"fof":this.cur_fof});
     this.$on('pieClick',(arg)=> {
           console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
         this.subtype=arg.name

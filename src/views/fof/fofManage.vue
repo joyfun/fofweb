@@ -10,6 +10,7 @@
         <el-button  size="small" @click="compare()">业绩对标</el-button>
         <el-button   v-if="usermenu.indexOf('rank-btn')>-1" size="small" @click="showRank()">排名</el-button>
         <el-button   v-if="usermenu.indexOf('sim-btn')>-1" size="small" @click="showSimulate()">仿真</el-button>
+        <el-button   v-if="usermenu.indexOf('info-edit')>-1"  @click="uploadInvestAll()"  size="small">上传尽调表</el-button >
 
         <el-select v-model="filter.stage" @change="getList" style="width:80px"  clearable placeholder="阶段">
     <el-option
@@ -190,7 +191,7 @@
             <el-button v-show="scope.row.combine" @click.native.prevent="viewConcat(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="拼接历史" placement="left-start"><i class="el-icon-link"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
             <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
-            <vxe-button v-if="usermenu.indexOf('info-edit')>-1"  @click="uploadInvest(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="上传尽调表" placement="left-start"><i class="iconfont icon-shangchuanbeiandanzheng"></i></el-tooltip></vxe-button >
+            <!-- <vxe-button v-if="usermenu.indexOf('info-edit')>-1"  @click="uploadInvest(scope.row)" type="text" size="small">上传尽调表</vxe-button > -->
 
         </template>
     </el-table-column>
@@ -581,7 +582,7 @@
     )
       },
       addInfo(){
-          this.current={stage:"入库",scale:"可投"}
+          this.current={stage:"入库",scale:"入库"}
           this.formVisible=true
       },
         loadModel(file){
@@ -593,6 +594,26 @@
             this.cur_code=row.code
             document.getElementById('uploadButton').click()
 
+        },
+                uploadInvestAll(){
+            VXETable.readFile({multiple:true,types:["xlsx","xls"]}).then((file)=>{
+          var formData = new FormData();
+          let fls=file.files
+          console.log(fls)
+          for (let idx=0;idx<fls.length; idx++){
+              formData.append('file[]',fls[idx]);
+          }
+        this.$axios({
+      method: 'post',
+      url: "/fof/upInvest", // 请求地址
+      data: formData, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then(res=>{
+              console.log(res) 
+            })
+
+            // document.getElementById('uploadButton').click()
+        })
         },
         uploadInvest(row){
             VXETable.readFile({multiple:false,types:["xlsx"]}).then((file)=>{

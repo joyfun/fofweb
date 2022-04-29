@@ -34,6 +34,9 @@
             field="type"
             show-overflow-tooltip
           >
+              <template #header>
+                {{data_time}}<br>类型
+              </template>
             <template slot-scope="scope">
               {{scope.row['type']=='指增'?'指增超额':scope.row['type']}}
             </template>
@@ -317,6 +320,7 @@ export default {
         subsum:{},
         rdict:{},
         types:[],
+        data_time:"",
         worsekey:"m25",
         performs:{},
         clicktype:"",
@@ -416,9 +420,13 @@ export default {
               }
               if(row['type']=="中证500"){
                   if(this.performs["000905.SH"]){
-                 for(let key of ["hyr","1yr","2yr"]){
-				row["yeaily_return_"+key]+=this.performs["000905.SH"]['yeaily_return_'+key]
-                }   
+                //  for(let key of ["hyr","1yr","2yr"]){
+				        //     row["yeaily_return_"+key]+=this.performs["000905.SH"]['yeaily_return_'+key]
+                // }  
+                 row["yeaily_return_hyr"]+=this.performs["000905.SH"]['yeaily_return_hyr']/2
+                 row["yeaily_return_1yr"]+=this.performs["000905.SH"]['yeaily_return_1yr']
+                 row["yeaily_return_2yr"]+=this.performs["000905.SH"]['yeaily_return_2yr']*2
+
                 this.indexData=JSON.parse(JSON.stringify(row))              
                 }
 
@@ -471,8 +479,10 @@ export default {
     changeHoldingtype(mcode){
           this.sumdict={"中证500":{'marketval':0},"指增":{'marketval':0},"套利":{'marketval':0},"混合":{'marketval':0},"cta0":{'marketval':0},"中性":{'marketval':0},"cta1":{'marketval':0},null:{'marketval':0}}
           this.holdings=JSON.parse(JSON.stringify(this.subresult[mcode]))
-          this.holdings.filter(row=> !row["type"]).forEach((srow,idx)=>{
+          console.log(this.holdings)
+          this.holdings.filter(row=> row["class_type"]=="FOF").forEach((srow,idx)=>{
               if(srow["code"]){
+                console.log(srow)
               let rt=srow["marketval"]/this.subsum[srow["code"]]
               this.subresult[srow["code"]].map(prow=>{
                   let nrow=JSON.parse(JSON.stringify(prow))
@@ -631,6 +641,7 @@ export default {
             prev.yr_w+=row["yeaily_return_w"]*pct
             })
         prev.vola=this.$tools.formatMoney(Math.sqrt(prev.vola)*100,2)
+        nprev.vola=this.$tools.formatMoney(Math.sqrt(nprev.vola)*100,2)
         if(cmap["中证500"]){
         prev.dd=this.$tools.formatMoney((cmap["中证500"]["dd"]*(cmap["中证500"]["marketval"]+cmap["中证500"]["adj"])/this.total-prev.vola*0.6/100)*100,2)
         nprev.dd=this.$tools.formatMoney((this.indexData["dd"]*cmap["中证500"]["marketval"]/this.ptotal-nprev.vola*0.6/100)*100,2)
@@ -642,7 +653,6 @@ export default {
         }
         prev.yr=this.$tools.formatMoney(prev.yr*100,2)
         prev.yr_w=this.$tools.formatMoney(prev.yr_w*100,2)
-        nprev.vola=this.$tools.formatMoney(Math.sqrt(nprev.vola)*100,2)
         nprev.yr=this.$tools.formatMoney(nprev.yr*100,2)
         nprev.yr_w=this.$tools.formatMoney(nprev.yr_w*100,2)
         this.precast=prev
@@ -655,10 +665,18 @@ export default {
   },
  mounted() {
             this.getHoldingType()
+            
   },
   created() {
     //   this.getFofPercent()
-
+    this.$axios
+        .get("/fof/last_calcdate") //axis后面的.get可以省略；
+        .then((response) => {
+          this.data_time=response.data['latest_date']
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     this.pieData.action["click"]=(params)=>{
             console.log(params)
             this.clicktype=params.data.name

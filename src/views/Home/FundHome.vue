@@ -350,7 +350,7 @@ export default {
 
             }
             row["profit"]=row.amount*(row["n_netval"])
-            row["sumrate"]=row["n_sumval"]/row["s_sumval"]-1
+            row["sumrate"]=parseFloat(row["n_sumval"])/parseFloat(row["s_sumval"])-1
 
             ret.push({name:row.short_name,value:row["profit"]})
         }
@@ -426,6 +426,7 @@ export default {
           this.tableData = response.data.datas.sort((a,b)=>{
               return this.class_order.indexOf(a['class_type'])-this.class_order.indexOf(b['class_type'])
           });
+          this.getPieDataOuter(this.tableData)
           // this.subData.series[0].data=this.getPieDataOuter(this.tableData)
           // this.pieData.series.data=this.getPieData(this.tableData)
           // this.pieData.legend.data=this.getLegend(this.pieData.series.data)
@@ -457,6 +458,7 @@ export default {
               }
 
           })
+          console.log(this.holdings)
           
           let cdata={}
           this.holdings.map(row=>{

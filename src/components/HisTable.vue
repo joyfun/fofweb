@@ -163,14 +163,10 @@ export default {
   methods: {
      importData(){
        console.log(this.frecord)
-       console.log(this.$moment("19000101").add(44620-2,"d").format("YYYYMMDD"))
-
+      //  console.log(this.$moment("19000101").add(44620-2,"d").format("YYYYMMDD"))
        if(this.keymap[0]&&this.keymap[2]){
        this.tableData=this.records.map(rc=>{ 
-         let ret={"code":this.code,"date":rc[this.keymap[0]],"netval":null,"sumval":rc[this.keymap[2]],"reval":null}
-         if(ret["date"]>41000 &&  ret["date"]<46000){
-           this.$moment("20")
-         }
+         let ret={"code":this.code,"date":rc[this.keymap[0]].replaceAll("-",""),"netval":null,"sumval":rc[this.keymap[2]],"reval":null}
         if(this.keymap[1]){
           ret["netval"]=rc[this.keymap[1]]
         }
