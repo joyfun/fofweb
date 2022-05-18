@@ -117,7 +117,7 @@ const routes = [
       },{
         path: '/rankinfo',
         name: 'rank-info',
-        component:() => import('@/views/fof/rankInfo.vue')
+        component:() => import('@/views/fof/rankInfoN.vue')
       },
       {
         path: '/listrank',

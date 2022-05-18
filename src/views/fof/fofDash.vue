@@ -387,8 +387,8 @@
  <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
 import SankeyChart from "@/components/SankeyChart.vue";
-import rankInfo from "./rankInfo.vue";
 import fofCast from "./fofCast.vue";
+import rankInfo from "./rankInfoN.vue";
 
 import Bus from '@/store/bus.js';
 import { t } from 'vxe-table';
