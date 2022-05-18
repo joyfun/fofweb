@@ -58,7 +58,7 @@
                 {{prodTitle}}
                 <br>{{tableList.length}}
                   <vxe-switch v-model="showList" open-label="List" :open-value="true" close-label="所有" :close-value="false"></vxe-switch>
-                  <vxe-input v-model="filter"  @keyup="filterNames"></vxe-input>
+                  <vxe-input v-model="filter"  @keyup="filterNames" ></vxe-input>
 
               </template>
         <template #default="{ row }">
@@ -470,6 +470,9 @@ return ''
             return row
           })
           this.filterList()
+          if(this.filter){
+            this.filterNames()
+          }
           this.$refs.rankTable.reloadData(this.tableList)
           this.$refs.rankTable.sort({field: 'rankF_1yr_r', order: 'asc'})
         })
@@ -610,6 +613,7 @@ return ''
         
         }) 
           }
+
         })
         .catch((error) => {
           console.log(error);
@@ -637,6 +641,10 @@ return ''
 
         .mytable-style .col--group {
           border:2px ;
+        }
+        .mytable-style .vxe-cell {
+          padding-left:2px ;
+          padding-right: 2px;
         }
         .mytable-style .vxe-body--row.row-green {
           background-color: #187;

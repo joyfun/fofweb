@@ -444,9 +444,16 @@ export default {
     },
     changePie(){
           if(this.subresult[this.cur_fof]){
+
           this.holdings= JSON.parse(JSON.stringify(this.subresult[this.cur_fof]))
           this.holdings.filter(row=> !row["type"]).forEach((srow,idx)=>{
               if(srow["code"]){
+                console.log(srow)
+                if(srow['code'].startsWith("SUBJECT")){
+                 srow['class_type']="现金"
+                 srow['type']="现金"
+                return true 
+                }
               let rt=srow["marketval"]/this.subsum[srow["code"]]
               this.subresult[srow["code"]].map(prow=>{
                   let nrow=JSON.parse(JSON.stringify(prow))
@@ -462,7 +469,12 @@ export default {
           
           let cdata={}
           this.holdings.map(row=>{
+            if(row["code"].startsWith("SUBJECT")){
+            row["name"]='现金'
+            }else{
             row["name"]=this.showFundName(row["code"]).substring(2)
+
+            }
             if(row["type"]){
               let ov=cdata[row["class_type"]]
               if(!ov){

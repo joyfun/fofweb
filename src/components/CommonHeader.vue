@@ -455,6 +455,7 @@ export default {
           //   }
           // } else {
           this.curAction.add_time=new Date().getTime()
+          delete this.curAction.name 
           this.addAction(JSON.parse(JSON.stringify(this.curAction)));
           // }
           this.buyVisible = !this.buyVisible;

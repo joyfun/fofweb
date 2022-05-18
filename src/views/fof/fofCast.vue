@@ -11,7 +11,8 @@
             <vxe-radio-group v-model="clicktype" size="small" :strict="false">
             <vxe-radio-button :key="key" v-for="key of types" :label="key" :content="key?key:'所有'"></vxe-radio-button>
           </vxe-radio-group>  
-          <vxe-button icon="vxe-icon--refresh" status="perfect" @click="revertEvent">还原</vxe-button>        
+          <vxe-button icon="vxe-icon--refresh" status="perfect" @click="revertEvent">还原</vxe-button> 
+          数据日期{{pos_date}}       
           </template>
         </vxe-toolbar>
 <vxe-table
@@ -216,7 +217,7 @@
             show-overflow-tooltip
           >
           <template slot-scope="scope">{{
-              $tools.formatMoney(scope.row.yeaily_return_hyr*100,2)
+              $tools.formatMoney(scope.row.yeaily_return_hyr*50,2)
             }}</template>
           </vxe-column>
                 <vxe-column
@@ -235,7 +236,7 @@
             field="yeaily_return_2yr"
             show-overflow-tooltip
           >          <template slot-scope="scope">{{
-              $tools.formatMoney(scope.row.yeaily_return_2yr*100,2)
+              $tools.formatMoney(scope.row.yeaily_return_2yr*200,2)
             }}</template></vxe-column>
             </vxe-colgroup>
         </vxe-table>
@@ -315,6 +316,7 @@ export default {
   data() {
       return {
         indexData:{},
+        pos_date:"",
         fof_percent:{},
         subresult:{},
         subsum:{},
@@ -415,8 +417,14 @@ export default {
                 tkey="aas"
             }
           for (let akey of ["yeaily_return","dd","volatility"]){
-              row[akey]=this.rdict["normal"][tkey][akey]
-              row[akey+"_w"]=this.rdict[this.worsekey][tkey][akey]   
+              let nm=0
+              let ws=0
+              if(this.rdict["normal"][tkey]){
+                nm=this.rdict["normal"][tkey][akey]
+                ws=this.rdict[this.worsekey][tkey][akey]   
+              }
+              row[akey]=nm
+              row[akey+"_w"]=ws
               }
               if(row['type']=="中证500"){
                   if(this.performs["000905.SH"]){
@@ -477,7 +485,7 @@ export default {
         
      },
     changeHoldingtype(mcode){
-          this.sumdict={"中证500":{'marketval':0},"指增":{'marketval':0},"套利":{'marketval':0},"混合":{'marketval':0},"cta0":{'marketval':0},"中性":{'marketval':0},"cta1":{'marketval':0},null:{'marketval':0}}
+          this.sumdict={"中证500":{'marketval':0},"指增":{'marketval':0},"套利":{'marketval':0},"混合":{'marketval':0},"cta0":{'marketval':0},"中性":{'marketval':0},"cta1":{'marketval':0},null:{'marketval':0},"现金":{'marketval':0}}
           this.holdings=JSON.parse(JSON.stringify(this.subresult[mcode]))
           console.log(this.holdings)
           this.holdings.filter(row=> row["class_type"]=="FOF").forEach((srow,idx)=>{
@@ -500,8 +508,15 @@ export default {
           this.classify(row)
 				this.sumdict[row['type']]["marketval"]+=row['marketval']
                 }
+                else if(row['b_code'].startsWith("SUBJECT")){
+              console.log(row)
+              row['type']="现金"
+              this.sumdict["现金"]["marketval"]+=row['marketval']
+ 
+                }
             })
-        console.log(this.holdings)
+
+        console.table(this.holdings)
         this.types=[...new Set(this.holdings.map(r=>r['type']))]
         this.types.sort((a,b)=>{
           if(b==null){
@@ -643,7 +658,7 @@ export default {
         prev.vola=this.$tools.formatMoney(Math.sqrt(prev.vola)*100,2)
         nprev.vola=this.$tools.formatMoney(Math.sqrt(nprev.vola)*100,2)
         if(cmap["中证500"]){
-        prev.dd=this.$tools.formatMoney((cmap["中证500"]["dd"]*(cmap["中证500"]["marketval"]+cmap["中证500"]["adj"])/this.total-prev.vola*0.6/100)*100,2)
+        prev.dd=this.$tools.formatMoney((cmap["中证500"]["dd"]*(cmap["中证500"]["marketval"]+cmap["中证500"]["adj"]*10000)/this.total-prev.vola*0.6/100)*100,2)
         nprev.dd=this.$tools.formatMoney((this.indexData["dd"]*cmap["中证500"]["marketval"]/this.ptotal-nprev.vola*0.6/100)*100,2)
 
         }else{
@@ -669,6 +684,14 @@ export default {
   },
   created() {
     //   this.getFofPercent()
+        this.$axios
+        .get("/fof/last_posdate") //axis后面的.get可以省略；
+        .then((response) => {
+          this.pos_date=response.data['last_posdate']
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     this.$axios
         .get("/fof/last_calcdate") //axis后面的.get可以省略；
         .then((response) => {

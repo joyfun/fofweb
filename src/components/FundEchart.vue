@@ -1238,7 +1238,9 @@ export default {
       }
     },
     resizeChart() {
+      if(this.$refs.echartdiv.clientHeight){
       this.echart ? this.echart.resize() : "";
+      }
     },
   },
   mounted() {

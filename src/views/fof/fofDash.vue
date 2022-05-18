@@ -2,7 +2,7 @@
   <div id="tableContainer" ref="tableContainer" style="height: 100%">
     <el-tabs type="border-card">
       <el-tab-pane>
-         <span slot="label"><i class="el-icon-date"></i> 资金状况</span>                               <!--<vxe-button @click="jumptodash">排名信息</vxe-button> -->
+         <span slot="label"><i class="el-icon-date"></i> 资金状况{{pos_date}}</span>                               <!--<vxe-button @click="jumptodash">排名信息</vxe-button> -->
 
 <!-- 
         <vxe-table
@@ -199,9 +199,9 @@
                   </template>
           </vxe-column>
           <vxe-column
-            label="操作时间"
+            title="操作时间"
             sortable
-            prop="add_time"
+            field="add_time"
             show-overflow-tooltip
           >
           <template slot-scope="scope">{{
@@ -408,10 +408,11 @@ export default {
   watch: {
         actionData:{
               handler(n){
-                  this.calcFinal()
-                  if(this.adinit){
+                  console.log(n)
+                  // this.calcFinal()
+                  // if(this.adinit){
                   this.saveAction()
-                  }
+                  // }
                   // this.$refs.actionTable.reloadData(this.actionData)
                   this.adinit=1
                   }
@@ -450,6 +451,7 @@ export default {
   },
   data() {
     return {  allAlign: 'right',
+              pos_date:"",
               range:"hyr",
               adinit:0,
               timeout: null,
@@ -566,7 +568,7 @@ return ''
             },
 
     updateCash(code,row){
-            if(row['value']&&row['value'].length>1){
+            if(row['value']&&row['value'].length>0){
 
         let old=this.actionData.filter(row=>row["code"]==code&&row["stage"]=="预入款")
         if(old.length==1){
@@ -580,12 +582,12 @@ return ''
             },
 
     updateInvest(code,b_code,row){
-      if(row['value']&&row['value'].length>1){
+      if(row['value']&&row['value'].length>0){
         let old=this.actionData.filter(row=>row["code"]==code&&row["b_code"]==b_code&&row["stage"]=="待投资")
         if(old.length==1){
           old[0]["marketval"]=row['value']
         }else if(old.length==0){
-          this.actionData.push({"code":code,"stage":"待投资","b_code":b_code,"marketval":row['value']})
+          this.actionData.push({"code":code,"stage":"待投资","b_code":b_code,"marketval":row['value'],"add_time": new Date().getTime()})
         }}
     },
 
@@ -676,8 +678,9 @@ return ''
       let toinvest=0
       let toredeem=0
       for(var key of ["SSN818","SSN369","STE599"]){
-      this.compData3[5][key]=parseFloat(this.compData1[4][key])+parseFloat(this.compData2[4][key])-parseFloat(this.compData3[4][key])
-      this.compData3[7][key]=this.compData3[6][key]+parseFloat(this.compData3[4][key])+parseFloat(this.compData3[5][key])
+      this.compData3[0][key]=parseFloat(this.compData1[0][key])+parseFloat(this.compData2[0][key])
+      this.compData3[5][key]=parseFloat(this.compData3[1][key])+parseFloat(this.compData3[2][key])+parseFloat(this.compData1[4][key])+parseFloat(this.compData2[4][key])-parseFloat(this.compData3[4][key])
+      this.compData3[7][key]=this.compData3[6][key]+parseFloat(this.compData3[0][key])
      }
       let fofs=["SY9620","SSS105","SSN818","SSN369","STE599"]
       this.finalData.sort((a,b)=>{return fofs.indexOf(a.code)-fofs.indexOf(b.code)})
@@ -1125,6 +1128,14 @@ this.$axios
     this.resizeChart()
   },
   created() {
+    this.$axios
+        .get("/fof/last_posdate") //axis后面的.get可以省略；
+        .then((response) => {
+          this.pos_date=response.data['last_posdate']
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     // this.getMisc("fof_action")
     this.types.map(t=>{this.rlen[t]=0})
 
@@ -1134,6 +1145,10 @@ this.$axios
 <style lang="scss" >
         .mytable-style .col--group {
           border:2px ;
+        }
+        .mytable-style .vxe-cell {
+padding-left: 2px;
+padding-right: 2px;
         }
 .background-yellow {
             background-color: yellow;
