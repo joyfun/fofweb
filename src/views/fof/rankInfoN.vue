@@ -82,7 +82,7 @@
             <vxe-column field=" " width="2" sortable :title="' '"  >
             </vxe-column>
             <template  v-for=" tp of ['hyr','1yr','2yr']">
-           <vxe-colgroup  :key="tp" :title="yrdict[tp]+'排名信息'" align="center" >
+           <vxe-colgroup  :key="tp" :title="yrdict[tp]+'排名信息('+tableData.length+')平均'+avgcnt[range]+'个'" align="center" >
 
 
              <vxe-column :field="'mean'+winlength[tp]" width="60" sortable :title="'mean(%)'"  >
@@ -253,19 +253,20 @@ export default {
     filterList(){
        if(this.showList){
           this.tableList= this.tableData.filter(row=>{
-            for(let key in this.yrdict){
+            return row['list']=='1'
+          //   for(let key in this.yrdict){
         
-              if(isNumber(row["mean"+this.winlength[key]])&&row["mean"+this.winlength[key]]<=0.3){
-                return true
-              }
-              if(isNumber(row["listrate"+this.winlength[key]])&&row["listrate"+this.winlength[key]]>=0.7){
-                return true
-              }
-              if(isNumber(row['rankF_'+key+"_r"])&&(row['rankF_'+key+"_r"]/this.rgdict[key])<=0.3){
-                return true
-              }
-            }
-          return false
+          //     if(isNumber(row["mean"+this.winlength[key]])&&row["mean"+this.winlength[key]]<=0.3){
+          //       return true
+          //     }
+          //     if(isNumber(row["listrate"+this.winlength[key]])&&row["listrate"+this.winlength[key]]>=0.7){
+          //       return true
+          //     }
+          //     if(isNumber(row['rankF_'+key+"_r"])&&(row['rankF_'+key+"_r"]/this.rgdict[key])<=0.3){
+          //       return true
+          //     }
+          //   }
+          // return false
           })
         }else{
        this.tableList=this.tableData
