@@ -302,7 +302,7 @@ return ''
 return ''
             },
     cellClassBg ({ row, rowIndex, column, columnIndex }) {
-      if(column['field']&&column['field'].startsWith("astd")){
+      if(column['field']&&column['field'].startsWith("std")){
         let rg=(this.statdict[column['field']]["max"]-row[column['field']])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
       let clr=this.genColor(rg)
             return {
