@@ -229,7 +229,7 @@
           :max-height="tmaxh"
           size="mini"
           :sort-config="{trigger: 'cell', orders: ['desc', 'asc', null]}"
-          :data="detailData">
+          :data="detailList">
           <vxe-column type="checkbox" width="30"></vxe-column>
           <vxe-column field="code" title="产品"  sortable width="160" :filters="sysparam.FOF.map(r=> {return {'value':r.code,'label':r.value}})" :filter-method="filterStatusMethod" >
                         <template #default="{ row }">
@@ -237,6 +237,11 @@
             </template>
              </vxe-column>
           <vxe-column field="b_name" align="left" title="基金名称" width="260">  
+              <template #header>
+                  名称
+                 <vxe-input v-model="filter"  @keyup="filterNames" ></vxe-input>
+
+              </template>
             <template #default="{ row }">
                    <el-button  @click.native.prevent="addCart(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
        <a href="javascript:;" @click="showHis(row)">{{ row.b_name }}</a>
@@ -452,6 +457,8 @@ export default {
   data() {
     return {  allAlign: 'right',
               pos_date:"",
+              filter:"",
+              detailList:[],
               range:"hyr",
               adinit:0,
               timeout: null,
@@ -1027,7 +1034,16 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       this.detailData.sort((a,b)=>{
         return uniquename.indexOf(a['b_code'])-uniquename.indexOf(b['b_code'])
       })
-
+      this.filterNames()
+    },
+    filterNames(){
+      if(this.filter){
+        this.detailList=this.detailData.filter(row=>{
+          return row["b_name"].indexOf(this.filter)>-1
+        })
+      }else{
+      this.detailList=this.detailData
+      }
     },
     showholding(row) {
       if (row["b_code"].startsWith("SUBJECT110")) {

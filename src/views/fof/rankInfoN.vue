@@ -56,6 +56,8 @@
                 {{prodTitle}}
                 <br>{{tableList.length}}
                   <vxe-switch v-model="showList" open-label="List" :open-value="true" close-label="所有" :close-value="false"></vxe-switch>
+                  <vxe-input v-model="filter"  @keyup="filterNames" ></vxe-input>
+
               </template>
         <template #default="{ row }">
                                       <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
@@ -224,6 +226,7 @@ export default {
   data() {
     return {  
         statdict:{},
+        filter:"",
         basedict:{},
         allAlign:"right",
         tableData:[],
@@ -249,6 +252,15 @@ export default {
         Bus.$emit("oneKeyBuy",{b_code:row['code'],stage:"待投资"})
       }
 
+    },
+    filterNames(){
+      if(this.filter){
+        this.tableList=this.tableData.filter(row=>{
+          return row["name"].indexOf(this.filter)>-1
+        })
+      }else{
+      this.filterList()
+      }
     },
     filterList(){
        if(this.showList){
@@ -510,6 +522,7 @@ return ''
         .then((response) => {
           this.rgdict={}
           this.tableData =response.data.map(row=>{
+            row['name']=this.showFundName(row['code'])
             for(let rg of ['hyr','1yr','2yr']){
             //   if(row['rankF_'+rg]){
             //     row['rankF_'+rg+'_r']=row['rankF_'+rg].split("-")[0]
@@ -539,7 +552,12 @@ return ''
                   }
                 }
                 if(['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility'].indexOf(key)>-1){
-                                      row[key]=parseFloat(row[key]).toFixed(2)
+                                      let fcnt=2
+                                      let rval=parseFloat(row[key])
+                                      if(rval>=10){
+                                        fcnt=1
+                                      }
+                                      row[key]=rval.toFixed(fcnt)
                 }
               }
            return row
