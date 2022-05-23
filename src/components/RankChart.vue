@@ -39,6 +39,10 @@ export default {
       type: String,
       default: "",
     },
+    rg: {
+      type: String,
+      default: "",
+    },
   },
   computed: {
       ...mapGetters(['sysparam','token','showFundName','showFundClassType']),
@@ -72,6 +76,9 @@ export default {
     code: {
       handler: function (val) {
         if (val) {
+          if(this.rg){
+            this.range=this.rg
+          }
           this.getChartData()
         }
       },
@@ -278,15 +285,19 @@ export default {
           that.echart.setOption(option, true);
           let dlen=option.xAxis[0].data.length
           let yrago=this.$moment(option.xAxis[0].data[dlen-1]).add(-1,"y").format("YYYYMMDD")
+          let yrago2=this.$moment(option.xAxis[0].data[dlen-1]).add(-2,"y").format("YYYYMMDD")
+
           let sidx=0;
+          let sidx2=0;
+
           for (let ad in option.xAxis[0].data){
-            if(option.xAxis[0].data[ad]>=yrago){
+            if(option.xAxis[0].data[ad]>=yrago2 && sidx2==0 ){
+              sidx2=ad-1
+            }
+           if(option.xAxis[0].data[ad]>=yrago && sidx==0){
               sidx=ad-1
               break
             }
-          }
-          if(sidx<0){
-            sidx=0
           }
      that.echart.dispatchAction({
     type: 'brush',
@@ -295,7 +306,12 @@ export default {
         brushType: 'lineX',
         coordRange: [option.xAxis[0].data[sidx], option.xAxis[0].data[dlen-1]],
         xAxisIndex: 0
-      }
+      },
+      {
+        brushType: 'lineX',
+        coordRange: [option.xAxis[0].data[sidx2], option.xAxis[0].data[dlen-1]],
+        xAxisIndex: 0
+      },
     ]
   });
 
@@ -315,6 +331,9 @@ export default {
     window.addEventListener("resize", this.resizeChart);
     this.initChart()
      this.$nextTick(() => { 
+           if(this.rg){
+             this.range=this.rg
+           }
            this.getChartData()
      })
   

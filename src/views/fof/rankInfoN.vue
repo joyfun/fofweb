@@ -2,6 +2,7 @@
   <div ref="tableContainer" style="	height : 100%;">
           <vxe-toolbar>
           <template #buttons>
+            <vxe-button @click="clearSelect">取消选择</vxe-button>
             <vxe-button @click="showRankHis">排名对比</vxe-button>
             <vxe-button @click="compareData">业绩对比</vxe-button>
             <vxe-button @click="compareInvest">已投对比</vxe-button>
@@ -37,6 +38,8 @@
           </template>
         </vxe-toolbar>  
        <vxe-table
+          @checkbox-change="selectChangeEvent1"
+          @checkbox-all="checkAll"
           class="mytable-style"
           border
           ref="rankTable"
@@ -102,13 +105,13 @@
           </template> 
           <vxe-colgroup :title="yrdict[range]+'指标数据'" align="center">
                 <template #header>
-          <vxe-radio-group v-model="range" :strict="false">
+          <vxe-radio-group v-model="brange" :strict="false">
             <vxe-radio label="hyr" content="半年"></vxe-radio>
             <vxe-radio label="1yr" content="1年"></vxe-radio>
             <vxe-radio label="2yr" content="2年 指标数据"></vxe-radio>
           </vxe-radio-group>
                         </template>   
-         <vxe-column :key="af" width="50" sortable v-for="af of ['length','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio','yeaily_return', 'volatility']"  :title="af" :field="af"  >
+         <vxe-column :key="af" width="50" sortable v-for="af of ['yeaily_return','length','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility']"  :title="af" :field="af"  >
             <template #default="{ row }">
               <span>{{ row[af]}}</span>
             </template>
@@ -175,6 +178,11 @@ export default {
             },
     
     },
+    brange :{
+              handler(n){
+                  this.getBaseInfo()
+            },
+     },
      date :{
               handler(n){
                   this.getProducts()
@@ -227,6 +235,7 @@ export default {
     return {  
         statdict:{},
         filter:"",
+        multipleSelection:[],
         basedict:{},
         allAlign:"right",
         tableData:[],
@@ -234,6 +243,7 @@ export default {
         winlength:{'hyr':26,'1yr':52,'2yr':104},
         showList:true,
         range:"2yr",
+        brange:"hyr",
         calcdate:"",
         baseData:{},
         rgdict:{},
@@ -247,6 +257,30 @@ export default {
     };
   },
   methods: {
+    setSelect(){
+      let selrow=this.tableData.filter(row=>this.multipleSelection.indexOf(row['code'])>-1)
+      this.$refs.rankTable.setCheckboxRow(selrow, true)
+
+    },
+    clearSelect(){
+      this.$refs.rankTable.clearCheckboxRow()
+      this.multipleSelection=[]
+    },
+    checkAll({ checked, $event }){
+      if(checked){
+        this.multipleSelection=this.tableList.map(r=>r['code'])
+      }else{
+        this.multipleSelection=[]
+      }
+      console.log(this.multipleSelection)
+    },
+    selectChangeEvent1({ checked, row, rowIndex, $rowIndex, column, columnIndex, $columnIndex, $event }){
+      if(checked&&this.multipleSelection.indexOf(row['code']<0)){
+        this.multipleSelection.push(row["code"])
+      }else{
+        this.multipleSelection=this.multipleSelection.filter(r=>r!=row['code'])
+      }
+    },
     oneKeyBuy(row){
             if(row['code']){
         Bus.$emit("oneKeyBuy",{b_code:row['code'],stage:"待投资"})
@@ -283,6 +317,8 @@ export default {
         }else{
        this.tableList=this.tableData
         }
+       this.setSelect()
+
     },
     cellClass1 ({ row, rowIndex, column, columnIndex }) {
      if(row[column['field']]<0.3){
@@ -386,28 +422,29 @@ return ''
       },
     showHis(row){
         console.log(row)
-       Bus.$emit("showChart",{"cur_code":row.code,"diagName":"rankChart"})
+       Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"rankChart"})
 
     },
      showRankHis(){
-          let sels=this.$refs.rankTable.getCheckboxRecords()
-          Bus.$emit("showChart",{"cur_code":sels.map(r=>r["code"]).join(','),"diagName":"rankChart"})
+          // let sels=this.$refs.rankTable.getCheckboxRecords()
+          if(this.multipleSelection.length>0)
+          Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"rg":this.range,"diagName":"rankChart"})
 
       },
     compareData(){
-          let sels=this.$refs.rankTable.getCheckboxRecords()
-          Bus.$emit("showChart",{"cur_code":sels.map(r=>r["code"]).join(','),"diagName":"compareTable"})
+          if(this.multipleSelection.length>0)
+          Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"diagName":"compareTable"})
 
       },
     compareInvest(){
           let clss=class_dict[this.type]
-          let sels=this.$refs.rankTable.getCheckboxRecords()
-          if(sels.length==0){
-            sels=this.tableList
-          }
-          let holds=this.foflist.filter(row=>this.holding.filter(hd=>hd['b_code']==row['code']).length>0).filter(row=>clss.indexOf( row['class_type'])>-1)
-          sels=sels.concat(holds)
-          Bus.$emit("showChart",{"cur_code":sels.map(r=>r["code"]).join(','),"diagName":"compareTable"})
+          // let sels=this.$refs.rankTable.getCheckboxRecords()
+          // if(sels.length==0){
+          //   sels=this.tableList
+          // }
+          let holds=this.foflist.filter(row=>this.holding.filter(hd=>hd['b_code']==row['code']).length>0).filter(row=>clss.indexOf( row['class_type'])>-1).map(row=>row['code'])
+          let sels=this.multipleSelection.concat(holds)
+          Bus.$emit("showChart",{"cur_code":sels.join(','),"diagName":"compareTable"})
 
 
     },
@@ -430,30 +467,32 @@ return ''
     getBaseInfo(){
      let that=this
 
-    //  this.$axios
-    //     .get("/fof/baseinfo", { params: { date: this.date,type:this.type ,range:this.range,code:this.tableData.map(row=>row.code).join()} })
-    //     .then((response) => {
-    //       this.baseData =response.data
-    //       this.tableData.map(row=>{
-    //         if(this.baseData[row.code]){
-    //         for (let af of ['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility']){
-    //           row[af]=this.baseData[row.code][af].toFixed(2)
-    //         }
-    //          row['dd_week']=this.baseData[row.code]['dd_week']
-    //          row['length']=this.baseData[row.code]['tlength']
-    //         if(this.range=='2yr'){
-    //         that.nclassify(row)
-    //         }
-    //         }
-    //         return row
-    //       })
+     this.$axios
+        .get("/fof/baseinfo", { params: { date: this.date,type:this.type ,range:this.brange,code:this.tableData.map(row=>row.code).join()} })
+        .then((response) => {
+          this.baseData =response.data
+          this.tableData.map(row=>{
+            if(this.baseData[row.code]){
+            for (let af of ['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility']){
+              let digi=2
+              if(this.baseData[row.code][af]>=10){
+                  digi=1
+              }
+              row[af]=this.$tools.formatMoney(this.baseData[row.code][af],digi)
+            }
+             row['dd_week']=this.baseData[row.code]['dd_week']
+             row['length']=this.baseData[row.code]['tlength']
+            }
+            return row
+          })
           this.filterList()
           this.$refs.rankTable.reloadData(this.tableList)
+          this.setSelect()
           this.$refs.rankTable.sort({field: 'rank', order: 'asc'})
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     }); 
+        })
+        .catch((error) => {
+          console.log(error);
+        }); 
     },
     rgbaToHex(color) {
 	        var values = color

@@ -273,7 +273,7 @@
      :visible.sync="dialogVisible"
      >
     
-    <rank-chart       @close="editClose" ref="rankchart"    style="height: 600px" :code="cur_code"   v-if="diagName=='rankChart'"></rank-chart>
+    <rank-chart       @close="editClose" ref="rankchart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='rankChart'"></rank-chart>
     <compare-table      @close="editClose" ref="comparetable"  :code="cur_code"   v-if="diagName=='compareTable'"></compare-table>
     <fund-echart       @close="editClose" ref="hischart"    style="height: 500px" :code="cur_code"   v-if="diagName=='hisChart'||diagName=='compareTable'"></fund-echart>
     <his-table       @close="editClose" ref="histable"    style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
@@ -506,6 +506,7 @@ export default {
       },
             dialogVisible:false,
             cur_code:"",
+            rg:"",
             prodDisabled:false,
             stages: ["预赎回", "待投资", "预入款"],
             diagName:"",
