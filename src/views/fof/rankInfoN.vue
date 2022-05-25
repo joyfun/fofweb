@@ -352,7 +352,7 @@ return ''
             },
     cellClassBg ({ row, rowIndex, column, columnIndex }) {
       if(['yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio'].indexOf(column['field'])>-1){
-        console.log(this.statdict[column['field']])
+        // console.log(this.statdict[column['field']])
         if(this.statdict[column['field']]){
         let rg=(row[column['field']]-this.statdict[column['field']]["min"])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
       let clr=this.genColor(rg)
@@ -483,8 +483,13 @@ return ''
           this.baseData =response.data
           this.tableData.map(row=>{
             if(this.baseData[row.code]){
-            for (let af of ['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility']){
-                  if(isNumber(row[af])){
+            for (let af of ['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility']){   
+             let digi=2
+              if(this.baseData[row.code][af]>=10){
+                  digi=1
+              }
+              row[af]=this.$tools.formatMoney(this.baseData[row.code][af],digi)
+               if(isNumber(row[af])){
                     let tmp=this.statdict[af]
                     if(tmp){
 
@@ -499,12 +504,6 @@ return ''
                       tmp["min"]=row[af]
                     }
                   }
-                
-             let digi=2
-              if(this.baseData[row.code][af]>=10){
-                  digi=1
-              }
-              row[af]=this.$tools.formatMoney(this.baseData[row.code][af],digi)
             }
              row['dd_week']=this.baseData[row.code]['dd_week']
              row['length']=this.baseData[row.code]['tlength']
@@ -512,10 +511,12 @@ return ''
             return row
           })
           this.filterList()
-          this.$nextTick(()=>{
+
+          // this.$nextTick(()=>{
           this.$refs.rankTable.reloadData(this.tableList)
           this.setSelect()
-          this.$refs.rankTable.sort({field: 'rank', order: 'asc'})})
+          this.$refs.rankTable.sort({field: 'rank', order: 'asc'})
+          // })
         })
         .catch((error) => {
           console.log(error);
