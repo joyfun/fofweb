@@ -179,7 +179,7 @@
 <script>
 import Vue from 'vue'
 import store from '@/store'
-import DB from '@/store/localapi.js'
+// import DB from '@/store/localapi.js'
 import {mapGetters} from 'vuex'
     import FundEchart from '../../components/FundEchart.vue';
 

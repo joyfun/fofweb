@@ -176,10 +176,10 @@ export default {
         }
         this.showchart=false
         if(this.$isElectron){
-          // DB.calc_simval(ret,this.wts)
-          this.buy_amts=DB.calc_simval(ret)
-          this.collapseItem=""
-          this.showchart=true
+          // // DB.calc_simval(ret,this.wts)
+          // this.buy_amts=DB.calc_simval(ret)
+          // this.collapseItem=""
+          // this.showchart=true
         }
         else{
         this.$axios({
@@ -203,7 +203,7 @@ export default {
         }).then(({ value }) => {
         console.log(this.buy_amts)
         if(this.$isElectron){
-          DB.save_fund_info(value,this.buy_amts)
+          // DB.save_fund_info(value,this.buy_amts)
         }
         else{
         this.$axios({
@@ -245,21 +245,21 @@ export default {
              var $this=this
              if(this.$isElectron){
 
-               //let ret=DB.getSocres(this.code,['20000101','20210101'])
+              //  //let ret=DB.getSocres(this.code,['20000101','20210101'])
 
-              let dts=[]
-              if(rgs){
-                dts=rgs
-              }else{
-                dts=this.getDateArray()
-              }
-               this.tableData={}
-              for (var day of dts){
-                const rg=[this.$moment(day).add(-2,'y').format("YYYYMMDD"),day]
-                let scores=DB.getSocres(this.code,rg)
-                DB.do_calc(scores,this.cols,this.limit_dic,this.wts)
-                this.tableData[day]=scores.sort((a,b)=>{return b['score']-a['score']})
-              }
+              // let dts=[]
+              // if(rgs){
+              //   dts=rgs
+              // }else{
+              //   dts=this.getDateArray()
+              // }
+              //  this.tableData={}
+              // for (var day of dts){
+              //   const rg=[this.$moment(day).add(-2,'y').format("YYYYMMDD"),day]
+              //   let scores=DB.getSocres(this.code,rg)
+              //   DB.do_calc(scores,this.cols,this.limit_dic,this.wts)
+              //   this.tableData[day]=scores.sort((a,b)=>{return b['score']-a['score']})
+              // }
              }else{
 
                 let param={code:this.code,wts:this.wts.join(",")}

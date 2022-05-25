@@ -116,7 +116,7 @@ import { mapState } from 'vuex'
 import Bus from '../store/bus.js';
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
-import DB from '@/store/localapi.js';
+// import DB from '@/store/localapi.js';
 export default {
   props: {
      code:{
@@ -231,41 +231,41 @@ export default {
     },
     exportExcelAll(){
       if(this.$isElectron){
-        var title='数据'+new Date().getTime()
-        var workbook = XLSX.utils.book_new();
+  //       var title='数据'+new Date().getTime()
+  //       var workbook = XLSX.utils.book_new();
 
-        for (var i in this.tags){
-          console.log(this.tags[i])
-          const rg=this.dateranges[i]
-          let scoreData=DB.getSocres(this.code,rg)
-          DB.do_calc(scoreData,this.cols,this.limit_dic,this.wts)
-  //           st.D1={t: 'n', v:this.wts[0]}
-  // st.E1={t: 'n', v:this.wts[1]}
-  // st.F1={t: 'n', v:this.wts[2]}
-  // st.G1={t: 'n', v:this.wts[3]}
-  // st.H1={t: 'n', v:this.wts[4]}
-  // st.I1={t: 'n', v:this.wts[5]}
-  // st.J1={t: 'n', v:this.wts[6]}
-  // st.K1={t: 'n', v:this.wts[7]}
-        // let st= XLSX.utils.aoa_to_sheet([ "SheetJS".split("") ]);
-        // XLSX.utils.sheet_add_aoa(st, [this.wts], {origin: -1});
-        // console.log(scoreData)
-        let st=XLSX.utils.json_to_sheet(scoreData,{header:["fundname","name","class_type"]})
-        // XLSX.utils.sheet_add_aoa(st, [this.wts], {origin: 0});
-        XLSX.utils.book_append_sheet(workbook, st, this.tags[i]); 
+  //       for (var i in this.tags){
+  //         console.log(this.tags[i])
+  //         const rg=this.dateranges[i]
+  //         let scoreData=DB.getSocres(this.code,rg)
+  //         DB.do_calc(scoreData,this.cols,this.limit_dic,this.wts)
+  // //           st.D1={t: 'n', v:this.wts[0]}
+  // // st.E1={t: 'n', v:this.wts[1]}
+  // // st.F1={t: 'n', v:this.wts[2]}
+  // // st.G1={t: 'n', v:this.wts[3]}
+  // // st.H1={t: 'n', v:this.wts[4]}
+  // // st.I1={t: 'n', v:this.wts[5]}
+  // // st.J1={t: 'n', v:this.wts[6]}
+  // // st.K1={t: 'n', v:this.wts[7]}
+  //       // let st= XLSX.utils.aoa_to_sheet([ "SheetJS".split("") ]);
+  //       // XLSX.utils.sheet_add_aoa(st, [this.wts], {origin: -1});
+  //       // console.log(scoreData)
+  //       let st=XLSX.utils.json_to_sheet(scoreData,{header:["fundname","name","class_type"]})
+  //       // XLSX.utils.sheet_add_aoa(st, [this.wts], {origin: 0});
+  //       XLSX.utils.book_append_sheet(workbook, st, this.tags[i]); 
       
-      }
-      let wbout=null
-         try {
-         wbout = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'array' })      
-        }    catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+  //     }
+  //     let wbout=null
+  //        try {
+  //        wbout = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'array' })      
+  //       }    catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
         
-        if(wbout){
-            FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
-        }
+  //       if(wbout){
+  //           FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
+  //       }
 
 
-        return
+  //       return
       }else{
         const options = {"code":this.code}
         this.$axios({

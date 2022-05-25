@@ -309,16 +309,16 @@ export default {
               }
               var $this=this
               if(this.$isElectron){
-                   $this.tableData=[]
-                  const stmt = DB.prepare('SELECT * FROM fund_val where code=?');
-                  var hisData = stmt.all(code);
-                   var len=hisData.length
-                                console.log(len)
-                                for (var i =len ;i>0;i--){
-                                this.tableData.push(
-                                   hisData[i-1]
-                                )
-                                }
+                  //  $this.tableData=[]
+                  // const stmt = DB.prepare('SELECT * FROM fund_val where code=?');
+                  // var hisData = stmt.all(code);
+                  //  var len=hisData.length
+                  //               console.log(len)
+                  //               for (var i =len ;i>0;i--){
+                  //               this.tableData.push(
+                  //                  hisData[i-1]
+                  //               )
+                  //               }
                   }
               else{
 

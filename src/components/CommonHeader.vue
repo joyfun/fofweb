@@ -305,8 +305,6 @@ import { mapState,mapGetters, mapMutations } from 'vuex'
 import Bus from '../store/bus.js';
 import tools from '../store/tools.js';
 import axis from 'axios'
-const fs = require('fs')
-import DB from '@/store/localapi.js';
 import FundEchart from '@/components/FundEchart.vue';
 import HisTable from '@/components/HisTable.vue';
 import RankTable from '@/components/RankTable.vue';
@@ -315,7 +313,6 @@ import FofSimulate from '@/components/FofSimulate';
 import ReportTable from '@/components/ReportTable';
 import CompareTable from '@/components/CompareTable';
 
-const os = require('os')
 
 
 export default {
@@ -344,32 +341,32 @@ export default {
         this.dialogVisible = false
         },
         loadDB(){
-            const { dialog } = require('electron').remote
-            console.log(dialog)
-            dialog.showOpenDialog({
-            title: '导入备份文件',
-            defaultPath: 'C:/',
-            filters: [{
-                name: '备份文件',
-                extensions: ['db', 'sqlite3']
-            }],
-            buttonLabel: '导入!'
-        }).then(result => {
-          console.log(result)
-            fs.readFile(result.filePaths[0], (err, data) => {
-            if (!err) {
-              DB.reload(data)
-                      this.$message({
-            showClose: true,
-            message: "导入数据成功 请重新启动APP",
-            type: "info"
-          })
+        //     const { dialog } = require('electron').remote
+        //     console.log(dialog)
+        //     dialog.showOpenDialog({
+        //     title: '导入备份文件',
+        //     defaultPath: 'C:/',
+        //     filters: [{
+        //         name: '备份文件',
+        //         extensions: ['db', 'sqlite3']
+        //     }],
+        //     buttonLabel: '导入!'
+        // }).then(result => {
+        //   console.log(result)
+        //     fs.readFile(result.filePaths[0], (err, data) => {
+        //     if (!err) {
+        //       DB.reload(data)
+        //               this.$message({
+        //     showClose: true,
+        //     message: "导入数据成功 请重新启动APP",
+        //     type: "info"
+        //   })
 
-            }
-        })
-        }).catch(err=>{
-            console.log(err)
-        })
+        //     }
+        // })
+        // }).catch(err=>{
+        //     console.log(err)
+        // })
 
 
         },

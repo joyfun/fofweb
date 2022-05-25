@@ -48,8 +48,8 @@
 import axis from "axios";
 import Bus from '@/store/bus.js';
 import {mapGetters} from 'vuex'
-import DB from '@/store/localapi.js';
-import * as df from "danfojs/dist/index";
+// import DB from '@/store/localapi.js';
+// import * as df from "danfojs/dist/index";
 import RankTable from '@/components/RankTable';
 var echarts = require("echarts");
 // 引入柱状图
@@ -632,75 +632,75 @@ export default {
             return
         }
         if(this.$isElectron){
-                 var codes=code.split(",")
-                 console.log(codes)
-        var rst={"combine_date":[null],"buy_date":["19000101"]}
-        let datadf=new df.DataFrame();
-        for (var acode of codes ){
-               if(acode.length<2){
-          continue
-        }
-        const istmt =DB.prepare('SELECT * FROM fund_info where code=?')
-        var info=istmt.get(acode)
-        // rst.columns=[info['name']]
-        const stmt = DB.prepare('SELECT * FROM fund_val where code=?');
-        const dbval=stmt.all(acode)
-        if(dbval.length<2){
-          datadf.addColumn({ "column":  info["short_name"],values:[]})
-          continue
-        }
-         let ndf=new df.DataFrame(dbval)
-        //  ndf.set_index({column: "date", drop: true, inplace: true})
-         ndf.rename({ mapper: {"sumval": info["short_name"]},inplace: true })
-         ndf.drop({ columns: ["code"], inplace: true })
-        //  console.log(info)
-        //  ndf.print()
-        //  datadf.print()
-        //  console.log(datadf.axis.columns)
-        // console.log(ndf['date'].values)
-         if(datadf.axis.columns.length>0){
-         datadf = df.merge({ left:datadf, right:ndf, on: ["date"] ,how:"outer"})
-         }
-         else{
-           datadf=ndf
-         }
-        }
-        console.log(datadf.axis)
-        if(datadf.axis.index<1){
-        //   this.$message({
-        //         message: '产品已存在 名称:'+info.name,
-        //         type: 'warning',
-        //         center: true
-        // });
-        }
-      if(datadf.axis.columns.length>0){
-          // datadf.sort_values({by: 'date', inplace:true})
-        datadf.values.sort((a,b)=>{return parseInt(a[0])-parseInt(b[0])})
-        // console.log(vdate)
-        datadf.set_index({column: "date", drop: true, inplace: true})
-        datadf.sort_index({ ascending: false , inplace: true})
-        // datadf.print()
-        rst['date']=datadf.index
-        console.log(rst)
-        rst.columns=datadf.axis.columns
-        for(var col of datadf.axis.columns){
-          // console.log(col)
-          // datadf.print()
-          // console.log(datadf[col])
-          rst[col]=datadf.column(col).values
-        }}else{
-          rst.columns=[]
-          rst.date=[]
-        }
+      //            var codes=code.split(",")
+      //            console.log(codes)
+      //   var rst={"combine_date":[null],"buy_date":["19000101"]}
+      //   let datadf=new df.DataFrame();
+      //   for (var acode of codes ){
+      //          if(acode.length<2){
+      //     continue
+      //   }
+      //   const istmt =DB.prepare('SELECT * FROM fund_info where code=?')
+      //   var info=istmt.get(acode)
+      //   // rst.columns=[info['name']]
+      //   const stmt = DB.prepare('SELECT * FROM fund_val where code=?');
+      //   const dbval=stmt.all(acode)
+      //   if(dbval.length<2){
+      //     datadf.addColumn({ "column":  info["short_name"],values:[]})
+      //     continue
+      //   }
+      //    let ndf=new df.DataFrame(dbval)
+      //   //  ndf.set_index({column: "date", drop: true, inplace: true})
+      //    ndf.rename({ mapper: {"sumval": info["short_name"]},inplace: true })
+      //    ndf.drop({ columns: ["code"], inplace: true })
+      //   //  console.log(info)
+      //   //  ndf.print()
+      //   //  datadf.print()
+      //   //  console.log(datadf.axis.columns)
+      //   // console.log(ndf['date'].values)
+      //    if(datadf.axis.columns.length>0){
+      //    datadf = df.merge({ left:datadf, right:ndf, on: ["date"] ,how:"outer"})
+      //    }
+      //    else{
+      //      datadf=ndf
+      //    }
+      //   }
+      //   console.log(datadf.axis)
+      //   if(datadf.axis.index<1){
+      //   //   this.$message({
+      //   //         message: '产品已存在 名称:'+info.name,
+      //   //         type: 'warning',
+      //   //         center: true
+      //   // });
+      //   }
+      // if(datadf.axis.columns.length>0){
+      //     // datadf.sort_values({by: 'date', inplace:true})
+      //   datadf.values.sort((a,b)=>{return parseInt(a[0])-parseInt(b[0])})
+      //   // console.log(vdate)
+      //   datadf.set_index({column: "date", drop: true, inplace: true})
+      //   datadf.sort_index({ ascending: false , inplace: true})
+      //   // datadf.print()
+      //   rst['date']=datadf.index
+      //   console.log(rst)
+      //   rst.columns=datadf.axis.columns
+      //   for(var col of datadf.axis.columns){
+      //     // console.log(col)
+      //     // datadf.print()
+      //     // console.log(datadf[col])
+      //     rst[col]=datadf.column(col).values
+      //   }}else{
+      //     rst.columns=[]
+      //     rst.date=[]
+      //   }
 
-        console.log(rst)
-          this.raw_data=rst
-          this.chartData.xData = [];
-          this.chartData.series = [];
-          this.chartData.xData = rst["date"];
-          var len = this.chartData.xData.length;
-          this.max_date = this.chartData.xData[len - 1];
-          this.initChart();
+      //   console.log(rst)
+      //     this.raw_data=rst
+      //     this.chartData.xData = [];
+      //     this.chartData.series = [];
+      //     this.chartData.xData = rst["date"];
+      //     var len = this.chartData.xData.length;
+      //     this.max_date = this.chartData.xData[len - 1];
+      //     this.initChart();
         }
         else{
 

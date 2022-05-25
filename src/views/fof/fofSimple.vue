@@ -330,14 +330,13 @@
     import AuditLog from '../../components/AuditLog.vue';
     import ConcatLog from '../../components/ConcatLog.vue';
     import Bus from '@/store/bus.js';
-    import DB from '@/store/localapi.js';
+    // import DB from '@/store/localapi.js';
 
     import HisTable from '../../components/HisTable';
     import RankTable from '../../components/RankTable';
 
     import ReportTable from '../../components/ReportTable';
     import FofSimulate from '../../components/FofSimulate';
-    import * as df from "danfojs/dist/index";
     import {mapGetters} from 'vuex'
 
     import FundCorr from '../../components/FundCorr';
