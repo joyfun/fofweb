@@ -24,7 +24,7 @@
       type="date"
       placeholder="截止日期"
       :picker-options="pickerOptions">
-    </el-date-picker>
+    </el-date-picker>{{aligndate}}
     <el-radio-group v-model="range" size="small">
   <el-radio-button type="primary" :key="i"  :label="i" icon="el-icon-edit" v-for="(item,i) in tags">{{item}}</el-radio-button>
   </el-radio-group>
@@ -141,7 +141,7 @@ export default {
       
         switch (rg) {
             case 0:
-              vday= this.raw_data["date"][0];
+              vday= this.aligndate;
               break
             case 1:
               vday = this.$moment(this.max_date).add(-30, "d").format("YYYYMMDD");
@@ -163,6 +163,9 @@ export default {
               break
             case 7:
               vday = this.$moment(this.max_date).dayOfYear(1).format("YYYYMMDD")
+              break
+            case 8:
+              vday= this.raw_data["date"][0];
               break
             default:
               vday="20000101"
@@ -244,11 +247,13 @@ export default {
   data() {
     return {
       raw_data: {},
+      aligndate:"20990901",
+      firstIdx:0,
       lowest:0.9,
       startdate:'',
-      range:'',
+      range:8,
       showdrop:false,
-      tags:["全部","月","90天","半年","近1年","近2年","近3年","本年"],
+      tags:["对齐","月","90天","半年","近1年","近2年","近3年","本年","全部"],
       tur:0,
       enddate:'',
       pickerOptions:{
@@ -736,6 +741,7 @@ export default {
           var len = $this.chartData.xData.length;
           if (len) {
             $this.max_date = $this.chartData.xData[len - 1];
+            $this.firstIdx=0
           } 
           this.initChart();
         })
@@ -942,6 +948,10 @@ export default {
             }
         }
         this.chartData.series.push(asery);
+        var max = parseInt(this.getLastIndex(asery.data));
+        if(max>this.firstIdx){
+          this.firstIdx=max
+        }
         if(this.showdrop && !cname.endsWith('指数')){
                   var dsery={
           data: ddata,
@@ -964,18 +974,24 @@ export default {
       // console.log(this.lowest)
       // this.axisOption.yAxis[0]["min"] = this.lowest;
       // }
+      this.aligndate=this.raw_data.date[this.firstIdx]
       this.axisOption.dataZoom[0].startValue = oneindex;
       // this.refreshData(params)
     },
     start_init() {
       var lastIdx = 0;
+
       for (var sidx in this.chartData.series) {
         // console.log(this.chartData.series[sidx])
         var max = parseInt(this.getLastIndex(this.chartData.series[sidx].data));
-        if (max > lastIdx) lastIdx = max;
+        console.log(max)
+        if (max > lastIdx) {lastIdx = max}
+     
+
       }
-      // console.log(typeof(lastIdx))
-      lastIdx = lastIdx;
+   
+
+      // lastIdx = lastIdx;
       // var rate=(lastIdx*100)/this.chartData.series[0].data.length
       var dlen=this.raw_data.date.length
       this.enddate=this.raw_data.date[dlen-1]
