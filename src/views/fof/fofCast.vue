@@ -209,6 +209,11 @@
               showMoney(scope.row.marketval)
             }}</template>
           </vxe-column>
+            <vxe-column field="marketval"  sortable title="占比">
+                <template slot-scope="scope">{{
+              $tools.formatMoney(scope.row.marketval*100/ptotal,2)+'%'
+            }}</template>
+          </vxe-column>
            <vxe-colgroup title="近期表现" align="center">
       <vxe-column
             title="半年"
@@ -485,7 +490,7 @@ export default {
         
      },
     changeHoldingtype(mcode){
-          this.sumdict={"中证500":{'marketval':0},"指增":{'marketval':0},"套利":{'marketval':0},"混合":{'marketval':0},"cta0":{'marketval':0},"中性":{'marketval':0},"cta1":{'marketval':0},null:{'marketval':0},"现金":{'marketval':0}}
+          this.sumdict={"中证500":{'marketval':0},"指增":{'marketval':0},"cta1":{'marketval':0},"cta0":{'marketval':0},"套利":{'marketval':0},"中性":{'marketval':0},"混合":{'marketval':0},null:{'marketval':0},"现金":{'marketval':0}}
           this.holdings=JSON.parse(JSON.stringify(this.subresult[mcode]))
           console.log(this.holdings)
           this.holdings.filter(row=> row["class_type"]=="FOF").forEach((srow,idx)=>{
