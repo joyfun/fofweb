@@ -72,9 +72,9 @@
             </template>
           </vxe-column>
           <!-- -->
-          <vxe-column  sortable  title="级别"  width="40" field="level" sort-by="lscore"  :filters="[{label: '甲', value: '甲'}, {label: '乙', value: '乙'}, {label: '丙', value: '丙'}, {label: '丁', value: '丁'}]" :title-help="{message: '根据产品波动率和最大回撤对产品进行分级'}" >
+          <vxe-column  sortable  title="级别"  width="36" align="center" field="level" sort-by="lscore"  :filters="[{label: '甲', value: '甲'}, {label: '乙', value: '乙'}, {label: '丙', value: '丙'}, {label: '丁', value: '丁'}]" :title-help="{message: '根据产品波动率和最大回撤对产品进行分级'}" >
           </vxe-column> 
-           <vxe-column   field="rank" width="60" sortable :title="'rank'" >
+           <vxe-column   field="rank" width="40" sortable :title="'rank'" >
             </vxe-column>
           <template  v-if="type=='高费率'">
               <vxe-column field="fee" width="60"  title="fee"  ></vxe-column>
@@ -90,13 +90,13 @@
            <vxe-colgroup  :key="tp" :title="yrdict[tp]+'排名信息('+tableData.length+')平均'+avgcnt[range]+'个'" align="center" >
 
 
-             <vxe-column :field="'mean'+winlength[tp]" width="60" sortable :title="'mean(%)'"  >
+             <vxe-column :field="'mean'+winlength[tp]" width="48" sortable :title="'mean(%)'"  >
             </vxe-column>
-              <vxe-column :field="'listrate'+winlength[tp]" width="60" sortable :title="'listrate'" >
+              <vxe-column :field="'listrate'+winlength[tp]" width="48" sortable :title="'listrate'" >
             </vxe-column>
-            <vxe-column :key="dkey" :field="dkey+winlength[tp]" width="60" sortable :title="dkey"  v-for="dkey in ['std']">
+            <vxe-column :key="dkey" :field="dkey+winlength[tp]" width="48" sortable :title="dkey"  v-for="dkey in ['std']">
             </vxe-column>
-            <vxe-column  :field="'meand'+winlength[tp]" width="60" sortable :title="'Δrank'" >
+            <vxe-column  :field="'meand'+winlength[tp]" width="48" sortable :title="'Δrank'" >
             </vxe-column>
                 </vxe-colgroup>
           <vxe-column  :key="'blank_'+tp" field=" " width="2" sortable :title="' '"  >
@@ -111,7 +111,7 @@
             <vxe-radio label="2yr" content="2年 指标数据"></vxe-radio>
           </vxe-radio-group>
                         </template>   
-         <vxe-column :key="af" width="50" sortable v-for="af of ['yeaily_return','length','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility']"  :title="af" :field="af"  >
+         <vxe-column :key="af" :width="48" sortable v-for="af of ['length','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility']"  :title="af" :field="af"  >
             <template #default="{ row }">
               <span>{{ row[af]}}</span>
             </template>
@@ -351,7 +351,17 @@ return ''
 return ''
             },
     cellClassBg ({ row, rowIndex, column, columnIndex }) {
-      if(column['field']&&column['field'].startsWith("std")){
+      if(['yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio'].indexOf(column['field'])>-1){
+        console.log(this.statdict[column['field']])
+        if(this.statdict[column['field']]){
+        let rg=(row[column['field']]-this.statdict[column['field']]["min"])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
+      let clr=this.genColor(rg)
+            return {
+                    color: clr
+                  }
+                  }
+      }
+      else if(column['field']&&column['field'].startsWith("std")){
         let rg=(this.statdict[column['field']]["max"]-row[column['field']])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
       let clr=this.genColor(rg)
             return {
@@ -474,7 +484,23 @@ return ''
           this.tableData.map(row=>{
             if(this.baseData[row.code]){
             for (let af of ['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility']){
-              let digi=2
+                  if(isNumber(row[af])){
+                    let tmp=this.statdict[af]
+                    if(tmp){
+
+                    }else{
+                      tmp={"max":row[af],"min":row[af]}
+                      this.statdict[af]=tmp
+                    }
+                    if(row[af]>tmp["max"]){
+                      tmp["max"]=row[af]
+                    }
+                    if(row[af]<tmp["min"]){
+                      tmp["min"]=row[af]
+                    }
+                  }
+                
+             let digi=2
               if(this.baseData[row.code][af]>=10){
                   digi=1
               }
@@ -486,9 +512,10 @@ return ''
             return row
           })
           this.filterList()
+          this.$nextTick(()=>{
           this.$refs.rankTable.reloadData(this.tableList)
           this.setSelect()
-          this.$refs.rankTable.sort({field: 'rank', order: 'asc'})
+          this.$refs.rankTable.sort({field: 'rank', order: 'asc'})})
         })
         .catch((error) => {
           console.log(error);
@@ -590,14 +617,14 @@ return ''
                     row[key]=parseFloat(row[key]).toFixed(2)
                   }
                 }
-                if(['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility'].indexOf(key)>-1){
-                                      let fcnt=2
-                                      let rval=parseFloat(row[key])
-                                      if(rval>=10){
-                                        fcnt=1
-                                      }
-                                      row[key]=rval.toFixed(fcnt)
-                }
+                // if(['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility'].indexOf(key)>-1){
+                //                       let fcnt=2
+                //                       let rval=parseFloat(row[key])
+                //                       if(rval>=10){
+                //                         fcnt=1
+                //                       }
+                //                       row[key]=rval.toFixed(fcnt)
+                // }
               }
            return row
 
@@ -606,6 +633,8 @@ return ''
           if(this.tableData&&this.tableData.length>0){
             this.calcdate=this.tableData[0]['date']
           }
+          this.getBaseInfo()
+
           
       this.$axios
         .get("/fof/rankstat", { params: { date: this.date,type:this.type} })
@@ -615,7 +644,6 @@ return ''
           this.avgcnt[k]=parseInt(this.avgcnt[k])
         }
         })
-          this.getBaseInfo()
           if(this.type=='高费率'){
                  this.$axios
         .get("/fof/list", { params: { scale:this.type} })
@@ -663,6 +691,10 @@ return ''
 
         .mytable-style .col--group {
           border:2px ;
+        }
+        .mytable-style .vxe-cell {
+           padding-right: 2px;
+           padding-left: 2px;
         }
         .mytable-style .vxe-body--row.row-green {
           background-color: #187;
