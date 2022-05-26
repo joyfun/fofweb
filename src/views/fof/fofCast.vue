@@ -490,7 +490,7 @@ export default {
         
      },
     changeHoldingtype(mcode){
-          this.sumdict={"中证500":{'marketval':0},"指增":{'marketval':0},"cta1":{'marketval':0},"cta0":{'marketval':0},"套利":{'marketval':0},"中性":{'marketval':0},"混合":{'marketval':0},null:{'marketval':0},"现金":{'marketval':0}}
+          this.sumdict={"中证500":{'marketval':0},"指增":{'marketval':0},"cta1":{'marketval':0},"cta0":{'marketval':0},"套利":{'marketval':0},"中性":{'marketval':0},"期权":{'marketval':0},"中性":{'marketval':0},"混合":{'marketval':0},null:{'marketval':0},"现金":{'marketval':0}}
           this.holdings=JSON.parse(JSON.stringify(this.subresult[mcode]))
           console.log(this.holdings)
           this.holdings.filter(row=> row["class_type"]=="FOF").forEach((srow,idx)=>{
@@ -510,7 +510,11 @@ export default {
           
           this.holdings.map(row=>{
                 if(row['type']){
+                  if(row['type']=='期权'){
+                    return
+                  }
           this.classify(row)
+          console.log(row['type'])
 				this.sumdict[row['type']]["marketval"]+=row['marketval']
                 }
                 else if(row['b_code'].startsWith("SUBJECT")){
