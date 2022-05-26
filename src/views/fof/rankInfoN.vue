@@ -21,7 +21,9 @@
             <vxe-radio-button label="cta1" content="CTA1"></vxe-radio-button>
             <vxe-radio-button label="指增" content="指增"></vxe-radio-button>
             <vxe-radio-button label="中性" content="中性"></vxe-radio-button>
+            <vxe-radio-button label="混合" content="混合"></vxe-radio-button>
             <vxe-radio-button label="套利" content="套利"></vxe-radio-button>
+            <vxe-radio-button label="期权" content="期权"></vxe-radio-button>
             <vxe-radio-button label="高费率" content="高费率"></vxe-radio-button>
 
           </vxe-radio-group>
