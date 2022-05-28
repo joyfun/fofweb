@@ -126,12 +126,19 @@
            <vxe-column
             title="占比"
             sortable
+            width="100"
             field="marketval"
             show-overflow-tooltip
           >
-                    <template slot-scope="scope">{{
-              $tools.formatMoney((scope.row.marketval+parseFloat(scope.row.adj)*10000)*100/total,2)
+                    <template slot-scope="scope ">{{
+                      showPercentComp(scope.row)
             }}</template>
+      <!--
+                          $tools.formatMoney(scope.row.marketval*100/ptotal,2)  +'\n'+
+
+            $tools.formatMoney((scope.row.marketval+parseFloat(scope.row.adj)*10000)*100/total,2)
+
+        -->
           </vxe-column>
           </vxe-colgroup>
             <vxe-colgroup title="近期表现" align="center">
@@ -198,12 +205,12 @@
           :align="'right'"
           :row-config="{isHover: true}"
           :data="subholding">
-          <vxe-column field="code" title="基金名称">
+          <vxe-column field="code" width="240" align="left" title="基金名称">
                            <template slot-scope="scope">{{
               showFundName(scope.row.code)
             }}</template>
           </vxe-column>
-          <vxe-column field="level" title="level"></vxe-column>
+          <vxe-column field="level" width="40" title="level"></vxe-column>
           <vxe-column field="marketval"  sortable title="市值(万)">
                 <template slot-scope="scope">{{
               showMoney(scope.row.marketval)
@@ -388,6 +395,14 @@ export default {
       }
   },
   methods:{
+    showPercentComp(row){
+      console.log(row)
+      let ret= this.$tools.formatMoney(row.marketval*100/this.ptotal,2)
+      if(Math.abs(this.ptotal-this.total)>0){
+        ret=this.$tools.formatMoney((row.marketval+parseFloat(row.adj)*10000)*100/this.total,2)+'/'+ret
+      }
+      return ret
+    },
     async revertEvent () {
             this.$refs.holdingTable.revertData()
             this.adjamount()
