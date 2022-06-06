@@ -116,7 +116,7 @@ import { mapState } from 'vuex'
 import Bus from '../store/bus.js';
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
-// import DB from '@/store/localapi.js';
+import DB from '@/store/localapi.js';
 export default {
   props: {
      code:{
@@ -377,9 +377,12 @@ export default {
        for (var idx in this.cols){
          var item=this.cols[idx]
         ascore+=row[item]*this.wts[idx]
+        console.log(ascore)
        }
+      // console.log(
+      // tableData.filter(item=>{return item['name']==row['name']}))[0]
       tableData.forEach((item,idx)=>{
-        if(item['fundname']==row['fundname']){
+        if(item['name']==row['name']){
           item['score2']=ascore
         }
       })

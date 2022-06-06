@@ -24,7 +24,7 @@
       type="date"
       placeholder="截止日期"
       :picker-options="pickerOptions">
-    </el-date-picker>{{aligndate}}
+    </el-date-picker>
     <el-radio-group v-model="range" size="small">
   <el-radio-button type="primary" :key="i"  :label="i" icon="el-icon-edit" v-for="(item,i) in tags">{{item}}</el-radio-button>
   </el-radio-group>

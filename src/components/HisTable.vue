@@ -83,7 +83,7 @@
 import axis from 'axios'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
-import DB from '@/store/localapi.js';
+// import DB from '@/store/localapi.js';
 var echarts = require('echarts');
 // 引入柱状图
 // require('echarts/lib/chart/line');

@@ -236,7 +236,7 @@
               {{ row.name }}
             </template>
              </vxe-column>
-          <vxe-column field="b_name" align="left" title="基金名称" width="260">  
+          <vxe-column field="b_name" align="left" title="基金名称" width="240">  
               <template #header>
                   名称
                  <vxe-input v-model="filter"  @keyup="filterNames" ></vxe-input>
@@ -250,7 +250,7 @@
             </template>
 
              </vxe-column>
-          <vxe-column field="marketval" title="市值" width="80" sortable>
+          <vxe-column field="marketval" title="市值(万)" width="80" sortable>
             <template #default="{ row }">
               {{ showMoney(row.marketval) }}
             </template>
@@ -265,7 +265,7 @@
             <vxe-radio label="2yr" :content="titleDate"></vxe-radio>
           </vxe-radio-group>
                         </template>   
-          <vxe-column :key="type" :field="type+'_r'" max-width="100" sortable :title="type+'('+rlen[type]+')'"   v-for=" type of this.types">
+          <vxe-column align="center" :key="type" :field="type+'_r'" width="50" sortable :title="type+'\n'+rlen[type]"   v-for=" type of this.types">
             </vxe-column>
                     </vxe-colgroup>
                       <vxe-column field=" " width="2"  :title="' '"  >
@@ -287,7 +287,7 @@
              width="80"
             show-overflow-tooltip
           ><template slot-scope="scope">
-               <el-button
+               <el-button 
                 v-if="scope.row['b_code'].length == 6"
                 @click="fundAction(scope.row)"
                 >操作</el-button>
@@ -504,7 +504,7 @@ export default {
       detailData: [],
       tableData: [],
       rlen:{},
-      types: ['aas','cta0','cta1','指增','中性','套利'],
+      types: ['aas','cta0','cta1','指增','中性','混合','套利','期权'],
       tmaxh: 600,
     };
   },

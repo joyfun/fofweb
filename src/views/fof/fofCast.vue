@@ -123,15 +123,35 @@
               <vxe-input type="number" v-model="row.adj" class="myinput"></vxe-input>
             </template>
           </vxe-column>
+          </vxe-colgroup>
+                      <vxe-colgroup title="占比" align="center">
+
            <vxe-column
-            title="占比"
+            title="前"
             sortable
-            width="100"
+            width="60"
             field="marketval"
             show-overflow-tooltip
           >
                     <template slot-scope="scope ">{{
-                      showPercentComp(scope.row)
+ $tools.formatMoney(scope.row.marketval*100/ptotal,2) 
+             }}</template>
+      <!--
+                          $tools.formatMoney(scope.row.marketval*100/ptotal,2)  +'\n'+
+
+            $tools.formatMoney((scope.row.marketval+parseFloat(scope.row.adj)*10000)*100/total,2)
+
+        -->
+          </vxe-column>
+          <vxe-column
+            title="后"
+            sortable
+            width="60"
+            field="marketval"
+            show-overflow-tooltip
+          >
+                    <template slot-scope="scope ">{{
+            $tools.formatMoney((scope.row.marketval+parseFloat(scope.row.adj)*10000)*100/total,2)
             }}</template>
       <!--
                           $tools.formatMoney(scope.row.marketval*100/ptotal,2)  +'\n'+
@@ -205,12 +225,12 @@
           :align="'right'"
           :row-config="{isHover: true}"
           :data="subholding">
-          <vxe-column field="code" width="240" align="left" title="基金名称">
+          <vxe-column field="code" width="240"  align="left" title="基金名称">
                            <template slot-scope="scope">{{
               showFundName(scope.row.code)
             }}</template>
           </vxe-column>
-          <vxe-column field="level" width="40" title="level"></vxe-column>
+          <vxe-column field="level" width="70" title="level"></vxe-column>
           <vxe-column field="marketval"  sortable title="市值(万)">
                 <template slot-scope="scope">{{
               showMoney(scope.row.marketval)
@@ -303,7 +323,8 @@ export default {
     },
   },
   computed:{
-          ...mapGetters(["sysparam","token","showFundName"]),
+        ...mapState(["foflist","actionData"]),
+        ...mapGetters(["sysparam","token","showFundName","showFundInfo"]),
     //       subholding() {
     //           return this.holdings.filter(row=>{
     //             if(this.clicktype){
@@ -409,7 +430,7 @@ export default {
             },
     activeCellMethod ({ row, rowIndex ,column, columnIndex }) {
               console.log(column.field)
-              if(column.field=="adj"&&rowIndex === 0){
+              if(column.field=="adj"&&(rowIndex === 0&&row['type'] === '中证500')){
                 return false
               }
               if(column.field=="adj"){
@@ -430,8 +451,7 @@ export default {
             this.holdingData=[]
             for(let atype in this.sumdict){
                 if(atype && 'null'!=atype){
-                console.log(atype)
-            let row={"adj":0,"type":atype,"marketval":this.sumdict[atype]["marketval"],"yeaily_return_hyr":this.sumdict[atype]["yeaily_return_hyr"]/2,"yeaily_return_1yr":this.sumdict[atype]["yeaily_return_1yr"],"yeaily_return_2yr":this.sumdict[atype]["yeaily_return_2yr"]*2}
+            let row={"adj":this.sumdict[atype]["adj"],"type":atype,"marketval":this.sumdict[atype]["marketval"],"yeaily_return_hyr":this.sumdict[atype]["yeaily_return_hyr"]/2,"yeaily_return_1yr":this.sumdict[atype]["yeaily_return_1yr"],"yeaily_return_2yr":this.sumdict[atype]["yeaily_return_2yr"]*2}
             let tkey=atype
             if(atype=="混合"){
                 tkey="aas"
@@ -505,9 +525,10 @@ export default {
         
      },
     changeHoldingtype(mcode){
-          this.sumdict={"中证500":{'marketval':0},"指增":{'marketval':0},"cta1":{'marketval':0},"cta0":{'marketval':0},"套利":{'marketval':0},"中性":{'marketval':0},"期权":{'marketval':0},"中性":{'marketval':0},"混合":{'marketval':0},null:{'marketval':0},"现金":{'marketval':0}}
+          this.sumdict={"中证500":{'marketval':0,"adj":0},"指增":{'marketval':0,"adj":0},"cta1":{'marketval':0,"adj":0},"cta0":{'marketval':0,"adj":0},"套利":{'marketval':0,"adj":0},"中性":{'marketval':0,"adj":0},"期权":{'marketval':0,"adj":0},"中性":{'marketval':0,"adj":0},"混合":{'marketval':0,"adj":0},null:{'marketval':0,"adj":0},"现金":{'marketval':0,"adj":0}}
           this.holdings=JSON.parse(JSON.stringify(this.subresult[mcode]))
           console.log(this.holdings)
+          console.log(this.actionData.filter(r=>r['code']==this.cur_fof))
           this.holdings.filter(row=> row["class_type"]=="FOF").forEach((srow,idx)=>{
               if(srow["code"]){
                 console.log(srow)
@@ -525,22 +546,34 @@ export default {
           
           this.holdings.map(row=>{
                 if(row['type']){
-                  if(row['type']=='期权'){
-                    return
-                  }
           this.classify(row)
-          console.log(row['type'])
 				this.sumdict[row['type']]["marketval"]+=row['marketval']
                 }
                 else if(row['b_code'].startsWith("SUBJECT")){
-              console.log(row)
               row['type']="现金"
               this.sumdict["现金"]["marketval"]+=row['marketval']
  
                 }
             })
+          this.actionData.filter(row=>row['code']==this.cur_fof||row['b_code']==this.cur_fof).map(row=>{
+            let rinfo=this.showFundInfo(row['b_code'])
+            let mval=parseFloat(row['marketval'])
+            if(row['stage']=='预入款'||row['b_code']==this.cur_fof){
+              console.log(row)
+              this.sumdict['现金']["adj"]+=mval
 
-        console.table(this.holdings)
+            }else if(rinfo['type']){
+            if(row['stage']=='待投资'){
+              this.sumdict[rinfo['type']]["adj"]+=mval
+              this.sumdict['现金']["adj"]-=mval
+            }else if(row['stage']=='预赎回'){
+              this.sumdict[rinfo['type']]["adj"]-=mval
+              this.sumdict['现金']["adj"]+=mval
+
+            }}else if(rinfo['class_type']=="FOF"){
+              this.sumdict['现金']["adj"]-=mval
+            }
+          })
         this.types=[...new Set(this.holdings.map(r=>r['type']))]
         this.types.sort((a,b)=>{
           if(b==null){
@@ -639,8 +672,12 @@ export default {
         console.log(this.holdingData)
         
         this.pieData.series.data=this.holdingData.map(row=>{if(row['type']!='中证500')
-        {this.total+=row['marketval']+parseFloat(row['adj'])*10000
+        {if(row['adj']==''){
+           row['adj']=0
+         }
+          this.total+=row['marketval']+parseFloat(row['adj'])*10000
          this.ptotal+=row['marketval']
+         
         return {"name":row["type"],"value":row['marketval']+row["adj"]*10000}}
         return null})
         this.$refs.piechart.initChart() 
@@ -729,6 +766,7 @@ export default {
             this.clicktype=params.data.name
         }
         this.getMisc("median_info")
+        console.log(this.actionData)
   },
   }
 </script>
