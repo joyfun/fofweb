@@ -57,6 +57,14 @@ const getters = {
   }
   return code
   },
+  showFundInfo: (state) => (code) => {
+    for (var item of state.foflist){
+      if (code==item['code']){
+        return item
+      }
+  }
+  return {}
+  },
   info: state => state.role.info,
   logoShow: state => state.layout.logoShow,
   isCollapse: state => state.layout.isCollapse,

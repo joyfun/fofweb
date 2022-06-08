@@ -556,6 +556,7 @@ export default {
                 }
             })
           this.actionData.filter(row=>row['code']==this.cur_fof||row['b_code']==this.cur_fof).map(row=>{
+            console.log(row)
             let rinfo=this.showFundInfo(row['b_code'])
             let mval=parseFloat(row['marketval'])
             if(row['stage']=='预入款'||row['b_code']==this.cur_fof){

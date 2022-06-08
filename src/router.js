@@ -263,6 +263,10 @@ const routes = [
             right:"备投",
             class_type:"CTA"}
         },
+      },{
+        path: '/holdingReprot',
+        name: 'holding-report',
+        component:() => import('@/views/fof/HoldingReport.vue')
       }
       ,
   {

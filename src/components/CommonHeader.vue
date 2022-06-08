@@ -162,108 +162,36 @@
           <el-button @click="resetForm('actionForm')">重置</el-button>
         </el-form-item>
       </el-form>
-  
- <!-- <vxe-form :data="formData1" @submit="searchEvent" @reset="resetEvent">
-          <vxe-form-item title="名称" field="name" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-input v-model="data.name" placeholder="请输入名称" clearable></vxe-input>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item title="昵称" field="nickname" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-input v-model="data.nickname" placeholder="请输入昵称"></vxe-input>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item title="性别" field="sex" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-select v-model="data.sex" placeholder="请选择性别" clearable>
-                <vxe-option value="1" label="女"></vxe-option>
-                <vxe-option value="2" label="男"></vxe-option>
-              </vxe-select>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item>
-            <template #default>
-              <vxe-button type="submit" status="primary">默认尺寸</vxe-button>
-            </template>
-          </vxe-form-item>
-        </vxe-form>
-        <vxe-form :data="formData1" @submit="searchEvent" @reset="resetEvent" size="medium">
-          <vxe-form-item title="名称" field="name" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-input v-model="data.name" placeholder="请输入名称" clearable></vxe-input>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item title="昵称" field="nickname" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-input v-model="data.nickname" placeholder="请输入昵称" clearable></vxe-input>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item title="性别" field="sex" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-select v-model="data.sex" placeholder="请选择性别" clearable>
-                <vxe-option value="1" label="女"></vxe-option>
-                <vxe-option value="2" label="男"></vxe-option>
-              </vxe-select>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item>
-            <template #default>
-              <vxe-button type="submit" status="primary">中等尺寸</vxe-button>
-            </template>
-          </vxe-form-item>
-        </vxe-form>
-        <vxe-form :data="formData1" @submit="searchEvent" @reset="resetEvent" size="small">
-          <vxe-form-item title="名称" field="name" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-input v-model="data.name" placeholder="请输入名称" clearable></vxe-input>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item title="昵称" field="nickname" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-input v-model="data.nickname" placeholder="请输入昵称" clearable></vxe-input>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item title="性别" field="sex" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-select v-model="data.sex" placeholder="请选择性别" clearable>
-                <vxe-option value="1" label="女"></vxe-option>
-                <vxe-option value="2" label="男"></vxe-option>
-              </vxe-select>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item>
-            <template #default>
-              <vxe-button type="submit" status="primary">小型尺寸</vxe-button>
-            </template>
-          </vxe-form-item>
-        </vxe-form>
-        <vxe-form :data="formData1" @submit="searchEvent" @reset="resetEvent" size="mini">
-          <vxe-form-item title="名称" field="name" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-input v-model="data.name" placeholder="请输入名称" clearable></vxe-input>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item title="昵称" field="nickname" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-input v-model="data.nickname" placeholder="请输入昵称" clearable></vxe-input>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item title="性别" field="sex" :item-render="{}">
-            <template #default="{ data }">
-              <vxe-select v-model="data.sex" placeholder="请选择性别" clearable>
-                <vxe-option value="1" label="女"></vxe-option>
-                <vxe-option value="2" label="男"></vxe-option>
-              </vxe-select>
-            </template>
-          </vxe-form-item>
-          <vxe-form-item>
-            <template #default>
-              <vxe-button type="submit" status="primary">超小尺寸</vxe-button>
-            </template>
-          </vxe-form-item>
-        </vxe-form> -->
-
+    </el-dialog>
+       <el-dialog
+    width="50%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="auditVisible"
+  >
+    <el-form ref="form" :model="curAction" label-width="80px">
+  <el-form-item label="基金名称">
+    <label >{{curAction.name}}</label>
+  </el-form-item>
+  <el-form-item label="决策阶段">
+     <el-radio-group v-model="curAction.stage">    
+    <el-radio :key="idx" v-for="(item,idx) in sysparam.stage" :label="item.value"></el-radio>
+  </el-radio-group>
+  </el-form-item>
+  <el-form-item label="投资份额" v-if="curAction.stage!='投后'">
+    <el-input-number style="width:200px"
+    placeholder="份额"
+    v-model="curAction.amount">
+  </el-input-number>
+  </el-form-item>
+  <el-form-item label="评审意见">
+    <el-input type="textarea" v-model="curAction.remark"></el-input>
+  </el-form-item>
+  <el-form-item>
+    <el-button type="primary" @click="auditSubmit">确认提交</el-button>
+  </el-form-item>
+</el-form>
     </el-dialog>
   <el-dialog
     width="80%"
@@ -279,6 +207,8 @@
     <his-table       @close="editClose" ref="histable"    style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
     <rank-table       @close="editClose" ref="ranktable"    style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
     <fof-simulate     @close="editClose" ref="simtable"   style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
+    <audit-log       @close="editClose" ref="auditlog"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='auditDialog'"></audit-log>
+
 <el-tabs type="border-card"  v-if="diagName=='fullDialog'">
       <el-tab-pane>
         <span slot="label"><i class="el-icon-date"></i> 净值曲线</span> 
@@ -312,12 +242,14 @@ import RankChart from '@/components/RankChart.vue';
 import FofSimulate from '@/components/FofSimulate';
 import ReportTable from '@/components/ReportTable';
 import CompareTable from '@/components/CompareTable';
+import AuditLog from '@/components/AuditLog.vue';
 
 
 
 export default {
         components: {
             FundEchart,
+            AuditLog,
             HisTable,
             RankTable,
             FofSimulate,
@@ -510,6 +442,7 @@ export default {
             temp:"",
             resetVisible:false,
             buyVisible:false,
+            auditVisible:false,
            userImg:require('../assets/images/user.png')
         }
     },
@@ -524,6 +457,11 @@ export default {
           console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
       })
               Bus.$on('oneKeyBuy',(arg)=> {
+              this.buyVisible=true
+              this.curAction=arg
+          console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
+      })
+      Bus.$on('audit_action',(arg)=> {
               this.buyVisible=true
               this.curAction=arg
           console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]

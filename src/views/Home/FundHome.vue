@@ -21,6 +21,7 @@
       <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptodash">资金明细</vxe-button>
       <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptorank">排名信息</vxe-button>
       <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptopressure">压力测试</vxe-button>
+      <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptoReport">回撤信息</vxe-button>
 
       <!-- <div class="num">
                 <el-card shadow="hover" v-for="item in countData" :key="item.name"
@@ -250,6 +251,15 @@ export default {
 		"path": "/fundpressure",
 		"label": "压力测试",
 		"name": "fund-pressure",
+		"icon": "setting"
+	});
+      },
+    jumptoReport(){
+            this.$router.push({name:'holding-report'})  
+            this.$store.commit('selectMenu',{
+		"path": "/holdingReprot",
+		"label": "回撤信息",
+		"name": "holding-report",
 		"icon": "setting"
 	});
       },

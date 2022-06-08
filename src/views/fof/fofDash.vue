@@ -154,6 +154,7 @@
           ref="actionTable"
           :data="actionData"
           tooltip-effect="dark"
+          :sort-config="{trigger: 'cell', defaultSort: {field: 'add_time', order: 'desc'}, orders: ['desc', 'asc', null]}"
           :max-height="tmaxh"
         >
           <vxe-column
@@ -205,7 +206,7 @@
             show-overflow-tooltip
           >
           <template slot-scope="scope">{{
-              $moment(scope.row.add_time).format("YYYY-MM-DD")
+              $moment(scope.row.add_time).format("YYYY-MM-DD HH:mm")
             }}</template>
           </vxe-column> 
            </vxe-table>
@@ -228,6 +229,7 @@
           class="mytable-style"
           :max-height="tmaxh"
           size="mini"
+          show-overflow
           :sort-config="{trigger: 'cell', orders: ['desc', 'asc', null]}"
           :data="detailList">
           <vxe-column type="checkbox" width="30"></vxe-column>
@@ -284,16 +286,19 @@
             </vxe-column>
           <vxe-column
             title="操作"
-             width="80"
+             width="60"
+             align="center"
             show-overflow-tooltip
           ><template slot-scope="scope">
-               <el-button 
-                v-if="scope.row['b_code'].length == 6"
-                @click="fundAction(scope.row)"
-                >操作</el-button>
-              <el-button v-if="scope.row['id']" @click="delAction(scope.row)"
-                >删除</el-button
-              >
+              <el-button  v-if="scope.row['b_code'].length == 6" @click.native.prevent="fundAction(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="操作" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip></el-button>
+              <!-- <el-button @click.native.prevent="viewAudit(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start"><i class="el-icon-s-order"></i></el-tooltip></el-button> -->
+            </template>
+          </vxe-column>
+          <vxe-column field="list" title="备注"  align="left" :class-name="cellClass3"    >
+               <template #default="{ row }">
+                            <el-button @click.native.prevent="viewAudit(row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start"><i class="el-icon-s-order"></i></el-tooltip></el-button>
+                            
+                            {{ row["remark"] }}
             </template>
           </vxe-column>
         </vxe-table>
@@ -452,7 +457,7 @@ export default {
       return this.detailData.concat(this.actionData);
     },
     ...mapState(["foflist","holding","actionData"]),
-    ...mapGetters(["sysparam","token","showFundName"]),
+    ...mapGetters(["sysparam","token","showFundName","showFundInfo"]),
   },
   data() {
     return {  allAlign: 'right',
@@ -509,6 +514,9 @@ export default {
     };
   },
   methods: {
+      viewAudit(row){
+          Bus.$emit("showChart",{"cur_code":row.b_code,"diagName":"auditDialog"})
+      },
           jumptodash(){
             this.$router.push({name:'rank-info'})  
             this.$store.commit('selectMenu',{

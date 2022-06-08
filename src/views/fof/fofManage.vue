@@ -238,14 +238,6 @@
     <fund-echart    ref="hischart1"  :titles="current.name"  style="height: 480px" :code="selcode"  ></fund-echart>
 </div>
         </el-dialog>
-        <el-dialog
-    width="50%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="auditVisible">
-    <audit-log       @close="editClose" ref="auditlog"  :titles="current.name"  style="height: 600px" :temp="temp" :code="cur_code"  :visable="auditVisible"></audit-log>
-    </el-dialog>
     <el-dialog
     width="50%"
     top="50px"
@@ -847,12 +839,7 @@ showResult(number,rate=100){
           Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisTable","temp":-1})
       },
       viewAudit(row){
-          this.temp=-1
-          this.cur_code=""
-          this.current=row
-          this.auditVisible=true
-          this.cur_code=row.code
-
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"auditDialog"})
       },
        viewConcat(row){
           this.temp=-1
