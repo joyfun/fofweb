@@ -2,6 +2,7 @@
   <div id="tableContainer" ref="tableContainer" style="height: 100%">
       <el-row>
           <el-col :span="16">
+            {{holdingdict}}
                     <vxe-toolbar perfect>
           <template #buttons>
           <vxe-select v-model="cur_fof" placeholder="默认尺寸">
@@ -412,6 +413,7 @@ export default {
         total:0,
         ptotal:0,
         sumdict:{},
+        holdingdict:{},
         cur_fof:"SY9620"  
       }
   },
@@ -446,6 +448,58 @@ export default {
     },
     showPercent(money) {
         return Math.round(money * 1000)/10;
+    },
+    genPercent(fcode){
+      // for (var fcode of ["SSN818","SSN369","STE599"]){
+          let subdict={"中证500":{'marketval':0,"adj":0},"指增":{'marketval':0,"adj":0},"cta1":{'marketval':0,"adj":0},"cta0":{'marketval':0,"adj":0},"套利":{'marketval':0,"adj":0},"中性":{'marketval':0,"adj":0},"期权":{'marketval':0,"adj":0},"中性":{'marketval':0,"adj":0},"混合":{'marketval':0,"adj":0},null:{'marketval':0,"adj":0},"现金":{'marketval':0,"adj":0}}
+          let subholdings=JSON.parse(JSON.stringify(this.subresult[fcode]))
+
+          // this.subholdings.filter(row=> row["class_type"]=="FOF").forEach((srow,idx)=>{
+          //     if(srow["code"]){
+          //       console.log(srow)
+          //     let rt=srow["marketval"]/this.subsum[srow["code"]]
+          //     this.subresult[srow["code"]].map(prow=>{
+          //         let nrow=JSON.parse(JSON.stringify(prow))
+          //         nrow["omarketval"]=nrow["marketval"]
+          //         nrow["rt"]=rt
+          //         nrow["marketval"]=nrow["marketval"]*rt
+          //         this.holdings.push(nrow)
+          //     })
+          //     }
+
+          // })
+          
+          subholdings.map(row=>{
+                if(row['type']){
+          // this.classify(row)
+				subdict[row['type']]["marketval"]+=row['marketval']
+                }
+                else if(row['b_code'].startsWith("SUBJECT")){
+              row['type']="现金"
+              subdict["现金"]["marketval"]+=row['marketval']
+                }
+            })
+          this.actionData.filter(row=>row['code']==fcode||row['b_code']==fcode).map(row=>{
+            let rinfo=this.showFundInfo(row['b_code'])
+            let mval=parseFloat(row['marketval'])
+            if(row['stage']=='预入款'||row['b_code']==fcode){
+              subdict['现金']["adj"]+=mval
+
+            }else if(rinfo['type']){
+            if(row['stage']=='待投资'){
+              subdict[rinfo['type']]["adj"]+=mval
+              subdict['现金']["adj"]-=mval
+            }else if(row['stage']=='预赎回'){
+              subdict[rinfo['type']]["adj"]-=mval
+              subdict['现金']["adj"]+=mval
+
+            }}else if(rinfo['class_type']=="FOF"){
+              subdict['现金']["adj"]-=mval
+            }
+          }) 
+      this.holdingdict[fcode]=subdict
+
+      // }
     },
     genHoldingData(){
             this.holdingData=[]
@@ -594,9 +648,10 @@ export default {
         .then((response) => {
          let resp=response.data
          this.subsum={}
-         for(let fof of this.sysparam.FOF){
-             this.subresult[fof['code']]=resp.filter(row=>row['mcode']==fof['code'])
-             this.subsum[fof['code']]=resp.filter(row=>row['mcode']==fof['code']).reduce((preVal, row) => { return preVal + row["marketval"];}, 0)
+         for(let fof  of ["SSN818","SSN369","STE599","SSS105","SY9620"]){
+             this.subresult[fof]=resp.filter(row=>row['mcode']==fof)
+             this.subsum[fof]=resp.filter(row=>row['mcode']==fof).reduce((preVal, row) => { return preVal + row["marketval"];}, 0)
+             this.genPercent(fof)
          }
         this.changeHoldingtype(this.cur_fof)
         this.getPerform(response.data.map(row=>row["code"]))
