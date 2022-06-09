@@ -269,6 +269,25 @@ export default {
       ...mapMutations({
           addAction : 'addAction'
       }),
+      auditSubmit(){
+          axis({
+        method: 'post',
+        url: "/fof/updateinfo", // 请求地址
+        data: this.curAction, // 参数
+        responseType: 'json' // 表明返回服务器返回的数据类型
+      }).then(
+        response => {
+            if(response.data.status=="success"){
+                this.auditVisible=false
+                this.$message({
+                message: '保存成功',
+                type: 'success',
+                center: true
+        });
+                                        }
+
+        })
+      },
         editClose() {
         this.dialogVisible = false
         },
@@ -461,8 +480,8 @@ export default {
               this.curAction=arg
           console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
       })
-      Bus.$on('audit_action',(arg)=> {
-              this.buyVisible=true
+      Bus.$on('auditAction',(arg)=> {
+              this.auditVisible=true
               this.curAction=arg
           console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
       })

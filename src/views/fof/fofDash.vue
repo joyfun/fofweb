@@ -184,10 +184,26 @@
             }}</template>
           </vxe-column>
           <vxe-column
+            title="类型"
+            sortable
+            field="b_code"
+            show-overflow-tooltip
+          ><template slot-scope="scope">{{
+              showFundInfo(scope.row.b_code)['type']
+            }}</template>
+          </vxe-column>
+          <vxe-column
             title="金额(万)"
             sortable
             align="right"
             field="marketval"
+            show-overflow-tooltip
+          >
+          </vxe-column>
+          <vxe-column
+            title="状态"
+            sortable
+            field="status"
             show-overflow-tooltip
           >
           </vxe-column>
@@ -252,6 +268,8 @@
             </template>
 
              </vxe-column>
+          <vxe-column field="level" title="级别" width="60"></vxe-column>
+
           <vxe-column field="marketval" title="市值(万)" width="80" sortable>
             <template #default="{ row }">
               {{ showMoney(row.marketval) }}
@@ -297,7 +315,8 @@
           <vxe-column field="list" title="备注"  align="left" :class-name="cellClass3"    >
                <template #default="{ row }">
                             <el-button @click.native.prevent="viewAudit(row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start"><i class="el-icon-s-order"></i></el-tooltip></el-button>
-                            
+                            <el-button @click.native.prevent="auditAction(row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="添加审核意见" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
+
                             {{ row["remark"] }}
             </template>
           </vxe-column>
@@ -932,6 +951,10 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       this.prodDisabled=false
       this.curAction = {};
       Bus.$emit("oneKeyBuy",this.curAction)
+    },
+    auditAction(row) {
+      this.curAction = {"stage":"投后","name":row["b_name"],"code":row["b_code"],"user":this.token};
+      Bus.$emit("auditAction",this.curAction,)
     },
     fundAction(row) {
       this.curAction = JSON.parse(JSON.stringify(row));

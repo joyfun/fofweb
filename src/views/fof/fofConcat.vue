@@ -3,7 +3,7 @@
     <div class="block" style="display: flex; justify-content: space-between">
       <div style=" width: 1200px;">
 
-        <el-select v-model="comb1" filterable placeholder="名称">
+        <el-select v-model="comb1" filterable placeholder="新产品">
           <el-option
             v-for="item in foflist"
             :key="item.code"
@@ -12,7 +12,7 @@
           >
           </el-option>
         </el-select>
-           <el-select v-model="comb2" filterable placeholder="名称">
+           <el-select v-model="comb2" filterable placeholder="旧产品">
           <el-option
             v-for="item in foflist"
             :key="item.code"

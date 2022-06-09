@@ -2,7 +2,7 @@
   <div id="tableContainer" ref="tableContainer" style="height: 100%">
       <el-row>
           <el-col :span="16">
-            {{holdingdict}}
+            <!-- {{holdingdict}} -->
                     <vxe-toolbar perfect>
           <template #buttons>
           <vxe-select v-model="cur_fof" placeholder="默认尺寸">
@@ -118,7 +118,7 @@
                  <vxe-input  v-model="row.adj" type="number"></vxe-input>
           </template> -->
            <template #default="{ row }">
-              <span>{{             row.adj }}</span>
+              <span>{{              $tools.formatMoney(row.adj,0) }}</span>
             </template>
             <template #edit="{ row }">
               <vxe-input type="number" v-model="row.adj" class="myinput"></vxe-input>
@@ -354,6 +354,7 @@ export default {
         fof_percent:{},
         subresult:{},
         subsum:{},
+        adjsum:{},
         rdict:{},
         types:[],
         data_time:"",
@@ -408,7 +409,7 @@ export default {
             
             ]}},
         cls_gap:{"AAS":{"limit":{"dd":[-0.1,0],"volatility":[0,0.15]},"level":{"dd":[-0.07,-0.05,-0.03]}},
-               "CTA":{"limit":{"dd":[-0.2,0],"dd_week":[0,60]},"level":{"dd":[-0.15,-0.07,-0.03]}}},
+                 "CTA":{"limit":{"dd":[-0.2,0],"dd_week":[0,60]},"level":{"dd":[-0.15,-0.07,-0.03]}}},
         holdings:[],
         total:0,
         ptotal:0,
@@ -453,24 +454,36 @@ export default {
       // for (var fcode of ["SSN818","SSN369","STE599"]){
           let subdict={"中证500":{'marketval':0,"adj":0},"指增":{'marketval':0,"adj":0},"cta1":{'marketval':0,"adj":0},"cta0":{'marketval':0,"adj":0},"套利":{'marketval':0,"adj":0},"中性":{'marketval':0,"adj":0},"期权":{'marketval':0,"adj":0},"中性":{'marketval':0,"adj":0},"混合":{'marketval':0,"adj":0},null:{'marketval':0,"adj":0},"现金":{'marketval':0,"adj":0}}
           let subholdings=JSON.parse(JSON.stringify(this.subresult[fcode]))
+          subholdings.filter(row=> row["class_type"]=="FOF").forEach((srow,idx)=>{
+              // if(srow["code"]){
+              console.log(this.subsum)
+              let rt=srow["marketval"]/this.subsum[srow["code"]]
 
-          // this.subholdings.filter(row=> row["class_type"]=="FOF").forEach((srow,idx)=>{
-          //     if(srow["code"]){
-          //       console.log(srow)
-          //     let rt=srow["marketval"]/this.subsum[srow["code"]]
-          //     this.subresult[srow["code"]].map(prow=>{
-          //         let nrow=JSON.parse(JSON.stringify(prow))
-          //         nrow["omarketval"]=nrow["marketval"]
-          //         nrow["rt"]=rt
-          //         nrow["marketval"]=nrow["marketval"]*rt
-          //         this.holdings.push(nrow)
-          //     })
-          //     }
+              // =srow["marketval"]/this.holdingdict[srow["code"]]
+              let hdict=this.holdingdict[srow["code"]]
+              if(hdict){
+                for (let skey in hdict){
+                subdict[skey]["marketval"]+=hdict[skey]["marketval"]*rt
+                subdict[skey]["adj"]+=hdict[skey]["adj"]*rt
+              }
+              }
+       
 
-          // })
-          
+              // this.subresult[srow["code"]].map(prow=>{
+              //     let nrow=JSON.parse(JSON.stringify(prow))
+              //     nrow["omarketval"]=nrow["marketval"]
+              //     nrow["rt"]=rt
+              //     nrow["marketval"]=nrow["marketval"]*rt
+              //     nrow["amarketval"]=nrow["marketval"]
+              //     subholdings.push(nrow)
+              // })
+              // }
+
+          })
+          console.log(subdict)
+          console.log(subholdings)
           subholdings.map(row=>{
-                if(row['type']){
+                if(row['type']&&row["class_type"]!="FOF"){
           // this.classify(row)
 				subdict[row['type']]["marketval"]+=row['marketval']
                 }
@@ -483,14 +496,19 @@ export default {
             let rinfo=this.showFundInfo(row['b_code'])
             let mval=parseFloat(row['marketval'])
             if(row['stage']=='预入款'||row['b_code']==fcode){
+              
               subdict['现金']["adj"]+=mval
 
             }else if(rinfo['type']){
-            if(row['stage']=='待投资'){
-              subdict[rinfo['type']]["adj"]+=mval
+            if(row['stage']=='待投资' ){
+              if(subdict[rinfo['type']]){
+                subdict[rinfo['type']]["adj"]+=mval
+              }
               subdict['现金']["adj"]-=mval
             }else if(row['stage']=='预赎回'){
-              subdict[rinfo['type']]["adj"]-=mval
+              if(subdict[rinfo['type']]){
+                subdict[rinfo['type']]["adj"]-=mval
+              }
               subdict['现金']["adj"]+=mval
 
             }}else if(rinfo['class_type']=="FOF"){
@@ -498,11 +516,27 @@ export default {
             }
           }) 
       this.holdingdict[fcode]=subdict
+      let ptotal=0
+      let atotal=0
+      for(let k in subdict){
+        if(k!='中证500'){
+          ptotal+=subdict[k]['marketval']
+          atotal=atotal+subdict[k]['marketval']+subdict[k]['adj']*10000
+        }
+      }
+      this.adjsum[fcode]=atotal
+      this.subsum[fcode]=ptotal
+      for(let k in subdict){
+          subdict[k]['prate']=subdict[k]['marketval']/ptotal
+          subdict[k]['arate']=(subdict[k]['marketval']+subdict[k]['adj']*10000)/atotal
+        }
+      
 
       // }
     },
     genHoldingData(){
             this.holdingData=[]
+            this.sumdict=this.holdingdict[this.cur_fof]
             for(let atype in this.sumdict){
                 if(atype && 'null'!=atype){
             let row={"adj":this.sumdict[atype]["adj"],"type":atype,"marketval":this.sumdict[atype]["marketval"],"yeaily_return_hyr":this.sumdict[atype]["yeaily_return_hyr"]/2,"yeaily_return_1yr":this.sumdict[atype]["yeaily_return_1yr"],"yeaily_return_2yr":this.sumdict[atype]["yeaily_return_2yr"]*2}
@@ -579,56 +613,55 @@ export default {
         
      },
     changeHoldingtype(mcode){
-          this.sumdict={"中证500":{'marketval':0,"adj":0},"指增":{'marketval':0,"adj":0},"cta1":{'marketval':0,"adj":0},"cta0":{'marketval':0,"adj":0},"套利":{'marketval':0,"adj":0},"中性":{'marketval':0,"adj":0},"期权":{'marketval':0,"adj":0},"中性":{'marketval':0,"adj":0},"混合":{'marketval':0,"adj":0},null:{'marketval':0,"adj":0},"现金":{'marketval':0,"adj":0}}
+          // this.sumdict={"中证500":{'marketval':0,"adj":0},"指增":{'marketval':0,"adj":0},"cta1":{'marketval':0,"adj":0},"cta0":{'marketval':0,"adj":0},"套利":{'marketval':0,"adj":0},"中性":{'marketval':0,"adj":0},"期权":{'marketval':0,"adj":0},"中性":{'marketval':0,"adj":0},"混合":{'marketval':0,"adj":0},null:{'marketval':0,"adj":0},"现金":{'marketval':0,"adj":0}}
           this.holdings=JSON.parse(JSON.stringify(this.subresult[mcode]))
-          console.log(this.holdings)
-          console.log(this.actionData.filter(r=>r['code']==this.cur_fof))
-          this.holdings.filter(row=> row["class_type"]=="FOF").forEach((srow,idx)=>{
-              if(srow["code"]){
-                console.log(srow)
-              let rt=srow["marketval"]/this.subsum[srow["code"]]
-              this.subresult[srow["code"]].map(prow=>{
-                  let nrow=JSON.parse(JSON.stringify(prow))
-                  nrow["omarketval"]=nrow["marketval"]
-                  nrow["rt"]=rt
-                  nrow["marketval"]=nrow["marketval"]*rt
-                  this.holdings.push(nrow)
-              })
-              }
+          this.sumdict=this.holdingdict[mcode]
+        //   this.holdings.filter(row=> row["class_type"]=="FOF").forEach((srow,idx)=>{
+        //       if(srow["code"]){
+        //         console.log(srow)
+        //       let rt=srow["marketval"]/this.subsum[srow["code"]]
+        //       this.subresult[srow["code"]].map(prow=>{
+        //           let nrow=JSON.parse(JSON.stringify(prow))
+        //           nrow["omarketval"]=nrow["marketval"]
+        //           nrow["rt"]=rt
+        //           nrow["marketval"]=nrow["marketval"]*rt
+        //           this.holdings.push(nrow)
+        //       })
+        //       }
 
-          })
+        //   })
           
-          this.holdings.map(row=>{
-                if(row['type']){
-          this.classify(row)
-				this.sumdict[row['type']]["marketval"]+=row['marketval']
-                }
-                else if(row['b_code'].startsWith("SUBJECT")){
-              row['type']="现金"
-              this.sumdict["现金"]["marketval"]+=row['marketval']
+        //   this.holdings.map(row=>{
+        //         if(row['type']){
+        //   this.classify(row)
+				// this.sumdict[row['type']]["marketval"]+=row['marketval']
+        //         }
+        //         else if(row['b_code'].startsWith("SUBJECT")){
+        //       row['type']="现金"
+        //       this.sumdict["现金"]["marketval"]+=row['marketval']
  
-                }
-            })
-          this.actionData.filter(row=>row['code']==this.cur_fof||row['b_code']==this.cur_fof).map(row=>{
-            console.log(row)
-            let rinfo=this.showFundInfo(row['b_code'])
-            let mval=parseFloat(row['marketval'])
-            if(row['stage']=='预入款'||row['b_code']==this.cur_fof){
-              console.log(row)
-              this.sumdict['现金']["adj"]+=mval
+        //         }
+        //     })
+        //   this.actionData.filter(row=>row['code']==this.cur_fof||row['b_code']==this.cur_fof).map(row=>{
+        //     console.log(row)
+        //     let rinfo=this.showFundInfo(row['b_code'])
+        //     let mval=parseFloat(row['marketval'])
+        //     if(row['stage']=='预入款'||row['b_code']==this.cur_fof){
+        //       console.log(row)
+        //       this.sumdict['现金']["adj"]+=mval
 
-            }else if(rinfo['type']){
-            if(row['stage']=='待投资'){
-              this.sumdict[rinfo['type']]["adj"]+=mval
-              this.sumdict['现金']["adj"]-=mval
-            }else if(row['stage']=='预赎回'){
-              this.sumdict[rinfo['type']]["adj"]-=mval
-              this.sumdict['现金']["adj"]+=mval
+        //     }else if(rinfo['type']){
+        //     if(row['stage']=='待投资'){
+        //       this.sumdict[rinfo['type']]["adj"]+=mval
+        //       this.sumdict['现金']["adj"]-=mval
+        //     }else if(row['stage']=='预赎回'){
+        //       this.sumdict[rinfo['type']]["adj"]-=mval
+        //       this.sumdict['现金']["adj"]+=mval
 
-            }}else if(rinfo['class_type']=="FOF"){
-              this.sumdict['现金']["adj"]-=mval
-            }
-          })
+        //     }}else if(rinfo['class_type']=="FOF"){
+        //       this.sumdict['现金']["adj"]-=mval
+        //     }
+        //   })
         this.types=[...new Set(this.holdings.map(r=>r['type']))]
         this.types.sort((a,b)=>{
           if(b==null){
@@ -648,9 +681,9 @@ export default {
         .then((response) => {
          let resp=response.data
          this.subsum={}
+         this.adjsum={}
          for(let fof  of ["SSN818","SSN369","STE599","SSS105","SY9620"]){
              this.subresult[fof]=resp.filter(row=>row['mcode']==fof)
-             this.subsum[fof]=resp.filter(row=>row['mcode']==fof).reduce((preVal, row) => { return preVal + row["marketval"];}, 0)
              this.genPercent(fof)
          }
         this.changeHoldingtype(this.cur_fof)
@@ -680,12 +713,13 @@ export default {
     },
     addPerformance(){
             this.holdings.map(row=>{
+              if(row['type']!='FOF'){
                 let rdata=this.performs[row["code"]]
                 for(let k in rdata){
                     row[k]=rdata[k]
                 }
                 row["subTotal"]=this.sumdict[row['type']]["marketval"]
-                row["percent"]=row["marketval"]/row["subTotal"]
+                row["percent"]=row["marketval"]/row["subTotal"]}
             })
             for(let key of ["hyr","1yr","2yr"]){
                 for(let skey in this.sumdict){
@@ -693,10 +727,11 @@ export default {
                 }
             }
             this.holdings.map(row=>{
+              if(row['type']!='FOF'){
                 for(let key of ["hyr","1yr","2yr"]){
 				this.sumdict[row['type']]["yeaily_return_"+key]+=row["percent"]*row['yeaily_return_'+key]
                 }
-            })
+            }})
     },
     getFofPercent(){
         this.$axios
@@ -789,7 +824,7 @@ export default {
         nprev.yr_w=this.$tools.formatMoney(nprev.yr_w*100,2)
         this.precast=prev
         return [["预期",nprev.yr,nprev.yr_w,nprev.dd,(this.ptotal/10000).toFixed(0),"","近期",this.$tools.formatMoney(this.performs[this.cur_fof]["yeaily_return_hyr"]*100/2,2),this.$tools.formatMoney(this.performs[this.cur_fof]["yeaily_return_1yr"]*100,2),this.$tools.formatMoney(this.performs[this.cur_fof]["yeaily_return_2yr"]*200,2),nprev.vola],
-                ["调整后",prev.yr,prev.yr_w,prev.dd,(this.total/10000).toFixed(0),sadj,"","","","",prev.vola]
+                ["调整后",prev.yr,prev.yr_w,prev.dd,(this.total/10000).toFixed(0),this.$tools.formatMoney(sadj,0),"","","","",prev.vola]
         ]
       }
       return []
