@@ -456,18 +456,30 @@ export default {
           let subholdings=JSON.parse(JSON.stringify(this.subresult[fcode]))
           subholdings.filter(row=> row["class_type"]=="FOF").forEach((srow,idx)=>{
               // if(srow["code"]){
-              console.log(this.subsum)
               let rt=srow["marketval"]/this.subsum[srow["code"]]
+              let adjdetail=this.actionData.filter(ac=>{
+                return ac['code']==fcode&&ac['b_code']==srow["code"]
+              })
+              let namt=0
+              if(adjdetail.length>0){
+                if(adjdetail[0]["stage"]=='待投资'){
+                  namt=parseFloat(adjdetail[0]["marketval"])*10000
+                }
+              }
+              let nrt=(srow["marketval"]+namt)/this.adjsum[srow["code"]]
+              console.log('######################')
+              console.log(adjdetail)
 
               // =srow["marketval"]/this.holdingdict[srow["code"]]
               let hdict=this.holdingdict[srow["code"]]
               if(hdict){
                 for (let skey in hdict){
                 subdict[skey]["marketval"]+=hdict[skey]["marketval"]*rt
-                subdict[skey]["adj"]+=hdict[skey]["adj"]*rt
+                subdict[skey]["adj"]+=(nrt*(hdict[skey]["marketval"]+hdict[skey]["adj"]*10000)-hdict[skey]["marketval"]*rt)/10000
               }
               }
        
+       console.log(subdict)
 
               // this.subresult[srow["code"]].map(prow=>{
               //     let nrow=JSON.parse(JSON.stringify(prow))
