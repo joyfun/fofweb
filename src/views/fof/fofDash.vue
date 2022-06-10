@@ -268,9 +268,9 @@
             </template>
 
              </vxe-column>
-          <vxe-column field="level" title="级别" width="60"></vxe-column>
+          <vxe-column field="level" title="级别" width="40"></vxe-column>
 
-          <vxe-column field="marketval" title="市值(万)" width="80" sortable>
+          <vxe-column field="marketval" title="市值(万)" width="60" sortable>
             <template #default="{ row }">
               {{ showMoney(row.marketval) }}
             </template>
@@ -285,7 +285,7 @@
             <vxe-radio label="2yr" :content="titleDate"></vxe-radio>
           </vxe-radio-group>
                         </template>   
-          <vxe-column align="center" :key="type" :field="type+'_r'" width="50" sortable :title="type+'\n'+rlen[type]"   v-for=" type of this.types">
+          <vxe-column align="center" :key="type" :field="type+'_r'" width="40" sortable :title="type+'\n'+rlen[type]"   v-for=" type of this.types">
             </vxe-column>
                     </vxe-colgroup>
                       <vxe-column field=" " width="2"  :title="' '"  >
@@ -297,14 +297,14 @@
             </template>
           </vxe-column>
 
-          <vxe-column field="act_amount" title="操作金额(万)" width="80">
+          <vxe-column field="act_amount" title="变动(万)" width="40">
             <!-- <template #default="{ row }">
               {{ showMoney(row.act_amount) }}
             </template> -->
             </vxe-column>
           <vxe-column
             title="操作"
-             width="60"
+             width="30"
              align="center"
             show-overflow-tooltip
           ><template slot-scope="scope">

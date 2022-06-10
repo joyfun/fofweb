@@ -76,7 +76,7 @@
           <!-- -->
           <vxe-column  sortable  title="级别"  width="36" align="center" field="level" sort-by="lscore"  :filters="[{label: '甲', value: '甲'}, {label: '乙', value: '乙'}, {label: '丙', value: '丙'}, {label: '丁', value: '丁'}, {label: '戊', value: '戊'}]" :title-help="{message: '根据产品波动率和最大回撤对产品进行分级'}" >
           </vxe-column> 
-            <vxe-column   field="sub_type" width="60" sortable :title="'子'" >
+            <vxe-column   field="sub_type" width="60" sortable :title="'子'" :filters="[]"  >
             </vxe-column>
            <vxe-column   field="rank" width="40" sortable :title="'rank'" >
             </vxe-column>
@@ -255,6 +255,7 @@ export default {
         type: 'aas',
         yrdict: {"hyr":"半年","1yr":"一年","2yr":"两年"},
         avgcnt:{},
+        subtypes:[],
         cls_gap:{"aas":{"limit":{"dd":[-0.1,0],"volatility":[0,0.15]},"level":{"dd":[-0.07,-0.05,-0.03]}},
                 "cta0":{"limit":{"dd":[-0.2,0],"dd_week":[0,60]},"level":{"dd":[-0.15,-0.07,-0.03]}},
                "cta1":{"limit":{"dd":[-0.2,0],"dd_week":[0,60]},"level":{"dd":[-0.15,-0.07,-0.03]}}}
@@ -517,6 +518,7 @@ return ''
           this.filterList()
 
           // this.$nextTick(()=>{
+          this.$refs.rankTable.setFilter(this.$refs.rankTable.getColumnByField('sub_type'), this.subtypes.map(st=>{return  { label: st, value: st }}))
           this.$refs.rankTable.reloadData(this.tableList)
           this.setSelect()
           this.$refs.rankTable.sort({field: 'rank', order: 'asc'})
@@ -592,8 +594,12 @@ return ''
         .get("/fof/rank3", { params: { date: this.date,type:this.type ,range:this.range} })
         .then((response) => {
           this.rgdict={}
+          this.subtypes=[]
           this.tableData =response.data.map(row=>{
             row['name']=this.showFundName(row['code'])
+            if(this.subtypes.indexOf(row['sub_type']<0)){
+              this.subtypes.push(row['sub_type'])
+            }
             for(let rg of ['hyr','1yr','2yr']){
             //   if(row['rankF_'+rg]){
             //     row['rankF_'+rg+'_r']=row['rankF_'+rg].split("-")[0]
