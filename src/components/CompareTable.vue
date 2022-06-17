@@ -2,11 +2,6 @@
 
   <div>
       <div class="el-card">
-              <vxe-toolbar>
-          <template #buttons>
-            <vxe-button @click="exportEvent">导出.xlsx</vxe-button>
-          </template>
-        </vxe-toolbar>
        <vxe-table
           class="mytable-style"
           border
@@ -21,6 +16,12 @@
         >
       <!-- <vxe-column  type="checkbox" width="30" fixed="left"></vxe-column> -->
                 <vxe-column  width="200" field="基金名称" align="left" title="基金名称" fixed="left" >
+              <template #header>
+                  基金名称
+                   <vxe-button @click="exportEvent">导出.xlsx</vxe-button>
+
+              </template>
+
         <template #default="{ row }">
                    <el-button  @click.native.prevent="addCart(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
            {{ showFundName(row["code"])}}
@@ -117,8 +118,8 @@ export default {
     exportEvent () {
           const header = XLSX.utils.table_to_sheet (this.$refs.rankTable.$el.querySelector('.body--wrapper>.vxe-table--header'))
           const workBook = XLSX.utils.table_to_sheet (this.$refs.rankTable.$el.querySelector('.body--wrapper>.vxe-table--body'))
-          console.log(XLSX.utils.sheet_to_aoa(workBook))
-          XLSX.utils.sheet_add_aoa(header,XLSX.utils.sheet_to_csv(workBook))
+          console.log( XLSX.utils.sheet_to_json(workBook, {header:1}))
+          XLSX.utils.sheet_add_aoa(header, XLSX.utils.sheet_to_json(workBook, {header:1}),{ origin: -1 });
           var nwb= XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(nwb, header, "Sheet1");
               XLSX.writeFile(nwb, '数据导出.xlsx')

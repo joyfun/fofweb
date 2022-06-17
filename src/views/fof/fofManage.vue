@@ -20,6 +20,14 @@
       :value="item.code">
     </el-option>
   </el-select>
+  <el-select v-model="filter.scale" @change="getList" style="width:80px"  clearable placeholder="规模">
+    <el-option
+      v-for="item in sysparam.scale"
+      :key="item.value"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
   <el-select v-model="filter.class_type" @change="changeSub"  style="width:80px"  clearable placeholder="类型">
     <el-option
       v-for="item in sysparam.class_type"
@@ -138,6 +146,13 @@
       sortable
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.stage }}</template>
+    </el-table-column>
+    <el-table-column
+      prop="latest_date"
+      label="净值日期"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.latest_date }}</template>
     </el-table-column>
      <el-table-column
       prop="fee"

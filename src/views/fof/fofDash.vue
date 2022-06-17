@@ -33,7 +33,7 @@
               <vxe-input v-model="row.name" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','多策略FOF直投','SY9620']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass1">
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SVK645','多策略FOF直投','SY9620']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass1">
             <template #default="{ row }">
               <span>{{ row[af] }}</span>
             </template>
@@ -61,7 +61,7 @@
               <vxe-input v-model="row.name" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SSS105']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass1">
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SVK645','SSS105']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass1">
             <template #default="{ row }">
               <span>{{ row[af] }}</span>
             </template>
@@ -88,7 +88,7 @@
               <vxe-input v-model="row.name" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass">
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SVK645']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass">
             <template #default="{ row }">
               <span>{{ row[af] }}</span>
             </template>
@@ -144,16 +144,23 @@
         </el-col>
       </el-row>
       </el-tab-pane>
-      <el-tab-pane label="资金预操作"
+      <el-tab-pane label="资金预操作" height="100%"
         >
-        <div style="display: flex; justify-content: space-between">
-          <el-button size="small" @click="addAction()">添加操作</el-button>
-        </div>
+        <!-- <div style="display: flex; justify-content: space-between">
+          <el-button size="small" @click="addAction()">添加操作1</el-button><el-button size="small" @click="doSaveAction()">保存</el-button>
+        </div> -->
+                  <vxe-toolbar>
+          <template #buttons>
+            <vxe-button @click="addAction">添加操作</vxe-button>
+            <vxe-button @click="doSaveAction">保存</vxe-button>
+          </template>
+        </vxe-toolbar>
         <vxe-table
           border
           ref="actionTable"
           :data="actionData"
           tooltip-effect="dark"
+          :edit-config="{trigger: 'dblclick', mode: 'cell'}"
           :sort-config="{trigger: 'cell', defaultSort: {field: 'add_time', order: 'desc'}, orders: ['desc', 'asc', null]}"
           :max-height="tmaxh"
         >
@@ -201,15 +208,65 @@
           >
           </vxe-column>
           <vxe-column
-            title="状态"
-            sortable
+            title="流程状态"
+            sortable 
             field="status"
-            show-overflow-tooltip
+            show-overflow-tooltip :edit-render="{autofocus: '.myinput'}"
           >
+            <template #default="{ row }">
+              <span>{{ row['status'] }}</span>
+            </template>
+            <template #edit="{ row }">
+                        <vxe-select v-model="row['status']" transfer placeholder="流程状态">
+            <vxe-option v-for="item in sysparam.flow_status" :key="item.value" :label="item.value"
+      :value="item.code" ></vxe-option>
+          </vxe-select>
+            </template>
+          </vxe-column>
+          <vxe-column
+            title="当前负责人"
+            sortable
+            field="principal"
+            show-overflow-tooltip :edit-render="{autofocus: '.myinput'}"
+          >
+            <template #default="{ row }">
+              <span>{{ row['principal'] }}</span>
+            </template>
+            <template #edit="{ row }">
+              <vxe-input  v-model="row['principal']" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
+          <vxe-column
+            title="下一节点"
+            sortable
+            field="nstatus"
+            show-overflow-tooltip :edit-render="{autofocus: '.myinput'}"
+          >
+          <template #default="{ row }">
+              <span>{{ row['nstatus'] }}</span>
+            </template>
+            <template #edit="{ row }">
+                        <vxe-select transfer v-model="row['nstatus']" placeholder="流程状态">
+            <vxe-option v-for="item in sysparam.flow_status" :key="item.value" :label="item.value"
+      :value="item.code" ></vxe-option>
+          </vxe-select>            </template>
+          </vxe-column>
+          <vxe-column
+            title="下一负责人"
+            sortable
+            field="nprincipal"
+            show-overflow-tooltip :edit-render="{autofocus: '.myinput'}"
+          >
+            <template #default="{ row }">
+              <span>{{ row['nprincipal'] }}</span>
+            </template>
+            <template #edit="{ row }">
+              <vxe-input  v-model="row['nprincipal']" class="myinput"></vxe-input>
+            </template>
           </vxe-column>
           <vxe-column
             title=""
-            show-overflow-tooltip
+            show-overflow-tooltip 
           ><template slot-scope="scope">
             <el-button  @click.native.prevent="delAction(scope.row,scope.rowIndex)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
 
@@ -250,6 +307,12 @@
           :data="detailList">
           <vxe-column type="checkbox" width="30"></vxe-column>
           <vxe-column field="code" title="产品"  sortable width="160" :filters="sysparam.FOF.map(r=> {return {'value':r.code,'label':r.value}})" :filter-method="filterStatusMethod" >
+                                   <template #header>
+                  产品
+                   <vxe-button @click="exportEvent">导出.xlsx</vxe-button>
+
+              </template>
+                     
                         <template #default="{ row }">
               {{ row.name }}
             </template>
@@ -418,9 +481,8 @@ import { mapGetters, mapMutations, mapState } from "vuex";
 import SankeyChart from "@/components/SankeyChart.vue";
 import fofCast from "./fofCast.vue";
 import rankInfo from "./rankInfoN.vue";
-
+import XLSX from 'xlsx'
 import Bus from '@/store/bus.js';
-import { t } from 'vxe-table';
 
 export default {
           components: {
@@ -464,7 +526,7 @@ export default {
       
     },
     finalDataf(){
-      return this.finalData.filter( row=>["SSN818","SSN369","STE599","多策略FOF直投"].indexOf(row["code"])<0)
+      return this.finalData.filter( row=>["SSN818","SSN369","STE599","SVK645","多策略FOF直投"].indexOf(row["code"])<0)
     },
     titleDate(){
       return '2年 排名信息('+this.data_time+")"
@@ -533,6 +595,16 @@ export default {
     };
   },
   methods: {
+
+        exportEvent () {
+          const header = XLSX.utils.table_to_sheet (this.$refs.detailTable.$el.querySelector('.body--wrapper>.vxe-table--header'))
+          const workBook = XLSX.utils.table_to_sheet (this.$refs.detailTable.$el.querySelector('.body--wrapper>.vxe-table--body'))
+          console.log( XLSX.utils.sheet_to_json(workBook, {header:1}))
+          XLSX.utils.sheet_add_aoa(header, XLSX.utils.sheet_to_json(workBook, {header:1}),{ origin: -1 });
+          var nwb= XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(nwb, header, "Sheet1");
+              XLSX.writeFile(nwb, '数据导出.xlsx')
+    },
       viewAudit(row){
           Bus.$emit("showChart",{"cur_code":row.b_code,"diagName":"auditDialog"})
       },
@@ -604,7 +676,7 @@ return ''
     updateCash(code,row){
             if(row['value']&&row['value'].length>0){
 
-        let old=this.actionData.filter(row=>row["code"]==code&&row["stage"]=="预入款")
+        let old=this.actionData.filter(row=>row["status"]!="结束"&&row["code"]==code&&row["stage"]=="预入款")
         if(old.length==1){
           old[0]["marketval"]=row['value']
         }else{
@@ -617,7 +689,7 @@ return ''
 
     updateInvest(code,b_code,row){
       if(row['value']&&row['value'].length>0){
-        let old=this.actionData.filter(row=>row["code"]==code&&row["b_code"]==b_code&&row["stage"]=="待投资")
+        let old=this.actionData.filter(row=>row["status"]!="结束"&&row["code"]==code&&row["b_code"]==b_code&&row["stage"]=="待投资")
         if(old.length==1){
           old[0]["marketval"]=row['value']
         }else if(old.length==0){
@@ -627,7 +699,7 @@ return ''
 
     getCash(code){
       return this.actionData.reduce((prev,row)=> {
-              if(row["code"]==code&&row["stage"]=="预入款"){
+              if(row["status"]!="结束"&&row["code"]==code&&row["stage"]=="预入款"){
                 prev=prev+parseFloat(row['marketval'])
               }
               return prev
@@ -652,7 +724,7 @@ return ''
     genNoUsed1(){
       let toinvest=0
       let toredeem=0
-      for(var key of ["SSN818","SSN369","STE599","多策略FOF直投"]){
+      for(var key of ["SSN818","SSN369","STE599","SVK645","多策略FOF直投"]){
       this.compData1[4][key]=this.compData1[0][key]
       if(this.compData1[0][key]){
           toinvest+=parseFloat(this.compData1[0][key])
@@ -684,7 +756,7 @@ return ''
     genNoUsed2(){
       let toinvest=0
       let toredeem=0
-      for(var key of ["SSN818","SSN369","STE599"]){
+      for(var key of ["SSN818","SSN369","STE599","SVK645"]){
       this.updateInvest("SSS105",key,{"value":this.compData2[0][key]})
       this.compData2[4][key]=this.compData2[0][key]
       if(this.compData2[0][key]){
@@ -711,12 +783,12 @@ return ''
       genNoUsed3(){
       let toinvest=0
       let toredeem=0
-      for(var key of ["SSN818","SSN369","STE599"]){
+      for(var key of ["SSN818","SSN369","STE599","SVK645"]){
       this.compData3[0][key]=parseFloat(this.compData1[0][key])+parseFloat(this.compData2[0][key])
       this.compData3[5][key]=parseFloat(this.compData3[1][key])+parseFloat(this.compData3[2][key])+parseFloat(this.compData1[4][key])+parseFloat(this.compData2[4][key])-parseFloat(this.compData3[4][key])
       this.compData3[7][key]=this.compData3[6][key]+parseFloat(this.compData3[0][key])
      }
-      let fofs=["SY9620","SSS105","SSN818","SSN369","STE599"]
+      let fofs=["SY9620","SSS105","SSN818","SSN369","STE599","SVK645"]
       this.finalData.sort((a,b)=>{return fofs.indexOf(a.code)-fofs.indexOf(b.code)})
 
       // this.compData2[1]['SSS105']=toredeem
@@ -747,7 +819,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
     genTitleData1(){
       const cols=["预入款","预赎回","现金","在投","待分配合计"]
       const keys=["income","redeem","cash","marketval","unused"]
-      const fofs=["SSN818","SSN369","STE599"] //["SY9620"]
+      const fofs=["SSN818","SSN369","STE599","SVK645"] //["SY9620"]
 
       let rets=[]
       for(var col in cols){
@@ -784,7 +856,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       rets[0]["SY9620"]=this.getCash("SY9620")
       for (let key of fofs){
                 rets[0][key]=this.actionData.reduce((prev,row)=> {
-              if(row["code"]=="SY9620"&&row["stage"]=="待投资"&&row["b_code"]==key){
+              if(row["status"]!="结束"&&row["code"]=="SY9620"&&row["stage"]=="待投资"&&row["b_code"]==key){
                 prev=prev+parseFloat(row['marketval'])
               }
               return prev
@@ -797,7 +869,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
     genTitleData2(){
            const cols=["预入款","预赎回","现金","在投","待分配合计"]
       const keys=["income","redeem","cash","marketval","unused"]
-      const fofs=["SSN818","SSN369","STE599"] //["SY9620"]
+      const fofs=["SSN818","SSN369","STE599","SVK645"] //["SY9620"]
       let rets=[]
       for(var col in cols){
         var ret={"name":cols[col]}
@@ -829,7 +901,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       rets[0]["SSS105"]=this.getCash("SSS105")
       for (let key of fofs){
                 rets[0][key]=this.actionData.reduce((prev,row)=> {
-              if(row["code"]=="SSS105"&&row["stage"]=="待投资"&&row["b_code"]==key){
+              if(row["status"]!="结束"&&row["code"]=="SSS105"&&row["stage"]=="待投资"&&row["b_code"]==key){
                 prev=prev+parseFloat(row['marketval'])
               }
               return prev
@@ -840,11 +912,13 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
     genTitleData3(){
       const cols=["预入款","预赎回","现金","在投","预投","待分配合计","总管理规模","管理规模(预)","核对"]
       const keys=["income","redeem","cash","marketval","buy","unused","managed","total","check"]
-      const fofs=["SSN818","SSN369","STE599"]
+      const fofs=["SSN818","SSN369","STE599","SVK645"]
       let rets=[]
       for(var col in cols){
         var ret={"name":cols[col]}
         for (let af of fofs ){
+          console.log(af+':' +cols[col])
+          console.log(this.finalData)
         ret[af]=Math.floor(this.finalData.filter((row)=>row['code']==af)[0][keys[col]]/10000)
       }
       
@@ -952,6 +1026,10 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       this.curAction = {};
       Bus.$emit("oneKeyBuy",this.curAction)
     },
+    doSaveAction() {
+      this.calcFinal()
+      this.saveAction()
+    },
     auditAction(row) {
       this.curAction = {"stage":"投后","name":row["b_name"],"code":row["b_code"],"user":this.token};
       Bus.$emit("auditAction",this.curAction,)
@@ -1000,7 +1078,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
         } else if (row["b_code"].length == 6) {
           row["name"] = this.showFundName(row.code);
           row["stage"] = "已投";
-          let acts=this.actionData.filter(a=>a['code']==row['code']&&a['b_code']==row['b_code'])
+          let acts=this.actionData.filter(a=>a['status']!='结束'&&a['code']==row['code']&&a['b_code']==row['b_code'])
           if(acts.length>0){
             row['act_amount']=0
           for (let act of acts){
@@ -1021,7 +1099,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
            }
          })
       }
-      for (var row of this.actionData) {
+      for (var row of this.actionData.filter(a=>a['status']!='结束')) {
         let pdict = rdict[row["code"]];
         if (!pdict) {
           pdict = {

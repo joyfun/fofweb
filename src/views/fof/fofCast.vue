@@ -5,7 +5,7 @@
             <!-- {{holdingdict}} -->
                     <vxe-toolbar perfect>
           <template #buttons>
-          <vxe-select v-model="cur_fof" placeholder="默认尺寸">
+          <vxe-select v-model="cur_fof" placeholder="默认FOF">
             <vxe-option v-for="item in sysparam.FOF" :key="item.value" :label="item.value"
       :value="item.code" ></vxe-option>
           </vxe-select>
@@ -651,7 +651,7 @@ export default {
          let resp=response.data
          this.subsum={}
          this.adjsum={}
-         for(let fof  of ["SSN818","SSN369","STE599","SSS105","SY9620"]){
+         for(let fof  of ["SSN818","SSN369","STE599","SVK645","SSS105","SY9620"]){
              this.subresult[fof]=resp.filter(row=>row['mcode']==fof)
              this.genPercent(fof)
          }

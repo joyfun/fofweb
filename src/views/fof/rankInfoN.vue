@@ -12,7 +12,6 @@
       format="yyyyMMdd"
       align="right"
       type="date"
-      placeholder="选择日期"
       >
     </el-date-picker>
             <vxe-radio-group v-model="type" size="mini" :strict="false">
@@ -20,6 +19,9 @@
             <vxe-radio-button label="cta0" content="CTA0"></vxe-radio-button>
             <vxe-radio-button label="cta1" content="CTA1"></vxe-radio-button>
             <vxe-radio-button label="指增" content="指增"></vxe-radio-button>
+            <!-- <vxe-radio-button label="I5" content="I5"></vxe-radio-button>
+            <vxe-radio-button label="I3" content="I3"></vxe-radio-button>
+            <vxe-radio-button label="I1" content="I1"></vxe-radio-button> -->
             <vxe-radio-button label="中性" content="中性"></vxe-radio-button>
             <vxe-radio-button label="混合" content="混合"></vxe-radio-button>
             <vxe-radio-button label="套利" content="套利"></vxe-radio-button>
@@ -94,11 +96,11 @@
            <vxe-colgroup  :key="tp" :title="yrdict[tp]+'排名信息('+tableData.length+')平均'+avgcnt[range]+'个'" align="center" >
 
 
-             <vxe-column :field="'mean'+winlength[tp]" width="48" sortable :title="'mean(%)'"  >
+             <vxe-column :field="'mean'+winlength[tp]" width="48" sortable :title="'mean%'"  >
             </vxe-column>
-              <vxe-column :field="'listrate'+winlength[tp]" width="48" sortable :title="'listrate'" >
+              <vxe-column :field="'listrate'+winlength[tp]" width="48" sortable :title="'listrate%'" >
             </vxe-column>
-            <vxe-column :key="dkey" :field="dkey+winlength[tp]" width="48" sortable :title="dkey"  v-for="dkey in ['std']">
+            <vxe-column :key="dkey" :field="dkey+winlength[tp]" width="48" sortable :title="dkey+'%'"  v-for="dkey in ['std']">
             </vxe-column>
             <vxe-column  :field="'meand'+winlength[tp]" width="48" sortable :title="'Δrank'" >
             </vxe-column>
@@ -597,7 +599,7 @@ return ''
           this.subtypes=[]
           this.tableData =response.data.map(row=>{
             row['name']=this.showFundName(row['code'])
-            if(this.subtypes.indexOf(row['sub_type']<0)){
+            if(this.subtypes.indexOf(row['sub_type'])<0){
               this.subtypes.push(row['sub_type'])
             }
             for(let rg of ['hyr','1yr','2yr']){
@@ -625,7 +627,7 @@ return ''
                     if(row[key]<tmp["min"]){
                       tmp["min"]=row[key]
                     }
-                    row[key]=parseFloat(row[key]).toFixed(2)
+                    row[key]=(parseFloat(row[key])*100).toFixed(2)
                   }
                 }
                 // if(['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility'].indexOf(key)>-1){

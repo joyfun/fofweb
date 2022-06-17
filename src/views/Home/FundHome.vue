@@ -380,6 +380,7 @@ export default {
         for(var cls in dict){
             ret.push({name:cls,value:dict[cls]})
         }
+        console.log(ret)
         return ret;
     },
     getLegend(data){

@@ -42,8 +42,12 @@ const getters = {
     if(blen>0){
       name="💰"
     }
+
     for (var item of state.foflist){
       if (code==item['code']){
+        if(item['scale']=="无额度"){
+          name="🈵"
+        }
         return name+item['name']+extra
       }
   }

@@ -34,6 +34,7 @@
         <vxe-table
           ref="hisTable"
           border
+          keep-source
           align="right"
           size="mini"
           max-height="480"
