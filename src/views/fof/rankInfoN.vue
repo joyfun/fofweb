@@ -613,7 +613,8 @@ return ''
             }
             for(let key in row){
                 if(['mean26','mean52','mean104','listrate26','listrate52','listrate104','std26','std52','std104'].indexOf(key)>-1){
-                  if(isNumber(row[key])){
+                  row[key]=this.$tools.formatMoney((parseFloat(row[key])*100),2)
+                 if(isNumber(row[key])){
                     let tmp=this.statdict[key]
                     if(tmp){
 
@@ -622,12 +623,11 @@ return ''
                       this.statdict[key]=tmp
                     }
                     if(row[key]>tmp["max"]){
-                      tmp["max"]=row[key]
+                      tmp["max"]=parseFloat(row[key])
                     }
                     if(row[key]<tmp["min"]){
-                      tmp["min"]=row[key]
+                      tmp["min"]=parseFloat(row[key])
                     }
-                    row[key]=(parseFloat(row[key])*100).toFixed(2)
                   }
                 }
                 // if(['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility'].indexOf(key)>-1){
