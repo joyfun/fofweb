@@ -154,6 +154,12 @@
             v-model="curAction.marketval"
           ></el-input>
         </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input
+            placeholder="备注"
+            v-model="curAction.remark"
+          ></el-input>
+        </el-form-item>
         <!-- -->
         <el-form-item>
           <el-button type="primary" @click="submitForm('actionForm')"

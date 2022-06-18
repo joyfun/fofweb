@@ -264,8 +264,22 @@
               <vxe-input  v-model="row['nprincipal']" class="myinput"></vxe-input>
             </template>
           </vxe-column>
+         <vxe-column
+            title="备注"
+            sortable
+            field="remark"
+            show-overflow-tooltip :edit-render="{autofocus: '.myinput'}"
+          >
+            <template #default="{ row }">
+              <span>{{ row['remark'] }}</span>
+            </template>
+            <template #edit="{ row }">
+              <vxe-input  v-model="row['remark']" class="myinput"></vxe-input>
+            </template>
+          </vxe-column>
           <vxe-column
             title=""
+            width="40"
             show-overflow-tooltip 
           ><template slot-scope="scope">
             <el-button  @click.native.prevent="delAction(scope.row,scope.rowIndex)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>

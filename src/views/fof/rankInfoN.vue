@@ -495,7 +495,14 @@ return ''
               if(this.baseData[row.code][af]>=10){
                   digi=1
               }
+              if(af=='yeaily_return'){
+              row[af]=this.$tools.formatMoney(this.baseData[row.code][af]*100,digi)
+
+              }
+            else{
               row[af]=this.$tools.formatMoney(this.baseData[row.code][af],digi)
+
+            }
                if(isNumber(row[af])){
                     let tmp=this.statdict[af]
                     if(tmp){
