@@ -495,7 +495,7 @@ return ''
               if(this.baseData[row.code][af]>=10){
                   digi=1
               }
-              if(af=='yeaily_return'){
+              if(af=='yeaily_return'||af=='win_ratio'||af=='volatility'){
               row[af]=this.$tools.formatMoney(this.baseData[row.code][af]*100,digi)
 
               }
