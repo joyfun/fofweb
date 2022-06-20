@@ -248,7 +248,7 @@ export default {
         tableList:[],
         winlength:{'hyr':26,'1yr':52,'2yr':104},
         showList:true,
-        range:"2yr",
+        range:"hyr",
         brange:"hyr",
         calcdate:"",
         baseData:{},

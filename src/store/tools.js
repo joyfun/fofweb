@@ -25,7 +25,8 @@ if ((s[1] || "").length < prec) {
   s[1] = s[1] || "";
   s[1] += new Array(prec - s[1].length + 1).join("0");
 }
-if(/0+/.test(s[1])){
+s[1]=s[1].replace(/0+$/,'')
+if(s[1].length<1){
   return s[0] 
 }
 return s.join(dec);
