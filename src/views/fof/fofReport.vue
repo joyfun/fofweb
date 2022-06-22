@@ -60,7 +60,15 @@
       >
              <template slot-scope="scope">{{ scope.row['子类型'] }}</template>
       </el-table-column>
-
+      <el-table-column
+        prop="购买时间"
+        width="60"
+        label="购买时间"
+        sortable
+        show-overflow-tooltip
+      >
+             <template slot-scope="scope">{{ scope.row['购买时间'] }}</template>
+      </el-table-column>
       <!-- <el-table-column
         prop="份额"
         width="60"
@@ -308,7 +316,7 @@ export default {
           return '' 
         var color=number>=0?"red":"green"
         //return '<span style="text-align:right;color='+color+'">'+this.formatMoney(number,4)+'</span>'
-        return this.$tools.formatMoney(number*rate,3)
+        return this.$tools.formatMoney(number*rate,2)
     },
     
 

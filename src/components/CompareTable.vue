@@ -31,6 +31,7 @@
           </vxe-column>
             <vxe-column sortable width="60" field="类型" title="类型" align="left"  fixed="left" ></vxe-column>
              <vxe-column sortable width="60" field="level" title="级别" align="left"  fixed="left" ></vxe-column>
+              <vxe-column v-if="showDrop" sortable  field="buy_date" title="购买时间" align="right"  ></vxe-column>
             <vxe-column sortable :key="key" :field="key" :title="key" align="right"   v-for="key in ['本周收益','当月收益','当年收益','近6月收益','近12月收益','2021','2020','2019','过去3年年均收益']">                 <template #default="{ row }">
               <span :style="'text-align:right;color:'+(row[key]>=0?'red':'green') " >
                     {{showResult(row[key])}}</span>

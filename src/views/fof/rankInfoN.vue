@@ -19,14 +19,14 @@
             <vxe-radio-button label="cta0" content="CTA0"></vxe-radio-button>
             <vxe-radio-button label="cta1" content="CTA1"></vxe-radio-button>
             <vxe-radio-button label="指增" content="指增"></vxe-radio-button>
-            <!-- <vxe-radio-button label="I5" content="I5"></vxe-radio-button>
-            <vxe-radio-button label="I3" content="I3"></vxe-radio-button>
-            <vxe-radio-button label="I1" content="I1"></vxe-radio-button> -->
+            <!----> <vxe-radio-button label="I5" content="Z5"></vxe-radio-button>
+            <vxe-radio-button label="I3" content="Z3"></vxe-radio-button>
+            <vxe-radio-button label="I1" content="Z1"></vxe-radio-button> 
             <vxe-radio-button label="中性" content="中性"></vxe-radio-button>
             <vxe-radio-button label="混合" content="混合"></vxe-radio-button>
             <vxe-radio-button label="套利" content="套利"></vxe-radio-button>
             <vxe-radio-button label="期权" content="期权"></vxe-radio-button>
-            <vxe-radio-button label="高费率" content="高费率"></vxe-radio-button>
+            <vxe-radio-button label="高费率" content="非常规"></vxe-radio-button>
 
           </vxe-radio-group>
 
@@ -53,6 +53,7 @@
           size="mini"
           :row-config="{keyField:'code',isCurrent: true, isHover: true}"
           show-overflow
+          :scroll-y="{oSize:500}"
           :sort-config="{trigger: 'cell', defaultSort: {field: 'rank', order: 'asc'}, orders: ['desc', 'asc', null]}"
           :data="tableList"
         >
@@ -359,7 +360,6 @@ return ''
             },
     cellClassBg ({ row, rowIndex, column, columnIndex }) {
       if(['yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio'].indexOf(column['field'])>-1){
-        // console.log(this.statdict[column['field']])
         if(this.statdict[column['field']]){
         let rg=(row[column['field']]-this.statdict[column['field']]["min"])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
       let clr=this.genColor(rg)
@@ -466,20 +466,13 @@ return ''
 
     },
     exportDataEvent () {
-      var title='排名信息'+this.type+'_'+this.date
-      console.log(this.$refs.rankTable)
-      var workbook = XLSX.utils.book_new();
-      var st = XLSX.utils.table_to_sheet(this.$refs.rankTable.$el)
-      XLSX.utils.book_append_sheet(workbook, st, "评分");
-      var wbout = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'array' })
-         try {
-      FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
-   }    catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
-              // this.$refs.rankTable.exportData({
-              //   filename: '排名信息'+this.type+'_'+this.date,
-              //   sheetName: 'Sheet1',
-              //   type: 'xlsx'
-              // })
+
+           const header = XLSX.utils.table_to_sheet (this.$refs.rankTable.$el.querySelector('.body--wrapper>.vxe-table--header'))
+          const workBook = XLSX.utils.table_to_sheet (this.$refs.rankTable.$el.querySelector('.body--wrapper>.vxe-table--body'))
+          XLSX.utils.sheet_add_aoa(header, XLSX.utils.sheet_to_json(workBook, {header:1}),{ origin: -1 });
+          var nwb= XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(nwb, header, "Sheet1");
+              XLSX.writeFile(nwb, '排名信息.xlsx')
             },
     getBaseInfo(){
      let that=this
@@ -495,7 +488,7 @@ return ''
               if(this.baseData[row.code][af]>=10){
                   digi=1
               }
-              if(af=='yeaily_return'||af=='win_ratio'||af=='volatility'){
+              if(af=='yeaily_return'||af=='win_ratio'||af=='volatility'||af=='dd'){
               row[af]=this.$tools.formatMoney(this.baseData[row.code][af]*100,digi)
 
               }
@@ -512,10 +505,10 @@ return ''
                       this.statdict[af]=tmp
                     }
                     if(row[af]>tmp["max"]){
-                      tmp["max"]=row[af]
+                      tmp["max"]=parseFloat(row[af])
                     }
                     if(row[af]<tmp["min"]){
-                      tmp["min"]=row[af]
+                      tmp["min"]=parseFloat(row[af])
                     }
                   }
             }
@@ -524,7 +517,7 @@ return ''
             }
             return row
           })
-          this.filterList()
+          this.filterNames()
 
           // this.$nextTick(()=>{
           this.$refs.rankTable.setFilter(this.$refs.rankTable.getColumnByField('sub_type'), this.subtypes.map(st=>{return  { label: st, value: st }}))
@@ -666,7 +659,7 @@ return ''
         })
           if(this.type=='高费率'){
                  this.$axios
-        .get("/fof/list", { params: { scale:this.type} })
+        .get("/fof/list", { params: { scale:"高费率,黑名单,不可投"} })
         .then((response) => {
           let scalelist=response.data
         this.tableData.map(row=>{
