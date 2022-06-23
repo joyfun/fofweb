@@ -749,7 +749,7 @@ return ''
       this.updateInvest("SY9620",key,{"value":this.compData1[0][key]})
       }
       this.updateCash("SY9620",{"value":this.compData1[0]["SY9620"]})
-      this.compData1[1]['SY9620']=toredeem
+      this.compData1[1]['SY9620']=Math.round(toredeem*10000)/10000
       this.compData1[3]["SY9620"]=Math.round(this.detailData.reduce((prev,next)=>{if(next['code']=='SY9620'){
         return prev+next['marketval']
       }return prev},0)/10000)
@@ -765,6 +765,7 @@ return ''
         if(this.compData1[i]["SY9620"])
         this.compData1[4]["SY9620"]+=parseFloat(this.compData1[i]["SY9620"])
       }
+      this.compData1[4]["SY9620"]=Math.round(this.compData1[4]["SY9620"]*10000)/10000
       // this.genNoUsed3()
     },
     genNoUsed2(){
@@ -1136,6 +1137,8 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
         } else if (row["stage"] == "预入款") {
           pdict["income"] += row["marketval"] * 10000;
         }
+          pdict["redeem"] =Math.round(pdict["redeem"]*10000)/10000;
+
       }
       this.finalData = [];
       for (var key in rdict) {

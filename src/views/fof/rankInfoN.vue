@@ -73,6 +73,7 @@
                             &nbsp;<vxe-button  @click.native.prevent="oneKeyBuy(row)" type="text" status="primary" size="small"><i class="iconfont icon-yijiangoumai" ></i></vxe-button>
        <a href="javascript:;" @click="showHis(row)">{{ showFundName(row.code)}}</a>
                            <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing" ></i></el-button>
+                           <el-button  @click.native.prevent="showBaseHis(row)" type="text" size="small"><i class="el-icon-s-order" ></i></el-button>
 
             </template>
           </vxe-column>
@@ -446,6 +447,11 @@ return ''
           // let sels=this.$refs.rankTable.getCheckboxRecords()
           if(this.multipleSelection.length>0)
           Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"rg":this.range,"diagName":"rankChart"})
+
+      },
+      showBaseHis(row){
+          // let sels=this.$refs.rankTable.getCheckboxRecords()
+       Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"baseChart"})
 
       },
     compareData(){

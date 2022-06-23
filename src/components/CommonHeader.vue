@@ -207,6 +207,7 @@
      :visible.sync="dialogVisible"
      >
     
+    <base-chart       @close="editClose" ref="basechart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='baseChart'"></base-chart>
     <rank-chart       @close="editClose" ref="rankchart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='rankChart'"></rank-chart>
     <compare-table      @close="editClose" ref="comparetable"  :code="cur_code"   v-if="diagName=='compareTable'"></compare-table>
     <fund-echart       @close="editClose" ref="hischart"    style="height: 500px" :code="cur_code"   v-if="diagName=='hisChart'||diagName=='compareTable'"></fund-echart>
@@ -245,6 +246,7 @@ import FundEchart from '@/components/FundEchart.vue';
 import HisTable from '@/components/HisTable.vue';
 import RankTable from '@/components/RankTable.vue';
 import RankChart from '@/components/RankChart.vue';
+import BaseChart from '@/components/BaseChart.vue';
 import FofSimulate from '@/components/FofSimulate';
 import ReportTable from '@/components/ReportTable';
 import CompareTable from '@/components/CompareTable';
@@ -260,6 +262,7 @@ export default {
             RankTable,
             FofSimulate,
             RankChart,
+            BaseChart,
             CompareTable,
             ReportTable,
         },
