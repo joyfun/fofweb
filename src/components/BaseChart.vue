@@ -25,7 +25,7 @@
 // import 'echarts/lib/chart/line'
 import Bus from '@/store/bus.js';
 import {mapGetters} from 'vuex'
-import '@/utils/infographic.js'
+// import '@/utils/infographic.js'
 
 var echarts = require("echarts");
 // 引入柱状图
@@ -84,6 +84,14 @@ export default {
         }
       },
     },
+    visable:{
+      handler: function (val) {
+        console.log(val)
+        if (val) {
+        this.resizeChart();
+        }
+      },
+    },
     code: {
       handler: function (val) {
         if (val) {
@@ -103,6 +111,7 @@ export default {
   data() {
     return {
       raw_data: {},
+      areas:null,
       lv1:["SY9620","SSS105"],
       lowest:0.9,
       keygrps:["yeaily_return" ,"sharpe","calmar","sortino","dd","dd_week","win_ratio" ,"volatility"],
@@ -128,10 +137,9 @@ export default {
           //option.legend[0].selected[basename+"_超额"] = params.selected[basename];
           selected:{},
           type: "scroll",
-          align :"right",
-          orient: "vertical",
-          top: "middle",
-          right: 0,
+          align :"left",
+          orient: "horizontal",
+          top: 0,
         }],
               brush: {
         xAxisIndex: 'all',
@@ -228,6 +236,9 @@ export default {
       } else {
         this.echart = echarts.init(this.$refs.echart,'infographic');
         this.echart.setOption(this.axisOption,true);
+        this.echart.on("brushSelected",(params)=>{
+          this.areas=params.batch[0].areas
+        })
       }
     },
     refreshData(params) {
@@ -266,7 +277,7 @@ export default {
         }
           let option = this.echart.getOption();
           option.xAxis[0].data=rawdata.index
-          option.markLine=markLine
+          // option.markLine=markLine
           option.series=[]
           for (let col in rawdata.columns){
             let cnames=rawdata.columns[col].split('#')
@@ -296,37 +307,33 @@ export default {
  
             
           }
+          console.log(this.echart.getOption())
           this.echart.setOption(option, true);
+          if (this.areas){
+            console.log(this.areas)
+          }else{
           let dlen=option.xAxis[0].data.length
-          let yrago=this.$moment(option.xAxis[0].data[dlen-1]).add(-1,"y").format("YYYYMMDD")
-          let yrago2=this.$moment(option.xAxis[0].data[dlen-1]).add(-2,"y").format("YYYYMMDD")
+          let yrago=this.$moment(option.xAxis[0].data[dlen-1]).add(-7,"d").format("YYYYMMDD")
 
           let sidx=0;
-          let sidx2=0;
 
           for (let ad in option.xAxis[0].data){
-            if(option.xAxis[0].data[ad]>=yrago2 && sidx2==0 ){
-              sidx2=ad-1
-            }
            if(option.xAxis[0].data[ad]>=yrago && sidx==0){
               sidx=ad-1
               break
             }
           }
-     this.echart.dispatchAction({
-    type: 'brush',
-    areas: [
+          this.areas= [
       {
         brushType: 'lineX',
         coordRange: [option.xAxis[0].data[sidx], option.xAxis[0].data[dlen-1]],
         xAxisIndex: 0
-      },
-      {
-        brushType: 'lineX',
-        coordRange: [option.xAxis[0].data[sidx2], option.xAxis[0].data[dlen-1]],
-        xAxisIndex: 0
-      },
+      }
     ]
+          }
+     this.echart.dispatchAction({
+    type: 'brush',
+    areas: this.areas
   })
     },
     getChartData(){

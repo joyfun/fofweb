@@ -899,14 +899,21 @@ export default {
 
         var bdate = this.raw_data.buy_date[idx];
          var cidx=0
-        if (bdate) {
-           cidx = this.raw_data.date.indexOf(bdate);
+        if (bdate>'20170101') {
+          //  cidx = this.raw_data.date.indexOf(bdate);
+          for (let i=0;i<this.raw_data.date.length;i++){
+            if(this.raw_data.date[i]>=bdate){
+              cidx=i
+              break
+            }
+          }
+          // cidx=this.raw_data.date.some(r=> {return r>=bdate})
            mp.data.push({
                   name: "购",
-                  coord: [bdate, sdata[cidx]],
+                  coord: [this.raw_data.date[cidx], sdata[cidx]],
                 })
         }else if (cdate) {
-          var didx = this.raw_data.date.indexOf(cdate);
+          var didx = this.raw_data.date.some(r=> {return r>=bdate});
           if (didx > 0 && didx !=cidx)
            mp.data.push({
                   name: "拼",

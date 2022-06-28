@@ -456,7 +456,7 @@ return ''
       },
     compareData(){
           if(this.multipleSelection.length>0)
-          Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"diagName":"compareTable"})
+          Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"diagName":"fullDialog"})
 
       },
     compareInvest(){

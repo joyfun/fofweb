@@ -216,15 +216,16 @@
     <fof-simulate     @close="editClose" ref="simtable"   style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
     <audit-log       @close="editClose" ref="auditlog"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='auditDialog'"></audit-log>
 
-<el-tabs type="border-card"  v-if="diagName=='fullDialog'">
-      <el-tab-pane>
+<el-tabs type="border-card"  :value="fullActive" v-if="diagName=='fullDialog'" @tab-click="handleDiagClick">
+      <el-tab-pane name="sumvaltab">
         <span slot="label"><i class="el-icon-date"></i> 净值曲线</span> 
+    <compare-table      @close="editClose" ref="comparetable"  :code="cur_code"  ></compare-table>
     <fund-echart       @close="editClose" ref="hischart"    style="height: 500px" :code="cur_code" ></fund-echart>
 
       </el-tab-pane>
-            <el-tab-pane>
-        <span slot="label"><i class="el-icon-date"></i> 指标信息</span> 
-    <compare-table      @close="editClose" ref="comparetable"  :code="cur_code"   ></compare-table>
+            <el-tab-pane name="basedatatab">
+        <span slot="label"><i class="el-icon-date"></i> 指标信息</span>
+    <base-chart       @close="editClose" ref="basechart"    style="height: 600px" :code="cur_code" :visable="fullActive=='basedatatab'"></base-chart>
 
       </el-tab-pane>
           <!-- <el-tab-pane>
@@ -351,6 +352,10 @@ export default {
           }
 
       },
+          handleDiagClick(item){
+              console.log(item)
+              this.fullActive=item.name
+          },
           handleTabClick(item){
               console.log(item)
               this.changeMenu(item.name)
@@ -455,6 +460,7 @@ export default {
     data(){
         return{
             activeName:"首页",
+            fullActive:"sumvaltab",
             curAction: {},
             rules: {
         code: [{ required: true, message: "请选择基金", trigger: "blur" }],
