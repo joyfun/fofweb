@@ -1,7 +1,7 @@
 <template>
   <div ref="tableContainer" style="	height : 100%;">
     <div class="block" style="display: flex; justify-content: space-between">
-      <div style=" width: 480px;">
+      <div style=" width: 800px;">
       <el-radio-group v-model="reqType">
          <el-radio-button type="primary" :key="i"  :label="item" icon="el-icon-edit" v-for="(item,i) in types">{{tags[i]}}</el-radio-button>
       </el-radio-group>
@@ -215,10 +215,10 @@ export default {
 
   data() {
     return {
-      tags:["SiMuWang","GeShang",'邮件其它'],
-      types:["SiMuWang","GeShang",'1'],
+      tags:["SiMuWang","GeShang","ZhaoYang",'邮件其它'],
+      types:["SiMuWang","GeShang","ZhaoYang",,'1'],
       current: {},
-      reqType: 'GeShang,SiMuWang',
+      reqType: 'GeShang,SiMuWang,ZhaoYang',
       cur_code: "",
       dialogVisible: false,
       hisVisible:false,
@@ -310,7 +310,9 @@ export default {
             url='https://www.licai.com/simu/product/'+row.scode
         }else if(row.type=="SiMuWang"){
             url = 'https://dc.simuwang.com/product/' + row.scode + '.html'
-        }url
+        }else if(row.type=="ZhaoYang"){
+            url = 'https://fof.12345fund.com/details?dst=1&id=' + row.scode
+        }
         if(url){
             window.open(url)
         }

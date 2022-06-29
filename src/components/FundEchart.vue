@@ -861,7 +861,6 @@ export default {
         this.axisOption.legend[0].selected["沪深300指数"] = false;
         this.axisOption.legend[0].selected["中证1000指数"] = false;
 
-
         }
         var   mp = {
               symbol: "circle",
