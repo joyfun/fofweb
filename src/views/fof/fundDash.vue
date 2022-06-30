@@ -204,12 +204,15 @@ export default {
         return this.$tools.formatMoney(number*rate,3)
     },
     jumpToSource(row){
+      console.log(row)
         var url=""
         if(row.type=="GeShang"){
             url='https://www.licai.com/simu/product/'+row.code
         }else if(row.type=="SiMuWang"){
             url = 'https://dc.simuwang.com/product/' + row.code + '.html'
-        }url
+        }else if(row.type=="ZhaoYang"){
+            url = 'https://fof.12345fund.com/details?dst=1&id=' + row.code
+        }
         if(url){
             window.open(url)
         }
