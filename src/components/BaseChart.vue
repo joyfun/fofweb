@@ -1,15 +1,21 @@
 <template>
 <div ref="echartdiv">
       <!-- <rank-table       ref="ranktable"  :titles="compare"  style="height: 800px"  :code="code"  ></rank-table> -->
-            <vxe-radio-group v-model="range" :strict="false">
+          <vxe-radio-group v-model="range" :strict="false">
             <vxe-radio label="hyr" content="半年"></vxe-radio>
             <vxe-radio label="1yr" content="1年"></vxe-radio>
             <vxe-radio label="2yr" content="2年"></vxe-radio>
           </vxe-radio-group>
 
            <vxe-radio-group v-model="showkey" :strict="false">
-            <vxe-radio :key="vkey" v-for="vkey of keygrps" :label="vkey" :content="vkey"></vxe-radio>
+            <vxe-radio-button :key="vkey" v-for="vkey of keygrps" :label="vkey" :content="vkey+'  　'"></vxe-radio-button>
+            <br>
+            <vxe-radio-button :key="vkey+'_R'" v-for="vkey of keygrps" :label="vkey+'_R'" :content="vkey+'_R'"></vxe-radio-button>
           </vxe-radio-group>
+
+            <vxe-radio-group v-model="tag" :strict="false">
+            <vxe-radio-button :key="vkey" v-for="(vkey,i) in tags" :label="i" :content="vkey"></vxe-radio-button>
+                     </vxe-radio-group>
   <div style="height: 100%" ref="echart">
     <!-- <el-button-group>
   <el-button type="primary">7天</el-button>
@@ -52,7 +58,7 @@ export default {
       ...mapGetters(['sysparam','token','showFundName','showFundClassType']),
 
       collen:{get() {
-          return this.raw_data["columns"].length
+          return this.rawdata["columns"].length
       }},
     isVisible: {
       get() {
@@ -77,11 +83,55 @@ export default {
         }
       },
     },
+    tag: {
+      handler: function (rg) {
+        var vday='20000101'
+        if(this.rawdata["index"]){
+      
+        switch (rg) {
+            // case 0:
+            //   vday= this.aligndate;
+            //   break
+            case 0:
+              vday = this.$moment(this.max_date).add(-30, "d").format("YYYYMMDD");
+              break
+            case 1:
+              vday = this.$moment(this.max_date).add(-90, "d").format("YYYYMMDD");
+              break
+            case 2:
+              vday = this.$moment(this.max_date).add(-180, "d").format("YYYYMMDD");
+              break
+            case 3:
+              vday = this.$moment(this.max_date).add(-1, "y").format("YYYYMMDD");
+              break
+            case 4:
+              vday = this.$moment(this.max_date).add(-2, "y").format("YYYYMMDD");
+              break
+            case 5:
+              vday = this.$moment(this.max_date).add(-3, "y").format("YYYYMMDD");
+              break
+            case 6:
+              vday = this.$moment(this.max_date).dayOfYear(1).format("YYYYMMDD")
+              break
+            case 7:
+              vday= this.rawdata["index"][0];
+              break
+            default:
+              vday="20000101"
+              break
+        }}
+        this.changeDate(vday)
+        console.log(vday)
+      },
+    },
     showkey:{
       handler: function (val) {
-        if (val) {
+        // if (val&&val.endsWith('_R')) {
+        //   this.drawChart(this.rawdata_R,true)
+        // }else{
           this.drawChart(this.rawdata)
-        }
+
+        // }
       },
     },
     visable:{
@@ -110,7 +160,8 @@ export default {
   },
   data() {
     return {
-      raw_data: {},
+      tag:"",
+      tags:["月","90天","半年","近1年","近2年","近3年","本年","全部"],
       areas:null,
       lv1:["SY9620","SSS105"],
       lowest:0.9,
@@ -141,13 +192,13 @@ export default {
           orient: "horizontal",
           top: 0,
         }],
-              brush: {
-        xAxisIndex: 'all',
-        brushLink: 'all',
-        outOfBrush: {
-          colorAlpha: 0.1
-        }
-      },
+      //         brush: {
+      //   xAxisIndex: 'all',
+      //   brushLink: 'all',
+      //   outOfBrush: {
+      //     colorAlpha: 0.1
+      //   }
+      // },
       // title: {
       //   text: '基金排名图'
       // },
@@ -169,6 +220,8 @@ export default {
     boundaryGap: false,
     data: []
   },
+  dataZoom: [{type:"inside"}],
+
          yAxis: [
           {
             type: "value",
@@ -236,17 +289,15 @@ export default {
       } else {
         this.echart = echarts.init(this.$refs.echart,'infographic');
         this.echart.setOption(this.axisOption,true);
-        this.echart.on("brushSelected",(params)=>{
-          this.areas=params.batch[0].areas
-        })
+        // this.echart.on("brushSelected",(params)=>{
+        //   this.areas=params.batch[0].areas
+        // })
       }
     },
     refreshData(params) {
       var option = this.echart.getOption();
       option.dataZoom[0].startValue = params.startValue;
       option.dataZoom[0].end = params.end;
-      option.series = this.chartData.series;
-      option.yAxis[0].min=this.lowest
       this.echart.setOption(option, true);
     },
     
@@ -258,7 +309,7 @@ export default {
         this.normalOption.series = this.chartData.series;
       }
     },
-    drawChart(rawdata){
+    drawChart(rawdata,rank=false){
             let markLine={
              symbol:"none",           //去掉警戒线最后面的箭头
           silent: true,
@@ -276,6 +327,23 @@ export default {
           ]
         }
           let option = this.echart.getOption();
+          let rate=1
+          if(this.showkey.endsWith("_R")){
+          option.yAxis[1]={
+          type: 'value',
+          inverse: true,
+          axisLabel: {
+            formatter: '{value} %'
+            },
+          max:100,
+          min:0
+          }                
+          }else{
+             option.yAxis[1]=
+          {
+            type: "value",
+          }
+          }
           option.xAxis[0].data=rawdata.index
           // option.markLine=markLine
           option.series=[]
@@ -285,15 +353,27 @@ export default {
             if(cnames.length==2){
               sname=this.showFundName(cnames[0])+"_"+cnames[1]
             }
-            let rval=rawdata.data.map(row=>{if(row[col]==null){return null} return row[col]})
+    
             let yidx=1
             if(sname.endsWith("yeaily_return")){
               yidx=0
-            }else if(sname.endsWith(this.showkey)){
+              let lowest=rawdata.data.reduce((sum, value) => { return sum < value[col] ? sum : value[col] }, 0)
+            this.lowest=Math.floor(lowest*10)/10
+            option.yAxis[0].min=this.lowest
 
+            }
+            else if(sname.endsWith(this.showkey)){
+              // if(this.showkey=='dd_week_R'){
+              //   rate=-100
+              // }else 
+              if(this.showkey.endsWith("_R")){
+                          rate=100
+              }
             }else{
               continue
             }
+            let rval=rawdata.data.map(row=>{if(row[col]==null){return null} return row[col]*rate})
+          
             let asery={
           yAxisIndex:yidx,
           type: 'line',
@@ -307,47 +387,78 @@ export default {
  
             
           }
-          console.log(this.echart.getOption())
+          console.log(option)
           this.echart.setOption(option, true);
-          if (this.areas){
-            console.log(this.areas)
-          }else{
-          let dlen=option.xAxis[0].data.length
-          let yrago=this.$moment(option.xAxis[0].data[dlen-1]).add(-7,"d").format("YYYYMMDD")
+    //       if (this.areas){
+    //         console.log(this.areas)
+    //       }else{
+    //       let dlen=option.xAxis[0].data.length
+    //       let yrago=this.$moment(option.xAxis[0].data[dlen-1]).add(-7,"d").format("YYYYMMDD")
 
-          let sidx=0;
+    //       let sidx=0;
 
-          for (let ad in option.xAxis[0].data){
-           if(option.xAxis[0].data[ad]>=yrago && sidx==0){
-              sidx=ad-1
-              break
-            }
-          }
-          this.areas= [
-      {
-        brushType: 'lineX',
-        coordRange: [option.xAxis[0].data[sidx], option.xAxis[0].data[dlen-1]],
-        xAxisIndex: 0
+    //       for (let ad in option.xAxis[0].data){
+    //        if(option.xAxis[0].data[ad]>=yrago && sidx==0){
+    //           sidx=ad-1
+    //           break
+    //         }
+    //       }
+    //       this.areas= [
+    //   {
+    //     brushType: 'lineX',
+    //     coordRange: [option.xAxis[0].data[sidx], option.xAxis[0].data[dlen-1]],
+    //     xAxisIndex: 0
+    //   }
+    // ]
+    //       }
+  //    this.echart.dispatchAction({
+  //   type: 'brush',
+  //   areas: this.areas
+  // })
+    },
+    changeDate(vday){
+          var arr = this.echart.getModel().option.xAxis[0].data;
+          var sidx = this.getstart(vday);
+    this.echart.dispatchAction({
+    type: 'dataZoom',
+    // 可选，dataZoom 组件的 index，多个 dataZoom 组件时有用，默认为 0
+    dataZoomIndex: 0,
+    // 开始位置的百分比，0 - 100
+    // 结束位置的百分比，0 - 100
+    end: 100,
+    // 开始位置的数值
+    startValue: sidx,
+    // 结束位置的数值
+})
+
+
+    },
+        getstart(vady) {
+      var arr = this.rawdata.index;
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] >= vady && i > 0) return i;
       }
-    ]
-          }
-     this.echart.dispatchAction({
-    type: 'brush',
-    areas: this.areas
-  })
     },
     getChartData(){
 
       this.$axios
-        .get("/fof/hisbase", { params: { "code": this.code ,"range":this.range} }) //axis后面的.get可以省略；
-        .then((response) => {
+        .get("/fof/hisbase", { params: { "code": this.code ,"range":this.range} }).then((response) => {
           this.rawdata=response.data
+          this.max_date=this.rawdata.index.at(-1)
           this.drawChart(response.data)
 
         })
-        .catch((error) => {
-          console.log(error);
-        });
+// Promise.all([
+//       this.$axios
+//         .get("/fof/hisbase", { params: { "code": this.code ,"range":this.range} }),
+//         this.$axios
+//         .get("/fof/hisbaseRank", { params: { "code": this.code ,"range":this.range} }) //axis后面的.get可以省略；
+//         ]).then(r=>{
+//           let response=r[0]
+//           this.rawdata=response.data
+//           this.rawdata_R=r[1].data
+//           this.drawChart(response.data)}
+//         )
     },
     resizeChart() {
             if(this.$refs.echartdiv.clientHeight){
@@ -373,4 +484,6 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>

@@ -53,7 +53,7 @@
       </el-table-column>
       <el-table-column
         prop="子类型"
-        width="60"
+        width="80"
         label="子"
         sortable
         show-overflow-tooltip
@@ -442,7 +442,7 @@ export default {
         .get(this.url) //axis后面的.get可以省略；
         .then((response) => {
             if(this.url.indexOf('jcompare')>0){
-                this.tableData = this.$tools.pandasToJson(response.data)
+                this.tableData = this.$tools.pandasToJson(response.data).filter(row=>row['类型']!='指增')
             }else{
           this.tableData = this.$tools.pandasToJson(response.data).sort((a,b)=>{
               var r= this.class_order.indexOf(a['类型'])-this.class_order.indexOf(b['类型'])

@@ -40,7 +40,7 @@
                 {{data_time}}<br>类型
               </template>
             <template slot-scope="scope">
-              {{scope.row['type']=='指增'?'指增超额':scope.row['type']}}
+              {{scope.row['rank_type']=='指增'?'指增超额':scope.row['rank_type']}}
             </template>
           </vxe-column>
           <!-- <vxe-column
@@ -435,13 +435,13 @@ export default {
             },
     activeCellMethod ({ row, rowIndex ,column, columnIndex }) {
               console.log(column.field)
-              if(column.field=="adj"&&(rowIndex === 0&&row['type'] === '中证500')){
+              if(column.field=="adj"&&(rowIndex === 0&&row['rank_type'] === '中证500')){
                 return false
               }
               if(column.field=="adj"){
                 return true
               }
-              if (row['type'] === '中证500') {
+              if (row['rank_type'] === '中证500') {
                 return true
               }
               return false
@@ -462,7 +462,7 @@ export default {
               // if(srow["code"]){
               let rt=srow["marketval"]/this.subsum[srow["code"]]
               let adjdetail=this.actionData.filter(ac=>{
-                return ac['code']==fcode&&ac['b_code']==srow["code"]
+                return ac['code']==fcode&&ac['b_code']==srow["code"]&&ac['status']!='结束'
               })
               let namt=0
               if(adjdetail.length>0){
@@ -496,16 +496,17 @@ export default {
 
           })
           subholdings.filter(r=>!r['rt']).map(row=>{
-                if(row['type']&&row["class_type"]!="FOF"){
+                if(row['rank_type']&&row["class_type"]!="FOF"){
+          console.log(row)
           this.classify(row)
-				subdict[row['type']]["marketval"]+=row['marketval']
+				subdict[row['rank_type']]["marketval"]+=row['marketval']
                 }
-                else if(row['b_code'].startsWith("SUBJECT")){
-              row['type']="现金"
+                else if(row['b_code'].startsWith("SUBJECT1")){
+              row['rank_type']="现金"
               subdict["现金"]["marketval"]+=row['marketval']
                 }
             })
-          this.actionData.filter(row=>row['code']==fcode||row['b_code']==fcode).map(row=>{
+          this.actionData.filter((row=>(row['code']==fcode||row['b_code']==fcode)&&row['status']!='结束')).map(row=>{
             let rinfo=this.showFundInfo(row['b_code'])
             let mval=parseFloat(row['marketval'])
             if(row['stage']=='预入款'||row['b_code']==fcode){
@@ -554,7 +555,7 @@ export default {
             console.log(this.subdict)
             for(let atype in this.sumdict){
                 if(atype && 'null'!=atype){
-            let row={"adj":this.sumdict[atype]["adj"],"type":atype,"marketval":this.sumdict[atype]["marketval"],"yeaily_return_hyr":this.sumdict[atype]["yeaily_return_hyr"]/2,"yeaily_return_1yr":this.sumdict[atype]["yeaily_return_1yr"],"yeaily_return_2yr":this.sumdict[atype]["yeaily_return_2yr"]*2}
+            let row={"adj":this.sumdict[atype]["adj"],"rank_type":atype,"marketval":this.sumdict[atype]["marketval"],"yeaily_return_hyr":this.sumdict[atype]["yeaily_return_hyr"]/2,"yeaily_return_1yr":this.sumdict[atype]["yeaily_return_1yr"],"yeaily_return_2yr":this.sumdict[atype]["yeaily_return_2yr"]*2}
             let tkey=atype
             if(atype=="混合"){
                 tkey="aas"
@@ -569,7 +570,7 @@ export default {
               row[akey]=nm
               row[akey+"_w"]=ws
               }
-              if(row['type']=="中证500"){
+              if(row['rank_type']=="中证500"){
                   if(this.performs["000905.SH"]){
                 //  for(let key of ["hyr","1yr","2yr"]){
 				        //     row["yeaily_return_"+key]+=this.performs["000905.SH"]['yeaily_return_'+key]
@@ -608,7 +609,7 @@ export default {
     },
     classify(row){
        let key="AAS"
-       if(row['type'].startsWith('cta')){
+       if(row['rank_type'].startsWith('cta')){
          key="CTA"
        }
       row["numeric_type"]=key
@@ -632,7 +633,7 @@ export default {
           console.log(this.subresult)
           this.holdings=JSON.parse(JSON.stringify(this.subresult[mcode]))
           this.sumdict=this.holdingdict[mcode]
-        this.types=[...new Set(this.holdings.map(r=>r['type']))]
+        this.types=[...new Set(this.holdings.map(r=>r['rank_type']))]
         this.types.sort((a,b)=>{
           if(b==null){
             return -1
@@ -682,7 +683,7 @@ export default {
     },
     addPerformance(holds){
             holds.map(row=>{
-              if(row['type']!='FOF'){
+              if(row['rank_type']){
                 let rdata=this.performs[row["code"]]
                 if(!rdata){
                   rdata={}
@@ -693,7 +694,7 @@ export default {
                 for(let k in rdata){
                     row[k]=rdata[k]
                 }
-                row["subTotal"]=this.sumdict[row['type']]["marketval"]
+                row["subTotal"]=this.sumdict[row['rank_type']]["marketval"]
                 row["percent"]=row["marketval"]/row["subTotal"]}
             })
             for(let key of ["hyr","1yr","2yr"]){
@@ -702,9 +703,9 @@ export default {
                 }
             }
             holds.map(row=>{
-              if(row['type']!='FOF'){
+              if(row['rank_type']!='FOF'){
                 for(let key of ["hyr","1yr","2yr"]){
-				this.sumdict[row['type']]["yeaily_return_"+key]+=row["percent"]*row['yeaily_return_'+key]
+				this.sumdict[row['rank_type']]["yeaily_return_"+key]+=row["percent"]*row['yeaily_return_'+key]
                 }
             }})
             console.log(holds)
@@ -721,7 +722,7 @@ export default {
         let subdata={"甲":0,"乙":0,"丙":0,"丁":0}
         this.subholding=[]
         this.holdings.map(row=>{
-          if(row["level"]&&(row["type"]==this.clicktype||!this.clicktype)){
+          if(row["level"]&&(row["rank_type"]==this.clicktype||!this.clicktype)){
             this.subholding.push(row)
             subdata[row["level"]]+=row["marketval"]
           }
@@ -739,14 +740,14 @@ export default {
         this.ptotal=0
         console.log(this.holdingData)
         
-        this.pieData.series.data=this.holdingData.map(row=>{if(row['type']!='中证500')
+        this.pieData.series.data=this.holdingData.map(row=>{if(row['rank_type']!='中证500')
         {if(row['adj']==''){
            row['adj']=0
          }
           this.total+=row['marketval']+parseFloat(row['adj'])*10000
          this.ptotal+=row['marketval']
          
-        return {"name":row["type"],"value":row['marketval']+row["adj"]*10000}}
+        return {"name":row["rank_type"],"value":row['marketval']+row["adj"]*10000}}
         return null})
         this.$refs.piechart.initChart() 
         this.calcCast()

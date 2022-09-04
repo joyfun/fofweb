@@ -1,5 +1,8 @@
 <template>
 <div>
+        <el-button  size="small" @click="hisCompare()">对比</el-button>
+        <el-button  size="small" @click="showcorr()">相关性</el-button>
+        <el-button  size="small" @click="compare()">业绩对标</el-button>
  <el-table
     ref="multipleTable"
     :data="foflist"
@@ -8,34 +11,41 @@
     :max-height="tmaxh"
     style="width: 100%;margin-top:20px;">
     <el-table-column
+      type="selection"
+      :reserve-selection="true"
+      width="55">
+    </el-table-column>
+    <el-table-column
       label="名称"
       sortable
+      prop="short_name"
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.name }}</template>
+     <template slot-scope="scope">       <a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
     </el-table-column>
     <el-table-column
       label="备案号"
-      sortable
+      prop="code"
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.code }}</template>
     </el-table-column>
-    <el-table-column v-if="full"
+    <el-table-column 
       label="类别"
       sortable
+      prop="class_type"
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row['class_type'] }}</template>
     </el-table-column>
-    <el-table-column v-if="full"
+    <el-table-column 
       label="子类别"
       sortable
+      prop="sub_type"
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row['sub_type'] }}</template>
     </el-table-column>
-    <el-table-column v-if="full"
+    <el-table-column 
       label="阶段"
       sortable
+      prop="stage"
       show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row['stage'] }}</template>
     </el-table-column>
     <!-- <el-table-column
     width="40"
@@ -49,6 +59,7 @@
 </div>
 </template>
  <script>
+import Bus from '@/store/bus.js';
 export default {
   props: {
     foflist: {
@@ -82,7 +93,34 @@ export default {
     }
   },
   methods: {
+      showHis(row){
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisChart"})
 
+      },
+      hisCompare() {
+          let sels=this.$refs.multipleTable.selection.map(row=>row['code'])
+          let selcode=sels.join(',')
+
+          if(selcode){
+            Bus.$emit("showChart",{"cur_code":selcode,"diagName":"hisChart"})
+          }
+      },
+      compare(){
+          let sels=this.$refs.multipleTable.selection.map(row=>row['code'])
+          let selcode=sels.join(',')
+
+          if(selcode){
+              Bus.$emit("showChart",{"cur_code":selcode,"diagName":"fullDialog"})
+          }
+      },
+      showcorr(){
+          let sels=this.$refs.multipleTable.selection.map(row=>row['code'])
+          let selcode=sels.join(',')
+
+          if(selcode){
+              Bus.$emit("showChart",{"cur_code":selcode,"diagName":"corrDialog"})
+          }
+      }
   },
   mounted() {
 

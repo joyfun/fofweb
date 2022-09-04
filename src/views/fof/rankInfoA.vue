@@ -15,25 +15,25 @@
       >
     </el-date-picker>
             <vxe-radio-group v-model="type" size="mini" :strict="false">
-            <vxe-radio label="aas" content="AAS"></vxe-radio>
-            <vxe-radio label="cta0" content="CTA0"></vxe-radio>
-            <vxe-radio label="cta1" content="CTA1"></vxe-radio>
-            <vxe-radio label="指增" content="指增"></vxe-radio>
-            <vxe-radio label="I5" content="Z5"></vxe-radio>
-            <vxe-radio label="I3" content="Z3"></vxe-radio>
-            <vxe-radio label="I1" content="Z1"></vxe-radio> 
-            <vxe-radio label="中性" content="中性"></vxe-radio>
-            <vxe-radio label="混合" content="混合"></vxe-radio>
-            <vxe-radio label="套利" content="套利"></vxe-radio>
-            <vxe-radio label="期权" content="期权"></vxe-radio>
-            <vxe-radio label="高费率" content="非常规"></vxe-radio>
+            <vxe-radio-button label="aas" content="AAS"></vxe-radio-button>
+            <vxe-radio-button label="cta0" content="CTA0"></vxe-radio-button>
+            <vxe-radio-button label="cta1" content="CTA1"></vxe-radio-button>
+            <vxe-radio-button label="指增" content="指增"></vxe-radio-button>
+            <!----> <vxe-radio-button label="I5" content="Z5"></vxe-radio-button>
+            <vxe-radio-button label="I3" content="Z3"></vxe-radio-button>
+            <vxe-radio-button label="I1" content="Z1"></vxe-radio-button> 
+            <vxe-radio-button label="中性" content="中性"></vxe-radio-button>
+            <vxe-radio-button label="混合" content="混合"></vxe-radio-button>
+            <vxe-radio-button label="套利" content="套利"></vxe-radio-button>
+            <vxe-radio-button label="期权" content="期权"></vxe-radio-button>
+            <vxe-radio-button label="高费率" content="非常规"></vxe-radio-button>
 
           </vxe-radio-group>
 
           <vxe-radio-group v-model="range" :strict="false">
             <vxe-radio label="hyr" content="半年"></vxe-radio>
             <vxe-radio label="1yr" content="1年"></vxe-radio>
-            <vxe-radio label="2yr" content="2年"></vxe-radio>
+            <vxe-radio label="quarter" content="3月"></vxe-radio>
           </vxe-radio-group>
                               <vxe-button @click="exportDataEvent">导出</vxe-button>
 
@@ -64,7 +64,7 @@
               <template #header>
                 {{prodTitle}}
                 <br>{{tableList.length}}
-                  <vxe-switch v-model="showList" open-label="List" :open-value="true" close-label="所有" :close-value="false"></vxe-switch>
+                  <vxe-switch v-model="showList" open-label="已投" :open-value="true" close-label="所有" :close-value="false"></vxe-switch>
                   <vxe-input v-model="filter"  @keyup="filterNames" ></vxe-input>
 
               </template>
@@ -80,6 +80,13 @@
 
             </template>
           </vxe-column>
+                     <vxe-column   field="marketval" width="50" sortable :title="'持仓(万)'" >
+                                    <template #default="{ row }">
+                           
+{{$tools.formatMoney(row['marketval']/10000,0)}}
+
+            </template>
+            </vxe-column>
          <vxe-column  sortable  title="信息"  width="60" align="center" field="level"  >
                  <template #default="{ row }">
                            <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing" ></i></el-button>
@@ -131,7 +138,7 @@
             <vxe-radio label="2yr" content="2年 指标数据"></vxe-radio>
           </vxe-radio-group>
                         </template>   
-         <vxe-column :key="af" :width="48" sortable v-for="af of ['length','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility']"  :title="af" :field="af"  >
+         <vxe-column :key="af" :width="48" sortable v-for="af of ['length','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','profit_loss','dd_ratio']"  :title="af" :field="af"  >
             <template #default="{ row }">
               <span>{{ row[af]}}</span>
             </template>
@@ -168,6 +175,10 @@ export default {
         //     SankeyChart,
         // },
   props: {
+    filters:{
+      type: Object,
+      default:null
+    },
     full: {
       type: Boolean,
       default: false,
@@ -178,6 +189,21 @@ export default {
     },
   },
   watch: {
+     watch: {
+    $route:{
+      handler(n){
+          console.log(n)
+          let params=n.params
+          if(this.filters){
+              params=this.filters
+          }
+          // this.getProducts()
+		// 初始化操作
+      },
+      immediate: true,
+      deep: true,
+    }
+  },
     type :{
               handler(n){
                 if(this.type=='高费率'){
@@ -261,7 +287,7 @@ export default {
         allAlign:"right",
         tableData:[],
         tableList:[],
-        winlength:{'hyr':26,'1yr':52,'2yr':104},
+        winlength:{'hyr':26,'1yr':52,'2yr':104,'quarter':13},
         showList:false,
         range:"hyr",
         brange:"hyr",
@@ -270,7 +296,7 @@ export default {
         rgdict:{},
         date: '',
         type: 'aas',
-        yrdict: {"hyr":"半年","1yr":"一年","2yr":"两年"},
+        yrdict: {"hyr":"半年","1yr":"一年","2yr":"两年","quarter":"三月"},
         avgcnt:{},
         subtypes:[],
         cls_gap:{"aas":{"limit":{"dd":[-0.1,0],"volatility":[0,0.15]},"level":{"dd":[-0.07,-0.05,-0.03]}},
@@ -368,7 +394,7 @@ export default {
     filterList(){
        if(this.showList){
           this.tableList= this.tableData.filter(row=>{
-            return row['list']=='1'
+            return this.holding.filter(hd=>hd['b_code']==row['code']).length>0
           //   for(let key in this.yrdict){
         
           //     if(isNumber(row["mean"+this.winlength[key]])&&row["mean"+this.winlength[key]]<=0.3){
@@ -442,12 +468,14 @@ return ''
                     color: clr
                   }}
         else if(column['field']&&column['field'].startsWith("listrate")){
-    
         let rg=(row[column['field']]-this.statdict[column['field']]["min"])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
       let clr=this.genColor(rg)
             return {
                     color: clr
                   }}
+      else if(column['field']&&column['field']=='dd_ratio'){
+            return { color:row[column['field']]>=90?'#66ff00':''}
+      }
             },
      nclassify(row){
        let lmts=level_dic['common'] 
@@ -552,7 +580,7 @@ return ''
             },
     getBaseInfo(){
      let that=this
-
+     console.log(this.holding)
      this.$axios
         .get("/fof/baseinfo", { params: { date: this.date,type:this.type ,range:this.brange,code:this.tableData.map(row=>row.code).join()} })
         .then((response) => {
@@ -560,7 +588,15 @@ return ''
           this.tableData.map(row=>{
             if(this.baseData[row.code]){
               row['company_code']=this.baseData[row.code]['company_code']
-            for (let af of ['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility']){   
+              let holds=this.holding.filter(hd=>hd['b_code']==row['code'])
+              if(holds.length>0){
+                  console.log(holds)
+                  row['marketval']=holds.reduce((prev,r)=>{
+                    return prev+r['marketval']},0)
+              }
+              
+              row['dd_ratio']=this.$tools.formatMoney(this.baseData[row.code]['nowdrop']/this.baseData[row.code]['dd']*100,2)
+            for (let af of ['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility','profit_loss']){   
              let digi=2
               if(this.baseData[row.code][af]>=10){
                   digi=1
@@ -595,7 +631,7 @@ return ''
             return row
           })
           this.statdict['yeaily_return']['max']=36
-          this.filterCompay()
+          // this.filterCompay()
           this.filterNames()
 
           // this.$nextTick(()=>{
@@ -672,7 +708,7 @@ return ''
     getProducts() {
 
       this.$axios
-        .get("/fof/rank3", { params: { date: this.date,type:this.type ,range:this.range} })
+        .get("/fof/rank3", { params: { ftype:'投后',date: this.date,type:this.type ,range:this.range,weight_type:this.filters['weight_type']} })
         .then((response) => {
           this.rgdict={}
           this.subtypes=[]
@@ -730,7 +766,7 @@ return ''
 
           
       this.$axios
-        .get("/fof/rankstat", { params: { date: this.date,type:this.type} })
+        .get("/fof/rankstat", { params: { ftype:'投后',date: this.date,type:this.type} })
         .then((response) => {
         this.avgcnt=response.data
         for (let k in this.avgcnt){

@@ -137,6 +137,10 @@
               {{ showMoney(row.process) }}
             </template>
             </vxe-column> 
+          <vxe-column field="debet" title="负债"> <template #default="{ row }">
+              {{ showMoney(row.debet) }}
+            </template>
+            </vxe-column> 
 
         </vxe-table>
                     <sankey-chart    ref="vchart"  titles="虚拟FOF"  style="height: 640px" :finalData="detailData" :total="compData1.length" ></sankey-chart>
@@ -157,12 +161,12 @@
         </vxe-toolbar>
         <vxe-table
           border
+          height="600px"
           ref="actionTable"
           :data="actionData"
           tooltip-effect="dark"
           :edit-config="{trigger: 'dblclick', mode: 'cell'}"
           :sort-config="{trigger: 'cell', defaultSort: {field: 'add_time', order: 'desc'}, orders: ['desc', 'asc', null]}"
-          :max-height="tmaxh"
         >
           <vxe-column
             title="基金名称"
@@ -210,7 +214,7 @@
           <vxe-column
             title="流程状态"
             sortable 
-            field="status"
+            field="status"  :filters="flowFilters"
             show-overflow-tooltip :edit-render="{autofocus: '.myinput'}"
           >
             <template #default="{ row }">
@@ -547,6 +551,11 @@ export default {
     },
     statuFilters(){
       return this.status.map((r,i)=>{return {"lable":r,"value":i}})
+    },
+    flowFilters(){
+      let sysfilter=this.sysparam.flow_status.map((r,i)=>{return {"label":r.value,"value":r.code,checked:r.value!="结束"}})
+      sysfilter.push( {"label":"无","value":"无",checked:true})
+      return sysfilter
     },
     combineDate() {
       return this.detailData.concat(this.actionData);

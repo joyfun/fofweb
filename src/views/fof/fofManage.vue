@@ -14,7 +14,7 @@
 
         <el-select v-model="filter.stage" @change="getList" style="width:80px"  clearable placeholder="阶段">
     <el-option
-      v-for="item in sysparam.stage"
+      v-for="item in sysparam.stage.filter(r=>r.value!='对标'&&r.value!='投后')"
       :key="item.value"
       :label="item.value"
       :value="item.code">
@@ -305,10 +305,11 @@
     :close-on-press-escape="false"
     :visible.sync="formVisible"
   >
+      <el-tabs type="border-card">
+      <el-tab-pane ><span slot="label"><i class="el-icon-date"></i> 产品信息</span>  
  <!-- <wad-form :cForm="cForm"></wad-form>
  --><el-form :model="current" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
     <template v-for="(row,index)  in cForm" >
-
      <el-row  :key="index"   v-show="index%2==0">
       <el-col :span="12">              
       <el-form-item v-if="index<=cForm.length-1"  :prop="row.dataIndex"      :label=" row.tilte">
@@ -342,7 +343,100 @@
     <el-button v-if="usermenu.indexOf('info-edit')>-1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
     <el-button v-if="usermenu.indexOf('info-edit')>-1" @click="resetForm('dynamicValidateForm')">重置</el-button>
   </el-form-item>
-</el-form> 
+</el-form> </el-tab-pane>
+      <el-tab-pane ><span slot="label"><i class="el-icon-date"></i> 公司信息</span>  
+      <el-form :model="curCompany" ref="companyForm" label-width="100px" class="demo-dynamic">
+    
+      <el-row  >
+      <el-col :span="12">
+            <el-form-item  :prop="'name'"      :label="'名称'"><el-input  v-model="curCompany.name"></el-input>
+      </el-form-item>              
+       <!-- <el-form-item  v-else    label="公司名称">
+    <el-select  v-model="current.company_code" placeholder="请选择" filterable remote     :remote-method="qryCompany">
+        <el-option
+      v-for="item in fcompanys"
+      :key="item.org_id"
+      :label="item.org_full_name"
+      :value="item.org_id">
+    </el-option>
+  </el-select>
+        </el-form-item> -->
+
+
+      </el-col> 
+            <el-col :span="12">
+            <el-form-item :span="12"  :prop="maintainer"      :label="'对接人'">
+                  <el-select filterable allow-create v-model="curCompany['maintainer']"  style="width:120px"  clearable :placeholder="'对接人'">
+    <el-option
+      v-for="item in sysparam['maintainer']"
+      :key="item.value"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
+      </el-form-item> 
+      </el-col>
+    </el-row >
+    <template v-for="(row,index)  in compForm" >
+     <el-row  :key="index"   v-show="index%2==0">
+      <el-col :span="12">          
+      <el-form-item v-if="index<=compForm.length-1"  :prop="row.dataIndex"      :label=" row.tilte">
+        
+                  <el-select v-if="row.param" v-model="curCompany[row.dataIndex]"  filterable allow-create style="width:120px"  clearable :placeholder="row.tilte">
+    <el-option
+      v-for="item in sysparam[row.param]"
+      :key="item.value"
+      :label="item.value"
+      :value="item.code">
+    </el-option>
+  </el-select>
+          <el-input v-else v-model="curCompany[row.dataIndex]"></el-input>
+      </el-form-item>
+      </el-col>
+      <el-col :span="12">              
+      <el-form-item v-if="index+1<=compForm.length-1"  :prop="compForm[index+1].dataIndex"      :label=" compForm[index+1].tilte"><el-input :type="compForm[index+1].type" v-model="curCompany[compForm[index+1].dataIndex]"></el-input>
+      </el-form-item>
+      </el-col>
+    </el-row >
+    </template>
+<el-form-item>
+    <el-button v-if="usermenu.indexOf('info-edit')>-1" type="primary" @click="submitCompForm('companyForm')">提交</el-button>
+    <el-button v-if="usermenu.indexOf('info-edit')>-1" @click="resetForm('companyForm')">重置</el-button>
+  </el-form-item>
+</el-form>
+      </el-tab-pane>
+      <el-tab-pane ><span slot="label"><i class="el-icon-date"></i> 尽调信息</span>  
+       <vxe-table
+          border
+          ref="investTable"
+          height="480px"
+          align="right"
+          size="mini"
+          :sort-config="{trigger: 'cell', orders: ['desc', 'asc', null]}"
+          :data="investList"
+        >
+      <!-- <vxe-column  type="checkbox" width="30" fixed="left"></vxe-column> -->
+
+          <vxe-column sortable width="80" field="invest_date" title="尽调时间" align="left" ></vxe-column>
+          <vxe-column sortable width="80" field="investor" title="尽调人"    align="left"  ></vxe-column>
+          <vxe-column sortable width="160" field="policy_scale" title="策略规模" align="left"  ></vxe-column>
+          <vxe-column sortable width="60" field="fee" title="管理费" align="right"  ></vxe-column>
+          <vxe-column sortable width="100" field="carry" title="carry" align="left"  ></vxe-column>
+          <vxe-column sortable width="100" field="carry2" title="carry2" align="left"  ></vxe-column>
+          <vxe-column sortable width="100" field="lock_period" title="锁定期" align="left"  ></vxe-column>
+          <vxe-column sortable width="100" field="open_date" title="开放日" align="left"  ></vxe-column>
+          <vxe-column sortable width="100" field="temp_open" title="临开" align="left"  ></vxe-column>
+          <vxe-column sortable width="100" field="margin" title="保证金上限" align="left"  ></vxe-column>
+          <vxe-column sortable width="100" field="ex_rate" title="换手率" align="left"  ></vxe-column>
+          <vxe-column sortable width="100" field="host" title="托管" align="left"  ></vxe-column>
+          <vxe-column sortable width="100" field="broker" title="交易商" align="left"  ></vxe-column>
+          <vxe-column sortable width="100" field="vip_account" title="专户" align="left"  ></vxe-column>
+width="100"
+width="100"
+       </vxe-table>
+      </el-tab-pane>
+
+      </el-tabs>
     </el-dialog>
 
     <el-dialog
@@ -417,8 +511,20 @@
     {"tilte":"渠道联系人","dataIndex":"channel_man"},
     {"tilte":"渠道联系方式","dataIndex":"channel_contact"},
     {"tilte":"备注","dataIndex":"remark","type":"textarea"} ,
-
-    
+]
+  const compForm=[
+ {"tilte":"简称","dataIndex":"short_name"}, 
+  {"tilte":"城市","dataIndex":"city"}, 
+  {"tilte":"主策略","dataIndex":"master_strategy","param":"strategy" }, 
+ {"tilte":"负责人","dataIndex":"manager"},
+ {"tilte":"管理规模","dataIndex":"scale" , "param":"mgt_scale" },
+  {"tilte":"渠道","dataIndex":"channel"},
+ {"tilte":"市场经理","dataIndex":"business_man"},
+ {"tilte":"联系方式","dataIndex":"contact"},
+ {"tilte":"渠道联系人","dataIndex":"channel_man"},
+ {"tilte":"渠道联系方式","dataIndex":"channel_contact"},
+  {"tilte":"产品","dataIndex":"product"},
+ {"tilte":"备注","dataIndex":"remark","type":"textarea"} 
 
 ]
   export default {
@@ -444,6 +550,9 @@
     data() {
       return {
           cForm,
+          compForm,
+          fcompanys:[],
+          investList:[],
           selcode:"",
           allSelect:false,
           filter:{year:"2022"},
@@ -453,6 +562,7 @@
         multipleSelection: [],
         sub_type:[],
         current:{},
+        curCompany:{},
         cur_code:"",
         fileAccept:".doc,.dot,,docx,.pdf",
         uploadUrl:"/fof/upload",
@@ -501,6 +611,17 @@
     }
   },
     methods: {
+      qryCompany(query) {
+              if(query&&query.length>1){
+                axis( {
+                url: '/fof/compinfo',
+                method: 'GET',
+                params: {"qry":query}
+                }).then((response) => {
+                  this.fcompanys=response.data
+                })
+              }
+          },
       onselectAll(row){
 
         this.allSelect=!this.allSelect
@@ -532,6 +653,32 @@
         //   this.current=JSON.parse(JSON.stringify(row))  
           this.current=row
           this.formVisible=true
+          this.$axios.get("/fof/compinfoby",{ params: { "reg_code": this.current.company_code } }).then(r=>{
+            this.curCompany=r.data
+            this.curCompany["reg_code"] = this.current.company_code 
+            console.log(this.curCompany)
+          })
+         this.$axios.get("/fof/investList",{ params: { "code": this.current.code } }).then(r=>{
+            this.investList=r.data
+          })
+      },
+        submitCompForm(formName) {
+          console.log(this.$refs[formName].model)
+          axis({
+      method: 'post',
+      url: "/fof/savecompany", // 请求地址
+      data: this.curCompany, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+    }).then(
+      response => {
+          if(response.data["status"]=="success"){
+          }
+
+      },
+      err => {
+        reject(err)
+      }
+    )
       },
       submitForm(formName) {
           if(this.current.type && this.current.class_type){
@@ -767,6 +914,7 @@ showResult(number,rate=100){
           var $this=this
           ret['code']=this.origin.code
           ret['stage']=this.current.stage
+          ret['user']=this.token
           axis({
         method: 'post',
         url: "/fof/updateinfo", // 请求地址

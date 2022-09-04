@@ -71,7 +71,9 @@ export default new Vuex.Store({
         {lable:"基金排名",value:"rank-btn"},
         {lable:"基金仿真",value:"sim-btn"},
         {lable:"资金情况",value:"fof-dash"},
-        {lable:"排名信息",value:"rank-info"},
+        {lable:"投资排名",value:"rank-info"},
+        {lable:"投后排名",value:"rank-infoa"},
+        {lable:"投后分析",value:"rank-infoa1"},
         {lable:"用户管理",value:"user-manage"}]
   },
   mutations: {

@@ -118,6 +118,22 @@ const routes = [
         path: '/rankinfo',
         name: 'rank-info',
         component:() => import('@/views/fof/rankInfoN.vue')
+      },{
+        path: '/rankinfoa',
+        name: 'rank-infoa',
+        component:() => import('@/views/fof/rankInfoA.vue'),
+        props:{
+          filters:{weight_type:'after_weight'}
+     }
+     
+      },{
+        path: '/rankinfoa1',
+        name: 'rank-infoa1',
+        component:() => import('@/views/fof/rankInfoA.vue'),
+        props:{
+          filters:{weight_type:'after_weight1'}
+     }
+     
       },
       {
         path: '/listrank',
@@ -452,7 +468,8 @@ axios
 .then((response) => {
   let holdingData = tools
     .pandasToJson(response.data)
-    .filter((item) => !item.b_code.startsWith("SUBJECT2")).map(row=>{row["b_name"]=row['b_name'].replace(/(指数增强|证券|私募).+基金/,"")
+    // .filter((item) => !item.b_code.startsWith("SUBJECT2"))
+    .map(row=>{row["b_name"]=row['b_name'].replace(/(指数增强|证券|私募).*基金/,"")
     return row});
   store.commit('setHolding',holdingData)
 

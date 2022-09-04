@@ -14,6 +14,8 @@
             <vxe-button @click="getInsertEvent">获取新增</vxe-button> -->
             <!-- <vxe-button @click="$refs.xTable.setActiveCell(tableData[2], 'name')">激活第三行</vxe-button> -->
             <vxe-button icon="fa fa-save" @click="saveEvent">保存</vxe-button>
+            <vxe-button v-if="code.startsWith('after_weight')" icon="fa fa-calculator" @click="recalc">重新计算</vxe-button>
+            <span v-if="code.startsWith('after_weight')" >最新计算时间：{{latest_time}}</span>
           </template>
         </vxe-toolbar>
       <vxe-table
@@ -127,6 +129,7 @@ import 'markdown-it-vue/dist/markdown-it-vue-light.css'
   data() {
     return {
       raw_data: {},
+      latest_time:"",
       tableData:[],
       lv1:["SY9620","SSS105"],
       lowest:0.9,
@@ -141,6 +144,12 @@ import 'markdown-it-vue/dist/markdown-it-vue-light.css'
     };
   },
   methods: {
+        getlatest_time(){
+            this.$axios.get('/fof/last_calctime').then(response=>{
+        this.latest_time=response.data['latest_time']
+      })
+    
+    }, 
     getWts(code){
       let $this=this
     //   this.$axios.get('/sys/getwts', { params: { "code": this.code } }).then(response=>{
@@ -176,6 +185,15 @@ import 'markdown-it-vue/dist/markdown-it-vue-light.css'
               VXETable.modal.alert(`insertRecords=${insertRecords.length} removeRecords=${removeRecords.length} updateRecords=${updateRecords.length}`)
               this.saveMisc()
             },
+    recalc(){
+      this.$axios({
+        url: "/fof/action",
+        data:{"code":"calc_job","param":this.code}, //          
+        method: "POST"
+      }).then((response) => {
+            console.log(response.data)
+        });       
+    },
     saveMisc(){
        let tabledata= JSON.parse(JSON.stringify(this.$refs.xTable.getTableData()['tableData'])).map(row=>{ delete row["_X_ID"];return row})
        this.$axios({
@@ -190,6 +208,7 @@ import 'markdown-it-vue/dist/markdown-it-vue-light.css'
     },
   },
   mounted() {
+    this.getlatest_time()
       this.getWts(this.code)
 //       this.content=`
 // ## 说明

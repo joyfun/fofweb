@@ -73,7 +73,46 @@
 </el-form>
 
     </el-dialog>
-
+    <el-dialog
+    width="50%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="infoVisible"
+  >
+         <el-descriptions  :column="3" size="small" border>
+          <el-descriptions-item label="备案号">{{prodInfo.code}}</el-descriptions-item>
+          <el-descriptions-item label="名称">{{prodInfo.name}}</el-descriptions-item>
+          <el-descriptions-item label="简称">{{prodInfo.short_name}}</el-descriptions-item>
+          <el-descriptions-item label="基金类型">{{prodInfo.class_type}}</el-descriptions-item>
+          <el-descriptions-item label="子类型">{{prodInfo.sub_type}}</el-descriptions-item>
+          <el-descriptions-item label="所属公司">{{prodInfo.company}}</el-descriptions-item>
+          <el-descriptions-item span=3 label="备注">{{prodInfo.remark}}</el-descriptions-item>
+          <el-descriptions-item label="投资类型">{{prodInfo.scale}}</el-descriptions-item>
+          <el-descriptions-item label="购买时净值">{{prodInfo.buy_price}}</el-descriptions-item>
+          <el-descriptions-item label="购买时间">{{prodInfo.buy_date}}</el-descriptions-item>
+          <el-descriptions-item label="份额">{{prodInfo.amount}}</el-descriptions-item>
+          <el-descriptions-item label="渠道">{{prodInfo.type}}</el-descriptions-item>
+          <el-descriptions-item label="网站代码">{{prodInfo.scode}}</el-descriptions-item>
+          <el-descriptions-item label="基金成立时间">{{prodInfo.founded}}</el-descriptions-item>
+          <el-descriptions-item label="状态">{{prodInfo.stage}}</el-descriptions-item>
+          <el-descriptions-item label="子基金对标">{{prodInfo.compare}}</el-descriptions-item>
+          <el-descriptions-item label="管理费">{{prodInfo.fee}}</el-descriptions-item>
+          <el-descriptions-item label="carry">{{prodInfo.carry}}</el-descriptions-item>
+          <el-descriptions-item label="业绩报酬计提方式" span=2>{{prodInfo.perf_comp}}</el-descriptions-item>
+          <el-descriptions-item label="止损">{{prodInfo.lost}}</el-descriptions-item>
+          <el-descriptions-item label="预警">{{prodInfo.alarm}}</el-descriptions-item>
+          <el-descriptions-item label="风险等级">{{prodInfo.risk_level}}</el-descriptions-item>
+          <el-descriptions-item label="预期收益(年)">{{prodInfo.rate}}</el-descriptions-item>
+          <el-descriptions-item label="预期最大回撤">{{prodInfo.max_return}}</el-descriptions-item>
+          <el-descriptions-item label="预期夏普">{{prodInfo.sharp}}</el-descriptions-item>
+          <el-descriptions-item label="预期卡玛">{{prodInfo.calmar}}</el-descriptions-item>
+          <el-descriptions-item label="其他关键条款">{{prodInfo.other}}</el-descriptions-item>
+          <el-descriptions-item label="渠道">{{prodInfo.channel}}</el-descriptions-item>
+          <el-descriptions-item label="渠道联系人">{{prodInfo.channel_man}}</el-descriptions-item>
+          <el-descriptions-item label="渠道联系方式">{{prodInfo.channel_contact}}</el-descriptions-item>
+    </el-descriptions>
+  </el-dialog>
 
      <el-dialog
     width="50%"
@@ -215,6 +254,7 @@
     <rank-table       @close="editClose" ref="ranktable"    style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
     <fof-simulate     @close="editClose" ref="simtable"   style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
     <audit-log       @close="editClose" ref="auditlog"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='auditDialog'"></audit-log>
+    <fund-corr       @close="editClose" ref="fundcorr"   style="height: 600px" :code="cur_code"   v-if="diagName=='corrDialog'"></fund-corr>
 
 <el-tabs type="border-card"  :value="fullActive" v-if="diagName=='fullDialog'" @tab-click="handleDiagClick">
       <el-tab-pane name="sumvaltab">
@@ -234,7 +274,15 @@
       </el-tab-pane> -->
 </el-tabs>
     </el-dialog>
-
+<el-dialog
+    width="80%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+     :visible.sync="dialogCompVisible"
+     >
+      <prod-table       @close="editClose" ref="protable"  :foflist="foflist" :full="true"    v-if="diagName=='prodDiag'"></prod-table>
+    </el-dialog>
 </div>
 </template>
 
@@ -252,13 +300,13 @@ import FofSimulate from '@/components/FofSimulate';
 import ReportTable from '@/components/ReportTable';
 import CompareTable from '@/components/CompareTable';
 import AuditLog from '@/components/AuditLog.vue';
-
-
+import FundCorr from '@/components/FundCorr.vue';
 
 export default {
         components: {
             FundEchart,
             AuditLog,
+            FundCorr,
             HisTable,
             RankTable,
             FofSimulate,
@@ -267,6 +315,17 @@ export default {
             CompareTable,
             ReportTable,
         },
+        watch: {
+        infoVisible :{
+              handler(n){
+                if(n){
+                  this.getInfo(this.cur_code)
+
+                }
+            },
+    
+    },
+  },
     computed: {
         ...mapState({
             current: state => state.tab.currentMenu,
@@ -385,6 +444,11 @@ export default {
       }
     },
         changeTarget(){},
+        getInfo(code){
+           this.$axios
+        .get("/fof/info", { params: { "code":code }})
+        .then((response) => {this.prodInfo=response.data})
+        },
         changeFOF(){},
          submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -417,6 +481,7 @@ export default {
           //   }
           // } else {
           this.curAction.add_time=new Date().getTime()
+          this.curAction.status="无"
           delete this.curAction.name 
           this.addAction(JSON.parse(JSON.stringify(this.curAction)));
           // }
@@ -474,10 +539,54 @@ export default {
             stages: ["预赎回", "待投资", "预入款"],
             diagName:"",
             temp:"",
+            dialogCompVisible:false,
             resetVisible:false,
             buyVisible:false,
+            infoVisible:false,
             auditVisible:false,
-           userImg:require('../assets/images/user.png')
+           userImg:require('../assets/images/user.png'),
+           prodInfo: {
+    
+              },
+           formItems4: [
+                {
+                  title: '产品信息',
+                  span: 24,
+                  children: [
+    {"title":"备案号","field":"code"},
+    {"title":"名称","field":"name"},
+    {"title":"简称","field":"short_name"},
+    {"title":"基金类型","field":"class_type","param":"class_type"},
+    {"title":"投资类型","field":"scale","param":"scale"},
+    {"title":"购买时净值","field":"buy_price"},
+    {"title":"子类型","field":"sub_type"},
+    {"title":"购买时间","field":"buy_date"},
+    {"title":"份额","field":"amount"},
+    {"title":"所属公司","field":"company"},
+    {"title":"渠道","field":"type","param":"data_type"},
+    {"title":"网站代码","field":"scode"},
+    {"title":"基金成立时间","field":"founded"},
+    {"title":"状态","field":"stage","param":"stage"},
+    {"title":"子基金对标","field":"compare"},
+    {"title":"管理费","field":"fee"},
+    {"title":"carry","field":"carry"},
+    {"title":"业绩报酬计提方式","field":"perf_comp"},
+    {"title":"止损","field":"lost"},
+    {"title":"预警","field":"alarm"},
+    {"title":"风险等级","field":"risk_level","param":"risk_"},
+    {"title":"预期收益(年)","field":"rate"},
+    {"title":"预期最大回撤","field":"max_return"},
+    {"title":"预期夏普","field":"sharp"},
+    {"title":"预期卡玛","field":"calmar"},
+    {"title":"其他关键条款","field":"other"},
+    {"title":"渠道","field":"channel"},
+    {"title":"渠道联系人","field":"channel_man"},
+    {"title":"渠道联系方式","field":"channel_contact"},
+    {"title":"备注","field":"remark","type":"textarea"} 
+            ]
+                },
+              ]
+            
         }
     },
     created(){
@@ -493,6 +602,11 @@ export default {
               Bus.$on('oneKeyBuy',(arg)=> {
               this.buyVisible=true
               this.curAction=arg
+          console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
+      })
+      Bus.$on('showInfo',(arg)=> {
+              this.cur_code=arg["cur_code"]
+              this.infoVisible=true
           console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
       })
       Bus.$on('auditAction',(arg)=> {

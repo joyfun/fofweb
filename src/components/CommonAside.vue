@@ -167,7 +167,7 @@ export default {
                         },
                         {
                             path: '/rankinfo',
-                            label: '排名信息',
+                            label: '投资排名',
                             name:'rank-info',
                             icon:'setting'
                         },
@@ -182,35 +182,36 @@ export default {
                             name:'fund-extra',
                             icon:'setting'
                         },
-                         {
-                            path: '/fundcompare1',
-                            label: '分类基金对比',
-                            name:'fund-compare',
-                            children:[{
-                            path: '/fundcompare1',
-                            label: '已投对比',
-                            name:'fund-compare1',
-                            params:{
-                                left:'已投',
-                                right:'预选'
-                            },
-                            icon:'setting'
-                        },
-                        {
-                            path: '/fundcompare3',
-                            label: '尽调对比',
-                            name:'fund-compare3',
-                            params:{
-                                left:'尽调',
-                                right:'预选'
-                            },
-                            icon:'setting'
-                        },{
-                            path: '/fundcompare2',
-                            label: '侯选对比',
-                            name:'fund-compare2',
-                            icon:'setting'
-                        }]}],
+                        //  {
+                        //     path: '/fundcompare1',
+                        //     label: '分类基金对比',
+                        //     name:'fund-compare',
+                        //     children:[{
+                        //     path: '/fundcompare1',
+                        //     label: '已投对比',
+                        //     name:'fund-compare1',
+                        //     params:{
+                        //         left:'已投',
+                        //         right:'预选'
+                        //     },
+                        //     icon:'setting'
+                        // },
+                        // {
+                        //     path: '/fundcompare3',
+                        //     label: '尽调对比',
+                        //     name:'fund-compare3',
+                        //     params:{
+                        //         left:'尽调',
+                        //         right:'预选'
+                        //     },
+                        //     icon:'setting'
+                        // },{
+                        //     path: '/fundcompare2',
+                        //     label: '侯选对比',
+                        //     name:'fund-compare2',
+                        //     icon:'setting'
+                        // }]}
+                        ],
                          "decision":[
                         {
                             path: '/fundinfo',
@@ -251,34 +252,36 @@ export default {
                             label: '压力测试',
                             name:'fund-pressure',
                             icon:'setting'
-                        }, {
-                            path: '/fundcompare1',
-                            label: '分类基金对比',
-                            name:'fund-compare',
-                            children:[{
-                            path: '/fundcompare1',
-                            label: '已投对比',
-                            name:'fund-compare1',
-                            params:{
-                                left:'已投',
-                                right:'预选'
-                            },
-                            icon:'setting'
-                        },{
-                            path: '/fundcompare3',
-                            label: '尽调对比',
-                            name:'fund-compare3',
-                            params:{
-                                left:'尽调',
-                                right:'预选'
-                            },
-                            icon:'setting'
-                        },{
-                            path: '/fundcompare2',
-                            label: '侯选对比',
-                            name:'fund-compare2',
-                            icon:'setting'
-                        }]}
+                        }, 
+                        // {
+                        //     path: '/fundcompare1',
+                        //     label: '分类基金对比',
+                        //     name:'fund-compare',
+                        //     children:[{
+                        //     path: '/fundcompare1',
+                        //     label: '已投对比',
+                        //     name:'fund-compare1',
+                        //     params:{
+                        //         left:'已投',
+                        //         right:'预选'
+                        //     },
+                        //     icon:'setting'
+                        // },{
+                        //     path: '/fundcompare3',
+                        //     label: '尽调对比',
+                        //     name:'fund-compare3',
+                        //     params:{
+                        //         left:'尽调',
+                        //         right:'预选'
+                        //     },
+                        //     icon:'setting'
+                        // },{
+                        //     path: '/fundcompare2',
+                        //     label: '侯选对比',
+                        //     name:'fund-compare2',
+                        //     icon:'setting'
+                        // }
+                        // ]}
                         ],
                         "after":[
                         {
@@ -299,6 +302,18 @@ export default {
                             },
                             icon:'setting'
                         },
+                          {
+                            path: '/afterrankinfo',
+                            label: '投后排名',
+                            name:'rank-infoa',
+                            icon:'setting'
+                        },
+                        {
+                            path: '/afterrankinfo1',
+                            label: '投后分析',
+                            name:'rank-infoa1',
+                            icon:'setting'
+                        },
                                          {
                             path: '/fund-analysis',
                             label: '基金分析',
@@ -317,18 +332,18 @@ export default {
                             },
                             icon:'setting'
                         },
-                        {
-                            path: '/fundrank1',
-                            label: '已投尽调排名',
-                            name:'fund-rank1',
-                            icon:'setting'
-                        },
-                        {
-                            path: '/fundrank2',
-                            label: '已投备投排名',
-                            name:'fund-rank2',
-                            icon:'setting'
-                        },
+                        // {
+                        //     path: '/fundrank1',
+                        //     label: '已投尽调排名',
+                        //     name:'fund-rank1',
+                        //     icon:'setting'
+                        // },
+                        // {
+                        //     path: '/fundrank2',
+                        //     label: '已投备投排名',
+                        //     name:'fund-rank2',
+                        //     icon:'setting'
+                        // },
                         {
                             path: '/fundreason',
                             label: '收益归因',

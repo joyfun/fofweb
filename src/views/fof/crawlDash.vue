@@ -6,6 +6,8 @@
          <el-radio-button type="primary" :key="i"  :label="item" icon="el-icon-edit" v-for="(item,i) in types">{{tags[i]}}</el-radio-button>
       </el-radio-group>
         <el-button type="primary" @click="exportExcel">导出</el-button>
+        <el-button type="primary" @click="batchConfirm">批量确认</el-button>
+
       </div>
     </div>
     <el-table
@@ -390,6 +392,16 @@ export default {
           }
         }
       }
+    },
+    batchConfirm(){
+      console.log(this.multipleSelection)
+      let sels=this.multipleSelection.map(r=>r.code)
+        //  var $this=this
+         this.$axios.get('/fof/confirmBatch',{params:{codes:sels.join()}})//axis后面的.get可以省略；
+                        .then((response) => {
+                            if(response.data.status=="success")
+                               this.getList();
+                        })
     },
     clickSelection(index, row) {
       // console.log(index, row);

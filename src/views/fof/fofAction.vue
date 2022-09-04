@@ -1,10 +1,9 @@
 <template>
-  <div>
-    <div class="block" style="display: flex; justify-content: space-between">
-      <div >
+      <div  width="800px" >
 
        
-<el-row>
+<el-row width="800px" >
+  <el-col span="12">
   <el-select v-model="cur_fof"  style="width:160px"  clearable placeholder="基金选择">
     <el-option
       v-for="item in sysparam.FOF"
@@ -15,21 +14,29 @@
   </el-select>
         <el-button type="primary" @click="genWeekly">生成周报</el-button>
         <el-button type="primary" @click="downWeekly">下载周报</el-button>
+  </el-col>
 </el-row>
 <el-row>
+    <el-col span="12">
+
         <el-button type="primary" @click="doaction">刷新最新净值</el-button>
         <el-button type="primary" @click="updateparam">刷新参数</el-button>
         <el-button type="primary" @click="sendmail">发送邮件</el-button>
         <el-button type="primary" @click="fetchmail">收取邮件</el-button>
+  </el-col>
 
 </el-row>
 
+<el-row>
+    <el-col span="24">
+       <iframe width="100%" height="600px" src="http://192.168.0.22:5555"></iframe>
+    </el-col>
+
+
+</el-row>
 
       
-      </div>
-    </div>
-  
-  </div>
+      </div>  
 </template>
 <script>
 import Vue from 'vue'

@@ -20,7 +20,7 @@
       <el-card shadow="hover">
         <el-form ref="form" label-width="160px">
                         <el-col :span="11">
-                    <el-form-item :key="row.code" v-for="row in preInvest "  :prop="row.dataIndex"      :label=" row.short_name"><el-input-number @change = "((val)=>{handleChange(val, row)})" v-model="row.cost"></el-input-number>
+                    <el-form-item :key="row.b_code" v-for="row in preInvest "  :prop="row.dataIndex"      :label=" showFundName(row.b_code)"><el-input-number @change = "((val)=>{handleChange(val, row)})" v-model="row['marketval']"></el-input-number>
             
                 </el-form-item>
                         </el-col>
@@ -82,12 +82,17 @@
 import Echart from "../../components/Echart.vue";
 import FundEchart from "../../components/FundEchart.vue";
 import axis from "axios";
+import {mapState,mapGetters} from 'vuex'
 
 export default {
   components: {
     Echart,
     FundEchart,
   },
+     computed: {
+        ...mapGetters(["sysparam","token","showFundName","showFundInfo"]),
+    ...mapState(["foflist","holding","actionData"]),
+   },
   data() {
     return {
       code: "",
@@ -220,22 +225,28 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-        axis( {
-                url: '/fof/list',
-                method: 'GET',
-                params: {"stage":"备投"}
-                }).then((response) => {
-                                this.preInvest = response.data;
+        this.preInvest =this.actionData.filter(row=>row['stage']=='待投资' && row['status']!='结束')
                                 for(var  row in this.preInvest){
                                     this.preInvest[row].amount=0
                                     this.preInvest[row].netval=1
                                     // console.log(val)
                                 }
-                            })
-                        .catch(
-                            (error) => {
-                                console.log(error);
-                    });
+        // axis( {
+        //         url: '/fof/list',
+        //         method: 'GET',
+        //         params: {"stage":"备投"}
+        //         }).then((response) => {
+        //                         this.preInvest = response.data;
+        //                         for(var  row in this.preInvest){
+        //                             this.preInvest[row].amount=0
+        //                             this.preInvest[row].netval=1
+        //                             // console.log(val)
+        //                         }
+        //                     })
+        //                 .catch(
+        //                     (error) => {
+        //                         console.log(error);
+        //             });
     },
   },
   created() {

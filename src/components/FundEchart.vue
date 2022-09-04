@@ -162,7 +162,7 @@ export default {
               vday = this.$moment(this.max_date).add(-3, "y").format("YYYYMMDD");
               break
             case 7:
-              vday = this.$moment(this.max_date).dayOfYear(1).format("YYYYMMDD")
+              vday = this.$moment(this.max_date).dayOfYear(1).add(-1, "d").format("YYYYMMDD")
               break
             case 8:
               vday= this.raw_data["date"][0];
@@ -833,8 +833,8 @@ export default {
         }
         if(this.raw_data[cname+'_超额']){
             var result=[]
-            var lastval=null
             for (var i in sdata){
+              var lastval=null
                 if(sdata[i]>0){
                   let indexdata=zz500data
                   if(cname.endsWith("I3")){
@@ -843,6 +843,7 @@ export default {
                     indexdata=zz10000data
 
                   }
+                    if(sdata[i])
                     lastval=(sdata[i]-indexdata[i]).toFixed(4)
                 }
                 result.push(lastval)
