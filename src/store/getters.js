@@ -47,6 +47,8 @@ const getters = {
       if (code==item['code']){
         if(item['scale']=="无额度"||item['scale']=="已封盘"){
           name="🈵"
+        }else if(item['scale']=="高费率") {
+          name="💎"
         }
         return name+item['name']+extra
       }

@@ -255,7 +255,7 @@
     <fof-simulate     @close="editClose" ref="simtable"   style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
     <audit-log       @close="editClose" ref="auditlog"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='auditDialog'"></audit-log>
     <fund-corr       @close="editClose" ref="fundcorr"   style="height: 600px" :code="cur_code"   v-if="diagName=='corrDialog'"></fund-corr>
-
+    <prod-table       @close="editClose" ref="prodtable"  :foflist="prodlist"    v-if="diagName=='prodDiag'"></prod-table>
 <el-tabs type="border-card"  :value="fullActive" v-if="diagName=='fullDialog'" @tab-click="handleDiagClick">
       <el-tab-pane name="sumvaltab">
         <span slot="label"><i class="el-icon-date"></i> 净值曲线</span> 
@@ -301,6 +301,7 @@ import ReportTable from '@/components/ReportTable';
 import CompareTable from '@/components/CompareTable';
 import AuditLog from '@/components/AuditLog.vue';
 import FundCorr from '@/components/FundCorr.vue';
+import ProdTable from '@/components/ProdTable.vue';
 
 export default {
         components: {
@@ -314,6 +315,7 @@ export default {
             BaseChart,
             CompareTable,
             ReportTable,
+            ProdTable
         },
         watch: {
         infoVisible :{

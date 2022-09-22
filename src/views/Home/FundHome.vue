@@ -19,7 +19,7 @@
     </el-option> -->
   </el-select>
       <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptodash">资金明细</vxe-button>
-      <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptorank">排名信息</vxe-button>
+      <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptorank">投资排名</vxe-button>
       <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptopressure">压力测试</vxe-button>
       <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptoReport">回撤信息</vxe-button>
 
@@ -45,18 +45,17 @@
         <el-table
     ref="profiltTable"
     :data="profitlist"
-    :span-method="cellMergep"
     tooltip-effect="dark"
     max-height="480"
     :default-sort="{prop:'year',order:'descending'}"
     style="width: 100%;margin-top:20px;">
-    <el-table-column
-      :label="mcols[0]"
+    <!-- <el-table-column
+      label="年份"
       sortable
       prop="year"
       show-overflow-tooltip>
-    </el-table-column>
-        <el-table-column
+    </el-table-column> -->
+        <!-- <el-table-column
       label="产品"
       sortable
       min-width="100"
@@ -64,18 +63,24 @@
             <template slot-scope="scope">
                    {{ $tools.showName(scope.row['code'],sysparam) }}
         </template>
-    </el-table-column>
+    </el-table-column> -->
+    <el-table-column
+      label="年份"
+      sortable
+      min-width="60"
+      show-overflow-tooltip>
+            <template slot-scope="scope">
+                   {{ scope.row['year'] }}
+        </template>
+    </el-table-column> 
     <el-table-column
     v-for=" n in 13" :key="'col'+n"
-      prop="name"
       :label="mcols[n]"
       show-overflow-tooltip>
       <template slot-scope="scope">
               <span :style="'text-align:right;color:'+((scope.row[mindx[n]]&&scope.row[mindx[n]].startsWith('-'))?'green':'red') " >
                     {{ scope.row[mindx[n]] }}</span>
-
         </template>
-     <!-- <template slot-scope="scope">{{ scope.row[mindx[n]] }}</template> -->
     </el-table-column>
     </el-table> 
       </el-card>
@@ -110,7 +115,7 @@
           border
           style="width: 100%; margin-top: 20px"
         >
-          <el-table-column prop="class_type" label="类型"> </el-table-column>
+          <el-table-column prop="rank_type" label="类型"> </el-table-column>
           <el-table-column prop="short_name" label="名称">     <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
  </el-table-column>
            <el-table-column align="right"  prop="s_date" label="建仓时间"> </el-table-column>
@@ -225,6 +230,7 @@ export default {
     cur_fof: {
       handler: function (val) {
         this.code=this.cur_fof+",000300.SH,000905.SH,000852.SH";
+        this.changePie() 
         this.getTableData();
       },
     }},
@@ -240,7 +246,7 @@ export default {
             this.$router.push({name:'rank-info'})  
             this.$store.commit('selectMenu',{
 		"path": "/rankinfo",
-		"label": "排名信息",
+		"label": "投资排名",
 		"name": "rank-info",
 		"icon": "setting"
 	});
@@ -273,9 +279,10 @@ export default {
           }
         }
       },
-      changeFOF(fofcode){},
+      changeFOF(fofcode){
+        // this.changePie()
+      },
       getSummaries(param) {
-      console.log(param)
 			const { columns, data } = param;
 			const sums = [];
 			columns.forEach((column, index) => {
@@ -319,7 +326,7 @@ export default {
       if (!value) return "0.00";
       if(row.class_type=='指增' && column.label=='累计收益率')
       return this.$tools.formatMoney(value,3)+'\n(α:'+this.$tools.formatMoney(value-row['irate'],3)+'  β:'+this.$tools.formatMoney(row['irate'],3)+')'
-      return this.$tools.formatMoney(value,3)
+      return this.$tools.formatMoney(value,2)
     },
     getSpanArr(data,rname) {
       var sar=[]
@@ -339,7 +346,7 @@ export default {
           }
         }
       }
-      if(rname=='class_type'){
+      if(rname=='rank_type'){
         Vue.set(this,"spanArr",sar)
       }else if(rname=='year'){
         Vue.set(this,"pspanArr",sar)
@@ -367,23 +374,22 @@ export default {
         }
         return ret;
     },
-    getPieData(data){
-        var dict={};
-        for(var idx in data){
-            var row=data[idx]
-            if(dict[row.class_type]){
-                dict[row.class_type]+=row["profit"]
-            }else{
-                dict[row.class_type]=row["profit"]
-            }
-        }
-        var ret=[]
-        for(var cls in dict){
-            ret.push({name:cls,value:dict[cls]})
-        }
-        console.log(ret)
-        return ret;
-    },
+    // getPieData(data){
+    //     var dict={};
+    //     for(var idx in data){
+    //         var row=data[idx]
+    //         if(dict[row.class_type]){
+    //             dict[row.class_type]+=row["profit"]
+    //         }else{
+    //             dict[row.class_type]=row["profit"]
+    //         }
+    //     }
+    //     var ret=[]
+    //     for(var cls in dict){
+    //         ret.push({name:cls,value:dict[cls]})
+    //     }
+    //     return ret;
+    // },
     getLegend(data){
         var ret=[]
         for (var idx in data){
@@ -413,7 +419,6 @@ export default {
     getTableData() {
        //const acode=["SY9620","SSN818","SSN369","SSS105","STE599"]
        const acode=this.cur_fof.split(",")
-
         axis({
         url: "/fof/profits",
         method: "GET",
@@ -427,7 +432,7 @@ export default {
                 profitlist=profitlist.concat(response.data[code])
               }
             this.profitlist=profitlist.sort((a,b)=>b['year']-a['year'])
-            this.getSpanArr(this.profitlist,"year")
+            // this.getSpanArr(this.profitlist,"year")
         }),
       axis({
         url: "/fof/summary",
@@ -436,71 +441,86 @@ export default {
       })
         .then((response) => {
           this.tableData = response.data.datas.sort((a,b)=>{
-              return this.class_order.indexOf(a['class_type'])-this.class_order.indexOf(b['class_type'])
+              return this.class_order.indexOf(a['rank_type'])-this.class_order.indexOf(b['rank_type'])
           });
           this.getPieDataOuter(this.tableData)
+          let cashdata=this.pieData.series.data
+          let cash=cashdata.filter(r=>r['name']=='现金')[0]["value"]
+          //增加现金信息
+          this.tableData.push({"class_type":"现金","netval":1,"short_name":"现金","code":"CASH","amount":cash,"profit":cash})
           // this.subData.series[0].data=this.getPieDataOuter(this.tableData)
           // this.pieData.series.data=this.getPieData(this.tableData)
           // this.pieData.legend.data=this.getLegend(this.pieData.series.data)
           // this.$refs.piechart.initChart()   //子组件$on中的名字
           // this.subData.legend.data=this.getLegend(this.subData.series.data)
           // this.$refs.subPie.initChart()   //子组件$on中的名字
-          this.getSpanArr(this.tableData,"class_type")
+          this.getSpanArr(this.tableData,"rank_type")
           
         })
         .catch((error) => {
           console.log(error);
         });
 
-        this.changePie()
     },
     changePie(){
+          console.log(this.subresult)
           if(this.subresult[this.cur_fof]){
-
           this.holdings= JSON.parse(JSON.stringify(this.subresult[this.cur_fof]))
           this.holdings.filter(row=> !row["type"]).forEach((srow,idx)=>{
-              if(srow["code"]){
-                console.log(srow)
-                if(srow['code'].startsWith("SUBJECT")){
+              if(srow["b_code"]){
+                if(srow['b_code'].startsWith("SUBJECT")){
                  srow['class_type']="现金"
                  srow['type']="现金"
-                return true 
+                 return true 
                 }
-              let rt=srow["marketval"]/this.subsum[srow["code"]]
-              this.subresult[srow["code"]].map(prow=>{
-                  let nrow=JSON.parse(JSON.stringify(prow))
-                  nrow["omarketval"]=nrow["marketval"]
-                  nrow["rt"]=rt
-                  nrow["marketval"]=nrow["marketval"]*rt
-                  this.holdings.push(nrow)
-              })
+              // console.log(srow)
+              // let rt=srow["marketval"]/this.subsum[srow["b_code"]]
+              // this.subresult[srow["b_code"]].map(prow=>{
+              //     let nrow=JSON.parse(JSON.stringify(prow))
+              //     nrow["omarketval"]=nrow["marketval"]
+              //     nrow["rt"]=rt
+              //     nrow["marketval"]=nrow["marketval"]*rt
+              //     this.holdings.push(nrow)
+              // })
               }
 
           })
-          console.log(this.holdings)
           
           let cdata={}
+          console.log(this.holdings)
           this.holdings.map(row=>{
-            if(row["code"].startsWith("SUBJECT")){
+            if(row["b_code"].startsWith("SUBJECT")){
             row["name"]='现金'
             }else{
-            row["name"]=this.showFundName(row["code"]).substring(2)
+            row["name"]=this.showFundName(row["b_code"]).substring(2)
 
             }
-            if(row["type"]){
-              let ov=cdata[row["class_type"]]
+            if(row["class_type"]){
+              if(row["class_type"]=='FOF'){
+                cdata[row["name"]]=row["marketval"]
+              }else{
+              let key=row["rank_type"]
+              if(key){}
+              else{
+                key=row['class_type']
+              }
+              let ov=cdata[key]
               if(!ov){
                 ov=0
               }
               ov+=row["marketval"]
-              cdata[row["class_type"]]=ov
-            }
+              cdata[key]=ov
+            }}
           })
           let chartdata=[]
           for (let key in cdata){
             chartdata.push({"name":key,"value":cdata[key]})
 
           }
+          chartdata.sort((a,b)=>{
+              return this.class_order.indexOf(a['name'])-this.class_order.indexOf(b['name'])
+          });
+          // this.tableData.push({"class_type":"现金","short_name":"现金","code":"CASH","profit":999})
           this.pieData.series.data=chartdata
           this.$refs.piechart.initChart()   //子组件$on中的名字
           this.subData.series[0].data=this.holdings.filter(row=>!row["rt"]).map(row=>{return {"name":row["name"],"value":row["marketval"]}})
@@ -520,6 +540,7 @@ export default {
              this.subsum[fof['code']]=this.rawData.filter(row=>row['mcode']==fof['code']).reduce((preVal, row) => { return preVal + row["marketval"];}, 0)
          }
          this.changePie() 
+         this.getTableData();
         })
         .catch((error) => {
           console.log(error);
@@ -528,10 +549,16 @@ export default {
 this.pieData.action["click"]=(params)=>{
             this.$emit("mainpieClick",params)
         }
-    this.getTableData();
     this.$on('mainpieClick',(arg)=> {
         this.subtype=arg.name
-        this.subData.series[0].data=this.holdings.filter(row=>row["class_type"]==this.subtype).map(row=>{return {"name":row["name"],"value":row["marketval"]}})
+        console.log(arg)
+        let ret=this.sysparam.FOF.filter(r=>r['value']==this.subtype)
+        if(ret.length>0){
+        this.subData.series[0].data=this.rawData.filter(row=>row["mcode"]==ret[0]['code']).map(row=>{return {"name":row["b_name"].replace(/(指数增强|证券|私募).*基金/,""),"value":row["marketval"]}})
+        }else{
+        this.subData.series[0].data=this.holdings.filter(row=>row["rank_type"]==this.subtype||row["class_type"]==this.subtype).map(row=>{return {"name":row["name"],"value":row["marketval"]}})
+        }
+        console.log(this.subData.series[0].data)
         this.$refs.subPie.initChart() 
 
       })

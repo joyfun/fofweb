@@ -15,7 +15,7 @@
         </vxe-table> -->
 
 <el-row>
-  <el-col :span="14">
+  <el-col :span="16">
     <el-card>
         <vxe-table
           border
@@ -33,7 +33,7 @@
               <vxe-input v-model="row.name" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SVK645','多策略FOF直投','SY9620']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass1">
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','多策略FOF直投','SY9620']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass1">
             <template #default="{ row }">
               <span>{{ row[af] }}</span>
             </template>
@@ -61,7 +61,7 @@
               <vxe-input v-model="row.name" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SVK645','SSS105']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass1">
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SSS105']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass1">
             <template #default="{ row }">
               <span>{{ row[af] }}</span>
             </template>
@@ -88,7 +88,7 @@
               <vxe-input v-model="row.name" class="myinput"></vxe-input>
             </template>
           </vxe-column>
-          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599','SVK645']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass">
+          <vxe-column :key="af" v-for="af of ['SSN818','SSN369','STE599']"  :field="af" :title="showFundName(af)" :edit-render="{}"  :class-name="cellClass">
             <template #default="{ row }">
               <span>{{ row[af] }}</span>
             </template>
@@ -98,7 +98,7 @@
           </vxe-column>
         </vxe-table> 
         </el-card>
-        </el-col><el-col :span="10">
+        </el-col><el-col :span="8">
             <vxe-table
           border
           align="right"
@@ -107,9 +107,14 @@
           size="mini"
           :data="finalDataf">
           <vxe-column field="name" align="left" title="基金名称" width="160"> </vxe-column>
-          <vxe-column field="marketval" title="市值" width="80">
+          <vxe-column field="marketval" title="总规模（不含预）" width="80">
             <template #default="{ row }">
-              {{ showMoney(row.marketval) }}
+              {{ showMoney(row.marketval+row.cash) }}
+            </template>
+            </vxe-column>
+            <vxe-column field="netamt" title="净规模" width="80">
+            <template #default="{ row }">
+              {{ showMoney(row.netamt) }}
             </template>
             </vxe-column>
             <vxe-column field="total" title="总规模(预)" width="80">
@@ -117,7 +122,7 @@
               {{ showMoney(row.total) }}
             </template>
             </vxe-column>
-         <!-- --><vxe-column field="cash" title="可用资金"> <template #default="{ row }">
+         <!-- <vxe-column field="cash" title="可用资金"> <template #default="{ row }">
               {{ showMoney(row.cash) }}
             </template>
             </vxe-column>
@@ -132,7 +137,7 @@
           <vxe-column field="buy" title="待投资"> <template #default="{ row }">
               {{ showMoney(row.buy) }}
             </template>
-            </vxe-column>
+            </vxe-column>-->
           <vxe-column field="process" title="其它"> <template #default="{ row }">
               {{ showMoney(row.process) }}
             </template>
@@ -309,6 +314,7 @@
           <template #buttons>
             <vxe-button @click="showRankHis">排名对比</vxe-button>
             <vxe-button @click="addAction">添加</vxe-button>
+            <vxe-button @click.native.prevent="exportEvent">导出.xlsx</vxe-button>
           </template>
         </vxe-toolbar>
                   <!-- {{detailData}} -->
@@ -327,8 +333,6 @@
           <vxe-column field="code" title="产品"  sortable width="160" :filters="sysparam.FOF.map(r=> {return {'value':r.code,'label':r.value}})" :filter-method="filterStatusMethod" >
                                    <template #header>
                   产品
-                   <vxe-button @click="exportEvent">导出.xlsx</vxe-button>
-
               </template>
                      
                         <template #default="{ row }">
@@ -544,7 +548,7 @@ export default {
       
     },
     finalDataf(){
-      return this.finalData.filter( row=>["SSN818","SSN369","STE599","SVK645","多策略FOF直投"].indexOf(row["code"])<0)
+      return this.finalData.filter( row=>["SSN818","SSN369","STE599","多策略FOF直投"].indexOf(row["code"])<0)
     },
     titleDate(){
       return '2年 排名信息('+this.data_time+")"
@@ -747,7 +751,7 @@ return ''
     genNoUsed1(){
       let toinvest=0
       let toredeem=0
-      for(var key of ["SSN818","SSN369","STE599","SVK645","多策略FOF直投"]){
+      for(var key of ["SSN818","SSN369","STE599","多策略FOF直投"]){
       this.compData1[4][key]=this.compData1[0][key]
       if(this.compData1[0][key]){
           toinvest+=parseFloat(this.compData1[0][key])
@@ -780,7 +784,7 @@ return ''
     genNoUsed2(){
       let toinvest=0
       let toredeem=0
-      for(var key of ["SSN818","SSN369","STE599","SVK645"]){
+      for(var key of ["SSN818","SSN369","STE599"]){
       this.updateInvest("SSS105",key,{"value":this.compData2[0][key]})
       this.compData2[4][key]=this.compData2[0][key]
       if(this.compData2[0][key]){
@@ -807,12 +811,12 @@ return ''
       genNoUsed3(){
       let toinvest=0
       let toredeem=0
-      for(var key of ["SSN818","SSN369","STE599","SVK645"]){
+      for(var key of ["SSN818","SSN369","STE599"]){
       this.compData3[0][key]=parseFloat(this.compData1[0][key])+parseFloat(this.compData2[0][key])
       this.compData3[5][key]=parseFloat(this.compData3[1][key])+parseFloat(this.compData3[2][key])+parseFloat(this.compData1[4][key])+parseFloat(this.compData2[4][key])-parseFloat(this.compData3[4][key])
       this.compData3[7][key]=this.compData3[6][key]+parseFloat(this.compData3[0][key])
      }
-      let fofs=["SY9620","SSS105","SSN818","SSN369","STE599","SVK645"]
+      let fofs=["SY9620","SSS105","SSN818","SSN369","STE599"]
       this.finalData.sort((a,b)=>{return fofs.indexOf(a.code)-fofs.indexOf(b.code)})
 
       // this.compData2[1]['SSS105']=toredeem
@@ -843,7 +847,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
     genTitleData1(){
       const cols=["预入款","预赎回","现金","在投","待分配合计"]
       const keys=["income","redeem","cash","marketval","unused"]
-      const fofs=["SSN818","SSN369","STE599","SVK645"] //["SY9620"]
+      const fofs=["SSN818","SSN369","STE599"] //["SY9620"]
 
       let rets=[]
       for(var col in cols){
@@ -893,7 +897,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
     genTitleData2(){
            const cols=["预入款","预赎回","现金","在投","待分配合计"]
       const keys=["income","redeem","cash","marketval","unused"]
-      const fofs=["SSN818","SSN369","STE599","SVK645"] //["SY9620"]
+      const fofs=["SSN818","SSN369","STE599"] //["SY9620"]
       let rets=[]
       for(var col in cols){
         var ret={"name":cols[col]}
@@ -936,7 +940,7 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
     genTitleData3(){
       const cols=["预入款","预赎回","现金","在投","预投","待分配合计","总管理规模","管理规模(预)","核对"]
       const keys=["income","redeem","cash","marketval","buy","unused","managed","total","check"]
-      const fofs=["SSN818","SSN369","STE599","SVK645"]
+      const fofs=["SSN818","SSN369","STE599"]
       let rets=[]
       for(var col in cols){
         var ret={"name":cols[col]}
@@ -1151,7 +1155,9 @@ let selffund=this.finalData.filter(row=>["SY9620","SSS105"].indexOf(row.code)>-1
       }
       this.finalData = [];
       for (var key in rdict) {
-        rdict[key]["total"]=rdict[key]["marketval"]-rdict[key]["redeem"]+rdict[key]["buy"]+rdict[key]["income"]
+        rdict[key]["total"]=rdict[key]["marketval"]-rdict[key]["redeem"]+rdict[key]["buy"]+rdict[key]["income"]+rdict[key]["cash"]
+        rdict[key]["netamt"]=rdict[key]["marketval"]-rdict[key]["debet"]+rdict[key]["cash"]
+
         this.finalData.push(rdict[key]);
       }
       this.genTitleData1()

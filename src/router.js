@@ -320,6 +320,10 @@ const routes = [
         path: '/action',
         name: 'fof-action',
         component:() => import('@/views/fof/fofAction.vue')
+      }, {
+        path: '/dataMonitor',
+        name: 'data-monitor',
+        component:() => import('@/views/fof/dataMonitor.vue')
       }
       ,
       {

@@ -106,6 +106,7 @@
       fixed
       prop="short_name"
       label="基金"
+      min-width="160px"
       show-overflow-tooltip>
      <template slot-scope="scope">
        <el-button  @click.native.prevent="addCart(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
@@ -485,7 +486,7 @@ width="100"
     {"tilte":"名称","dataIndex":"name"},
     {"tilte":"简称","dataIndex":"short_name"},
     {"tilte":"基金类型","dataIndex":"class_type","param":"class_type"},
-    {"tilte":"投资类型","dataIndex":"scale","param":"scale"},
+    {"tilte":"规模","dataIndex":"scale","param":"scale"},
     {"tilte":"购买时净值","dataIndex":"buy_price"},
     {"tilte":"子类型","dataIndex":"sub_type"},
     {"tilte":"购买时间","dataIndex":"buy_date"},
@@ -494,7 +495,7 @@ width="100"
     {"tilte":"渠道","dataIndex":"type","param":"data_type"},
     {"tilte":"网站代码","dataIndex":"scode"},
     {"tilte":"基金成立时间","dataIndex":"founded"},
-    {"tilte":"状态","dataIndex":"stage","param":"stage"},
+    {"tilte":"阶段","dataIndex":"stage","param":"stage"},
     {"tilte":"子基金对标","dataIndex":"compare"},
     {"tilte":"管理费","dataIndex":"fee"},
     {"tilte":"carry","dataIndex":"carry"},
@@ -736,7 +737,7 @@ width="100"
     )
       },
       addInfo(){
-          this.current={stage:"入库",scale:"入库"}
+          this.current={stage:"入库",scale:"未尽调"}
           this.formVisible=true
       },
         loadModel(file){

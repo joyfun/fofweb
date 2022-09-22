@@ -218,7 +218,7 @@ export default {
   data() {
     return {
       tags:["SiMuWang","GeShang","ZhaoYang",'邮件其它'],
-      types:["SiMuWang","GeShang","ZhaoYang",'1'],
+      types:["SiMuWang","GeShang","ZhaoYang",'2'],
       current: {},
       reqType: 'GeShang,SiMuWang,ZhaoYang',
       cur_code: "",

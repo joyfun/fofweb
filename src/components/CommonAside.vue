@@ -102,6 +102,12 @@ export default {
                             name:'fof-action',
                             icon:'setting'
                         },{
+                            path: '/dataMonitor',
+                            label: '数据监控',
+                            name:'data-monitor',
+                            icon:'setting'
+                        }
+                        ,{
                             path: '/crawl',
                             label: '三方数据',
                             name:'fof-crawl',

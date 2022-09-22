@@ -23,6 +23,7 @@ import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 import '@/assets/iconfont/iconfont.css'
+import {parseTime}  from '@/utils'
 // import VXETablePluginExportXLSX from 'vxe-table-plugin-export-xlsx'
 
 // VXETable.use(VXETablePluginExportXLSX)
@@ -59,6 +60,9 @@ Vue.use(ElementUI)
 //     }
 //     return s.join(dec)
 //   }
+Vue.filter('formatTime', function(time) {
+  return parseTime(time)
+})
 
 new Vue({
   router,

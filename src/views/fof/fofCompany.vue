@@ -1,10 +1,9 @@
 <template>
   <div>
-      <div class="block" style="display: flex;justify-content: space-between">
+      <!--<div class="block" style="display: flex;justify-content: space-between">
         
-        <div style="display: flex;justify-content: space-between">
+         <div style="display: flex;justify-content: space-between">
             <el-button  size="small" @click="toggleSelection()">取消选择</el-button>
-            <el-button  size="small" @click="addCompany()">添加</el-button>
             <vxe-input v-model="input" type="search" placeholder="试试全表搜索" @keyup="searchEvent1"></vxe-input>
 
     <el-select v-model="filter.scale" @change="getList" style="width:80px"  clearable placeholder="规模">
@@ -27,19 +26,76 @@
 
 
         </div>
-      </div>
-       <vxe-table
+      </div> -->
+         <vxe-grid v-bind="gridOptions" ref="xGrid" style="width:100%">
+
+                <template #toolbar_buttons>
+
+            <vxe-form :data="formData" @submit="searchEvent" @reset="resetEvent" >
+                            <vxe-form-item  span=1>
+                               <vxe-button  size="small" @click="addCompany()">添加</vxe-button>
+                            </vxe-form-item>
+              <vxe-form-item  title="名称"  field="name" span=3>
+                <template  #default="{ data }"> 
+                  <vxe-input v-model="data.name" type="text" placeholder="请输入名称" clearable></vxe-input>
+                </template>
+              </vxe-form-item>
+                <vxe-form-item title="城市" field="city" span=2>
+                <template #default="{ data }"> 
+                  <vxe-input  v-model="data.city" type="text" placeholder="城市" clearable></vxe-input>
+                </template>
+              </vxe-form-item>
+               <vxe-form-item  title="规模" field="scale" span=2>
+                <template #default="{ data }"> 
+                  <vxe-select  v-model="data.scale" clearable >
+                    <vxe-option v-for="item in sysparam.mgt_scale" :key="item.value" :value="item.value" :label="item.code"></vxe-option>
+                  </vxe-select> 
+                 </template>
+              </vxe-form-item>
+               <vxe-form-item  title="接触状态" field="status" span=3>
+                <template #default="{ data }"> 
+                  <vxe-select  v-model="data.status" clearable >
+                    <vxe-option v-for="item in sysparam.corp_status" :key="item.value" :value="item.value" :label="item.code"></vxe-option>
+                  </vxe-select> 
+                 </template>
+              </vxe-form-item>
+               <vxe-form-item  title="主策略" field="master_strategy" span=3>
+                <template #default="{ data }"> 
+                  <vxe-select  v-model="data.master_strategy" clearable >
+                    <vxe-option v-for="item in sysparam.strategy" :key="item.value" :value="item.value" :label="item.code"></vxe-option>
+                    <vxe-option value="无" label="无"></vxe-option>
+                  </vxe-select> 
+                 </template>
+              </vxe-form-item>
+                <vxe-form-item title="对接人" field="maintainer" span=3 >
+                <template #default="{ data }"> 
+                  <vxe-select  v-model="data.maintainer" clearable >
+                    <vxe-option v-for="item in sysparam.maintainer" :key="item.value" :value="item.value" :label="item.code"></vxe-option>
+                    <vxe-option value="无" label="无"></vxe-option>
+
+                  </vxe-select> 
+                 </template>
+              </vxe-form-item>
+              <vxe-form-item>
+                <template>
+                  <vxe-button type="submit" status="primary" content="查询"></vxe-button>
+                  <vxe-button type="reset" content="重置"></vxe-button>
+                </template>
+              </vxe-form-item>
+            </vxe-form>
+          </template>
+              </vxe-grid>
+       <!-- <vxe-table
           border
           ref="companyTable"
           height="600"
           :row-config="{keyField:'code',isCurrent: true, isHover: true}"
           show-overflow
-          :data="totaltableData"
+          :data="tableData"
         >
                   <vxe-column  type="checkbox" width="30" fixed="left"></vxe-column>
-          <!-- <vxe-column type="seq" width="60"></vxe-column> -->
-      
-          <!-- -->
+           <vxe-column type="seq" width="50"></vxe-column> -->
+      <!--
           <vxe-column    min-width="200" title="名称"   field="name" type="html" >
           </vxe-column> 
           <vxe-column    title="城市"  min-width="60" field="city"  :filters="[]" >
@@ -52,19 +108,18 @@
           </vxe-column> 
           <vxe-column    title="代表产品"  min-width="120" field="product"  type="html" >
           </vxe-column> 
-          <vxe-column    title="对接人"  min-width="60" field="maintainer"    :filters="sysparam.maintainer.map(r=> {return {'label' : r.code,'value':r.value}})">
+          <vxe-column    title="对接人"  min-width="60" field="maintainer"    :filters="[{'label' : '无','value':''},...sysparam.maintainer.map(r=> {return {'label' : r.code,'value':r.value}})]"  >
           </vxe-column> 
+          
+
       <vxe-column    title="信息"  min-width="90" align="center" field="level"  >
                  <template #default="{ row }">
              <el-button @click.native.prevent="editStatus(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>
             <el-button @click.native.prevent="searchProd(row,true)" type="text" size="small"><el-tooltip class="item" effect="dark" content="查询" placement="left-start"><i class="el-icon-search"></i></el-tooltip></el-button>
-            <!-- <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delCompany0(row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button> -->
 
             </template>
           </vxe-column> 
-                      <!-- <vxe-column sortable  title="分"  field="lscore" >
-          </vxe-column>  -->
-        </vxe-table> 
+        </vxe-table>  -->
       <div style="display: flex;justify-content: space-between">
       
       <div class="block" style=" margin-top: 25px; height: 120px; ">
@@ -78,15 +133,19 @@
           :total="totaltableData.length">
         </el-pagination> -->
 
-               <!-- <vxe-pager
+               <!-- -->      </div>
+<!-- <vxe-pager
                @page-change="handleCurrentChange"
             background
             :current-page.sync="currentPage"
             :page-size.sync="PageSize"
             :total="totaltableData.length"
             :layouts="['PrevJump', 'PrevPage', 'JumpNumber', 'NextPage', 'NextJump', 'Sizes', 'FullJump', 'Total']">
-          </vxe-pager> -->
-      </div>
+          </vxe-pager>  -->
+
+
+           
+
     </div>
     <el-dialog
     width="80%"
@@ -160,7 +219,7 @@
 </el-tab-pane>
         </el-tabs>
     </el-dialog>
-<el-dialog
+<!-- <el-dialog
     width="80%"
     top="50px"
     :close-on-click-modal="false"
@@ -168,7 +227,7 @@
      :visible.sync="dialogCompVisible"
      >
       <prod-table       @close="editClose" ref="simtable"  :foflist="foflist" :full="true"    v-if="diagName=='prodDiag'"></prod-table>
-    </el-dialog>
+    </el-dialog> -->
 
 
     <el-dialog
@@ -200,6 +259,7 @@
     import XEUtils from 'xe-utils'
     import FundEchart from '../../components/FundEchart.vue';
     import ProdTable from '../../components/ProdTable.vue';
+    import Bus from '@/store/bus.js';
 
   const cForm=[
  
@@ -227,8 +287,101 @@
             computed:{...mapGetters(['sysparam','class_order','token','usermenu'])},
     data() {
       return {
+                      sexList1: [
+                { value: '1', label: '男' },
+                { value: '0', label: '女' }
+              ],
         cForm,
         filter:{},
+        formData: {
+                name: '',
+                city:'',
+                mgt_scale:''
+        },
+        gridOptions: {
+              border: true,
+              resizable: true,
+              width:800,
+              rowId: 'id',
+              pagerConfig: {
+                // 默认每页大小
+                pageSize: 15
+              },
+              checkboxConfig: {
+                // 设置复选框支持分页勾选，需要设置 rowId 行数据主键
+                reserve: true
+              },
+              // formConfig: {
+              //     items: [
+              //       { field: 'name', title: '名称', itemRender: {}, slots: { default: 'name_item' } },
+              //       { field: 'city', title: '城市', itemRender: {}, slots: { default: 'city_item' } },
+              //       { itemRender: {}, slots: { default: 'submit_item' } },
+              //       { itemRender: {}, slots: { default: 'reset_item' } }
+              //     ]
+              //   },
+              proxyConfig: {
+                seq: true, // 启用动态序号代理（分页之后索引自动计算为当前页的起始序号）
+                props: {
+                  // 自定义响应结果读取的字段，例如返回结果为：{result: [], page: {total: 10}}
+                  result: 'result',
+                  total: 'page.total'
+                },
+                ajax: {
+                  // 接收 Promise
+                  query: ({ page }) => {
+                    return new Promise(resolve => {
+                      setTimeout(() => {
+                        const list = this.filterResult(this.totaltableData)
+                        console.log(list)
+                        resolve({
+                          page: {
+                            total: list.length
+                          },
+                          result: list.slice((page.currentPage - 1) * page.pageSize, page.currentPage * page.pageSize)
+                        })
+                      }, 50)
+                    })
+                  }
+                }
+              },
+              toolbarConfig: {
+                  // export: true,
+                  // print: true,
+                  // custom: true,
+                  slots: {
+                    buttons: 'toolbar_buttons'
+                  }
+                },
+              columns: [
+
+                { type: 'checkbox', width: 50 },
+                { type: 'seq', width: 40 },
+                { field: 'name', minWidth :240,title: '名称' },
+                { field: 'city', title: '城市' },
+                { field: 'scale', title: '规模' },
+                { field: 'status', title: '接触状态' },
+                { field: 'master_strategy', title: '主策略' },
+                 { field: 'maintainer', title: '对接人',  },
+                { field: 'product',minWidth:240, title: '代表产品', showOverflow: true },
+                {
+                  field: 'id',
+                  title: '操作',
+                  width:80,
+                  showOverflow: true,
+                  slots: {
+                    // 使用 JSX 渲染
+                    default: ({ row }) => {
+                      return [
+                        <el-button type="text" onClick={ () => this.editStatus(row) } size="small"><el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip></el-button>,
+                        <el-button type="text" onClick={ () => this.searchProd(row,true) } size="small"><el-tooltip class="item" effect="dark" content="查询" placement="left-start"><i class="el-icon-search"></i></el-tooltip></el-button>
+          
+                      ]
+                    }
+                  }
+                }
+
+              ]
+            },
         fcompanys:[],
         multipleSelection: [],
         foflist:[],
@@ -282,6 +435,28 @@
       }}
   },
     methods: {
+            filterResult(alldata){
+              let ret=alldata
+              console.log(this.formData)
+              for(let key in this.formData){
+                if(ret){
+                if(this.formData[key]){
+                               if(key=='name'||key=='city' ){
+                                console.log(ret)
+                  ret=ret.filter(r=>r[key]&&r[key].indexOf(this.formData[key])>-1)
+                }else{
+
+                   ret=ret.filter(r=>r[key]==this.formData[key]||(this.formData[key]=='无'&&!r[key]))
+
+                }
+                }}
+                else{
+                  return []
+                }
+
+              }
+              return ret
+            },
             remoteMethod(query) {
               if(query&&query.length>1){
                 axis( {
@@ -301,8 +476,7 @@
                 }).then((response) => {
                     this.foflist=response.data
                     if(show){
-                    this.dialogCompVisible=true
-                    this.diagName="prodDiag"
+                    Bus.$emit("showChart",{"prodlist":response.data,"diagName":"prodDiag"})
                     }
 
                 })
@@ -374,46 +548,6 @@
       addCompany(){
           this.curCompany={}
           this.dialogVisible=true
-      },
-      companyProxy(){
-        return  {
-                seq: true, // 启用动态序号代理（分页之后索引自动计算为当前页的起始序号）
-                props: {
-                  // 自定义响应结果读取的字段，例如返回结果为：{result: [], page: {total: 10}}
-                  result: 'result',
-                  total: 'page.total'
-                },
-                ajax: {
-                  // 接收 Promise
-                  query: ({ page }) => {
-                    return new Promise(resolve => {
-                      setTimeout(() => {
-                        const list = [
-                          { id: 10001, name: 'Test1', nickname: 'T1', role: 'Develop', sex: 'Man', age: 28, address: 'Shenzhen' },
-                          { id: 10002, name: 'Test2', nickname: 'T2', role: 'Test', sex: 'Women', age: 22, address: 'Guangzhou' },
-                          { id: 10003, name: 'Test3', nickname: 'T3', role: 'PM', sex: 'Man', age: 32, address: 'Shanghai' },
-                          { id: 10004, name: 'Test4', nickname: 'T4', role: 'Designer', sex: 'Women', age: 23, address: 'Shenzhen' },
-                          { id: 10005, name: 'Test5', nickname: 'T5', role: 'Develop', sex: 'Women', age: 30, address: 'Shanghai' },
-                          { id: 10006, name: 'Test6', nickname: 'T6', role: 'Designer', sex: 'Women', age: 21, address: 'Shenzhen' },
-                          { id: 10007, name: 'Test7', nickname: 'T7', role: 'Test', sex: 'Man', age: 29, address: 'test abc' },
-                          { id: 10008, name: 'Test8', nickname: 'T8', role: 'Develop', sex: 'Man', age: 35, address: 'Shenzhen' },
-                          { id: 10009, name: 'Test9', nickname: 'T9', role: 'Develop', sex: 'Man', age: 35, address: 'Shenzhen' },
-                          { id: 100010, name: 'Test10', nickname: 'T10', role: 'Develop', sex: 'Man', age: 35, address: 'Guangzhou' },
-                          { id: 100011, name: 'Test11', nickname: 'T11', role: 'Test', sex: 'Women', age: 26, address: 'test abc' },
-                          { id: 100012, name: 'Test12', nickname: 'T12', role: 'Develop', sex: 'Man', age: 34, address: 'Guangzhou' },
-                          { id: 100013, name: 'Test13', nickname: 'T13', role: 'Test', sex: 'Women', age: 22, address: 'Shenzhen' }
-                        ]
-                        resolve({
-                          page: {
-                            total: list.length
-                          },
-                          result: list.slice((page.currentPage - 1) * page.pageSize, page.currentPage * page.pageSize)
-                        })
-                      }, 100)
-                    })
-                  }
-                }
-              }
       },
       handleClose(done) {
           done()
@@ -500,7 +634,15 @@
               this.totaltableData=this.rowdata.filter(r=>options.indexOf(r[field])>-1)
             },
 
-
+            searchEvent () {
+              const $grid = this.$refs.xGrid
+              $grid.commitProxy('query')
+            },
+            resetEvent () {
+              this.formData={}
+              const $grid = this.$refs.xGrid
+              $grid.commitProxy('reload')
+            },
         searchEvent1 () {
               const filterName = this.input
               if (filterName) {
@@ -521,7 +663,7 @@
             },
       // 跳转
       handleCurrentChange({ type, currentPage, pageSize, $event }) {
-        console.log(`当前页: ${type} size:${pageSize}`);
+        console.log(`当前页: ${type} ${currentPage},size:${pageSize}`);
         // this.currentPage = val;
         //页面每页大小
         console.log(pageSize)
@@ -583,8 +725,8 @@
                                 )
                                 let citys=Object.keys(citycnt).sort((b,a)=>citycnt[a]-citycnt[b])
                                 let cmans=Object.keys(chanelcnt).sort((b,a)=>chanelcnt[a]-chanelcnt[b])
-                                this.$refs.companyTable.setFilter(this.$refs.companyTable.getColumnByField('channel_man'), cmans.map(st=>{return  { label: st, value: st }}))
-                                this.$refs.companyTable.setFilter(this.$refs.companyTable.getColumnByField('city'), citys.map(st=>{return  { label: st, value: st }}))
+                                // this.$refs.companyTable.setFilter(this.$refs.companyTable.getColumnByField('channel_man'), cmans.map(st=>{return  { label: st, value: st }}))
+                                // this.$refs.companyTable.setFilter(this.$refs.companyTable.getColumnByField('city'), citys.map(st=>{return  { label: st, value: st }}))
                                 if(this.token=='demo'){
                                     for (var row in this.totaltableData){
                                         this.totaltableData[row]["name"]="名称"+row
@@ -592,7 +734,9 @@
 
                                     }
                                 }
-                                this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
+                                // this.tableData = this.totaltableData.slice(0 ,$this.PageSize);
+                                const $grid = this.$refs.xGrid
+                                $grid.commitProxy('query')
                             })
                         .catch(
                             (error) => {

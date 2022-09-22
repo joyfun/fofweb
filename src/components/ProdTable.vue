@@ -3,6 +3,7 @@
         <el-button  size="small" @click="hisCompare()">对比</el-button>
         <el-button  size="small" @click="showcorr()">相关性</el-button>
         <el-button  size="small" @click="compare()">业绩对标</el-button>
+        <el-button  size="small" @click="exportExcel">导出</el-button>
  <el-table
     ref="multipleTable"
     :data="foflist"
@@ -47,6 +48,12 @@
       prop="stage"
       show-overflow-tooltip>
     </el-table-column>
+        <el-table-column 
+      label="最新净值"
+      sortable
+      prop="latest_date"
+      show-overflow-tooltip>
+    </el-table-column>
     <!-- <el-table-column
     width="40"
             fixed="right"
@@ -59,6 +66,8 @@
 </div>
 </template>
  <script>
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
 import Bus from '@/store/bus.js';
 export default {
   props: {
@@ -82,6 +91,12 @@ export default {
   data() {
     return {
         tmaxh:600,
+          tableExport: {
+                // 默认选中类型
+                type: 'xlsx',
+                // 自定义类型
+                types: ['xlsx', 'csv', 'html', 'xml', 'txt']
+              },
     //   raw_data:{},
     //   corrdata:[],
     //   funds:{},
@@ -93,6 +108,21 @@ export default {
     }
   },
   methods: {
+        exportExcel(){
+      var title='产品信息'
+      var workbook = XLSX.utils.book_new();
+      var st = XLSX.utils.table_to_sheet(this.$refs.multipleTable.$el)
+      XLSX.utils.book_append_sheet(workbook, st, "产品");
+      var wbout = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'array' })
+         try {
+      FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), title+'.xlsx')
+   }    catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+              // this.$refs.rankTable.exportData({
+              //   filename: '排名信息'+this.type+'_'+this.date,
+              //   sheetName: 'Sheet1',
+              //   type: 'xlsx'
+              // })
+    },
       showHis(row){
           Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisChart"})
 
