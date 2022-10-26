@@ -112,7 +112,12 @@
        <el-button  @click.native.prevent="addCart(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
        <a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
     </el-table-column>
-<!--      测试用例是否关联-->
+  <el-table-column
+      prop="company"
+      label="公司"
+      show-overflow-tooltip>
+      <template slot-scope="scope">{{ scope.row.company }}</template>
+    </el-table-column>
    <el-table-column
       prop="class_type"
       label="类型"
@@ -120,13 +125,7 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.class_type }}</template>
     </el-table-column>
-       <el-table-column
-      prop="create_time"
-      label="入库"
-      sortable
-      show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.create_time|formatDate }}</template>
-    </el-table-column>
+
     <el-table-column
       prop="sub_type"
       label="子类型"
@@ -134,6 +133,14 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.sub_type }}</template>
     </el-table-column>
+    <el-table-column
+      prop="scale"
+      label="可投状态"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.scale }}</template>
+    </el-table-column>
+
     <!-- <el-table-column
       prop="buy_date"
       label="建仓日期"
@@ -149,13 +156,6 @@
      <template slot-scope="scope">{{ scope.row.stage }}</template>
     </el-table-column>
     <el-table-column
-      prop="latest_date"
-      label="净值日期"
-      sortable
-      show-overflow-tooltip>
-     <template slot-scope="scope">{{ scope.row.latest_date }}</template>
-    </el-table-column>
-     <el-table-column
       prop="fee"
       label="管理费"
       sortable
@@ -169,6 +169,21 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.carry }}</template>
      </el-table-column>>
+
+    <el-table-column
+      prop="latest_date"
+      label="净值日期"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.latest_date }}</template>
+    </el-table-column>
+             <el-table-column
+      prop="create_time"
+      label="入库"
+      sortable
+      show-overflow-tooltip>
+     <template slot-scope="scope">{{ scope.row.create_time|formatDate }}</template>
+    </el-table-column>
     
 <!--      测试输入-->
     
@@ -178,12 +193,6 @@
       show-overflow-tooltip>
       <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.name }}</a></template>
     </el-table-column> -->
-<el-table-column
-      prop="company"
-      label="公司"
-      show-overflow-tooltip>
-      <template slot-scope="scope">{{ scope.row.company }}</template>
-    </el-table-column>
 <el-table-column
       prop="remark"
       label="备注"
@@ -207,6 +216,8 @@
             <el-button v-show="scope.row.combine" @click.native.prevent="viewConcat(scope.row)" type="text" size="small">    <el-tooltip class="item" effect="dark" content="拼接历史" placement="left-start"><i class="el-icon-link"></i></el-tooltip></el-button>
             <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip></el-button>
             <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delFund0(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip></el-button>
+            <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="doCheck(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="核对" placement="left-start"><i class="el-icon-finished" ></i></el-tooltip></el-button>
+
             <!-- <vxe-button v-if="usermenu.indexOf('info-edit')>-1"  @click="uploadInvest(scope.row)" type="text" size="small">上传尽调表</vxe-button > -->
 
         </template>
@@ -299,6 +310,103 @@
   </el-form-item>
 </el-form>
     </el-dialog>
+    <el-dialog
+    width="50%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="checkVisible">
+        <el-button type="primary" @click="reCrawl">重新爬取</el-button>
+               <vxe-table
+          border
+          ref="crawInfo"
+          size="mini"
+          :sort-config="{trigger: 'cell', orders: ['desc', 'asc', null]}"
+          :data="checkData"
+        >
+        <vxe-column
+        field="source"
+        title="来源"
+        width="100">
+        <template slot-scope="scope">{{ scope.row.source}} <el-button  @click.native.prevent="changeSource(scope.row.source)" type="text" size="small"><el-tooltip class="item" effect="dark" content="切换" placement="left-start"><i class="el-icon-finished" ></i></el-tooltip></el-button>
+        </template>
+
+      </vxe-column>
+      <vxe-column
+        field="start"
+        title="开始">
+      </vxe-column>
+      <vxe-column
+        field="end"
+        title="结束">
+      </vxe-column>
+      <vxe-column
+        field="cnt"
+        title="总计">
+      </vxe-column>
+      <vxe-column
+        field="total_week"
+        title="合计周数">
+      </vxe-column>
+        <vxe-column
+        field="miss_week"
+        title="缺失周">
+      </vxe-column>
+        <vxe-column
+        field="miss_week"
+        title="缺失率">
+             <template slot-scope="scope">{{ $tools.formatMoney(scope.row.miss_week/scope.row.total_week ,3)}}</template>
+      </vxe-column>
+       <vxe-column
+        field="ostd"
+        title="异常std">
+      </vxe-column>
+      <vxe-column
+        field="over_data"
+        show-overflow-tooltip
+        title="异常std">
+      </vxe-column>
+      <vxe-column
+        field="rdiff"
+        show-overflow-tooltip
+        title="异常增长率">
+      </vxe-column>
+        </vxe-table>
+    <!-- <el-table
+      :data="checkData"
+      key="source"
+      style="width: 100%">
+      
+    </el-table> -->
+          <el-tabs type="border-card">
+      <el-tab-pane ><span slot="label"><i class="el-icon-date"></i> 净值曲线</span>  
+    <fund-echart      ref="hischart"  :titles="current.name"  :code="current.code"  :orig="'1'"></fund-echart>
+      </el-tab-pane>
+      <el-tab-pane><span slot="label">单位净值</span>
+           <vxe-table
+          border
+          ref="netValsInfo"
+          size="mini"
+          :sort-config="{trigger: 'cell', orders: ['desc', 'asc', null]}"
+          :data="netvals"
+        >
+      <vxe-column
+        field="date"
+        sortable=""
+        title="日期">
+         <template #header>
+                {{'日期'}}
+                  <vxe-switch v-model="showDiff" open-label="差异" :open-value="true" close-label="所有" :close-value="false"></vxe-switch>
+            </template>
+      </vxe-column>
+            <vxe-column   v-for="item in sources" :key="item" :field="item" :title="item">
+              
+              </vxe-column>  
+          </vxe-table>
+      </el-tab-pane>
+          </el-tabs>
+
+    </el-dialog>
  <el-dialog
     width="80%"
     top="50px"
@@ -366,7 +474,7 @@
 
       </el-col> 
             <el-col :span="12">
-            <el-form-item :span="12"  :prop="maintainer"      :label="'对接人'">
+            <el-form-item :span="12"  :prop="curCompany.maintainer"      :label="'对接人'">
                   <el-select filterable allow-create v-model="curCompany['maintainer']"  style="width:120px"  clearable :placeholder="'对接人'">
     <el-option
       v-for="item in sysparam['maintainer']"
@@ -479,6 +587,7 @@ width="100"
 
     import {mapGetters} from 'vuex'
     import VXETable from 'vxe-table'
+    import Vue from 'vue'
 
     import FundCorr from '../../components/FundCorr.vue';
    const cForm=[
@@ -493,7 +602,10 @@ width="100"
     {"tilte":"份额","dataIndex":"amount"},
     {"tilte":"所属公司","dataIndex":"company"},
     {"tilte":"渠道","dataIndex":"type","param":"data_type"},
-    {"tilte":"网站代码","dataIndex":"scode"},
+    // {"tilte":"网站代码","dataIndex":"scode"}, 
+    {"tilte":"朝阳代码","dataIndex":"ZhaoYang"},
+    {"tilte":"格上代码","dataIndex":"GeShang"},
+    {"tilte":"私募网代码","dataIndex":"SiMuWang"},
     {"tilte":"基金成立时间","dataIndex":"founded"},
     {"tilte":"阶段","dataIndex":"stage","param":"stage"},
     {"tilte":"子基金对标","dataIndex":"compare"},
@@ -504,13 +616,11 @@ width="100"
     {"tilte":"预警","dataIndex":"alarm"},
     {"tilte":"风险等级","dataIndex":"risk_level","param":"risk_"},
     {"tilte":"预期收益(年)","dataIndex":"rate"},
-    {"tilte":"预期最大回撤","dataIndex":"max_return"},
+    {"tilte":"预期最大回撤","dataIndex":"max_drawdown"},
     {"tilte":"预期夏普","dataIndex":"sharp"},
     {"tilte":"预期卡玛","dataIndex":"calmar"},
     {"tilte":"其他关键条款","dataIndex":"other"},
-    {"tilte":"渠道","dataIndex":"channel"},
-    {"tilte":"渠道联系人","dataIndex":"channel_man"},
-    {"tilte":"渠道联系方式","dataIndex":"channel_contact"},
+
     {"tilte":"备注","dataIndex":"remark","type":"textarea"} ,
 ]
   const compForm=[
@@ -547,13 +657,14 @@ width="100"
       type: Object,
       default:null
     },},
-    computed:{...mapGetters(['sysparam','token','usermenu',"allparam"])},
+    computed:{...mapGetters(['sysparam','token','usermenu',"allparam","sources"])},
     data() {
       return {
           cForm,
           compForm,
           fcompanys:[],
           investList:[],
+          showDiff:true,
           selcode:"",
           allSelect:false,
           filter:{year:"2022"},
@@ -563,7 +674,7 @@ width="100"
         multipleSelection: [],
         sub_type:[],
         current:{},
-        curCompany:{},
+        curCompany:{"maintainer":""},
         cur_code:"",
         fileAccept:".doc,.dot,,docx,.pdf",
         uploadUrl:"/fof/upload",
@@ -577,6 +688,10 @@ width="100"
         auditVisible:false,
         concatVisible:false,
         editVisible:false,
+        checkVisible:false,
+        checkData:[],
+        checkAll:{},
+        netvals:[],
         compData:[],
         rowdata: '',
         tmaxh:500,
@@ -609,9 +724,42 @@ width="100"
       },
       immediate: true,
       deep: true,
+    },
+    showDiff:{
+      handler(n){
+        this.showNetVals()
+      }
     }
   },
     methods: {
+          reCrawl() {
+      axis
+        .get('/fof/reCrawl',{params:{code:this.current.code}})
+        .then((response) => {
+             this.tableData=response.data
+             this.resizeChart();
+          //this.tableData = this.totaltableData;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+      changeSource(source) {
+
+        axis({
+      method: 'post',
+      url: '/fof/update_source', // 请求地址
+      data: {'code':this.current.code,'source':source}, // 参数
+      responseType: 'json' // 表明返回服务器返回的数据类型
+      }).then((response) => {
+             this.tableData=response.data
+             this.resizeChart();
+          //this.tableData = this.totaltableData;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
       qryCompany(query) {
               if(query&&query.length>1){
                 axis( {
@@ -685,6 +833,9 @@ width="100"
           if(this.current.type && this.current.class_type){
             this.current.code=this.current.code.trim()
             this.current.user=this.token
+            if(this.current.type.length<2 ||(this.current.type.length>2&&this.current[this.current.type])){
+
+       
           axis({
       method: 'post',
       url: "/fof/saveinfo", // 请求地址
@@ -701,7 +852,14 @@ width="100"
       err => {
         reject(err)
       }
-    )}else{
+    )     }else{
+              this.$message({
+            showClose: true,
+            message: this.current.type+"代码必填",
+            type: "error"
+          })
+
+    }}else{
         this.$message({
             showClose: true,
             message: "类型和来源为必填项",
@@ -737,7 +895,7 @@ width="100"
     )
       },
       addInfo(){
-          this.current={stage:"入库",scale:"未尽调"}
+          this.current={stage:"入库",scale:"待尽调"}
           this.formVisible=true
       },
         loadModel(file){
@@ -1016,6 +1174,54 @@ showResult(number,rate=100){
       
       viewHisTemp(row){
           Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisTable","temp":1})
+
+      },
+      showNetVals(){
+        let rets=this.checkAll['netvals']
+        if(this.showDiff){
+
+       
+                                let cols=this.checkData.map(r=>r['source'])
+                                if(cols.length==2){
+                                   rets=this.netvals.filter(row=>{
+                                  return row[cols[0]]!=row[cols[1]]
+                                })
+                                }else if(cols.length==3){
+                                    rets=this.netvals.filter(row=>{
+                                  return !(row[cols[0]]==row[cols[1]]&&row[cols[0]]==row[cols[2]]&&row[cols[2]]==row[cols[1]])
+                                })
+                                }
+                                console.log(rets)
+                                this.netvals=rets
+                    }
+                                rets.sort((a,b)=>{return a['date']>b['date']})
+                                 this.$refs.netValsInfo.reloadData(rets)
+                                 console.log(`loaddata ${rets.length}`)
+      },
+      doCheck(row){
+          this.current=JSON.parse(JSON.stringify(row))  
+          this.checkVisible=true
+          axis.get('/fof/checkdata',{params:{'code':this.current.code}})//axis后面的.get可以省略；
+                        .then(
+                            (response) => {
+                                console.log('#############');
+                                console.log(response.data["data"]);
+                                console.log(response.data["netvals"]);
+                                this.checkAll=response.data
+                                // Vue.set(checkData["data"],response.data["data"])
+                                Vue.set(this,'checkData',response.data["data"])
+                                Vue.set(this,'netvals',response.data["netvals"])
+                                this.showNetVals()
+                                this.$refs.crawInfo.reloadData(response.data["data"])
+                                // this.$refs.netValsInfo.reloadData(response.data["netvals"])
+
+                                // this.checkData["netvals"]=response.data["netvals"]
+
+                            })
+                        .catch(
+                            (error) => {
+                                console.log(error);
+                    });
 
       },
        editStatus(row){

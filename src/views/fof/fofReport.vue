@@ -227,7 +227,7 @@
     :close-on-press-escape="false"
     :visible.sync="dialogVisible"
   >
-    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :visable="dialogVisible"></fund-echart>
+    <fund-echart       @close="editClose" ref="hischart"  :titles="current.name"  style="height: 600px" :code="cur_code"  :wk="0" :visable="dialogVisible"></fund-echart>
     </el-dialog>
   </div>
 </template>

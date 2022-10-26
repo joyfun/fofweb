@@ -37,6 +37,7 @@
       <el-card shadow="hover">
         <fund-echart
           ref="hischart"
+          :wk="0"
           style="height: 500px"
           :code="code"
         ></fund-echart>
@@ -313,7 +314,7 @@ export default {
           this.cur_code=""
           this.current=row
           this.cur_code=row.code
-          Bus.$emit("showChart",{"cur_code":this.cur_code,"diagName":"hisChart"})
+          Bus.$emit("showChart",{"cur_code":this.cur_code,"diagName":"hisChart","wk":'0'})
         //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
       },
             showChartByCodes(codes){

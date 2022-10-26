@@ -218,7 +218,7 @@ export default {
   data() {
     return {
       tags:["SiMuWang","GeShang","ZhaoYang",'邮件其它'],
-      types:["SiMuWang","GeShang","ZhaoYang",'2'],
+      types:["SiMuWang","GeShang","ZhaoYang",'1'],
       current: {},
       reqType: 'GeShang,SiMuWang,ZhaoYang',
       cur_code: "",
@@ -321,7 +321,7 @@ export default {
     },
 
     showHis(row){
-          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisChart"})
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisChart","orig":'1'})
       },
     handleClose(done) {
       done();

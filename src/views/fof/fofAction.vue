@@ -138,7 +138,7 @@ this.$axios({
             console.log(response.data)
         });       },
       downWeekly(){
-          window.location.href="/fof/downfile?code="+this.cur_fof+"&r="+Math.random()
+          window.location.href="/fof/downreport?code="+this.cur_fof+"&r="+Math.random()
       },
       updateparam(){
           var that=this

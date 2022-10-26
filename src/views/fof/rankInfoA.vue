@@ -15,18 +15,18 @@
       >
     </el-date-picker>
             <vxe-radio-group v-model="type" size="mini" :strict="false">
-            <vxe-radio-button label="aas" content="AAS"></vxe-radio-button>
-            <vxe-radio-button label="cta0" content="CTA0"></vxe-radio-button>
-            <vxe-radio-button label="cta1" content="CTA1"></vxe-radio-button>
-            <vxe-radio-button label="指增" content="指增"></vxe-radio-button>
-            <!----> <vxe-radio-button label="I5" content="Z5"></vxe-radio-button>
-            <vxe-radio-button label="I3" content="Z3"></vxe-radio-button>
-            <vxe-radio-button label="I1" content="Z1"></vxe-radio-button> 
-            <vxe-radio-button label="中性" content="中性"></vxe-radio-button>
-            <vxe-radio-button label="混合" content="混合"></vxe-radio-button>
-            <vxe-radio-button label="套利" content="套利"></vxe-radio-button>
-            <vxe-radio-button label="期权" content="期权"></vxe-radio-button>
-            <vxe-radio-button label="高费率" content="非常规"></vxe-radio-button>
+            <!-- --> <vxe-radio-button label="aas" content="AAS"></vxe-radio-button>
+            <vxe-radio label="cta0" content="CTA0"></vxe-radio>
+            <vxe-radio label="cta1" content="CTA1"></vxe-radio>
+            <vxe-radio label="指增" content="指增"></vxe-radio>
+            <!----> <vxe-radio label="I5" content="Z5"></vxe-radio>
+            <vxe-radio label="I3" content="Z3"></vxe-radio>
+            <vxe-radio label="I1" content="Z1"></vxe-radio> 
+            <vxe-radio label="中性" content="中性"></vxe-radio>
+            <vxe-radio label="混合" content="混合"></vxe-radio>
+            <vxe-radio label="套利" content="套利"></vxe-radio>
+            <vxe-radio label="期权" content="期权"></vxe-radio>
+            <vxe-radio label="非常规" content="非常规"></vxe-radio>
 
           </vxe-radio-group>
 
@@ -59,6 +59,12 @@
         >
                   <vxe-column  type="checkbox" width="30" fixed="left"></vxe-column>
                   <vxe-column type="seq" width="30" fixed="left"></vxe-column>
+                  <vxe-column width="80"  title="公司"  field="company" align="left" fixed="left"> 
+                            <template #default="{ row }">
+       <a href="javascript:;" @click="showCompany(row.company_code)">{{ row.company}}</a>
+               </template>
+
+</vxe-column>
           <!-- <vxe-column type="seq" width="60"></vxe-column> -->
           <vxe-column  width="180" field="code" align="left" :title="prodTitle" fixed="left" :title-help="{message: '默认显示排名前30%和历史平均排名进入前30%次数超过70%的产品'}">
               <template #header>
@@ -71,7 +77,7 @@
         <template #default="{ row }">
                                       <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
                             <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
-                            &nbsp;<vxe-button  @click.native.prevent="oneKeyBuy(row)" type="text" status="primary" size="small"><i class="iconfont icon-yijiangoumai" ></i></vxe-button>
+                            <!-- &nbsp;<vxe-button  @click.native.prevent="oneKeyBuy(row)" type="text" status="primary" size="small"><i class="iconfont icon-yijiangoumai" ></i></vxe-button> -->
        <a href="javascript:;" @click="showHis(row)">{{ showFundName(row.code)}}</a>
                            <!-- <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing" ></i></el-button>
                            <el-button  @click.native.prevent="showBaseHis(row)" type="text" size="small"><i class="el-icon-s-order" ></i></el-button>
@@ -148,7 +154,96 @@
                       <!-- <vxe-column sortable  title="分"  field="lscore" >
           </vxe-column>  -->
         </vxe-table> 
+        <el-dialog
+    width="80%"
+    top="50px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+     :visible.sync="showCompanyRanks"
+     > <vxe-toolbar>
+          <template #buttons>
+
+            <vxe-button @click="compareDatac">业绩对比</vxe-button>
+          </template>
+          </vxe-toolbar>
+     <vxe-table
+          ref="companyTable"
+          :align="allAlign"
+          size="mini"
+          :row-config="{keyField:'code',isCurrent: true, isHover: true}"
+          show-overflow
+          :sort-config="{trigger: 'cell', defaultSort: {field: 'rank', order: 'asc'}, orders: ['desc', 'asc', null]}"
+          :data="company_ranks"
+        >
+          <vxe-column  type="checkbox" width="30" fixed="left"></vxe-column>
+          <!-- <vxe-column type="seq" width="60"></vxe-column> -->
+          <vxe-column  width="180" field="code" align="left" :title="prodTitle" fixed="left" :title-help="{message: '默认显示排名前30%和历史平均排名进入前30%次数超过70%的产品'}">
+        <template #default="{ row }">
+                                      <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
+                            <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
+                            <!-- &nbsp;<vxe-button  @click.native.prevent="oneKeyBuy(row)" type="text" status="primary" size="small"><i class="iconfont icon-yijiangoumai" ></i></vxe-button> -->
+       <a href="javascript:;" @click="showHis(row)">{{ showFundName(row.code)}}</a>
+                           <!-- <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing" ></i></el-button>
+                           <el-button  @click.native.prevent="showBaseHis(row)" type="text" size="small"><i class="el-icon-s-order" ></i></el-button>
+                            <el-button  @click.native.prevent="showBaseInfo(row)" type="text" size="small"><i class="el-icon-info" ></i></el-button> -->
+
+
+            </template>
+          </vxe-column>
+
+          <!-- -->
+            <vxe-column   field="type" width="60" sortable :title="'子'" :filters="[]"  >
+            </vxe-column>
+           <vxe-column   field="rank" width="40" sortable :title="'rank'" >
+            </vxe-column>
+          <template  v-if="type=='高费率'">
+              <vxe-column field="fee" width="60"  title="fee"  ></vxe-column>
+              <vxe-column align="left" field="carry" width="160"  title="carry"  ></vxe-column>
+              <!-- <vxe-column field="perf_comp" width="80"  title="业绩提计方式"  ></vxe-column> -->
+              <vxe-column align="left" field="remark" width="240"  title="备注"  ></vxe-column>
+          </template>
+          <template  v-else>
+
+            <vxe-column field=" " width="2" sortable :title="' '"  >
+            </vxe-column>
+            <template  v-for=" tp of ['hyr','1yr','2yr']">
+           <vxe-colgroup  :key="tp" :title="yrdict[tp]+'排名信息('+rawlen+')平均'+avgcnt[range]+'个'" align="center" >
+
+
+             <vxe-column :field="'mean'+winlength[tp]" width="48" sortable :title="'mean%'"  >
+            </vxe-column>
+              <vxe-column :field="'listrate'+winlength[tp]" width="48" sortable :title="'listrate%'" >
+            </vxe-column>
+            <vxe-column :key="dkey" :field="dkey+winlength[tp]" width="48" sortable :title="dkey+'%'"  v-for="dkey in ['std']">
+            </vxe-column>
+            <vxe-column  :field="'meand'+winlength[tp]" width="48" sortable :title="'Δrank'" >
+            </vxe-column>
+                </vxe-colgroup>
+          <vxe-column  :key="'blank_'+tp" field=" " width="2" sortable :title="' '"  >
+            </vxe-column>
+            </template>
+          </template> 
+          <vxe-colgroup :title="yrdict[range]+'指标数据'" align="center">
+                <template #header>
+          <vxe-radio-group v-model="arange" :strict="false">
+            <vxe-radio label="hyr" content="半年"></vxe-radio>
+            <vxe-radio label="1yr" content="1年"></vxe-radio>
+            <vxe-radio label="2yr" content="2年 指标数据"></vxe-radio>
+          </vxe-radio-group>
+                        </template>   
+         <vxe-column :key="af" :width="48" sortable v-for="af of ['length','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','profit_loss','dd_ratio']"  :title="af" :field="af"  >
+            <template #default="{ row }">
+              <span>{{ row[af]}}</span>
+            </template>
+          </vxe-column>
+          </vxe-colgroup>
+
+                      <!-- <vxe-column sortable  title="分"  field="lscore" >
+          </vxe-column>  -->
+        </vxe-table> 
+    </el-dialog>
     </div>
+    
 </template>
 
  <script>
@@ -168,6 +263,7 @@ function isNumber(val) {
 
 import { mapGetters, mapMutations, mapState } from "vuex";
 import XLSX from 'xlsx'
+import Vue from 'vue'
 import FileSaver from 'file-saver'
 import Bus from '@/store/bus.js';
 export default {
@@ -229,6 +325,11 @@ export default {
                   this.getBaseInfo()
             },
      },
+    arange :{
+              handler(n){
+                  this.getBaseInfoA()
+            },
+     },
      date :{
               handler(n){
                   this.getProducts()
@@ -280,6 +381,8 @@ export default {
   data() {
     return {  
         statdict:{},
+        company_ranks:[],
+        showCompanyRanks:false,
         rawlen:0,
         filter:"",
         multipleSelection:[],
@@ -291,11 +394,12 @@ export default {
         showList:false,
         range:"hyr",
         brange:"hyr",
+        arange:"hyr",
         calcdate:"",
         baseData:{},
         rgdict:{},
         date: '',
-        type: 'aas',
+        type: 'cta0',
         yrdict: {"hyr":"半年","1yr":"一年","2yr":"两年","quarter":"三月"},
         avgcnt:{},
         subtypes:[],
@@ -305,6 +409,34 @@ export default {
     };
   },
   methods: {
+    getBaseInfoA(){
+               this.$axios
+        .get("/fof/baseinfo", { params: { date: this.date,type:this.type ,range:this.arange,code:this.company_ranks.map(row=>row.code).join()} })
+        .then((res) => {
+          this.company_ranks.map(r=>{r=Object.assign(r,res.data[r['code']])
+          for (let ak in r){
+            if(!isNaN(parseFloat(r[ak]))){
+              r[ak]=Math.floor(r[ak]*100)/100
+            }
+          }
+          return r
+          })
+          
+        })
+    },
+    showCompany(ccode){
+      this.$axios
+        .get("/fof/rank4", { params: { company_code:ccode,ftype:'投后',date: this.date,type:this.type ,range:this.range,weight_type:this.filters['weight_type']} })
+        .then((response) => {
+          let rets=response.data
+          Vue.set(this,"company_ranks",rets)
+          this.company_ranks=response.data
+          this.getBaseInfoA()
+          this.showCompanyRanks=true
+          console.log(rets)
+
+        })
+    },
     setSelect(){
       let selrow=this.tableData.filter(row=>this.multipleSelection.indexOf(row['code'])>-1)
       this.$refs.rankTable.setCheckboxRow(selrow, true)
@@ -552,6 +684,12 @@ return ''
           Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"diagName":"fullDialog"})
 
       },
+    compareDatac(){
+          console.log(this.$refs.companyTable.getCheckboxRecords())
+          let codes=this.$refs.companyTable.getCheckboxRecords().map(r=>r['code'])
+          Bus.$emit("showChart",{"cur_code":codes.join(','),"diagName":"fullDialog"})
+
+      },
     compareInvest(){
           let ntype=this.type
           console.log(ntype)
@@ -628,6 +766,7 @@ return ''
              row['dd_week']=this.baseData[row.code]['dd_week']
              row['length']=this.baseData[row.code]['tlength']
             }
+            this.nclassify(row)
             return row
           })
           this.statdict['yeaily_return']['max']=36

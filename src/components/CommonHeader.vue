@@ -104,7 +104,7 @@
           <el-descriptions-item label="预警">{{prodInfo.alarm}}</el-descriptions-item>
           <el-descriptions-item label="风险等级">{{prodInfo.risk_level}}</el-descriptions-item>
           <el-descriptions-item label="预期收益(年)">{{prodInfo.rate}}</el-descriptions-item>
-          <el-descriptions-item label="预期最大回撤">{{prodInfo.max_return}}</el-descriptions-item>
+          <el-descriptions-item label="预期最大回撤">{{prodInfo.max_drawdown}}</el-descriptions-item>
           <el-descriptions-item label="预期夏普">{{prodInfo.sharp}}</el-descriptions-item>
           <el-descriptions-item label="预期卡玛">{{prodInfo.calmar}}</el-descriptions-item>
           <el-descriptions-item label="其他关键条款">{{prodInfo.other}}</el-descriptions-item>
@@ -245,11 +245,10 @@
     :close-on-press-escape="false"
      :visible.sync="dialogVisible"
      >
-    
     <base-chart       @close="editClose" ref="basechart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='baseChart'"></base-chart>
     <rank-chart       @close="editClose" ref="rankchart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='rankChart'"></rank-chart>
     <compare-table      @close="editClose" ref="comparetable"  :code="cur_code"   v-if="diagName=='compareTable'"></compare-table>
-    <fund-echart       @close="editClose" ref="hischart"    style="height: 500px" :code="cur_code"   v-if="diagName=='hisChart'||diagName=='compareTable'"></fund-echart>
+    <fund-echart       @close="editClose" ref="hischart"    style="height: 500px" :code="cur_code"  :wk=this.wk v-if="diagName=='hisChart'||diagName=='compareTable'"></fund-echart>
     <his-table       @close="editClose" ref="histable"    style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
     <rank-table       @close="editClose" ref="ranktable"    style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
     <fof-simulate     @close="editClose" ref="simtable"   style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
@@ -528,6 +527,7 @@ export default {
         return{
             activeName:"首页",
             fullActive:"sumvaltab",
+            wk:"1",
             curAction: {},
             rules: {
         code: [{ required: true, message: "请选择基金", trigger: "blur" }],

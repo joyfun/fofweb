@@ -23,7 +23,7 @@
           :data="summaryData">
            <vxe-column field="type" width="80" title="类型"></vxe-column>
           <vxe-column  field="source"    title="来源" width="90">                     <template #default="{ row }">
-                             {{getSouce(row['source'])
+                             {{getSouce(row['source'],row['type'])
                              }}
             </template></vxe-column>
           <vxe-column field="cnt"  width="60" title="总个数" align="right"></vxe-column>
@@ -62,6 +62,12 @@
              <template #default="{ row }">
                              {{getRemark(row['source'])
                              }}
+                            <el-button type="primary" v-if="row.source=='SiMuWang'" @click="down_realfile('新旧值不匹配.xlsx')">下载新旧值不匹配</el-button>
+                            <el-button type="primary" v-if="row.source=='波动异常'" @click="down_realfile('净值波动异常数据.xlsx')">下载净值异常</el-button>
+                            <el-button type="primary" v-if="row.source=='复权异常'" @click="down_realfile('已投产品复权差异.xlsx')">下载已投复权差异</el-button>
+                            <el-button type="primary" v-if="row.source=='爬取异常'" @click="down_realfile('未投产品复权差异.xlsx')">下载未投复权差异</el-button>
+                            <el-button type="primary" v-if="row.source=='投后数据'" @click="down_realfile('收益数据'+summaryAll.header.ndate+'.xlsx')">下载投后数据</el-button>
+
             </template>
           </vxe-column>
 
@@ -97,14 +103,14 @@
     </el-card>
   </el-col> -->
    </el-row>
-   <el-row>
+   <!-- <el-row>
         <el-button type="primary" @click="down_realfile('净值波动异常数据.xlsx')">下载净值异常</el-button>
         <el-button type="primary" @click="down_realfile('已投产品净值波动差异.xlsx')">下载复权异常</el-button>
         <el-button type="primary" @click="down_realfile('收益数据'+summaryAll.header.ndate+'.xlsx')">下载投后分析数据</el-button>
 
-   </el-row>
+   </el-row> -->
    
-      <el-row>
+      <!-- <el-row>
   <el-col :span="24">
               <vxe-toolbar>
           <template #buttons>
@@ -135,7 +141,7 @@
           <vxe-column field="miss" sortable title="缺失数据"></vxe-column>
         </vxe-table>
   </el-col>
-    </el-row>
+    </el-row> -->
   </div>
 </template>
 
@@ -207,14 +213,14 @@ export default {
       let tmap={"股票":"jq.ASHAREEODPRICES","指数":"jq.AINDEXEODPRICES","期权":"jq.OPT_DAILY_PRICE","2":"fund_daily","1":"fund_daily","GeShang":"fund_val","SiMuWang":"fund_val","ZhaoYang":"fund_val"}
       return tmap[source]
     },
-    getSouce(type){
-      if(type=='1'){
+    getSouce(source,type){
+      if(source=='1'){
         return '邮件(日)'
       }
-      else if(type=='2'){
+      else if(source=='2'){
         return '邮件(周)'
       }
-      return type
+      return source
     },
     getIndex() {
       axis
@@ -284,7 +290,7 @@ export default {
  created() {
     // this.getIndex()
     // this.getAlarms()
-    this.getCheckData()
+    //this.getCheckData()
     this.getSummary()
   },
 };

@@ -26,7 +26,7 @@
             <vxe-radio label="混合" content="混合"></vxe-radio>
             <vxe-radio label="套利" content="套利"></vxe-radio>
             <vxe-radio label="期权" content="期权"></vxe-radio>
-            <vxe-radio label="高费率" content="非常规"></vxe-radio>
+            <vxe-radio label="非常规" content="非常规"></vxe-radio>
 
           </vxe-radio-group>
 
@@ -331,11 +331,21 @@ export default {
             
             if(arow.tlength>old.tlength){
             console.log(`#########${arow['company_code']}删除了前面产品${old['code']}:${old['rankF']}`)
+            if(this.holding.filter(hd=>hd['b_code']==old['code']).length>0){
+            console.log(`#########已购产品${old['code']}不删除`)
+            a++
+            continue
+            }
             this.deleteByCode(old['code'])
             cmap[arow['company_code']]=arow
             todel++
             }else{
             console.log(`#########${arow['company_code']}删除了后面产品${arow['code']}:${old['rankF']}`)
+            if(this.holding.filter(hd=>hd['b_code']==arow['code']).length>0){
+            console.log(`#########已购产品${arow['code']}不删除`)
+            a++
+            continue
+            }
             this.deleteByCode(arow['code'])
             todel++
             }

@@ -78,6 +78,10 @@ export default {
       type: String,
       default: "",
     },
+    wk: {
+      type: String,
+      default: "1",
+    },
     dstartdate: {
       type: String,
       default: "",
@@ -728,7 +732,7 @@ export default {
             car.push(acd)
           }
         }
-        data = { code: car.join(",") ,w:this.wts};
+        data = { code: car.join(",") ,w:this.wts,wk:this.wk};
       }
       axis
         .get(charturl, { params: data }) //axis后面的.get可以省略；
