@@ -15,7 +15,7 @@
       >
     </el-date-picker>
             <vxe-radio-group v-model="type" size="mini" :strict="false">
-            <!-- --> <vxe-radio-button label="aas" content="AAS"></vxe-radio-button>
+             <vxe-radio  v-if="ftype!='投后'" label="aas" content="AAS"></vxe-radio>
             <vxe-radio label="cta0" content="CTA0"></vxe-radio>
             <vxe-radio label="cta1" content="CTA1"></vxe-radio>
             <vxe-radio label="指增" content="指增"></vxe-radio>
@@ -33,7 +33,8 @@
           <vxe-radio-group v-model="range" :strict="false">
             <vxe-radio label="hyr" content="半年"></vxe-radio>
             <vxe-radio label="1yr" content="1年"></vxe-radio>
-            <vxe-radio label="quarter" content="3月"></vxe-radio>
+            <vxe-radio v-if="ftype=='投后'" label="quarter" content="3月"></vxe-radio>
+            <vxe-radio v-else label="2yr" content="2年"></vxe-radio>
           </vxe-radio-group>
                               <vxe-button @click="exportDataEvent">导出</vxe-button>
 
@@ -49,7 +50,6 @@
           ref="rankTable"
           :height="height"
           :align="allAlign"
-          :cell-style="cellClassBg"
           size="mini"
           :row-config="{keyField:'code',isCurrent: true, isHover: true}"
           show-overflow
@@ -71,7 +71,7 @@
                 {{prodTitle}}
                 <br>{{tableList.length}}
                   <vxe-switch v-model="showList" open-label="已投" :open-value="true" close-label="所有" :close-value="false"></vxe-switch>
-                  <vxe-input v-model="filter"  @keyup="filterNames" ></vxe-input>
+                  <vxe-input v-model="filter"  @change="filterNames" ></vxe-input>
 
               </template>
         <template #default="{ row }">
@@ -103,7 +103,7 @@
             </template>
           </vxe-column> 
           <!-- -->
-          <vxe-column  sortable  title="级别"  width="36" align="center" field="level" sort-by="lscore"  :filters="[{label: '甲', value: '甲'}, {label: '乙', value: '乙'}, {label: '丙', value: '丙'}, {label: '丁', value: '丁'}, {label: '戊', value: '戊'}]" :title-help="{message: '根据产品波动率和最大回撤对产品进行分级'}" >
+          <vxe-column v-if="ftype!='投后'" sortable  title="级别"  width="36" align="center" field="level" sort-by="lscore"  :filters="[{label: '甲', value: '甲'}, {label: '乙', value: '乙'}, {label: '丙', value: '丙'}, {label: '丁', value: '丁'}, {label: '戊', value: '戊'}]" :title-help="{message: '根据产品波动率和最大回撤对产品进行分级'}" >
           </vxe-column> 
             <vxe-column   field="sub_type" width="60" sortable :title="'子'" :filters="[]"  >
             </vxe-column>
@@ -124,10 +124,19 @@
 
 
              <vxe-column :field="'mean'+winlength[tp]" width="48" sortable :title="'mean%'"  >
+              <template #default="{ row }">
+                <span :class="'rank_text_color'+Math.floor(row['mean'+winlength[tp]+'_R']*4)">{{row['mean'+winlength[tp]]}}</span>
+              </template>
             </vxe-column>
               <vxe-column :field="'listrate'+winlength[tp]" width="48" sortable :title="'listrate%'" >
+              <template #default="{ row }">
+                <span :class="'rank_text_color'+Math.floor((1-row['listrate'+winlength[tp]+'_R'])*4)">{{row['listrate'+winlength[tp]]}}</span>
+              </template>
             </vxe-column>
             <vxe-column :key="dkey" :field="dkey+winlength[tp]" width="48" sortable :title="dkey+'%'"  v-for="dkey in ['std']">
+                <template #default="{ row }">
+                <span :class="'rank_text_color'+Math.floor(row['std'+winlength[tp]+'_R']*4)">{{row['std'+winlength[tp]]}}</span>
+              </template>
             </vxe-column>
             <vxe-column  :field="'meand'+winlength[tp]" width="48" sortable :title="'Δrank'" >
             </vxe-column>
@@ -144,9 +153,17 @@
             <vxe-radio label="2yr" content="2年 指标数据"></vxe-radio>
           </vxe-radio-group>
                         </template>   
-         <vxe-column :key="af" :width="48" sortable v-for="af of ['length','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','profit_loss','dd_ratio']"  :title="af" :field="af"  >
-            <template #default="{ row }">
-              <span>{{ row[af]}}</span>
+             <vxe-column  field="length" width="48" sortable title="length" >
+            </vxe-column>              
+         <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','profit_loss','dd_ratio']"  :title="af" :field="af"  >
+            <template v-if=" ['yeaily_return','sharpe','calmar','sortino', 'dd','win_ratio','profit_loss'].indexOf(af)>-1" #default="{ row }">
+              <span :class="'rank_text_color'+Math.floor(row[af+'_R']*4)">{{row[af]}}</span>
+            </template>
+            <!-- <template v-else-if="['dd_ratio'].indexOf(af)>-1" #default="{ row }">
+              <span :class="'rank_text_color'+Math.floor(row[af]/25)">{{row[af]}}</span>
+            </template> -->
+            <template v-else #default="{ row }">
+              <span >{{row[af]}}</span>
             </template>
           </vxe-column>
           </vxe-colgroup>
@@ -163,7 +180,13 @@
      > <vxe-toolbar>
           <template #buttons>
 
-            <vxe-button @click="compareDatac">业绩对比</vxe-button>
+            <vxe-button @click="compareDatac">业绩对比</vxe-button> 
+                      <vxe-radio-group v-model="srange" :strict="false">
+            <vxe-radio label="hyr" content="半年"></vxe-radio>
+            <vxe-radio label="1yr" content="1年"></vxe-radio>
+            <vxe-radio v-if="ftype=='投后'" label="quarter" content="3月"></vxe-radio>
+            <vxe-radio v-else label="2yr" content="2年"></vxe-radio>
+          </vxe-radio-group>
           </template>
           </vxe-toolbar>
      <vxe-table
@@ -192,7 +215,9 @@
           </vxe-column>
 
           <!-- -->
-            <vxe-column   field="type" width="60" sortable :title="'子'" :filters="[]"  >
+            <vxe-column   field="rank_type" width="80" sortable title="" :filters="[]"  >
+            </vxe-column>
+            <vxe-column   field="sub_type" width="80" sortable :title="'子'" :filters="[]"  >
             </vxe-column>
            <vxe-column   field="rank" width="40" sortable :title="'rank'" >
             </vxe-column>
@@ -210,11 +235,20 @@
            <vxe-colgroup  :key="tp" :title="yrdict[tp]+'排名信息('+rawlen+')平均'+avgcnt[range]+'个'" align="center" >
 
 
-             <vxe-column :field="'mean'+winlength[tp]" width="48" sortable :title="'mean%'"  >
+            <vxe-column :field="'mean'+winlength[tp]" width="48" sortable :title="'mean%'"  >
+              <template #default="{ row }">
+                <span :class="'rank_text_color'+Math.floor(row['mean'+winlength[tp]+'_R']*4)">{{row['mean'+winlength[tp]]}}</span>
+              </template>
             </vxe-column>
               <vxe-column :field="'listrate'+winlength[tp]" width="48" sortable :title="'listrate%'" >
+              <template #default="{ row }">
+                <span :class="'rank_text_color'+Math.floor((1-row['listrate'+winlength[tp]+'_R'])*4)">{{row['listrate'+winlength[tp]]}}</span>
+              </template>
             </vxe-column>
             <vxe-column :key="dkey" :field="dkey+winlength[tp]" width="48" sortable :title="dkey+'%'"  v-for="dkey in ['std']">
+                <template #default="{ row }">
+                <span :class="'rank_text_color'+Math.floor(row['std'+winlength[tp]+'_R']*4)">{{row['std'+winlength[tp]]}}</span>
+              </template>
             </vxe-column>
             <vxe-column  :field="'meand'+winlength[tp]" width="48" sortable :title="'Δrank'" >
             </vxe-column>
@@ -231,9 +265,17 @@
             <vxe-radio label="2yr" content="2年 指标数据"></vxe-radio>
           </vxe-radio-group>
                         </template>   
-         <vxe-column :key="af" :width="48" sortable v-for="af of ['length','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','profit_loss','dd_ratio']"  :title="af" :field="af"  >
-            <template #default="{ row }">
-              <span>{{ row[af]}}</span>
+            <vxe-column  field="length" width="48" sortable title="length" >
+            </vxe-column> 
+            <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','profit_loss','dd_ratio']"  :title="af" :field="af"  >
+            <template v-if=" ['yeaily_return','sharpe','calmar','sortino', 'dd','win_ratio','profit_loss'].indexOf(af)>-1" #default="{ row }">
+              <span :class="'rank_text_color'+Math.floor(row[af+'_R']*4)">{{row[af]}}</span>
+            </template>
+            <!-- <template v-else-if="['dd_ratio'].indexOf(af)>-1" #default="{ row }">
+              <span :class="'rank_text_color'+Math.floor(row[af]/25)">{{row[af]}}</span>
+            </template> -->
+            <template v-else #default="{ row }">
+              <span >{{row[af]}}</span>
             </template>
           </vxe-column>
           </vxe-colgroup>
@@ -251,7 +293,9 @@
            'cta1': [[-0.13, -0.15, -0.2], [0.15, 0.2, 0.25]]}
 const lvs=["丁","丙","乙","甲"]
 const class_dict = {'cta0': ['CTA'], 'cta1': ['CTA'], '中性': ['中性'],
-                 '指增': ['指增'], '套利': ['期权', '套利'],
+                 '指增': ['指增'], '套利': [ '套利'],
+                 '期权':['期权'],
+                 '混合':['混合'],
                  'aas': ['中性', 'CTA', '期权', '套利', '混合']}
 function isNumber(val) {
   if (parseFloat(val).toString() == "NaN") {
@@ -266,6 +310,25 @@ import XLSX from 'xlsx'
 import Vue from 'vue'
 import FileSaver from 'file-saver'
 import Bus from '@/store/bus.js';
+// const sort_key =['mean26','mean52','mean104','listrate26','listrate52','listrate104','std26','std52','std104','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio']
+
+const sort_key_r =['mean26','mean52','mean104','std26','std52','std104']
+const sort_key =['listrate26','listrate52','listrate104','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio']
+const sort_by = (field, reverse, primer) => {
+  const key = primer ?
+    function(x) {
+      return primer(x[field])
+    } :
+    function(x) {
+      return x[field]
+    };
+
+  reverse = !reverse ? 1 : -1;
+
+  return function(a, b) {
+    return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+  }
+}
 export default {
         //   components: {
         //     SankeyChart,
@@ -273,7 +336,11 @@ export default {
   props: {
     filters:{
       type: Object,
-      default:null
+      default:{'weight_type':''}
+    },
+    ftype:{
+      type:String,
+      default:''
     },
     full: {
       type: Boolean,
@@ -317,6 +384,12 @@ export default {
     range :{
               handler(n){
                   this.getProducts()
+            },
+    
+    },
+    srange :{
+              handler(n){
+                  this.getComanyPords()
             },
     
     },
@@ -393,8 +466,10 @@ export default {
         winlength:{'hyr':26,'1yr':52,'2yr':104,'quarter':13},
         showList:false,
         range:"hyr",
+        srange:"hyr",
         brange:"hyr",
         arange:"hyr",
+        company_code:"",
         calcdate:"",
         baseData:{},
         rgdict:{},
@@ -403,6 +478,7 @@ export default {
         yrdict: {"hyr":"半年","1yr":"一年","2yr":"两年","quarter":"三月"},
         avgcnt:{},
         subtypes:[],
+        trank:{},
         cls_gap:{"aas":{"limit":{"dd":[-0.1,0],"volatility":[0,0.15]},"level":{"dd":[-0.07,-0.05,-0.03]}},
                 "cta0":{"limit":{"dd":[-0.2,0],"dd_week":[0,60]},"level":{"dd":[-0.15,-0.07,-0.03]}},
                "cta1":{"limit":{"dd":[-0.2,0],"dd_week":[0,60]},"level":{"dd":[-0.15,-0.07,-0.03]}}}
@@ -424,18 +500,20 @@ export default {
           
         })
     },
-    showCompany(ccode){
-      this.$axios
-        .get("/fof/rank4", { params: { company_code:ccode,ftype:'投后',date: this.date,type:this.type ,range:this.range,weight_type:this.filters['weight_type']} })
+    getComanyPords(){
+this.$axios
+        .get("/fof/rank4", { params: { company_code:this.company_code,ftype:this.ftype,date: this.date,type:this.type ,range:this.srange,weight_type:this.filters['weight_type']} })
         .then((response) => {
           let rets=response.data
           Vue.set(this,"company_ranks",rets)
           this.company_ranks=response.data
           this.getBaseInfoA()
           this.showCompanyRanks=true
-          console.log(rets)
-
         })
+    },
+    showCompany(ccode){
+      this.company_code=ccode;
+      this.getComanyPords()
     },
     setSelect(){
       let selrow=this.tableData.filter(row=>this.multipleSelection.indexOf(row['code'])>-1)
@@ -489,11 +567,21 @@ export default {
             
             if(arow.tlength>old.tlength){
             console.log(`#########${arow['company_code']}删除了前面产品${old['code']}:${old['rankF']}`)
+            if(this.holding.filter(hd=>hd['b_code']==old['code']).length>0){
+            console.log(`#########已购产品${old['code']}不删除`)
+            a++
+            continue
+            }
             this.deleteByCode(old['code'])
             cmap[arow['company_code']]=arow
             todel++
             }else{
             console.log(`#########${arow['company_code']}删除了后面产品${arow['code']}:${old['rankF']}`)
+            if(this.holding.filter(hd=>hd['b_code']==arow['code']).length>0){
+            console.log(`#########已购产品${arow['code']}不删除`)
+            a++
+            continue
+            }
             this.deleteByCode(arow['code'])
             todel++
             }
@@ -548,66 +636,75 @@ export default {
 
     },
     cellClass1 ({ row, rowIndex, column, columnIndex }) {
-     if(row[column['field']]<0.3){
+     if(row[column['field']]<0.25){
         return 'col-green'
       }
      if(row[column['field']]<0.5){
         return ''
       }
-      if(row[column['field']]<0.7){
+      if(row[column['field']]<0.75){
         return 'col-orange'
       }
-     if(row[column['field']]>=0.7){
+     if(row[column['field']]>=0.75){
         return 'col-red'
       }
 return ''
             },
     cellClass2 ({ row, rowIndex, column, columnIndex }) {
-     if(row[column['field']]<0.3){
+     if(row[column['field']]<0.25){
         return 'col-red'
       }
      if(row[column['field']]<0.5){
         return 'col-orange'
       }
-      if(row[column['field']]<0.7){
+      if(row[column['field']]<0.75){
         return ''
       }
-     if(row[column['field']]>=0.7){
+     if(row[column['field']]>=0.75){
         return 'col-green'
       }
 return ''
             },
     cellClassBg ({ row, rowIndex, column, columnIndex }) {
-      if(['yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio'].indexOf(column['field'])>-1){
-        if(this.statdict[column['field']]){
-        let rg=(row[column['field']]-this.statdict[column['field']]["min"])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
-      let clr=this.genColor(rg)
-            return {
-                    color: clr
-                  }
-                  }
+      let clr=''
+      if(sort_key.indexOf(column['field'])>-1){
+       clr=this.genColor(row[column['field']+'_R'])
+          return {color: clr}
+      }else if(sort_key_r.indexOf(column['field'])>-1){
+       clr=this.genColor(1-row[column['field']+'_R'])
+          return {color: clr}
+      }else if(column['field']=='dd_ratio'){
+       clr=this.genColor(1-row[column['field']]/100)
+             return {color: clr}
       }
-      else if(column['field']&&column['field'].startsWith("std")){
-        let rg=(this.statdict[column['field']]["max"]-row[column['field']])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
-      let clr=this.genColor(rg)
-            return {
-                    color: clr
-                  }}
-      else if(column['field']&&column['field'].startsWith("mean")&&this.statdict[column['field']]){
-        let rg=(this.statdict[column['field']]["max"]-row[column['field']])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
-      let clr=this.genColor(rg)
-            return {
-                    color: clr
-                  }}
-        else if(column['field']&&column['field'].startsWith("listrate")){
-        let rg=(row[column['field']]-this.statdict[column['field']]["min"])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
-      let clr=this.genColor(rg)
-            return {
-                    color: clr
-                  }}
-      else if(column['field']&&column['field']=='dd_ratio'){
-            return { color:row[column['field']]>=90?'#66ff00':''}
-      }
+      return {color: clr}
+            // if(['yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio'].indexOf(column['field'])>-1){
+      //   if(this.statdict[column['field']]){
+      //   let rg=(row[column['field']]-this.statdict[column['field']]["min"])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
+      // 
+      //             }
+      // }
+      // else if(column['field']&&column['field'].startsWith("std")){
+      //   let rg=(this.statdict[column['field']]["max"]-row[column['field']])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
+      // let clr=this.genColor(rg)
+      //       return {
+      //               color: clr
+      //             }}
+      // else if(column['field']&&column['field'].startsWith("mean")&&this.statdict[column['field']]){
+      //   let rg=(this.statdict[column['field']]["max"]-row[column['field']])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
+      // let clr=this.genColor(rg)
+      //       return {
+      //               color: clr
+      //             }}
+      //   else if(column['field']&&column['field'].startsWith("listrate")){
+      //   let rg=(row[column['field']]-this.statdict[column['field']]["min"])/(this.statdict[column['field']]["max"]-this.statdict[column['field']]["min"])
+      // let clr=this.genColor(rg)
+      //       return {
+      //               color: clr
+      //             }}
+      // else if(column['field']&&column['field']=='dd_ratio'){
+      //       return { color:row[column['field']]>=90?'#66ff00':''}
+      // }
             },
      nclassify(row){
        let lmts=level_dic['common'] 
@@ -724,11 +821,12 @@ return ''
         .then((response) => {
           this.baseData =response.data
           this.tableData.map(row=>{
+            this.trank[row.code]={}
             if(this.baseData[row.code]){
               row['company_code']=this.baseData[row.code]['company_code']
+              //获取持仓信息 待优化
               let holds=this.holding.filter(hd=>hd['b_code']==row['code'])
               if(holds.length>0){
-                  console.log(holds)
                   row['marketval']=holds.reduce((prev,r)=>{
                     return prev+r['marketval']},0)
               }
@@ -766,24 +864,28 @@ return ''
              row['dd_week']=this.baseData[row.code]['dd_week']
              row['length']=this.baseData[row.code]['tlength']
             }
-            this.nclassify(row)
+            // this.nclassify(row)
             return row
           })
-          this.statdict['yeaily_return']['max']=36
-          // this.filterCompay()
+          console.log(this.tableData)
+          // for var prop in ['yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio']:
+          // this.tableData.sort(sort_by('price', true, parseFloat))
+          this.filterCompay()
           this.filterNames()
 
           // this.$nextTick(()=>{
           this.$refs.rankTable.setFilter(this.$refs.rankTable.getColumnByField('sub_type'), this.subtypes.map(st=>{return  { label: st, value: st }}))
+          print(this.$refs.rankTable.getSortColumns())
           this.$refs.rankTable.reloadData(this.tableList)
           this.setSelect()
-          this.$refs.rankTable.sort({field: 'rank', order: 'asc'})
+          // this.$refs.rankTable.sort({field: 'rank', order: 'asc'})
           // })
         })
         .catch((error) => {
           console.log(error);
         }); 
     },
+
     rgbaToHex(color) {
 	        var values = color
 	          .replace(/rgba?\(/, '')
@@ -800,54 +902,57 @@ return ''
 	          ("0" + g.toString(16)).slice(-2) +
 	          ("0" + b.toString(16)).slice(-2);
 	    },
+
     genColor(n) {
             //       黄色（深黄）#FFB90F
             // 黄色（中黄）#EEC900
             // 绿色（深绿）#0ce91f69
             // 绿色（中绿）#88b924d3
-      let color='#0B5345'
-      if(n>=0.7){
+      let colors=['#FFFFFF','#FFB90F','#229954','#FFFFFF']
+      let color='#FFFFFF'
+      if(n>=0.75){
         color='#ff0000'
       }
       else if(n>=0.5){
         color='#FFB90F'
       }
-      else if(n>=0.3){
+      else if(n<=0.25){
         color='#229954'
       }
+      console.log(`${n}  ${n*4} ${color}`)
       return color
 
-	    	let halfMax = 0.5  //最大数值的二分之一
-	        //var 百分之一 = (单色值范围) / halfMax;  单颜色的变化范围只在50%之内
-	        var one = 255 / halfMax; 
-	        var r = 0;
-	        var g = 0;
-	        var b = 0;
+	    	// let halfMax = 0.5  //最大数值的二分之一
+	      //   //var 百分之一 = (单色值范围) / halfMax;  单颜色的变化范围只在50%之内
+	      //   var one = 255 / halfMax; 
+	      //   var r = 0;
+	      //   var g = 0;
+	      //   var b = 0;
 
 
-	        if (n < halfMax) {
-	          // 比例小于halfMax的时候红色是越来越多的,直到红色为255时(红+绿)变为黄色.
-	          r = one * n;  
-	          g = 255;
-	        }
+	      //   if (n < halfMax) {
+	      //     // 比例小于halfMax的时候红色是越来越多的,直到红色为255时(红+绿)变为黄色.
+	      //     r = one * n;  
+	      //     g = 255;
+	      //   }
 
-	        if (n >= halfMax) {
-	          // 比例大于halfMax的时候绿色是越来越少的,直到0 变为纯红
-	          g = (255 - ((n - halfMax) * one)) < 0 ? 0 : (255 - ((n - halfMax) * one))
-	          r = 255;
+	      //   if (n >= halfMax) {
+	      //     // 比例大于halfMax的时候绿色是越来越少的,直到0 变为纯红
+	      //     g = (255 - ((n - halfMax) * one)) < 0 ? 0 : (255 - ((n - halfMax) * one))
+	      //     r = 255;
 
-	        }
-	        r = parseInt(r);// 取整
-	        g = parseInt(g);// 取整
-	        b = parseInt(b);// 取整
+	      //   }
+	      //   r = parseInt(r);// 取整
+	      //   g = parseInt(g);// 取整
+	      //   b = parseInt(b);// 取整
 
-	        // console.log(r,g,b)
-	        return this.rgbaToHex("rgb(" + r + "," + g + "," + b + ")");
+	      //   // console.log(r,g,b)
+	      //   return this.rgbaToHex("rgb(" + r + "," + g + "," + b + ")");
 	    },
     getProducts() {
 
       this.$axios
-        .get("/fof/rank3", { params: { ftype:'投后',date: this.date,type:this.type ,range:this.range,weight_type:this.filters['weight_type']} })
+        .get("/fof/rank3", { params: { ftype:this.ftype,date: this.date,type:this.type ,range:this.range,weight_type:this.filters['weight_type']} })
         .then((response) => {
           this.rgdict={}
           this.subtypes=[]
@@ -857,6 +962,12 @@ return ''
             if(this.subtypes.indexOf(row['sub_type'])<0){
               this.subtypes.push(row['sub_type'])
             }
+            for(var key of ['mean26','mean52','mean104','listrate26','listrate52','listrate104','std26','std52','std104']){
+            if(row[key]){
+              row[key]=this.$tools.formatMoney((parseFloat(row[key])*100),2)
+          }
+            }
+
             for(let rg of ['hyr','1yr','2yr']){
             //   if(row['rankF_'+rg]){
             //     row['rankF_'+rg+'_r']=row['rankF_'+rg].split("-")[0]
@@ -866,34 +977,34 @@ return ''
             //   }
             row['meand'+this.winlength[rg]]=row['meanr'+this.winlength[rg]]-row['rank']
             }
-            for(let key in row){
-                if(['mean26','mean52','mean104','listrate26','listrate52','listrate104','std26','std52','std104'].indexOf(key)>-1){
-                  row[key]=this.$tools.formatMoney((parseFloat(row[key])*100),2)
-                 if(isNumber(row[key])){
-                    let tmp=this.statdict[key]
-                    if(tmp){
+            // for(let key in row){
+            //     if(['mean26','mean52','mean104','listrate26','listrate52','listrate104','std26','std52','std104'].indexOf(key)>-1){
+            //       row[key]=this.$tools.formatMoney((parseFloat(row[key])*100),2)
+            //      if(isNumber(row[key])){
+            //         let tmp=this.statdict[key]
+            //         if(tmp){
 
-                    }else{
-                      tmp={"max":row[key],"min":row[key]}
-                      this.statdict[key]=tmp
-                    }
-                    if(row[key]>tmp["max"]){
-                      tmp["max"]=parseFloat(row[key])
-                    }
-                    if(row[key]<tmp["min"]){
-                      tmp["min"]=parseFloat(row[key])
-                    }
-                  }
-                }
-                // if(['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility'].indexOf(key)>-1){
-                //                       let fcnt=2
-                //                       let rval=parseFloat(row[key])
-                //                       if(rval>=10){
-                //                         fcnt=1
-                //                       }
-                //                       row[key]=rval.toFixed(fcnt)
-                // }
-              }
+            //         }else{
+            //           tmp={"max":row[key],"min":row[key]}
+            //           this.statdict[key]=tmp
+            //         }
+            //         if(row[key]>tmp["max"]){
+            //           tmp["max"]=parseFloat(row[key])
+            //         }
+            //         if(row[key]<tmp["min"]){
+            //           tmp["min"]=parseFloat(row[key])
+            //         }
+            //       }
+            //     }
+            //     // if(['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility'].indexOf(key)>-1){
+            //     //                       let fcnt=2
+            //     //                       let rval=parseFloat(row[key])
+            //     //                       if(rval>=10){
+            //     //                         fcnt=1
+            //     //                       }
+            //     //                       row[key]=rval.toFixed(fcnt)
+            //     // }
+            //   }
            return row
 
           })
@@ -905,7 +1016,7 @@ return ''
 
           
       this.$axios
-        .get("/fof/rankstat", { params: { ftype:'投后',date: this.date,type:this.type} })
+        .get("/fof/rankstat", { params: { ftype:this.ftype,date: this.date,type:this.type} })
         .then((response) => {
         this.avgcnt=response.data
         for (let k in this.avgcnt){
@@ -959,7 +1070,21 @@ return ''
 .el-button+.el-button{
     margin-left: 0px;
 }
-
+        .rank_text_color0{
+        color: #ff0000;
+        }
+        .rank_text_color1{
+        color: #FFB90F;
+        }
+        .rank_text_color3{
+        color: #229954;
+        }
+        .rank_text_color4{
+        color: #229954;
+        }
+        .rank_text_color2{
+        color: #000000;
+        }
         .mytable-style .col--group {
           border:2px ;
         }

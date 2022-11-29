@@ -131,9 +131,6 @@ export default {
                             path: '/fundinfo',
                             label: '初选基金管理',
                             name:'fund-info',
-                            params:{
-                                type:'1',
-                            },
                             icon:'setting'
                         }],
                          "invest":[

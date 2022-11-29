@@ -1,0 +1,121 @@
+GET https://fof.12345fund.com/api/v1/zyfp_dst_fund_details/get_history_nav?rows=10&order_type=-1&page=1&fund_id=298741&dst=1
+cookie: acw_tc=0bca30fe16600934034876089e015c674d01afc9330069c9d01e483c026fc0; sntpwt=dcb91fee7c6449cf9dec2b22587d0304; sntpauth=eyJhdXRoTGlzdCI6WyJHb2Z1bmRfMDlfMDEiLCJHb2Z1bmRfMDVfMDFfMDEiLCJHb2Z1bmRfMDgiLCJHb2Z1bmRfMDlfMDIiLCJHb2Z1bmRfMDYiLCJHb2Z1bmRfMDRfMDFfMDFfMDEiLCJHb2Z1bmRfMDRfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDFfMDVfMDQiLCJHb2Z1bmRfMDJfMDNfMDEiLCJHb2Z1bmRfMDVfMDFfMDIiLCJHb2Z1bmRfMDRfMDFfMDFfMDQiLCJHb2Z1bmRfMDkiLCJHb2Z1bmRfMTJfMDEiLCJHb2Z1bmRfMDRfMDFfMDJfMDEiLCJHb2Z1bmRfMTIiLCJHb2Z1bmRfMTMiLCJHb2Z1bmRfMDJfMDNfMDJfMDEiLCJHb2Z1bmRfMDRfMDFfMDJfMDIiLCJHb2Z1bmRfMDJfMDNfMDJfMDIiLCJHb2Z1bmRfMDJfMDMiLCJHb2Z1bmRfMTNfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDEiLCJHb2Z1bmRfMTNfMDFfMDJfMDEiLCJHb2Z1bmRfMTNfMDFfMDFfMDQiLCJHb2Z1bmRfMDZfMDIiLCJHb2Z1bmRfMDZfMDEiLCJHb2Z1bmRfMDNfMDFfMDFfMDEiLCJHb2Z1bmRfMDJfMDFfMDIiLCJHb2Z1bmRfMDNfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDFfMDQiLCJHb2Z1bmRfMDhfMDEiLCJHb2Z1bmRfMTNfMDFfMDJfMDIiLCJHb2Z1bmRfMDNfMDFfMDFfMDQiLCJHb2Z1bmRfMDNfMDFfMDJfMDEiLCJHb2Z1bmRfMDZfMDJfMDEiLCJHb2Z1bmRfMTUiLCJHb2Z1bmRfMDIiLCJHb2Z1bmRfMDhfMDIiLCJHb2Z1bmRfMDJfMDFfMDFfMDEiLCJHb2Z1bmRfMDNfMDFfMDJfMDIiLCJHb2Z1bmRfMDZfMDJfMDIiLCJHb2Z1bmRfMTVfMDEiLCJHb2Z1bmRfMDMiLCJHb2Z1bmRfMDJfMDFfMDFfMDIiLCJHb2Z1bmRfMDZfMDRfMDEiLCJHb2Z1bmRfMDQiLCJHb2Z1bmRfMDJfMDFfMDVfMDEiLCJHb2Z1bmRfMTVfMDIiLCJHb2Z1bmRfMDJfMDFfMDVfMDIiLCJHb2Z1bmRfMDZfMDRfMDIiLCJHb2Z1bmRfMDUiXSwiZHV0eVZvTGlzdCI6W10sIndlYnNpdGUiOiJodHRwczovL2ZvZi4xMjM0NWZ1bmQuY29tIiwicHJvamVjdElkIjoiY20yY3BsIiwiaGFzTW9iaWxlIjp0cnVlLCJhY2NvdW50RXhjIjpmYWxzZSwiYWNjb3VudFR5cGUiOjMsImFjY291bnROYW1lIjoiUDAwMDQwODAyMSIsInZvcmdJZCI6bnVsbCwiaXNTaG93QWxsIjoxLCJpc0F1dGgiOjB9; sntpsign=9f426f5c9aed7e86c84839d84276e096
+x-pro: cm2cpl
+
+
+POST https://fof.12345fund.com/api/v1/zyfp_dst_fund_search/org_search
+content-type: application/json;charset=UTF-8
+cookie: acw_tc=0bca30fe16570915936582227e016b260bc806e2cc61b7817a33a3f452e663; sntpwt=ef983b1b9c7640d1a5bfcd98fa431e2e; sntpauth=eyJhdXRoTGlzdCI6WyJHb2Z1bmRfMDlfMDEiLCJHb2Z1bmRfMDVfMDFfMDEiLCJHb2Z1bmRfMDgiLCJHb2Z1bmRfMDlfMDIiLCJHb2Z1bmRfMDYiLCJHb2Z1bmRfMDRfMDFfMDFfMDEiLCJHb2Z1bmRfMDRfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDFfMDVfMDQiLCJHb2Z1bmRfMDJfMDNfMDEiLCJHb2Z1bmRfMDVfMDFfMDIiLCJHb2Z1bmRfMDRfMDFfMDFfMDQiLCJHb2Z1bmRfMDkiLCJHb2Z1bmRfMTJfMDEiLCJHb2Z1bmRfMDRfMDFfMDJfMDEiLCJHb2Z1bmRfMTIiLCJHb2Z1bmRfMTMiLCJHb2Z1bmRfMDJfMDNfMDJfMDEiLCJHb2Z1bmRfMDRfMDFfMDJfMDIiLCJHb2Z1bmRfMDJfMDNfMDJfMDIiLCJHb2Z1bmRfMDJfMDMiLCJHb2Z1bmRfMTNfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDEiLCJHb2Z1bmRfMTNfMDFfMDJfMDEiLCJHb2Z1bmRfMTNfMDFfMDFfMDQiLCJHb2Z1bmRfMDZfMDIiLCJHb2Z1bmRfMDZfMDEiLCJHb2Z1bmRfMDNfMDFfMDFfMDEiLCJHb2Z1bmRfMDJfMDFfMDIiLCJHb2Z1bmRfMDNfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDFfMDQiLCJHb2Z1bmRfMDhfMDEiLCJHb2Z1bmRfMTNfMDFfMDJfMDIiLCJHb2Z1bmRfMDNfMDFfMDFfMDQiLCJHb2Z1bmRfMDNfMDFfMDJfMDEiLCJHb2Z1bmRfMDZfMDJfMDEiLCJHb2Z1bmRfMTUiLCJHb2Z1bmRfMDIiLCJHb2Z1bmRfMDhfMDIiLCJHb2Z1bmRfMDJfMDFfMDFfMDEiLCJHb2Z1bmRfMDNfMDFfMDJfMDIiLCJHb2Z1bmRfMDZfMDJfMDIiLCJHb2Z1bmRfMTVfMDEiLCJHb2Z1bmRfMDMiLCJHb2Z1bmRfMDJfMDFfMDFfMDIiLCJHb2Z1bmRfMDZfMDRfMDEiLCJHb2Z1bmRfMDQiLCJHb2Z1bmRfMDJfMDFfMDVfMDEiLCJHb2Z1bmRfMTVfMDIiLCJHb2Z1bmRfMDJfMDFfMDVfMDIiLCJHb2Z1bmRfMDZfMDRfMDIiLCJHb2Z1bmRfMDUiXSwiZHV0eVZvTGlzdCI6W10sIndlYnNpdGUiOiJodHRwczovL2ZvZi4xMjM0NWZ1bmQuY29tIiwicHJvamVjdElkIjoiY20yY3BsIiwiaGFzTW9iaWxlIjp0cnVlLCJhY2NvdW50RXhjIjpmYWxzZSwiYWNjb3VudFR5cGUiOjMsImFjY291bnROYW1lIjoiUDAwMDQwODAyMSIsInZvcmdJZCI6bnVsbCwiaXNTaG93QWxsIjoxLCJpc0F1dGgiOjB9; sntpsign=24ffcf175dc26a1e92e8a05461e6e0d8
+
+{
+            "is_hg": 1,
+            "cust": "5nhdp6",
+            "return_field": [
+                "org_name",
+                "org_full_name",
+                "reg_code",
+                "is_reg",
+                "asset_mgt_scale_range",
+                "reg_capital",
+                "core_member",
+                "foundation_date",
+                "city",
+                "master_strategy",
+                "manage_type",
+                "fund_num2",
+                "fund_num"
+            ],
+            "arithmetic_period": "month",
+            "page": 1,
+            "rows": 20,
+            "dst": 101,
+            "order": "fund_num",
+            "order_type": -1,
+            "advanced_filter": {},
+            "config_search": {}
+}
+
+
+POST https://www.licai.com/api/v1/data/simu/product/netvalue
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+cache-control: no-cache
+content-type: application/json;charset=UTF-8
+cookie: sessionid=cpiyie2m9gvp9g8o5i77gdqqtxtp50qf;
+
+{"product_id":"P251944"}
+
+
+POST https://www.licai.com/api/v1/data/product/video
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+cache-control: no-cache
+client-type: pc
+content-length: 88
+content-type: application/json;charset=UTF-8
+cookie: sessionid=kt3s8tpia3stfr9qqbruolgweb0717cu;
+origin: https://www.licai.com
+
+{"product_id":"P251944","company_id":"C00004867","manager_id":["M00032175","M00032103"]}
+
+
+POST https://www.licai.com/api/v1/auth/login
+accept: application/json, text/plain, */*
+cookie: sessionid=kt3s8tpia3stfr9qqbruolgweb0717cu;
+
+{"password":"ZYYXSM123","username":"13916427906"}
+
+GET https://www.licai.com
+
+
+POST https://fof.simuwang.com/Login/login
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+content-type: application/json;charset=UTF-8
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36
+
+{"username":"18801165008","pass":"+d56EyBtPEgSMEhNEc5V9w==","usertype":2,"rem":1}
+
+GET https://fof.simuwang.com/dataservice/v1/secuirties/quick-search?userId=553742&word=SCW118&searchType=Fund&num=12
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+content-type: application/json;charset=UTF-8
+cookie: Hm_lvt_c3f6328a1a952e922e996c667234cdae=1648429723; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221740344%22%2C%22first_id%22%3A%221740344%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217e46cddcf628f-0d0ca7dce42e37-7f697c63-2304000-17e46cddcf788b%22%7D; certification=1; qualified_investor=1; focus-certification-pop=-1; cur_ck_time=1666159230; ck_request_key=JBgd3zI7dIPtBuc1rkyNVU9dSGDm9oGiC5J%2Bc277ZgM%3D; rz_rem_u_p=jaLzzOM4MeirNXMNdIgW%2F%2B6Sf302rFInfY88tQcTMZ0%3D%24tYkvz1s%2BkJf56f0%2F48R%2BoQdvREFYDbiS9SZp0965XOI%3D; evaluation_result=5; PHPSESSID=ooqtot9q72pkrrl6th2qif55l6; rem_username=1; 9d46d29a2c7821f5444536df9e761393=18801165008%2C755b14c58365fd9437a758c236d5c8e8%2C1814ebc2b9dcda6e6701388934aded48ee58efc0%2C2%2Cmaster; 49f290d6e8459c53f31f97de37921086=r32m2IB6da2xd6WrhqunmYbOp2yZsqeYsaF8YsdpvN62pqvVjYl9bcet06yGuNHMhrieaYN8fdywooeosXvNzrFsspeCeqOfx3qqrpyXxtmc0YiehWhsm8iJb24; passport=553742%09%E9%99%88%E6%9D%B0%E5%8D%8E%E9%81%93%E8%B5%84%E6%9C%AC%09DlYFUAgDAQVZUQUFA1BfAQVRUAMAClAFBA8GU1UMVF0%3Dfdba3b7745; http_tK_cache=1814ebc2b9dcda6e6701388934aded48ee58efc0; fof_passport=553742%0918801165008%09%E9%99%88%E6%9D%B0%E5%8D%8E%E9%81%93%E8%B5%84%E6%9C%AC; stat_passport=553742%0918801165008%09%E9%99%88%E6%9D%B0%E5%8D%8E%E9%81%93%E8%B5%84%E6%9C%AC; c034c9c0fdf5cdb54c7cf29546669be9=1873b17ea9c7e409de38765a84b3dac9; master_common_token=y4Kzs5n7xJ0PpSFrhl4j%2BlVKXHlSofL%2BmoFJhV2TFwoNKfnrTePguUSXw%2FC%2BjV9jBPTiHsetIZwnhH3%2BUBjvhyQEO3Kp0ZR7QE1Gr%2B%2Fn3lQl9ewLpJn5thOcACOZLXssDpMxSbmNCBHrDeZ93Pq8DbNOVyytJcabGhC2CW2CZeewQI8jEqxGzlnbynRsq8QDRGC1SWh2kpjBSQ8aW6KNLg%3D%3D; smppw_user_type=2; uc_login_stat=1
+
+GET https://s.simuwang.com/www/quick/?search_type=fund&q=SCW118&callback=__jp1
+
+
+POST https://www.licai.com/api/v1/search/product
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+content-type: application/json;charset=UTF-8
+cookie: sessionid=cpiyie2m9gvp9g8o5i77gdqqtxtp50qf;
+
+{
+  "amac_id": "SLY320",
+  "num": 20,
+  "offset": 0,
+  "source": "pc",
+  "type": "simu",
+  "domainFilter": [
+    "jiaming"
+  ]
+}
+
+
+GET https://iclubh5.gtmc.com.cn/carbon-api/user/dailytask/totalList
+accessToken:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZU1pbGxpcyI6IjE2NjczNzM3ODY5NjAiLCJVU0VSX0lEIjoiMTA3NDAiLCJVU0VSX05BTUUiOiI1Ym0vNUxpd09UVXlOamd6IiwiZXhwIjoxNjY3NDYwMTg2fQ.AbJFQAmvHJE5aRI7ynbEJ5r-vyh_pw1pPXp74f76zDA
+
+
+GET https://carapp.gtmc.com.cn/api/vhcApp/lookForCar/fixedPosition?vin=
+accessToken:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZU1pbGxpcyI6IjE2NjczNzM3ODY5NjAiLCJVU0VSX0lEIjoiMTA3NDAiLCJVU0VSX05BTUUiOiI1Ym0vNUxpd09UVXlOamd6IiwiZXhwIjoxNjY3NDYwMTg2fQ.AbJFQAmvHJE5aRI7ynbEJ5r-vyh_pw1pPXp74f76zDA
+
+
+
+POST https://iclubh5.gtmc.com.cn/carbon-api/user/dailytask/finishTask
+accessToken:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZU1pbGxpcyI6IjE2NjczNzM3ODY5NjAiLCJVU0VSX0lEIjoiMTA3NDAiLCJVU0VSX05BTUUiOiI1Ym0vNUxpd09UVXlOamd6IiwiZXhwIjoxNjY3NDYwMTg2fQ.AbJFQAmvHJE5aRI7ynbEJ5r-vyh_pw1pPXp74f76zDA
+content-type: application/x-www-form-urlencoded;
+
+taskId=20&taskBigClassify=2&finished=3&id=20

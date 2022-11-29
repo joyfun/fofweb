@@ -321,7 +321,7 @@ export default {
     },
 
     showHis(row){
-          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisChart","orig":'1'})
+          Bus.$emit("showChart",{"cur_code":row.code,"diagName":"hisChart","orig":1})
       },
     handleClose(done) {
       done();

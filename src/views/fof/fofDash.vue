@@ -656,7 +656,7 @@ export default {
       }
     },
      showFundHis(row){
-          Bus.$emit("showChart",{"cur_code":row.b_code,"diagName":"hisChart"})
+          Bus.$emit("showChart",{"cur_code":row.b_code,"diagName":"hisChart","wk":"0"})
 
       },
       showHis(row){

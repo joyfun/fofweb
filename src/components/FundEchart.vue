@@ -51,6 +51,7 @@ import {mapGetters} from 'vuex'
 // import DB from '@/store/localapi.js';
 // import * as df from "danfojs/dist/index";
 import RankTable from '@/components/RankTable';
+import { isInteger } from 'xe-utils';
 var echarts = require("echarts");
 // 引入柱状图
 // require('echarts/lib/chart/line');
@@ -81,6 +82,10 @@ export default {
     wk: {
       type: String,
       default: "1",
+    },
+    orig: {
+      type: Number,
+      default: 0,
     },
     dstartdate: {
       type: String,
@@ -725,6 +730,10 @@ export default {
         }
       } else if (code && code.length > 2) {
         charturl = "/fof/hisdata";
+        console.log(this.orig)
+        if(this.orig){
+          charturl="/fof/hisorig"
+        }
         let cds=code.split(",")
         let car=[]
         for (var acd of cds ){

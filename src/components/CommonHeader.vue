@@ -108,9 +108,6 @@
           <el-descriptions-item label="预期夏普">{{prodInfo.sharp}}</el-descriptions-item>
           <el-descriptions-item label="预期卡玛">{{prodInfo.calmar}}</el-descriptions-item>
           <el-descriptions-item label="其他关键条款">{{prodInfo.other}}</el-descriptions-item>
-          <el-descriptions-item label="渠道">{{prodInfo.channel}}</el-descriptions-item>
-          <el-descriptions-item label="渠道联系人">{{prodInfo.channel_man}}</el-descriptions-item>
-          <el-descriptions-item label="渠道联系方式">{{prodInfo.channel_contact}}</el-descriptions-item>
     </el-descriptions>
   </el-dialog>
 
@@ -241,6 +238,7 @@
   <el-dialog
     width="80%"
     top="50px"
+    append-to-body
     :close-on-click-modal="false"
     :close-on-press-escape="false"
      :visible.sync="dialogVisible"
@@ -248,7 +246,7 @@
     <base-chart       @close="editClose" ref="basechart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='baseChart'"></base-chart>
     <rank-chart       @close="editClose" ref="rankchart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='rankChart'"></rank-chart>
     <compare-table      @close="editClose" ref="comparetable"  :code="cur_code"   v-if="diagName=='compareTable'"></compare-table>
-    <fund-echart       @close="editClose" ref="hischart"    style="height: 500px" :code="cur_code"  :wk=this.wk v-if="diagName=='hisChart'||diagName=='compareTable'"></fund-echart>
+    <fund-echart       @close="editClose" ref="hischart"    style="height: 500px" :code="cur_code"  :wk="wk"  :orig="orig" v-if="diagName=='hisChart'||diagName=='compareTable'"></fund-echart>
     <his-table       @close="editClose" ref="histable"    style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
     <rank-table       @close="editClose" ref="ranktable"    style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
     <fof-simulate     @close="editClose" ref="simtable"   style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
@@ -528,6 +526,7 @@ export default {
             activeName:"首页",
             fullActive:"sumvaltab",
             wk:"1",
+            orig:0,
             curAction: {},
             rules: {
         code: [{ required: true, message: "请选择基金", trigger: "blur" }],
@@ -581,9 +580,6 @@ export default {
     {"title":"预期夏普","field":"sharp"},
     {"title":"预期卡玛","field":"calmar"},
     {"title":"其他关键条款","field":"other"},
-    {"title":"渠道","field":"channel"},
-    {"title":"渠道联系人","field":"channel_man"},
-    {"title":"渠道联系方式","field":"channel_contact"},
     {"title":"备注","field":"remark","type":"textarea"} 
             ]
                 },

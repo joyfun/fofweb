@@ -232,7 +232,7 @@
             }}</template>
           </vxe-column>
           <vxe-column field="level" width="40" title="level"></vxe-column>
-          <vxe-column field="type" width="60" title="类型"></vxe-column>
+          <vxe-column field="rank_type" width="60" title="类型"></vxe-column>
 
           <vxe-column field="marketval"  sortable title="市值(万)">
                 <template slot-scope="scope">{{

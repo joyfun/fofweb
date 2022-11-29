@@ -37,7 +37,7 @@
       <el-card shadow="hover">
         <fund-echart
           ref="hischart"
-          :wk="0"
+          :wk="'0'"
           style="height: 500px"
           :code="code"
         ></fund-echart>

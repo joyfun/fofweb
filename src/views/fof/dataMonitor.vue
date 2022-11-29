@@ -220,6 +220,9 @@ export default {
       else if(source=='2'){
         return '邮件(周)'
       }
+      else if(source=='9'){
+        return '邮件(已投)'
+      }
       return source
     },
     getIndex() {
@@ -250,7 +253,7 @@ export default {
         .get('fof/data_summary',{}) //axis后面的.get可以省略；
         .then((response) => {
              this.rawdata=response.data
-             this.summaryData=[{"ncnt":this.rawdata.header['tradedate'],"pcnt":this.rawdata.header['ptradedate']},...response.data.jq,{"ncnt":this.rawdata.header['ndate'],"pcnt":this.rawdata.header['pdate']},...response.data.data,{"ncnt":this.rawdata.header['mday'],"pcnt":this.rawdata.header['pmday']},...this.rawdata.daymail,{"ncnt":this.rawdata.header['ndate'],"pcnt":this.rawdata.header['pdate']},...this.rawdata.wb]
+             this.summaryData=[{"ncnt":this.rawdata.header['tradedate'],"pcnt":this.rawdata.header['ptradedate']},...response.data.jq,{"ncnt":this.rawdata.header['ndate'],"pcnt":this.rawdata.header['pdate']},...response.data.data,{"ncnt":this.rawdata.header['mday'],"pcnt":this.rawdata.header['pmday']},...this.rawdata.holding,...this.rawdata.daymail,{"ncnt":this.rawdata.header['ndate'],"pcnt":this.rawdata.header['pdate']},...this.rawdata.wb]
              this.header_cols=[response.data.header['ndate'],response.data.header['pdate']]
              this.summaryAll=response.data
              console.log(this.summaryData)

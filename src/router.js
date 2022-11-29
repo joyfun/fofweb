@@ -117,12 +117,16 @@ const routes = [
       },{
         path: '/rankinfo',
         name: 'rank-info',
-        component:() => import('@/views/fof/rankInfoN.vue')
+        component:() => import('@/views/fof/rankInfoA.vue'),
+        props:{
+          ftype:''
+     }
       },{
         path: '/rankinfoa',
         name: 'rank-infoa',
         component:() => import('@/views/fof/rankInfoA.vue'),
         props:{
+          ftype:'投后',
           filters:{weight_type:'after_weight'}
      }
      

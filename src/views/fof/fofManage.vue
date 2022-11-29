@@ -380,13 +380,14 @@
     </el-table> -->
           <el-tabs type="border-card">
       <el-tab-pane ><span slot="label"><i class="el-icon-date"></i> 净值曲线</span>  
-    <fund-echart      ref="hischart"  :titles="current.name"  :code="current.code"  :orig="'1'"></fund-echart>
+    <fund-echart      ref="hischart"  :titles="current.name"  :code="current.code"  :orig="1"></fund-echart>
       </el-tab-pane>
       <el-tab-pane><span slot="label">单位净值</span>
            <vxe-table
           border
           ref="netValsInfo"
           size="mini"
+          height="480"
           :sort-config="{trigger: 'cell', orders: ['desc', 'asc', null]}"
           :data="netvals"
         >
@@ -417,7 +418,18 @@
       <el-tabs type="border-card">
       <el-tab-pane ><span slot="label"><i class="el-icon-date"></i> 产品信息</span>  
  <!-- <wad-form :cForm="cForm"></wad-form>
- --><el-form :model="current" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
+ -->
+         <!-- <vxe-form :data="current" @submit="submitForm('dynamicValidateForm')" @reset="resetForm('dynamicValidateForm')">
+                <vxe-form-item span=12 title-width="100px" :key="index" v-for="(row,index)  in cForm" :title="row.tilte" :field="row.dataIndex" :item-render="{}">
+                  <vxe-select v-if="row.param" v-model="current[row.dataIndex]" clearable >
+                    <vxe-option v-for="item in sysparam[row.param]" :key="item.value" :value="item.code" :label="item.value"></vxe-option>
+                  </vxe-select> 
+                    <vxe-input v-else v-model="current[row.dataIndex]"  clearable></vxe-input>
+                </vxe-form-item>
+         </vxe-form> -->
+ 
+ <!----><el-form :model="current" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic"  :rules=" {'code': [{ required: true, message: '请输入备案号', trigger: 'blur' }, { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur'}],
+ 'short_name': [{ required: true, message: '简称必须输人', trigger: 'blur' }], 'name': [{ required: true, message: '基金名称必须输人', trigger: 'blur' }], 'class_type': [{ required: true, message: '类型必选', trigger: 'blur' }], 'type': [{ required: true, message: '渠道必选', trigger: 'blur' }]}">
     <template v-for="(row,index)  in cForm" >
      <el-row  :key="index"   v-show="index%2==0">
       <el-col :span="12">              
@@ -430,20 +442,20 @@
       :value="item.code">
     </el-option>
   </el-select>
-          <el-input v-else v-model="current[row.dataIndex]"></el-input>
+          <el-input v-else :type="row['type']"    rows="3" v-model="current[row.dataIndex]"></el-input>
       </el-form-item>
       </el-col>
       <el-col :span="12">              
       <el-form-item v-if="index+1<cForm.length"  :prop="cForm[index+1].dataIndex"      :label=" cForm[index+1].tilte">
-          <el-select v-if="cForm[index+1].param" v-model="current[cForm[index+1].dataIndex]"  style="width:120px"  clearable :placeholder="cForm[index+1].tilte">
+          <el-select v-if="cForm[index+1].param" v-model="current[cForm[index+1].dataIndex]"  @change="(v)=>cForm[index+1].dataIndex=='class_type' && changeSub(v)" style="width:120px"  clearable :placeholder="cForm[index+1].tilte">
     <el-option
-      v-for="item in sysparam[cForm[index+1].param]"
+      v-for="item in cForm[index+1].dataIndex=='sub_type'?sub_type:sysparam[cForm[index+1].param]"
       :key="item.value"
       :label="item.value"
       :value="item.code">
     </el-option>
   </el-select>
-          <el-input v-else v-model="current[cForm[index+1].dataIndex]"></el-input>
+          <el-input v-else   v-model="current[cForm[index+1].dataIndex]"></el-input>
       </el-form-item>
       </el-col>
     </el-row >
@@ -460,18 +472,6 @@
       <el-col :span="12">
             <el-form-item  :prop="'name'"      :label="'名称'"><el-input  v-model="curCompany.name"></el-input>
       </el-form-item>              
-       <!-- <el-form-item  v-else    label="公司名称">
-    <el-select  v-model="current.company_code" placeholder="请选择" filterable remote     :remote-method="qryCompany">
-        <el-option
-      v-for="item in fcompanys"
-      :key="item.org_id"
-      :label="item.org_full_name"
-      :value="item.org_id">
-    </el-option>
-  </el-select>
-        </el-form-item> -->
-
-
       </el-col> 
             <el-col :span="12">
             <el-form-item :span="12"  :prop="curCompany.maintainer"      :label="'对接人'">
@@ -540,8 +540,6 @@
           <vxe-column sortable width="100" field="host" title="托管" align="left"  ></vxe-column>
           <vxe-column sortable width="100" field="broker" title="交易商" align="left"  ></vxe-column>
           <vxe-column sortable width="100" field="vip_account" title="专户" align="left"  ></vxe-column>
-width="100"
-width="100"
        </vxe-table>
       </el-tab-pane>
 
@@ -591,37 +589,38 @@ width="100"
 
     import FundCorr from '../../components/FundCorr.vue';
    const cForm=[
-    {"tilte":"备案号","dataIndex":"code"},
-    {"tilte":"名称","dataIndex":"name"},
-    {"tilte":"简称","dataIndex":"short_name"},
-    {"tilte":"基金类型","dataIndex":"class_type","param":"class_type"},
-    {"tilte":"规模","dataIndex":"scale","param":"scale"},
-    {"tilte":"购买时净值","dataIndex":"buy_price"},
-    {"tilte":"子类型","dataIndex":"sub_type"},
-    {"tilte":"购买时间","dataIndex":"buy_date"},
-    {"tilte":"份额","dataIndex":"amount"},
+    {"tilte":"备案号","dataIndex":"code","required":"true"},
     {"tilte":"所属公司","dataIndex":"company"},
-    {"tilte":"渠道","dataIndex":"type","param":"data_type"},
-    // {"tilte":"网站代码","dataIndex":"scode"}, 
-    {"tilte":"朝阳代码","dataIndex":"ZhaoYang"},
-    {"tilte":"格上代码","dataIndex":"GeShang"},
-    {"tilte":"私募网代码","dataIndex":"SiMuWang"},
     {"tilte":"基金成立时间","dataIndex":"founded"},
+    {"tilte":"产品简称","dataIndex":"short_name", "required":"true"},
+    {"tilte":"规模","dataIndex":"scale","param":"scale"},
+    {"tilte":"产品全称","dataIndex":"name", "required":"true"},
     {"tilte":"阶段","dataIndex":"stage","param":"stage"},
-    {"tilte":"子基金对标","dataIndex":"compare"},
-    {"tilte":"管理费","dataIndex":"fee"},
-    {"tilte":"carry","dataIndex":"carry"},
-    {"tilte":"业绩报酬计提方式","dataIndex":"perf_comp"},
-    {"tilte":"止损","dataIndex":"lost"},
-    {"tilte":"预警","dataIndex":"alarm"},
-    {"tilte":"风险等级","dataIndex":"risk_level","param":"risk_"},
+    {"tilte":"基金类型","dataIndex":"class_type","param":"class_type", "change":"changeSub"},
+    {"tilte":"默认渠道","dataIndex":"type","param":"data_type", "required":"true"},
+    {"tilte":"子类型","dataIndex":"sub_type","param":"sub_type"},
+    {"tilte":"私募网代码","dataIndex":"SiMuWang"},
+    {"tilte":"管理费%","dataIndex":"fee"},
+    {"tilte":"朝阳代码","dataIndex":"ZhaoYang"},
+    {"tilte":"carry%","dataIndex":"carry"},
+    {"tilte":"格上代码","dataIndex":"GeShang"},
+    {"tilte":"业绩计提方式","dataIndex":"perf_comp"},
     {"tilte":"预期收益(年)","dataIndex":"rate"},
+    {"tilte":"购买时间","dataIndex":"buy_date"},
     {"tilte":"预期最大回撤","dataIndex":"max_drawdown"},
+    {"tilte":"购买时净值","dataIndex":"buy_price"},
     {"tilte":"预期夏普","dataIndex":"sharp"},
+    {"tilte":"持有份额","dataIndex":"amount"},
     {"tilte":"预期卡玛","dataIndex":"calmar"},
+    {"tilte":"止损","dataIndex":"lost"},
     {"tilte":"其他关键条款","dataIndex":"other"},
+    {"tilte":"预警","dataIndex":"alarm"},
+
+    // {"tilte":"网站代码","dataIndex":"scode"}, 
 
     {"tilte":"备注","dataIndex":"remark","type":"textarea"} ,
+    {"tilte":"已投基金对标","dataIndex":"compare"},
+
 ]
   const compForm=[
  {"tilte":"简称","dataIndex":"short_name"}, 
@@ -797,10 +796,25 @@ width="100"
                 this.sub_type=this.allparam['param_'+id]
 
             },
+            changeFormSub(row){
+                var id=-1
+                for (var ap of this.sysparam.class_type)
+                {
+                    if(ap.code==row){
+                        id=ap.id
+                        break;
+                    }
+                    
+                }
+
+                this.sub_type=this.allparam['param_'+id]
+
+            },
           editInfo(row){
         //   this.cur_id=row.id
         //   this.current=JSON.parse(JSON.stringify(row))  
           this.current=row
+          this.changeSub(this.current.class_type)
           this.formVisible=true
           this.$axios.get("/fof/compinfoby",{ params: { "reg_code": this.current.company_code } }).then(r=>{
             this.curCompany=r.data
@@ -895,7 +909,7 @@ width="100"
     )
       },
       addInfo(){
-          this.current={stage:"入库",scale:"待尽调"}
+          this.current={stage:"入库",scale:"待尽调",sub_type:''}
           this.formVisible=true
       },
         loadModel(file){
@@ -1194,7 +1208,8 @@ showResult(number,rate=100){
                                 console.log(rets)
                                 this.netvals=rets
                     }
-                                rets.sort((a,b)=>{return a['date']>b['date']})
+                                rets.sort((a,b)=> b['date']-a['date'])
+                                console.log(rets)
                                  this.$refs.netValsInfo.reloadData(rets)
                                  console.log(`loaddata ${rets.length}`)
       },
@@ -1413,8 +1428,6 @@ showResult(number,rate=100){
                 method: 'GET',
                 params: data
                 }).then((response) => {
-                                console.log(this.sysparam);
-                                console.log(response);
                                 this.totaltableData = response.data.sort((a,b)=>{return   b['create_time'].localeCompare(a['create_time'])
 });
                                 if(this.token=='demo'){
