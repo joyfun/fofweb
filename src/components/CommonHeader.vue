@@ -243,6 +243,7 @@
     :close-on-press-escape="false"
      :visible.sync="dialogVisible"
      >
+    <stat-chart       @close="editClose" ref="statchart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='statChart'"></stat-chart>
     <base-chart       @close="editClose" ref="basechart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='baseChart'"></base-chart>
     <rank-chart       @close="editClose" ref="rankchart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='rankChart'"></rank-chart>
     <compare-table      @close="editClose" ref="comparetable"  :code="cur_code"   v-if="diagName=='compareTable'"></compare-table>
@@ -293,6 +294,8 @@ import HisTable from '@/components/HisTable.vue';
 import RankTable from '@/components/RankTable.vue';
 import RankChart from '@/components/RankChart.vue';
 import BaseChart from '@/components/BaseChart.vue';
+import StatChart from '@/components/StatChart.vue';
+
 import FofSimulate from '@/components/FofSimulate';
 import ReportTable from '@/components/ReportTable';
 import CompareTable from '@/components/CompareTable';
@@ -310,6 +313,7 @@ export default {
             FofSimulate,
             RankChart,
             BaseChart,
+            StatChart,
             CompareTable,
             ReportTable,
             ProdTable

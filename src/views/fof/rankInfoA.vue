@@ -93,10 +93,11 @@
 
             </template>
             </vxe-column>
-         <vxe-column  sortable  title="信息"  width="60" align="center" field="level"  >
+         <vxe-column  sortable  title="信息"  width="80" align="center" field="level"  >
                  <template #default="{ row }">
                            <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing" ></i></el-button>
                            <el-button  @click.native.prevent="showBaseHis(row)" type="text" size="small"><i class="el-icon-s-order" ></i></el-button>
+                           <el-button  @click.native.prevent="showStatHis(row)" type="text" size="small"><i class="el-icon-s-data" ></i></el-button>
                             <el-button  @click.native.prevent="showBaseInfo(row)" type="text" size="small"><i class="el-icon-info" ></i></el-button>
 
 
@@ -771,6 +772,11 @@ return ''
        Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"baseChart"})
 
       },
+      showStatHis(row){
+          // let sels=this.$refs.rankTable.getCheckboxRecords()
+       Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"statChart"})
+
+      },
       showBaseInfo(row){
           // let sels=this.$refs.rankTable.getCheckboxRecords()
        Bus.$emit("showInfo",{"cur_code":row.code})
@@ -875,7 +881,6 @@ return ''
 
           // this.$nextTick(()=>{
           this.$refs.rankTable.setFilter(this.$refs.rankTable.getColumnByField('sub_type'), this.subtypes.map(st=>{return  { label: st, value: st }}))
-          print(this.$refs.rankTable.getSortColumns())
           this.$refs.rankTable.reloadData(this.tableList)
           this.setSelect()
           // this.$refs.rankTable.sort({field: 'rank', order: 'asc'})
