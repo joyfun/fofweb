@@ -121,6 +121,11 @@ const routes = [
         props:{
           ftype:''
      }
+      },
+      ,{
+        path: '/statinfo',
+        name: 'stat-info',
+        component:() => import('@/views/fof/StatInfo.vue')
       },{
         path: '/rankinfoa',
         name: 'rank-infoa',

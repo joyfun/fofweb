@@ -72,6 +72,7 @@ export default new Vuex.Store({
         {lable:"基金仿真",value:"sim-btn"},
         {lable:"资金情况",value:"fof-dash"},
         {lable:"投资排名",value:"rank-info"},
+        {lable:"指标分析",value:"stat-info"},
         {lable:"投后排名",value:"rank-infoa"},
         {lable:"投后分析",value:"rank-infoa1"},
         {lable:"数据监控",value:"data-monitor"},

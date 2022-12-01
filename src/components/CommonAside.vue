@@ -175,6 +175,12 @@ export default {
                             icon:'setting'
                         },
                         {
+                            path: '/statinfo',
+                            label: '指标分析',
+                            name:'stat-info',
+                            icon:'setting'
+                        },
+                        {
                             path: '/listrank',
                             label: '清单分析',
                             name:'list-rank',
