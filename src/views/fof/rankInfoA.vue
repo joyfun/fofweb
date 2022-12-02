@@ -2,11 +2,11 @@
   <div ref="tableContainer" style="	height : 100%;">
           <vxe-toolbar>
           <template #buttons>
-            <vxe-button @click="clearSelect">取消</vxe-button>
-            <vxe-button @click="showRankHis">排名</vxe-button>
-            <vxe-button @click="showStatHisBatch">指标</vxe-button>
-            <vxe-button @click="compareData">业绩</vxe-button>
-            <vxe-button @click="compareInvest">已投对比</vxe-button>
+            <vxe-button size="mini" @click="clearSelect">取消</vxe-button>
+            <vxe-button size="mini" @click="showRankHis">排名</vxe-button>
+            <vxe-button size="mini" @click="showStatHisBatch">指标</vxe-button>
+            <vxe-button size="mini" @click="compareData">业绩</vxe-button>
+            <vxe-button size="mini" @click="compareInvest">已投对比</vxe-button>
             <el-date-picker style="width:130px"
       v-model="date"
       value-format="yyyyMMdd"
