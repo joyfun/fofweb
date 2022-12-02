@@ -30,13 +30,13 @@
             <vxe-radio label="非常规" content="非常规"></vxe-radio>
 
           </vxe-radio-group>
-          <vxe-radio-group v-model="range" :strict="false">
+          <vxe-radio-group size="mini"  v-model="range" :strict="false">
             <vxe-radio label="hyr" content="半年"></vxe-radio>
             <vxe-radio label="1yr" content="1年"></vxe-radio>
             <vxe-radio v-if="ftype=='投后'" label="quarter" content="3月"></vxe-radio>
             <vxe-radio v-else label="2yr" content="2年"></vxe-radio>
           </vxe-radio-group>
-                              <vxe-button @click="exportDataEvent">导出</vxe-button>
+                              <vxe-button size="mini" @click="exportDataEvent">导出</vxe-button>
 
                               <!-- <vxe-button @click="jumptodash">排名信息</vxe-button> -->
 
