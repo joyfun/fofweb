@@ -15,14 +15,14 @@
       type="date"
       >
     </el-date-picker>
-            <vxe-radio-group v-model="type" size="mini" :strict="false">
-            <vxe-radio label="cta0" content="CTA0"></vxe-radio>
-            <vxe-radio label="cta1" content="CTA1"></vxe-radio>
-            <vxe-radio label="指增" content="指增"></vxe-radio>
-            <vxe-radio label="中性" content="中性"></vxe-radio>
-            <vxe-radio label="混合" content="混合"></vxe-radio>
-            <vxe-radio label="套利" content="套利"></vxe-radio>
-            <vxe-radio label="期权" content="期权"></vxe-radio>
+            <vxe-radio-group v-model="type" size="mini">
+            <vxe-radio-button label="cta0" content="CTA0"></vxe-radio-button>
+            <vxe-radio-button label="cta1" content="CTA1"></vxe-radio-button>
+            <vxe-radio-button label="指增" content="指增"></vxe-radio-button>
+            <vxe-radio-button label="中性" content="中性"></vxe-radio-button>
+            <vxe-radio-button label="混合" content="混合"></vxe-radio-button>
+            <vxe-radio-button label="套利" content="套利"></vxe-radio-button>
+            <vxe-radio-button label="期权" content="期权"></vxe-radio-button>
           </vxe-radio-group>
 
           <vxe-radio-group v-model="range" :strict="false">
