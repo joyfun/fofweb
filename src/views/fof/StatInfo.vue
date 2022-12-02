@@ -3,6 +3,7 @@
           <vxe-toolbar>
           <template #buttons>
             <vxe-button @click="clearSelect">取消选择</vxe-button>
+            <vxe-button @click="showStatHis">指标对比</vxe-button>
             <vxe-button @click="showRankHis">排名对比</vxe-button>
             <vxe-button @click="compareData">业绩对比</vxe-button>
             <vxe-button @click="compareInvest">已投对比</vxe-button>
@@ -713,7 +714,7 @@ return ''
       },
     showHis(row){
         console.log(row)
-       Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"rankChart"})
+       Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"statChart"})
 
     },
      showRankHis(){
@@ -727,9 +728,10 @@ return ''
        Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"baseChart"})
 
       },
-      showStatHis(row){
+      showStatHis(){
           // let sels=this.$refs.rankTable.getCheckboxRecords()
-       Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"statChart"})
+        if(this.multipleSelection.length>0)
+       Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"rg":this.range,"diagName":"statChart"})
 
       },
       showBaseInfo(row){
