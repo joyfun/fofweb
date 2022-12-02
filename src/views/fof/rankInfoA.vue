@@ -4,6 +4,7 @@
           <template #buttons>
             <vxe-button @click="clearSelect">取消选择</vxe-button>
             <vxe-button @click="showRankHis">排名对比</vxe-button>
+            <vxe-button @click="showStatHisBatch">排名对比</vxe-button>
             <vxe-button @click="compareData">业绩对比</vxe-button>
             <vxe-button @click="compareInvest">已投对比</vxe-button>
             <el-date-picker style="width:130px"
@@ -763,6 +764,12 @@ return ''
           // let sels=this.$refs.rankTable.getCheckboxRecords()
           if(this.multipleSelection.length>0)
           Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"rg":this.range,"diagName":"rankChart"})
+
+      },
+      showStatHisBatch(){
+          // let sels=this.$refs.rankTable.getCheckboxRecords()
+          if(this.multipleSelection.length>0)
+          Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"rg":this.range,"diagName":"statChart"})
 
       },
       showBaseHis(row){
