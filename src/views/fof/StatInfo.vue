@@ -103,7 +103,7 @@
               <span :class="'rank_text_color'+Math.floor(row[af]/25)">{{row[af]}}</span>
             </template> -->
             <template  #default="{ row }">
-              <span >{{row[af.key]}}</span>
+              <span >{{$tools.formatMoney(af.key.indexOf('cal')>-1?row[af.key]:row[af.key]*100,2)}}</span>
             </template>
           </vxe-column>
 
