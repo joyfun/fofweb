@@ -9,7 +9,7 @@
           </vxe-radio-group>
 
            <vxe-radio-group v-model="showkey" :strict="false">
-            <vxe-radio-button :key="vkey" v-for="vkey of keygrps" :label="vkey" :content="vkey+'  　'"></vxe-radio-button>
+            <vxe-radio-button :key="vkey.name" v-for="vkey of keygrps" :label="vkey.name" :content="vkey.name"></vxe-radio-button>
             </vxe-radio-group>
 
             <vxe-radio-group v-model="tag" :strict="false">
@@ -30,6 +30,7 @@
 // import 'echarts/lib/chart/line'
 import Bus from '@/store/bus.js';
 import {mapGetters} from 'vuex'
+import { indexOf } from 'xe-utils';
 // import '@/utils/infographic.js'
 
 var echarts = require("echarts");
@@ -128,6 +129,9 @@ export default {
         // if (val&&val.endsWith('_R')) {
         //   this.drawChart(this.rawdata_R,true)
         // }else{
+          console.log(val)
+          this.showcols=this.keygrps.filter(r=>r.name==val)[0].cols
+          console.log(this.showcols)
           this.drawChart(this.rawdata)
 
         // }
@@ -160,12 +164,25 @@ export default {
   data() {
     return {
       tag:"",
+      
+      colitems:{'yeaily_return':'中位收益',
+  'yr':'移动年均收益',
+  'profit':'年化收益',
+  'vola':'移动年化波动率',
+  'risk':'年化波动率',
+  'nowdrop':'回撤',
+  'max_dd':'最大回撤',
+  'adj_risk':'理论回撤',
+  'calm':'calmar',
+  'adj_calmar':'理论calmar'},
       tags:["月","90天","半年","近1年","近2年","近3年","本年","全部"],
       areas:null,
       lv1:["SY9620","SSS105"],
       lowest:0.9,
-      keygrps:["yeaily_return", "sharpe", "calmar", "profit", "risk", "adj_profit", "adj_risk", "max_dd", "volatility"],
-      showkey:"yeaily_return",
+      // keygrps:[{name:"收益",cols:['yr','yeaily_return','yeaily_return']},{name:"波动",cols:["vola","risk"]},{name:"风险",cols:["nowdrop","adj_risk"]},{name:"收益风险比",cols=["calm","adj_calmar"]}, {name:"收益波动",cols=["yr","std"]}],
+      keygrps:[{name:"收益",cols:['yr','yeaily_return','yeaily_return']},{name:"波动",cols:["vola","risk"]},{name:"风险",cols:["nowdrop","adj_risk"]},{name:"收益风险比",cols:["calm","adj_calmar"]}, {name:"收益波动",cols:["yr","vola"]}],
+      showkey:"收益",
+      showcols:['yr','yeaily_return','profit'],
       startdate:'',
       range:'1yr',
       showdrop:false,
@@ -327,52 +344,46 @@ export default {
         }
           let option = this.echart.getOption();
           let rate=1
-          if(this.showkey.endsWith("_R")){
-          option.yAxis[1]={
-          type: 'value',
-          inverse: true,
-          axisLabel: {
-            formatter: '{value} %'
-            },
-          max:100,
-          min:0
-          }                
-          }else{
+          // if(this.showkey.endsWith("_R")){
+          // option.yAxis[1]={
+          // type: 'value',
+          // inverse: true,
+          // axisLabel: {
+          //   formatter: '{value} %'
+          //   },
+          // max:100,
+          // min:0
+          // }                
+          // }else{
              option.yAxis[1]=
           {
             type: "value",
           }
-          }
+          // }
           option.xAxis[0].data=rawdata.index
           // option.markLine=markLine
           option.series=[]
           for (let col in rawdata.columns){
             let cnames=rawdata.columns[col].split('#')
+            console.log(cnames)
             let sname=""
             if(cnames.length==2){
-              sname=this.showFundName(cnames[0])+"_"+cnames[1]
-            }
-    
-            let yidx=1
-            if(sname.endsWith("yeaily_return")){
-              yidx=0
-              let lowest=rawdata.data.reduce((sum, value) => { return sum < value[col] ? sum : value[col] }, 0)
-            this.lowest=Math.floor(lowest*10)/10
-            option.yAxis[0].min=this.lowest
-
-            }
-            else if(sname.endsWith(this.showkey)){
+              sname=this.showFundName(cnames[0])+"_"+this.colitems[cnames[1]]
+            
+              if(this.showcols.indexOf(cnames[1])>-1){
               // if(this.showkey=='dd_week_R'){
               //   rate=-100
               // }else 
-              if(this.showkey.endsWith("_R")){
-                          rate=100
-              }
+             
             }else{
               continue
             }
+            }
+    
+            let yidx=0
+            console.log(col)
             let rval=rawdata.data.map(row=>{if(row[col]==null){return null} return row[col]*rate})
-          
+            console.log(rval)
             let asery={
           yAxisIndex:yidx,
           type: 'line',

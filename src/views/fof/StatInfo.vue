@@ -15,7 +15,6 @@
       >
     </el-date-picker>
             <vxe-radio-group v-model="type" size="mini" :strict="false">
-             <vxe-radio  v-if="ftype!='投后'" label="aas" content="AAS"></vxe-radio>
             <vxe-radio label="cta0" content="CTA0"></vxe-radio>
             <vxe-radio label="cta1" content="CTA1"></vxe-radio>
             <vxe-radio label="指增" content="指增"></vxe-radio>
@@ -23,8 +22,6 @@
             <vxe-radio label="混合" content="混合"></vxe-radio>
             <vxe-radio label="套利" content="套利"></vxe-radio>
             <vxe-radio label="期权" content="期权"></vxe-radio>
-            <vxe-radio label="非常规" content="非常规"></vxe-radio>
-
           </vxe-radio-group>
 
           <vxe-radio-group v-model="range" :strict="false">
@@ -98,14 +95,14 @@
           <!-- -->
             <vxe-column   field="sub_type" width="60" sortable :title="'子'" :filters="[]"  >
             </vxe-column>
-        
-         <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return', 'sharpe', 'calmar', 'profit', 'risk', 'adj_profit', 'adj_risk', 'max_dd', 'volatility']"  :title="af" :field="af"  >
-          
+         <!-- <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return', 'sharpe', 'calmar', 'profit', 'risk', 'adj_profit', 'adj_risk', 'max_dd', 'volatility']"  :title="af" :field="af"  > -->
+         <vxe-column :key="af.key" :width="48" sortable v-for="af of tbcols"  :title="af.name" :field="af.key"  >
+
             <!-- <template v-else-if="['dd_ratio'].indexOf(af)>-1" #default="{ row }">
               <span :class="'rank_text_color'+Math.floor(row[af]/25)">{{row[af]}}</span>
             </template> -->
             <template  #default="{ row }">
-              <span >{{row[af]}}</span>
+              <span >{{row[af.key]}}</span>
             </template>
           </vxe-column>
 
@@ -252,6 +249,23 @@ import Vue from 'vue'
 import FileSaver from 'file-saver'
 import Bus from '@/store/bus.js';
 // const sort_key =['mean26','mean52','mean104','listrate26','listrate52','listrate104','std26','std52','std104','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio']
+const colitems = [
+  {key:'yeaily_return',name:'中位收益'},
+  {key:'yr',name:'移动年均收益'},
+  {key:'profit',name:'年化收益'},
+  {key:'vola',name:'移动年化波动率'},
+  {key:'risk',name:'年化波动率'},
+  {key:'nowdrop',name:'回撤'},
+  {key:'max_dd',name:'最大回撤'},
+  {key:'adj_risk',name:'理论回撤'},
+  {key:'calmar',name:'calmar'},
+  {key:'adj_calmar',name:'理论calmar'},
+
+
+
+
+
+  ]
 
 const sort_key_r =['mean26','mean52','mean104','std26','std52','std104']
 const sort_key =['listrate26','listrate52','listrate104','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio']
@@ -403,6 +417,7 @@ export default {
         basedict:{},
         allAlign:"right",
         tableData:[],
+        tbcols:colitems,
         tableList:[],
         winlength:{'hyr':26,'1yr':52,'2yr':104,'quarter':13},
         showList:false,
