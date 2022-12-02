@@ -20,7 +20,7 @@
       :value="item.code">
     </el-option>
   </el-select>
-  <el-select v-model="filter.scale" @change="getList" style="width:80px"  clearable placeholder="规模">
+  <el-select v-model="filter.scale" @change="getList" style="width:80px"  clearable placeholder="可投状态">
     <el-option
       v-for="item in sysparam.scale"
       :key="item.value"
@@ -593,7 +593,7 @@
     {"tilte":"所属公司","dataIndex":"company"},
     {"tilte":"基金成立时间","dataIndex":"founded"},
     {"tilte":"产品简称","dataIndex":"short_name", "required":"true"},
-    {"tilte":"规模","dataIndex":"scale","param":"scale"},
+    {"tilte":"可投状态","dataIndex":"scale","param":"scale"},
     {"tilte":"产品全称","dataIndex":"name", "required":"true"},
     {"tilte":"阶段","dataIndex":"stage","param":"stage"},
     {"tilte":"基金类型","dataIndex":"class_type","param":"class_type", "change":"changeSub"},

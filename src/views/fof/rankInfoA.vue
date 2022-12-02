@@ -29,7 +29,6 @@
             <vxe-radio label="非常规" content="非常规"></vxe-radio>
 
           </vxe-radio-group>
-
           <vxe-radio-group v-model="range" :strict="false">
             <vxe-radio label="hyr" content="半年"></vxe-radio>
             <vxe-radio label="1yr" content="1年"></vxe-radio>
@@ -565,9 +564,8 @@ this.$axios
           let old=cmap[arow['company_code']]
           let diff=Math.abs(arow['yeaily_return']-old['yeaily_return'])
           if(diff<=5){
-            
-            if(arow.tlength>old.tlength){
-            console.log(`#########${arow['company_code']}删除了前面产品${old['code']}:${old['rankF']}`)
+            if(arow['length']>old['length']){
+            console.log(`#########${arow['company_code']}删除了前面产品${old['code']}:${old['length']}——${old['rankF']}`)
             if(this.holding.filter(hd=>hd['b_code']==old['code']).length>0){
             console.log(`#########已购产品${old['code']}不删除`)
             a++
@@ -577,7 +575,7 @@ this.$axios
             cmap[arow['company_code']]=arow
             todel++
             }else{
-            console.log(`#########${arow['company_code']}删除了后面产品${arow['code']}:${old['rankF']}`)
+            console.log(`#########${arow['company_code']}删除了后面产品${arow['code']}:${arow['length']}——${old['rankF']}`)
             if(this.holding.filter(hd=>hd['b_code']==arow['code']).length>0){
             console.log(`#########已购产品${arow['code']}不删除`)
             a++
@@ -881,9 +879,16 @@ return ''
 
           // this.$nextTick(()=>{
           this.$refs.rankTable.setFilter(this.$refs.rankTable.getColumnByField('sub_type'), this.subtypes.map(st=>{return  { label: st, value: st }}))
-          this.$refs.rankTable.reloadData(this.tableList)
+          let sc={field: 'rank', order: 'asc'}
+          for (let as of this.$refs.rankTable.getSortColumns()){
+            sc['field']=as['field']
+            sc['order']=as['asc']
+            break
+          }
+          // this.$refs.rankTable.getSortColumns()
+          this.$refs.rankTable.loadData(this.tableList)
           this.setSelect()
-          // this.$refs.rankTable.sort({field: 'rank', order: 'asc'})
+          // this.$refs.rankTable.sort(sc)
           // })
         })
         .catch((error) => {
@@ -1055,7 +1060,11 @@ return ''
     },
   },
   mounted() {
-    this.date=this.$moment().format("YYYYMMDD");
+    if(this.ftype=='投后'){
+      this.range='quarter'
+    }else{
+          this.date=this.$moment().format("YYYYMMDD");
+    }
     //this.getProducts();
   },
   created() {

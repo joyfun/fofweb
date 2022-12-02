@@ -19,9 +19,6 @@
             <vxe-radio label="cta0" content="CTA0"></vxe-radio>
             <vxe-radio label="cta1" content="CTA1"></vxe-radio>
             <vxe-radio label="指增" content="指增"></vxe-radio>
-            <!----> <vxe-radio label="I5" content="Z5"></vxe-radio>
-            <vxe-radio label="I3" content="Z3"></vxe-radio>
-            <vxe-radio label="I1" content="Z1"></vxe-radio> 
             <vxe-radio label="中性" content="中性"></vxe-radio>
             <vxe-radio label="混合" content="混合"></vxe-radio>
             <vxe-radio label="套利" content="套利"></vxe-radio>
@@ -31,10 +28,11 @@
           </vxe-radio-group>
 
           <vxe-radio-group v-model="range" :strict="false">
-            <vxe-radio label="hyr" content="半年"></vxe-radio>
             <vxe-radio label="1yr" content="1年"></vxe-radio>
             <vxe-radio v-if="ftype=='投后'" label="quarter" content="3月"></vxe-radio>
             <vxe-radio v-else label="2yr" content="2年"></vxe-radio>
+            <vxe-radio label="3yr" content="3年"></vxe-radio>
+
           </vxe-radio-group>
                               <vxe-button @click="exportDataEvent">导出</vxe-button>
 
@@ -905,7 +903,8 @@ return ''
           this.subtypes=[]
           this.rawlen = response.data.length
           this.tableData =response.data
-    
+          this.filterNames()
+
               })
         .catch((error) => {
           console.log(error);
