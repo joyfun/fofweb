@@ -165,7 +165,7 @@ export default {
     return {
       tag:"",
       
-      colitems:{'yeaily_return':'中位收益',
+      colitems:{'adj_profit':'中位收益',
   'yr':'移动年均收益',
   'profit':'年化收益',
   'vola':'移动年化波动率',
@@ -182,7 +182,7 @@ export default {
       // keygrps:[{name:"收益",cols:['yr','yeaily_return','yeaily_return']},{name:"波动",cols:["vola","risk"]},{name:"风险",cols:["nowdrop","adj_risk"]},{name:"收益风险比",cols=["calm","adj_calmar"]}, {name:"收益波动",cols=["yr","std"]}],
       keygrps:[{name:"收益",cols:['yr','yeaily_return','yeaily_return']},{name:"波动",cols:["vola","risk"]},{name:"风险",cols:["nowdrop","adj_risk"]},{name:"收益风险比",cols:["calm","adj_calmar"]}, {name:"收益波动",cols:["yr","vola"]}],
       showkey:"收益",
-      showcols:['yr','yeaily_return','profit'],
+      showcols:['yr','adj_profit','profit'],
       startdate:'',
       range:'1yr',
       showdrop:false,
