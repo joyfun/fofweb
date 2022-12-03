@@ -87,7 +87,7 @@
                  <template #default="{ row }">
                            <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing" ></i></el-button>
                            <el-button  @click.native.prevent="showBaseHis(row)" type="text" size="small"><i class="el-icon-s-order" ></i></el-button>
-                           <el-button  @click.native.prevent="showStatHis(row)" type="text" size="small"><i class="el-icon-s-data" ></i></el-button>
+                           <el-button  @click.native.prevent="showHis(row)" type="text" size="small"><i class="el-icon-s-data" ></i></el-button>
                             <el-button  @click.native.prevent="showBaseInfo(row)" type="text" size="small"><i class="el-icon-info" ></i></el-button>
 
 
