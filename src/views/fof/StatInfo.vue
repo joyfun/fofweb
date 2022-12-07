@@ -251,9 +251,9 @@ import FileSaver from 'file-saver'
 import Bus from '@/store/bus.js';
 // const sort_key =['mean26','mean52','mean104','listrate26','listrate52','listrate104','std26','std52','std104','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio']
 const colitems = [
-  {key:'adj_profit',name:'中位收益'},
   {key:'yr',name:'移动年均收益'},
   {key:'profit',name:'年化收益'},
+  {key:'median_hyr',name:'理论收益'},
   {key:'vola',name:'移动年化波动率'},
   {key:'risk',name:'年化波动率'},
   {key:'nowdrop',name:'回撤'},

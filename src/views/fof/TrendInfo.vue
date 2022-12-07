@@ -2,11 +2,11 @@
   <div ref="tableContainer" style="	height : 100%;">
           <vxe-toolbar>
           <template #buttons>
-            <vxe-button size="mini" @click="clearSelect">取消</vxe-button>
-            <vxe-button size="mini" @click="showRankHis">排名</vxe-button>
-            <vxe-button size="mini" @click="showStatHisBatch">指标</vxe-button>
-            <vxe-button size="mini" @click="compareData">业绩</vxe-button>
-            <vxe-button size="mini" @click="compareInvest">已投对比</vxe-button>
+            <vxe-button @click="clearSelect">取消选择</vxe-button>
+            <vxe-button @click="showStatHis">指标对比</vxe-button>
+            <vxe-button @click="showRankHis">排名对比</vxe-button>
+            <vxe-button @click="compareData">业绩对比</vxe-button>
+            <vxe-button @click="compareInvest">已投对比</vxe-button>
             <el-date-picker style="width:130px"
       v-model="date"
       value-format="yyyyMMdd"
@@ -15,28 +15,24 @@
       type="date"
       >
     </el-date-picker>
-            <vxe-radio-group v-model="type" size="mini" >
-             <vxe-radio-button  v-if="ftype!='投后'" label="aas" content="AAS"></vxe-radio-button>
+            <vxe-radio-group v-model="type" size="mini">
             <vxe-radio-button label="cta0" content="CTA0"></vxe-radio-button>
             <vxe-radio-button label="cta1" content="CTA1"></vxe-radio-button>
             <vxe-radio-button label="指增" content="指增"></vxe-radio-button>
-            <!----> <vxe-radio-button label="I5" content="Z5"></vxe-radio-button>
-            <vxe-radio-button label="I3" content="Z3"></vxe-radio-button>
-            <vxe-radio-button label="I1" content="Z1"></vxe-radio-button> 
             <vxe-radio-button label="中性" content="中性"></vxe-radio-button>
             <vxe-radio-button label="混合" content="混合"></vxe-radio-button>
             <vxe-radio-button label="套利" content="套利"></vxe-radio-button>
             <vxe-radio-button label="期权" content="期权"></vxe-radio-button>
-            <vxe-radio-button label="非常规" content="非常规"></vxe-radio-button>
-
           </vxe-radio-group>
-          <vxe-radio-group size="mini"  v-model="range" :strict="false">
-            <vxe-radio label="hyr" content="半年"></vxe-radio>
+
+          <vxe-radio-group v-model="range" :strict="false">
             <vxe-radio label="1yr" content="1年"></vxe-radio>
             <vxe-radio v-if="ftype=='投后'" label="quarter" content="3月"></vxe-radio>
             <vxe-radio v-else label="2yr" content="2年"></vxe-radio>
+            <vxe-radio label="3yr" content="3年"></vxe-radio>
+
           </vxe-radio-group>
-                              <vxe-button size="mini" @click="exportDataEvent">导出</vxe-button>
+                              <vxe-button @click="exportDataEvent">导出</vxe-button>
 
                               <!-- <vxe-button @click="jumptodash">排名信息</vxe-button> -->
 
@@ -75,7 +71,7 @@
 
               </template>
         <template #default="{ row }">
-                                      <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button>
+                                      <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
                             <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
                             <!-- &nbsp;<vxe-button  @click.native.prevent="oneKeyBuy(row)" type="text" status="primary" size="small"><i class="iconfont icon-yijiangoumai" ></i></vxe-button> -->
        <a href="javascript:;" @click="showHis(row)">{{ showFundName(row.code)}}</a>
@@ -86,89 +82,33 @@
 
             </template>
           </vxe-column>
-                     <vxe-column   field="marketval" width="50" sortable :title="'持仓(万)'" >
-                                    <template #default="{ row }">
-                           
-{{$tools.formatMoney(row['marketval']/10000,0)}}
-
-            </template>
-            </vxe-column>
+                     
          <vxe-column  sortable  title="信息"  width="80" align="center" field="level"  >
                  <template #default="{ row }">
                            <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing" ></i></el-button>
                            <el-button  @click.native.prevent="showBaseHis(row)" type="text" size="small"><i class="el-icon-s-order" ></i></el-button>
-                           <el-button  @click.native.prevent="showStatHis(row)" type="text" size="small"><i class="el-icon-s-data" ></i></el-button>
+                           <el-button  @click.native.prevent="showHis(row)" type="text" size="small"><i class="el-icon-s-data" ></i></el-button>
                             <el-button  @click.native.prevent="showBaseInfo(row)" type="text" size="small"><i class="el-icon-info" ></i></el-button>
 
 
             </template>
           </vxe-column> 
           <!-- -->
-          <vxe-column v-if="ftype!='投后'" sortable  title="级别"  width="36" align="center" field="level" sort-by="lscore"  :filters="[{label: '甲', value: '甲'}, {label: '乙', value: '乙'}, {label: '丙', value: '丙'}, {label: '丁', value: '丁'}, {label: '戊', value: '戊'}]" :title-help="{message: '根据产品波动率和最大回撤对产品进行分级'}" >
-          </vxe-column> 
             <vxe-column   field="sub_type" width="60" sortable :title="'子'" :filters="[]"  >
             </vxe-column>
-           <vxe-column   field="rank" width="40" sortable :title="'rank'" >
-            </vxe-column>
-          <template  v-if="type=='高费率'">
-              <vxe-column field="fee" width="60"  title="fee"  ></vxe-column>
-              <vxe-column align="left" field="carry" width="160"  title="carry"  ></vxe-column>
-              <!-- <vxe-column field="perf_comp" width="80"  title="业绩提计方式"  ></vxe-column> -->
-              <vxe-column align="left" field="remark" width="240"  title="备注"  ></vxe-column>
-          </template>
-          <template  v-else>
+          <vxe-colgroup :key="rg" v-for="rg of ['hydata','y1data','y2data','y3data']" :title="rg+'指标数据'" align="center">
 
-            <vxe-column field=" " width="2" sortable :title="' '"  >
-            </vxe-column>
-            <template  v-for=" tp of ['hyr','1yr','2yr']">
-           <vxe-colgroup  :key="tp" :title="yrdict[tp]+'排名信息('+rawlen+')平均'+avgcnt[range]+'个'" align="center" >
+         <!-- <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return', 'sharpe', 'calmar', 'profit', 'risk', 'adj_profit', 'adj_risk', 'max_dd', 'volatility']"  :title="af" :field="af"  > -->
+         <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return', 'sharpe', 'calmar', 'dd', 'volatility']"  :title="af" :field="af"  >
 
-
-             <vxe-column :field="'mean'+winlength[tp]" width="48" sortable :title="'mean%'"  >
-              <template #default="{ row }">
-                <span :class="'rank_text_color'+Math.floor(row['mean'+winlength[tp]+'_R']*4)">{{row['mean'+winlength[tp]]}}</span>
-              </template>
-            </vxe-column>
-              <vxe-column :field="'listrate'+winlength[tp]" width="48" sortable :title="'listrate%'" >
-              <template #default="{ row }">
-                <span :class="'rank_text_color'+Math.floor((1-row['listrate'+winlength[tp]+'_R'])*4)">{{row['listrate'+winlength[tp]]}}</span>
-              </template>
-            </vxe-column>
-            <vxe-column :key="dkey" :field="dkey+winlength[tp]" width="48" sortable :title="dkey+'%'"  v-for="dkey in ['std']">
-                <template #default="{ row }">
-                <span :class="'rank_text_color'+Math.floor(row['std'+winlength[tp]+'_R']*4)">{{row['std'+winlength[tp]]}}</span>
-              </template>
-            </vxe-column>
-            <vxe-column  :field="'meand'+winlength[tp]" width="48" sortable :title="'Δrank'" >
-            </vxe-column>
-                </vxe-colgroup>
-          <vxe-column  :key="'blank_'+tp" field=" " width="2" sortable :title="' '"  >
-            </vxe-column>
-            </template>
-          </template> 
-          <vxe-colgroup :title="yrdict[range]+'指标数据'" align="center">
-                <template #header>
-          <vxe-radio-group v-model="brange" :strict="false">
-            <vxe-radio label="hyr" content="半年"></vxe-radio>
-            <vxe-radio label="1yr" content="1年"></vxe-radio>
-            <vxe-radio label="2yr" content="2年 指标数据"></vxe-radio>
-          </vxe-radio-group>
-                        </template>   
-             <vxe-column  field="length" width="48" sortable title="length" >
-            </vxe-column>              
-         <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','profit_loss','dd_ratio']"  :title="af" :field="af"  >
-            <template v-if=" ['yeaily_return','sharpe','calmar','sortino', 'dd','win_ratio','profit_loss'].indexOf(af)>-1" #default="{ row }">
-              <span :class="'rank_text_color'+Math.floor(row[af+'_R']*4)">{{row[af]}}</span>
-            </template>
             <!-- <template v-else-if="['dd_ratio'].indexOf(af)>-1" #default="{ row }">
               <span :class="'rank_text_color'+Math.floor(row[af]/25)">{{row[af]}}</span>
             </template> -->
-            <template v-else #default="{ row }">
-              <span >{{row[af]}}</span>
+            <template  #default="{ row }">
+              <span >{{$tools.formatMoney(row[rg+'_'+af],2)}}</span>
             </template>
           </vxe-column>
           </vxe-colgroup>
-
                       <!-- <vxe-column sortable  title="分"  field="lscore" >
           </vxe-column>  -->
         </vxe-table> 
@@ -312,6 +252,21 @@ import Vue from 'vue'
 import FileSaver from 'file-saver'
 import Bus from '@/store/bus.js';
 // const sort_key =['mean26','mean52','mean104','listrate26','listrate52','listrate104','std26','std52','std104','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio']
+const colitems = [
+  {key:'yr',name:'移动年均收益'},
+  {key:'profit',name:'年化收益'},
+  {key:'median_hyr',name:'理论收益'},
+  {key:'vola',name:'移动年化波动率'},
+  {key:'risk',name:'年化波动率'},
+  {key:'nowdrop',name:'回撤'},
+  {key:'max_dd',name:'最大回撤'},
+  {key:'adj_risk',name:'理论回撤'},
+  {key:'calmar',name:'calmar'},
+  {key:'adj_calmar',name:'理论calmar'},
+
+
+
+  ]
 
 const sort_key_r =['mean26','mean52','mean104','std26','std52','std104']
 const sort_key =['listrate26','listrate52','listrate104','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio']
@@ -455,6 +410,7 @@ export default {
   data() {
     return {  
         statdict:{},
+        rawdata:{},
         company_ranks:[],
         showCompanyRanks:false,
         rawlen:0,
@@ -463,13 +419,14 @@ export default {
         basedict:{},
         allAlign:"right",
         tableData:[],
+        tbcols:colitems,
         tableList:[],
         winlength:{'hyr':26,'1yr':52,'2yr':104,'quarter':13},
         showList:false,
-        range:"hyr",
-        srange:"hyr",
-        brange:"hyr",
-        arange:"hyr",
+        range:"1yr",
+        srange:"1yr",
+        brange:"1yr",
+        arange:"1yr",
         company_code:"",
         calcdate:"",
         baseData:{},
@@ -565,8 +522,9 @@ this.$axios
           let old=cmap[arow['company_code']]
           let diff=Math.abs(arow['yeaily_return']-old['yeaily_return'])
           if(diff<=5){
-            if(arow['length']>old['length']){
-            console.log(`#########${arow['company_code']}删除了前面产品${old['code']}:${old['length']}——${old['rankF']}`)
+            
+            if(arow.tlength>old.tlength){
+            console.log(`#########${arow['company_code']}删除了前面产品${old['code']}:${old['rankF']}`)
             if(this.holding.filter(hd=>hd['b_code']==old['code']).length>0){
             console.log(`#########已购产品${old['code']}不删除`)
             a++
@@ -576,7 +534,7 @@ this.$axios
             cmap[arow['company_code']]=arow
             todel++
             }else{
-            console.log(`#########${arow['company_code']}删除了后面产品${arow['code']}:${arow['length']}——${old['rankF']}`)
+            console.log(`#########${arow['company_code']}删除了后面产品${arow['code']}:${old['rankF']}`)
             if(this.holding.filter(hd=>hd['b_code']==arow['code']).length>0){
             console.log(`#########已购产品${arow['code']}不删除`)
             a++
@@ -757,7 +715,7 @@ return ''
       },
     showHis(row){
         console.log(row)
-       Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"rankChart"})
+       Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"statChart"})
 
     },
      showRankHis(){
@@ -766,20 +724,15 @@ return ''
           Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"rg":this.range,"diagName":"rankChart"})
 
       },
-      showStatHisBatch(){
-          // let sels=this.$refs.rankTable.getCheckboxRecords()
-          if(this.multipleSelection.length>0)
-          Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"rg":this.range,"diagName":"statChart"})
-
-      },
       showBaseHis(row){
           // let sels=this.$refs.rankTable.getCheckboxRecords()
        Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"baseChart"})
 
       },
-      showStatHis(row){
+      showStatHis(){
           // let sels=this.$refs.rankTable.getCheckboxRecords()
-       Bus.$emit("showChart",{"cur_code":row.code,"rg":this.range,"diagName":"statChart"})
+        if(this.multipleSelection.length>0)
+       Bus.$emit("showChart",{"cur_code":this.multipleSelection.join(','),"rg":this.range,"diagName":"statChart"})
 
       },
       showBaseInfo(row){
@@ -886,16 +839,9 @@ return ''
 
           // this.$nextTick(()=>{
           this.$refs.rankTable.setFilter(this.$refs.rankTable.getColumnByField('sub_type'), this.subtypes.map(st=>{return  { label: st, value: st }}))
-          let sc={field: 'rank', order: 'asc'}
-          for (let as of this.$refs.rankTable.getSortColumns()){
-            sc['field']=as['field']
-            sc['order']=as['asc']
-            break
-          }
-          // this.$refs.rankTable.getSortColumns()
-          this.$refs.rankTable.loadData(this.tableList)
+          this.$refs.rankTable.reloadData(this.tableList)
           this.setSelect()
-          // this.$refs.rankTable.sort(sc)
+          // this.$refs.rankTable.sort({field: 'rank', order: 'asc'})
           // })
         })
         .catch((error) => {
@@ -969,109 +915,42 @@ return ''
     getProducts() {
 
       this.$axios
-        .get("/fof/rank3", { params: { ftype:this.ftype,date: this.date,type:this.type ,range:this.range,weight_type:this.filters['weight_type']} })
+        .get("/fof/basedataby", { params: { ftype:this.ftype,date: this.date,type:this.type ,range:this.range,weight_type:this.filters['weight_type']} })
         .then((response) => {
-          this.rgdict={}
-          this.subtypes=[]
-          this.rawlen = response.data.length
-          this.tableData =response.data.map(row=>{
-            row['name']=this.showFundName(row['code'])
-            if(this.subtypes.indexOf(row['sub_type'])<0){
-              this.subtypes.push(row['sub_type'])
+          this.rawdata=response.data
+          let rets=[]
+          let rkeys=['y1data','y2data','y3data']
+          for (let akey in this.rawdata['hydata']) {
+            let arow={'code':akey }
+            for (let skey in this.rawdata['hydata'][akey]){
+              arow['hydata'+'_'+skey]=this.rawdata['hydata'][akey][skey]
+              }
+             this.rawdata['hydata'][akey]
+          for (let ykey of rkeys){
+            if (this.rawdata[ykey][akey]){
+              for (let skey in this.rawdata[ykey][akey]){
+              arow[ykey+'_'+skey]=this.rawdata[ykey][akey][skey]
+              }
             }
-            for(var key of ['mean26','mean52','mean104','listrate26','listrate52','listrate104','std26','std52','std104']){
-            if(row[key]){
-              row[key]=this.$tools.formatMoney((parseFloat(row[key])*100),2)
-          }
-            }
-
-            for(let rg of ['hyr','1yr','2yr']){
-            //   if(row['rankF_'+rg]){
-            //     row['rankF_'+rg+'_r']=row['rankF_'+rg].split("-")[0]
-            //     row['meand_'+rg]=row['meanr_'+rg]-row['rankF_'+rg+'_r']
-
-            //     this.rgdict[rg]=row['rankF_'+rg].split("-")[1]
-            //   }
-            row['meand'+this.winlength[rg]]=row['meanr'+this.winlength[rg]]-row['rank']
-            }
-            // for(let key in row){
-            //     if(['mean26','mean52','mean104','listrate26','listrate52','listrate104','std26','std52','std104'].indexOf(key)>-1){
-            //       row[key]=this.$tools.formatMoney((parseFloat(row[key])*100),2)
-            //      if(isNumber(row[key])){
-            //         let tmp=this.statdict[key]
-            //         if(tmp){
-
-            //         }else{
-            //           tmp={"max":row[key],"min":row[key]}
-            //           this.statdict[key]=tmp
-            //         }
-            //         if(row[key]>tmp["max"]){
-            //           tmp["max"]=parseFloat(row[key])
-            //         }
-            //         if(row[key]<tmp["min"]){
-            //           tmp["min"]=parseFloat(row[key])
-            //         }
-            //       }
-            //     }
-            //     // if(['sharpe', 'calmar', 'sortino', 'dd', 'win_ratio','yeaily_return', 'volatility'].indexOf(key)>-1){
-            //     //                       let fcnt=2
-            //     //                       let rval=parseFloat(row[key])
-            //     //                       if(rval>=10){
-            //     //                         fcnt=1
-            //     //                       }
-            //     //                       row[key]=rval.toFixed(fcnt)
-            //     // }
-            //   }
-           return row
-
-          })
-          console.log(this.statdict)
-          if(this.tableData&&this.tableData.length>0){
-            this.calcdate=this.tableData[0]['date']
-          }
-          this.getBaseInfo()
-
-          
-      this.$axios
-        .get("/fof/rankstat", { params: { ftype:this.ftype,date: this.date,type:this.type} })
-        .then((response) => {
-        this.avgcnt=response.data
-        for (let k in this.avgcnt){
-          this.avgcnt[k]=parseInt(this.avgcnt[k])
-        }
-        })
-          if(this.type=='高费率'){
-                 this.$axios
-        .get("/fof/list", { params: { scale:"高费率,黑名单,不可投"} })
-        .then((response) => {
-          let scalelist=response.data
-        this.tableData.map(row=>{
-          let infos=scalelist.filter(info=>info['code']==row['code'])
-          if(infos.length==1){
-            let finfo=infos[0]
-            row['fee']=finfo['fee']
-            row['carry']=finfo['carry']
-            row['perf_comp']=finfo['perf_comp']
-            row['remark']=finfo['remark']
 
           }
-          return row
-        })
-        
-        }) 
+          rets.push(arow)
           }
-        })
+          // for (let acode in this.rawdata['hydata']){
+          //   for 
+          // }
+          console.log(rets)
+          this.tableData =rets
+          this.filterNames()
+
+              })
         .catch((error) => {
           console.log(error);
         });
     },
   },
   mounted() {
-    if(this.ftype=='投后'){
-      this.range='quarter'
-    }else{
-          this.date=this.$moment().format("YYYYMMDD");
-    }
+    this.date=this.$moment().format("YYYYMMDD");
     //this.getProducts();
   },
   created() {

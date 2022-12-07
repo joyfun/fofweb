@@ -7,15 +7,15 @@
             <vxe-radio label="3yr" content="3年"></vxe-radio>
 
           </vxe-radio-group>
-
            <vxe-radio-group v-model="showkey" :strict="false">
             <vxe-radio-button :key="vkey.name" v-for="vkey of keygrps" :label="vkey.name" :content="vkey.name"></vxe-radio-button>
             </vxe-radio-group>
+<br>
 
             <vxe-radio-group v-model="tag" :strict="false">
             <vxe-radio-button :key="vkey" v-for="(vkey,i) in tags" :label="i" :content="vkey"></vxe-radio-button>
                      </vxe-radio-group>
-  <div style="height: 100%" ref="echart">
+  <div style="height: 540px" ref="echart">
     <!-- <el-button-group>
   <el-button type="primary">7天</el-button>
   <el-button type="primary">30天</el-button>
@@ -85,43 +85,8 @@ export default {
     },
     tag: {
       handler: function (rg) {
-        var vday='20000101'
-        if(this.rawdata["index"]){
-      
-        switch (rg) {
-            // case 0:
-            //   vday= this.aligndate;
-            //   break
-            case 0:
-              vday = this.$moment(this.max_date).add(-30, "d").format("YYYYMMDD");
-              break
-            case 1:
-              vday = this.$moment(this.max_date).add(-90, "d").format("YYYYMMDD");
-              break
-            case 2:
-              vday = this.$moment(this.max_date).add(-180, "d").format("YYYYMMDD");
-              break
-            case 3:
-              vday = this.$moment(this.max_date).add(-1, "y").format("YYYYMMDD");
-              break
-            case 4:
-              vday = this.$moment(this.max_date).add(-2, "y").format("YYYYMMDD");
-              break
-            case 5:
-              vday = this.$moment(this.max_date).add(-3, "y").format("YYYYMMDD");
-              break
-            case 6:
-              vday = this.$moment(this.max_date).dayOfYear(1).format("YYYYMMDD")
-              break
-            case 7:
-              vday= this.rawdata["index"][0];
-              break
-            default:
-              vday="20000101"
-              break
-        }}
-        this.changeDate(vday)
-        console.log(vday)
+        this.changeRange(rg)
+        
       },
     },
     showkey:{
@@ -163,9 +128,9 @@ export default {
   },
   data() {
     return {
-      tag:"",
+      tag:"全部",
       
-      colitems:{'adj_profit':'中位收益',
+      colitems:{'median_hyr':'中位收益',
   'yr':'移动年均收益',
   'profit':'年化收益',
   'vola':'移动年化波动率',
@@ -180,9 +145,9 @@ export default {
       lv1:["SY9620","SSS105"],
       lowest:0.9,
       // keygrps:[{name:"收益",cols:['yr','yeaily_return','yeaily_return']},{name:"波动",cols:["vola","risk"]},{name:"风险",cols:["nowdrop","adj_risk"]},{name:"收益风险比",cols=["calm","adj_calmar"]}, {name:"收益波动",cols=["yr","std"]}],
-      keygrps:[{name:"收益",cols:['yr','yeaily_return','yeaily_return']},{name:"波动",cols:["vola","risk"]},{name:"风险",cols:["nowdrop","adj_risk"]},{name:"收益风险比",cols:["calm","adj_calmar"]}, {name:"收益波动",cols:["yr","vola"]}],
+      keygrps:[{name:"收益",cols:['yr','median_hyr','profit'],gap:[-0.2]},{name:"波动",cols:["vola","risk"],gap:[0,1]},{name:"风险",cols:["nowdrop","adj_risk"],gap:[-1,0]},{name:"收益风险比",cols:["calm","adj_calmar"],gap:[-1,10]}, {name:"收益波动",cols:["yr","vola"],gap:[-0.2]}],
       showkey:"收益",
-      showcols:['yr','adj_profit','profit'],
+      showcols:['yr','median_hyr','profit'],
       startdate:'',
       range:'1yr',
       showdrop:false,
@@ -236,8 +201,19 @@ export default {
     boundaryGap: false,
     data: []
   },
-  dataZoom: [{type:"inside"}],
-
+        dataZoom: [
+          //             {            type:"inside",
+          //     disabled: true
+          // },
+          {
+            zoomOnMouseWheel: false,
+            type: "slider",
+            rangeMode: ["value", "percent"],
+            throttle: 300,
+            show: true,
+            realtime: true,
+          },
+        ],
          yAxis: [
           {
             type: "value",
@@ -275,6 +251,44 @@ export default {
     //   close() {
     //   this.$emit('close')
     // },
+    changeRange(rg){
+      var vday='20000101'
+        if(this.rawdata["index"]){
+      
+        switch (rg) {
+            // case 0:
+            //   vday= this.aligndate;
+            //   break
+            case 0:
+              vday = this.$moment(this.max_date).add(-30, "d").format("YYYYMMDD");
+              break
+            case 1:
+              vday = this.$moment(this.max_date).add(-90, "d").format("YYYYMMDD");
+              break
+            case 2:
+              vday = this.$moment(this.max_date).add(-180, "d").format("YYYYMMDD");
+              break
+            case 3:
+              vday = this.$moment(this.max_date).add(-1, "y").format("YYYYMMDD");
+              break
+            case 4:
+              vday = this.$moment(this.max_date).add(-2, "y").format("YYYYMMDD");
+              break
+            case 5:
+              vday = this.$moment(this.max_date).add(-3, "y").format("YYYYMMDD");
+              break
+            case 6:
+              vday = this.$moment(this.max_date).dayOfYear(1).format("YYYYMMDD")
+              break
+            case 7:
+              vday= this.rawdata["index"][0];
+              break
+            default:
+              vday="20000101"
+              break
+        }}
+        this.changeDate(vday)
+    },
     initWidth() {
       this.screenWidth = document.body.clientWidth;
       if (this.screenWidth < 991) {
@@ -456,6 +470,7 @@ export default {
           this.rawdata=response.data
           this.max_date=this.rawdata.index.at(-1)
           this.drawChart(response.data)
+          this.changeRange(this.tag)
 
         })
 // Promise.all([

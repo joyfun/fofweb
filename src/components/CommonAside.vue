@@ -134,40 +134,7 @@ export default {
                             icon:'setting'
                         }],
                          "invest":[
-                        {
-                            path: '/fundinfo1',
-                            label: 'CTA',
-                            name:'fund-info1',
-                            icon:'setting'
-                        },
-                        {
-                            path: '/fundinfo2',
-                            label: '指数增强',
-                            name:'fund-info2',
-                            icon:'setting'
-                        }, {
-                            path: '/fundinfo3',
-                            label: '套利',
-                            name:'fund-info3',
-                            icon:'setting'
-                        }
-                        , {
-                            path: '/fundinfo4',
-                            label: '中性',
-                            name:'fund-info4',
-                            icon:'setting'
-                        }, {
-                            path: '/fundinfo5',
-                            label: '期权',
-                            name:'fund-info5',
-                            icon:'setting'
-                        }
-                        ,{
-                            path: '/fundinfo6',
-                            label: '混合',
-                            name:'fund-info6',
-                            icon:'setting'
-                        },
+
                         {
                             path: '/rankinfo',
                             label: '投资排名',
@@ -176,21 +143,27 @@ export default {
                         },
                         {
                             path: '/statinfo',
-                            label: '指标分析',
+                            label: '周剑指数',
                             name:'stat-info',
                             icon:'setting'
                         },
-                        {
-                            path: '/listrank',
-                            label: '清单分析',
-                            name:'list-rank',
-                            icon:'setting'
-                        },{
-                            path: '/fundextra',
-                            label: '高级查询',
-                            name:'fund-extra',
+                                            {
+                            path: '/trendinfo',
+                            label: '统计指标',
+                            name:'trend-info',
                             icon:'setting'
                         },
+                        // {
+                        //     path: '/listrank',
+                        //     label: '清单分析',
+                        //     name:'list-rank',
+                        //     icon:'setting'
+                        // },{
+                        //     path: '/fundextra',
+                        //     label: '高级查询',
+                        //     name:'fund-extra',
+                        //     icon:'setting'
+                        // },
                         //  {
                         //     path: '/fundcompare1',
                         //     label: '分类基金对比',
@@ -323,15 +296,15 @@ export default {
                             name:'rank-infoa1',
                             icon:'setting'
                         },
-                                         {
-                            path: '/fund-analysis',
-                            label: '基金分析',
-                            name:'fund-analysis',
-                            params:{
-                                class_type:'1',
-                            },
-                            icon:'setting'
-                        },
+                        //                  {
+                        //     path: '/fund-analysis',
+                        //     label: '基金分析',
+                        //     name:'fund-analysis',
+                        //     params:{
+                        //         class_type:'1',
+                        //     },
+                        //     icon:'setting'
+                        // },
                         {
                             path: '/fund-jcomp',
                             label: '对标差',
