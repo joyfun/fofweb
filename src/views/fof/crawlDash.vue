@@ -313,7 +313,7 @@ export default {
         }else if(row.type=="SiMuWang"){
             url = 'https://dc.simuwang.com/product/' + row.scode + '.html'
         }else if(row.type=="ZhaoYang"){
-            url = 'https://fof.12345fund.com/details?dst=1&id=' + row.scode
+            url = 'https://fof.12345fund.com/details/0-1?id=' + row.scode
         }
         if(url){
             window.open(url)

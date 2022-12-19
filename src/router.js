@@ -131,6 +131,10 @@ const routes = [
         path: '/trendinfo',
         name: 'trend-info',
         component:() => import('@/views/fof/TrendInfo.vue')
+      },{
+        path: '/trendinfo2',
+        name: 'trend-info2',
+        component:() => import('@/views/fof/TrendInfo2.vue')
       }
       ,{
         path: '/rankinfoa',

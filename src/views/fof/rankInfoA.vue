@@ -104,13 +104,13 @@
             </template>
           </vxe-column> 
           <!-- -->
-          <vxe-column v-if="ftype!='投后'" sortable  title="级别"  width="36" align="center" field="level" sort-by="lscore"  :filters="[{label: '甲', value: '甲'}, {label: '乙', value: '乙'}, {label: '丙', value: '丙'}, {label: '丁', value: '丁'}, {label: '戊', value: '戊'}]" :title-help="{message: '根据产品波动率和最大回撤对产品进行分级'}" >
+          <vxe-column v-if="ftype!='投后' && type!='非常规'" sortable  title="级别"  width="36" align="center" field="level" sort-by="lscore"  :filters="[{label: '甲', value: '甲'}, {label: '乙', value: '乙'}, {label: '丙', value: '丙'}, {label: '丁', value: '丁'}, {label: '戊', value: '戊'}]" :title-help="{message: '根据产品波动率和最大回撤对产品进行分级'}" >
           </vxe-column> 
             <vxe-column   field="sub_type" width="60" sortable :title="'子'" :filters="[]"  >
             </vxe-column>
            <vxe-column   field="rank" width="40" sortable :title="'rank'" >
             </vxe-column>
-          <template  v-if="type=='高费率'">
+          <template  v-if="type=='非常规'">
               <vxe-column field="fee" width="60"  title="fee"  ></vxe-column>
               <vxe-column align="left" field="carry" width="160"  title="carry"  ></vxe-column>
               <!-- <vxe-column field="perf_comp" width="80"  title="业绩提计方式"  ></vxe-column> -->

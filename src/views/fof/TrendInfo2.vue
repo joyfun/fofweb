@@ -2,7 +2,7 @@
   <div ref="tableContainer" style="	height : 100%;">
           <vxe-toolbar>
           <template #buttons>
-                                    {{tmaxh}}
+                        {{tmaxh}}
             <vxe-button @click="clearSelect">取消选择</vxe-button>
             <vxe-button @click="showStatHis">指标对比</vxe-button>
             <vxe-button @click="showRankHis">排名对比</vxe-button>
@@ -26,12 +26,12 @@
             <vxe-radio-button label="期权" content="期权"></vxe-radio-button>
           </vxe-radio-group>
 
-          <!-- <vxe-radio-group v-model="range" :strict="false">
-            <vxe-radio  label="quarter" content="3月"></vxe-radio>
-            <vxe-radio v-if="ftype=='投后'" label="quarter" content="3月"></vxe-radio>
+          <vxe-radio-group v-model="range" :strict="false">
+            <vxe-radio label="quarter" content="3月"></vxe-radio>
+            <vxe-radio label="hyr" content="半年"></vxe-radio>
             <vxe-radio label="1yr" content="1年"></vxe-radio>
-            
-          </vxe-radio-group> -->
+            <vxe-radio label="2yr" content="2年"></vxe-radio>
+          </vxe-radio-group>
                               <vxe-button @click="exportDataEvent">导出</vxe-button>
 
                               <!-- <vxe-button @click="jumptodash">排名信息</vxe-button> -->
@@ -98,16 +98,18 @@
             </vxe-column>
             <vxe-column   field="tlength" width="40" sortable :title="'总'" >
             </vxe-column>
-          <vxe-colgroup :key="af"  v-for="af of ['yeaily_return', 'sharpe', 'calmar', 'profit_loss','dd', 'volatility','win_ratio']" :title="af" align="center">
+          <vxe-colgroup :key="af" :title="af" v-for="af of ['mean', 'listrate', 'std','yeaily_return']" align="center">
 
          <!-- <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return', 'sharpe', 'calmar', 'profit', 'risk', 'adj_profit', 'adj_risk', 'max_dd', 'volatility']"  :title="af" :field="af"  > -->
-         <vxe-column :key="rg" :width="48" sortable  v-for="rg of ['hydata','y1data','y2data','y3data']" :title="titles[rg]" :field="rg+'_'+af"  >
+         <vxe-column  :key="rg" v-for="rg of ['hydata','y1data','y2data','y3data']" :width="48" sortable   :title="titles[rg]" :field="rg+'_'+af"  >
 
             <!-- <template v-else-if="['dd_ratio'].indexOf(af)>-1" #default="{ row }">
               <span :class="'rank_text_color'+Math.floor(row[af]/25)">{{row[af]}}</span>
             </template> -->
             <template  #default="{ row }">
-              <span :class="'rank_text_color'+Math.floor(row[rg+'_'+af+'_R']*4)">{{$tools.formatMoney(row[rg+'_'+af],2)}}</span>
+              <span v-if="af=='std' || af=='mean'" :class="'rank_text_color'+Math.floor(4-row[rg+'_'+af+'_R']*4)">{{$tools.formatMoney(row[rg+'_'+af],2)}}</span>
+              <span v-else :class="'rank_text_color'+Math.floor(row[rg+'_'+af+'_R']*4)">{{$tools.formatMoney(row[rg+'_'+af],2)}}</span>
+
             </template>
           </vxe-column>
           </vxe-colgroup>
@@ -425,18 +427,18 @@ export default {
         tableList:[],
         winlength:{'hyr':26,'1yr':52,'2yr':104,'quarter':13},
         showList:false,
-        range:"1yr",
+        range:"quarter",
         srange:"1yr",
         brange:"1yr",
         arange:"1yr",
         company_code:"",
         calcdate:"",
         baseData:{},
-        titles:{'hydata':"半年",'y1data':"一年",'y2data':"前一年",'y3data':"前两年"},
         rgdict:{},
         date: '',
         tmaxh:560,
         type: 'cta0',
+        titles:{'hydata':"半年",'y1data':"一年",'y2data':"前一年",'y3data':"前两年"},
         yrdict: {"hyr":"半年","1yr":"一年","2yr":"两年","quarter":"三月"},
         avgcnt:{},
         subtypes:[],
@@ -447,6 +449,27 @@ export default {
     };
   },
   methods: {
+
+     customSortMethod ({ data, sortList }) {
+              const sortItem = sortList[0]
+              // 取出第一个排序的列
+              const { property, order } = sortItem
+              let list = []
+              if (order === 'asc' || order === 'desc') {
+                // if (property === 'name') {
+                //   // 例如：实现中英文混排，按照字母排序
+                //   list = data.sort((a, b) => {
+                //     return this.getPinYin(a.name).localeCompare(this.getPinYin(b.name))
+                //   })
+                // } else {
+                  list = data.sort()
+                // }
+              }
+              if (order === 'desc') {
+                list.reverse()
+              }
+              return list
+            },
     getBaseInfoA(){
                this.$axios
         .get("/fof/baseinfo", { params: { date: this.date,type:this.type ,range:this.arange,code:this.company_ranks.map(row=>row.code).join()} })
@@ -919,7 +942,7 @@ return ''
     getProducts() {
 
       this.$axios
-        .get("/fof/basedataby", { params: { ftype:this.ftype,date: this.date,type:this.type ,range:this.range,weight_type:this.filters['weight_type']} })
+        .get("/fof/rankdataby", { params: { ftype:this.ftype,date: this.date,type:this.type ,range:this.range,weight_type:this.filters['weight_type']} })
         .then((response) => {
           this.rawdata=response.data
           let rets=[]
@@ -941,22 +964,9 @@ return ''
           }
           rets.push(arow)
           }
-          // for (let acode in this.rawdata['hydata']){
-          //   for 
-          // }
           let tlen=rets.length
-          // for (let r1 of ['hydata','y1data','y2data','y3data']){
-          //   for (let subkey of ['yeaily_return', 'sharpe', 'calmar', 'win_ratio','profit_loss','dd', 'volatility']){
-          //     rets.sort((b,a)=>{
-          //      return a[r1+"_"+subkey]-b[r1+"_"+subkey]
-          //     })
-          //     for (let i = 0; i < tlen; i++){
-          //       rets[i][r1+"_"+subkey+"_R"]=i/tlen
-          //     }
-          // }
-          // }
-           for (let r1 of ['hydata','y1data','y2data','y3data']){
-            for (let subkey of ['yeaily_return', 'sharpe', 'calmar', 'win_ratio','profit_loss','dd', 'volatility']){
+          for (let r1 of ['hydata','y1data','y2data','y3data']){
+            for (let subkey of ['mean', 'listrate', 'std','yeaily_return']){
               rets.sort((b,a)=>{
                 let ckey=r1+"_"+subkey
                 if(ckey in a && ckey in b){
@@ -985,7 +995,6 @@ return ''
               }
           }
           }
-          
           console.log(rets)
           this.tableData =rets
           this.filterNames()
@@ -999,11 +1008,11 @@ return ''
   mounted() {
     this.date=this.$moment().format("YYYYMMDD");
     this.tmaxh=this.$refs['tableContainer'].clientHeight-80
-    // this.getMisc("fof_action")
     //this.getProducts();
   },
   created() {
-
+        // this.tmaxh=this.$refs['tableContainer'].clientHeight-40
+    // this.getMisc("fof_action")
 
   },
 };

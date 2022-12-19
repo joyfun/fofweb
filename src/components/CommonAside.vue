@@ -153,6 +153,12 @@ export default {
                             name:'trend-info',
                             icon:'setting'
                         },
+                           {
+                            path: '/trendinfo2',
+                            label: '统计指标2',
+                            name:'trend-info2',
+                            icon:'setting'
+                        },
                         // {
                         //     path: '/listrank',
                         //     label: '清单分析',
