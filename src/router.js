@@ -150,6 +150,7 @@ const routes = [
         name: 'rank-infoa1',
         component:() => import('@/views/fof/rankInfoA.vue'),
         props:{
+          ftype:'投后',
           filters:{weight_type:'after_weight1'}
      }
      

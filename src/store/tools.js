@@ -3,7 +3,7 @@ import html2canvas from 'html2canvas'
 import jspdf from 'jspdf'
 var tools = {}
 tools.formatMoney=(number, decimals = 0, decPoint = ".", thousandsSep = ",")=>{
-    if (null == number||''==number)
+    if (null == number||''===number)
     return '' 
 
 number = (number + "").replace(/[^0-9+-Ee.]/g, "");

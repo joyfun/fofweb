@@ -316,7 +316,9 @@ export default {
           return '' 
         var color=number>=0?"red":"green"
         //return '<span style="text-align:right;color='+color+'">'+this.formatMoney(number,4)+'</span>'
-        return this.$tools.formatMoney(number*rate,2)
+        let aret=this.$tools.formatMoney(number*rate,2)
+        console.log(`${number}__${aret}`)
+        return aret
     },
     
 
