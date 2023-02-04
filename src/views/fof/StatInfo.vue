@@ -292,7 +292,7 @@ export default {
   props: {
     filters:{
       type: Object,
-      default:{'weight_type':''}
+      default:() => {return {'weight_type' : ''}},
     },
     ftype:{
       type:String,
