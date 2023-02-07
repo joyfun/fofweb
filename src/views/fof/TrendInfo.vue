@@ -70,7 +70,13 @@
                             <el-button  @click.native.prevent="showBaseInfo(row)" type="text" size="small"><i class="el-icon-info" ></i></el-button> -->
         </template>
       </vxe-column>
+  <vxe-column   field="marketval" width="50" sortable :title="'持仓(万)'" >
+                                    <template #default="{ row }">
+                           
+{{$tools.formatMoney(row['marketval']/10000,0)}}
 
+            </template>
+            </vxe-column>
       <vxe-column sortable title="信息" fixed="left" width="80" align="center" field="level">
         <template #default="{ row }">
           <el-button @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing"></i></el-button>
@@ -591,6 +597,7 @@ export default {
             }
             return r
           })
+          
         })
     },
     getComanyPords() {
@@ -1184,6 +1191,14 @@ export default {
               }
             }
             arow['type'] = this.type
+             let holds = this.holding.filter(
+                (hd) => hd['b_code'] == arow['code']
+              )
+              if (holds.length > 0) {
+                arow['marketval'] = holds.reduce((prev, r) => {
+                  return prev + r['marketval']
+                }, 0)
+              }
             rets.push(arow)
           }
           // for (let acode in this.rawdata['hydata']){

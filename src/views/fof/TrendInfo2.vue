@@ -61,7 +61,13 @@
 
         </template>
       </vxe-column>
+<vxe-column   field="marketval" width="50" sortable :title="'持仓(万)'" >
+                                    <template #default="{ row }">
+                           
+{{$tools.formatMoney(row['marketval']/10000,0)}}
 
+            </template>
+            </vxe-column>
       <vxe-column sortable title="信息" width="80" align="center" field="level">
         <template #default="{ row }">
           <el-button @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing"></i></el-button>
@@ -959,6 +965,7 @@ export default {
                 row['marketval'] = holds.reduce((prev, r) => {
                   return prev + r['marketval']
                 }, 0)
+                 console.log(row)
               }
 
               row['dd_ratio'] = this.$tools.formatMoney(
@@ -1132,6 +1139,14 @@ export default {
                 }
               }
             }
+             let holds = this.holding.filter(
+                (hd) => hd['b_code'] == arow['code']
+              )
+              if (holds.length > 0) {
+                arow['marketval'] = holds.reduce((prev, r) => {
+                  return prev + r['marketval']
+                }, 0)
+              }
             rets.push(arow)
           }
           let tlen = rets.length
