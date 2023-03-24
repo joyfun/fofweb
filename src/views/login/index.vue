@@ -98,6 +98,7 @@ export default {
               console.log("======login success=======")
               var luser=response.data.user
              that.$store.dispatch('setUserMenu',response.data.permissions)
+             that.$store.dispatch('setDays',response.data.days)
              that.$axios({
         url: "/sys/getcart",
         method: "GET",

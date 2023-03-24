@@ -1,5 +1,5 @@
 <template>
-  <div ref="tableContainer" style="	height : 100%;">
+  <div ref="tableContainer" style="height: 100%">
     <vxe-toolbar>
       <template #buttons>
         <vxe-button @click="clearSelect">取消选择</vxe-button>
@@ -8,7 +8,14 @@
         <vxe-button @click="compareData">业绩对比</vxe-button>
         <vxe-button @click="compareInvest">已投对比</vxe-button>
         <vxe-button @click="exportEvent">导出.xlsx</vxe-button>
-        <el-date-picker style="width:130px" v-model="date" value-format="yyyyMMdd" format="yyyyMMdd" align="right" type="date">
+        <el-date-picker
+          style="width: 130px"
+          v-model="date"
+          value-format="yyyyMMdd"
+          format="yyyyMMdd"
+          align="right"
+          type="date"
+        >
         </el-date-picker>
         <vxe-radio-group v-model="type" size="mini">
           <vxe-radio-button label="cta0" content="CTA0"></vxe-radio-button>
@@ -24,154 +31,348 @@
           <vxe-radio label="quarter" content="3月"></vxe-radio>
           <vxe-radio label="hyr" content="半年"></vxe-radio>
           <vxe-radio label="1yr" content="1年"></vxe-radio>
-          <vxe-radio label="2yr" content="2年"></vxe-radio>
+          <!-- <vxe-radio label="2yr" content="2年"></vxe-radio> -->
         </vxe-radio-group>
         <vxe-button @click="exportDataEvent">导出</vxe-button>
 
         <!-- <vxe-button @click="jumptodash">排名信息</vxe-button> -->
-
       </template>
     </vxe-toolbar>
-    <vxe-table @checkbox-change="selectChangeEvent1" @checkbox-all="checkAll" class="mytable-style" border ref="rankTable" :height="tmaxh" :align="allAlign" size="mini" :row-config="{keyField:'code',isCurrent: true, isHover: true}" show-overflow :scroll-y="{oSize:500}" :sort-config="{trigger: 'cell', defaultSort: {field: 'rank', order: 'asc'}, orders: ['desc', 'asc', null]}" :data="tableList">
+    <vxe-table
+      @checkbox-change="selectChangeEvent1"
+      @checkbox-all="checkAll"
+      class="mytable-style"
+      border
+      ref="rankTable"
+      :height="tmaxh"
+      :align="allAlign"
+      size="mini"
+      :row-config="{ keyField: 'code', isCurrent: true, isHover: true }"
+      show-overflow
+      :scroll-y="{ oSize: 500 }"
+      :sort-config="{
+        trigger: 'cell',
+        defaultSort: { field: 'rank', order: 'asc' },
+        orders: ['desc', 'asc', null]
+      }"
+      :data="tableList"
+    >
       <vxe-column type="checkbox" width="30"></vxe-column>
       <vxe-column type="seq" width="30"></vxe-column>
       <vxe-column width="80" title="公司" field="company" align="left">
         <template #default="{ row }">
-          <a href="javascript:;" @click="showCompany(row.company_code)">{{ row.company}}</a>
+          <a href="javascript:;" @click="showCompany(row.company_code)">{{
+            row.company
+          }}</a>
         </template>
-
       </vxe-column>
       <!-- <vxe-column type="seq" width="60"></vxe-column> -->
-      <vxe-column width="180" field="code" align="left" :title="prodTitle" :title-help="{message: '默认显示排名前30%和历史平均排名进入前30%次数超过70%的产品'}">
+      <vxe-column
+        width="180"
+        field="code"
+        align="left"
+        :title="prodTitle"
+        :title-help="{
+          message: '默认显示排名前30%和历史平均排名进入前30%次数超过70%的产品'
+        }"
+      >
         <template #header>
-          {{prodTitle}}
-          <br>{{tableList.length}}
-          <vxe-switch v-model="showList" open-label="已投" :open-value="true" close-label="所有" :close-value="false"></vxe-switch>
+          {{ prodTitle }}
+          <br />{{ tableList.length }}
+          <vxe-switch
+            v-model="showList"
+            open-label="已投"
+            :open-value="true"
+            close-label="所有"
+            :close-value="false"
+          ></vxe-switch>
           <vxe-input v-model="filter" @change="filterNames"></vxe-input>
-
         </template>
         <template #default="{ row }">
           <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
           <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
           <!-- &nbsp;<vxe-button  @click.native.prevent="oneKeyBuy(row)" type="text" status="primary" size="small"><i class="iconfont icon-yijiangoumai" ></i></vxe-button> -->
-          <a href="javascript:;" @click="showHis(row)">{{ showFundName(row.code)}}</a>
+          <a href="javascript:;" @click="showHis(row)">{{
+            showFundName(row.code)
+          }}</a>
           <!-- <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing" ></i></el-button>
                            <el-button  @click.native.prevent="showBaseHis(row)" type="text" size="small"><i class="el-icon-s-order" ></i></el-button>
                             <el-button  @click.native.prevent="showBaseInfo(row)" type="text" size="small"><i class="el-icon-info" ></i></el-button> -->
-
         </template>
       </vxe-column>
-<vxe-column   field="marketval" width="50" sortable :title="'持仓(万)'" >
-                                    <template #default="{ row }">
-                           
-{{$tools.formatMoney(row['marketval']/10000,0)}}
-
-            </template>
-            </vxe-column>
+      <vxe-column field="marketval" width="50" sortable :title="'持仓(万)'">
+        <template #default="{ row }">
+          {{ $tools.formatMoney(row['marketval'] / 10000, 0) }}
+        </template>
+      </vxe-column>
       <vxe-column sortable title="信息" width="80" align="center" field="level">
         <template #default="{ row }">
-          <el-button @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing"></i></el-button>
-          <el-button @click.native.prevent="showBaseHis(row)" type="text" size="small"><i class="el-icon-s-order"></i></el-button>
-          <el-button @click.native.prevent="showHis(row)" type="text" size="small"><i class="el-icon-s-data"></i></el-button>
-          <el-button @click.native.prevent="showBaseInfo(row)" type="text" size="small"><i class="el-icon-info"></i></el-button>
-
+          <el-button
+            @click.native.prevent="showFundHis(row)"
+            type="text"
+            size="small"
+            ><i class="el-icon-s-marketing"></i
+          ></el-button>
+          <el-button
+            @click.native.prevent="showBaseHis(row)"
+            type="text"
+            size="small"
+            ><i class="el-icon-s-order"></i
+          ></el-button>
+          <el-button
+            @click.native.prevent="showHis(row)"
+            type="text"
+            size="small"
+            ><i class="el-icon-s-data"></i
+          ></el-button>
+          <el-button
+            @click.native.prevent="showBaseInfo(row)"
+            type="text"
+            size="small"
+            ><i class="el-icon-info"></i
+          ></el-button>
         </template>
       </vxe-column>
       <!-- -->
-      <vxe-column field="sub_type" width="60" sortable :title="'子'" :filters="[]">
+      <vxe-column
+        field="sub_type"
+        width="60"
+        sortable
+        :title="'子'"
+        :filters="[]"
+      >
       </vxe-column>
       <vxe-column field="tlength" width="40" sortable :title="'总'">
       </vxe-column>
-      <vxe-colgroup :key="af" :title="af" v-for="af of ['mean', 'listrate', 'std','yeaily_return']" align="center">
-
+      <vxe-colgroup
+        :key="af"
+        :title="af"
+        v-for="af of ['mean', 'listrate', 'std', 'yeaily_return']"
+        align="center"
+      >
         <!-- <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return', 'sharpe', 'calmar', 'profit', 'risk', 'adj_profit', 'adj_risk', 'max_dd', 'volatility']"  :title="af" :field="af"  > -->
-        <vxe-column :key="rg" v-for="rg of ['hydata','y1data','y2data','y3data']" :width="48" sortable :title="titles[rg]" :field="rg+'_'+af">
-
+        <vxe-column
+          :key="rg"
+          v-for="rg of ['hydata', 'y1data', 'y2data', 'y3data']"
+          :width="48"
+          sortable
+          :title="titles[rg]"
+          :field="rg + '_' + af"
+        >
           <!-- <template v-else-if="['dd_ratio'].indexOf(af)>-1" #default="{ row }">
               <span :class="'rank_text_color'+Math.floor(row[af]/25)">{{row[af]}}</span>
             </template> -->
           <template #default="{ row }">
-            <span v-if="af=='std' || af=='mean'" :class="'rank_text_color'+Math.floor(4-row[rg+'_'+af+'_R']*4)">{{$tools.formatMoney(row[rg+'_'+af],2)}}</span>
-            <span v-else :class="'rank_text_color'+Math.floor(row[rg+'_'+af+'_R']*4)">{{$tools.formatMoney(row[rg+'_'+af],2)}}</span>
-
+            <span
+              v-if="af == 'std' || af == 'mean'"
+              :class="
+                'rank_text_color' +
+                Math.floor(4 - row[rg + '_' + af + '_R'] * 4)
+              "
+              >{{
+                af != 'yeaily_return' && row[rg + '_' + af] == 0
+                  ? ''
+                  : $tools.formatMoney(row[rg + '_' + af], 2)
+              }}</span
+            >
+            <span
+              v-else
+              :class="
+                'rank_text_color' + Math.floor(row[rg + '_' + af + '_R'] * 4)
+              "
+              >{{
+                af != 'yeaily_return' && row[rg + '_' + af] == 0
+                  ? ''
+                  : $tools.formatMoney(row[rg + '_' + af], 2)
+              }}</span
+            >
           </template>
         </vxe-column>
       </vxe-colgroup>
       <!-- <vxe-column sortable  title="分"  field="lscore" >
           </vxe-column>  -->
     </vxe-table>
-    <el-dialog width="80%" top="50px" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="showCompanyRanks">
+    <el-dialog
+      width="80%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="showCompanyRanks"
+    >
       <vxe-toolbar>
         <template #buttons>
-
           <vxe-button @click="compareDatac">业绩对比</vxe-button>
           <vxe-radio-group v-model="srange" :strict="false">
             <vxe-radio label="hyr" content="半年"></vxe-radio>
             <vxe-radio label="1yr" content="1年"></vxe-radio>
-            <vxe-radio v-if="ftype=='投后'" label="quarter" content="3月"></vxe-radio>
+            <vxe-radio
+              v-if="ftype == '投后'"
+              label="quarter"
+              content="3月"
+            ></vxe-radio>
             <vxe-radio v-else label="2yr" content="2年"></vxe-radio>
           </vxe-radio-group>
         </template>
       </vxe-toolbar>
-      <vxe-table ref="companyTable" :align="allAlign" size="mini" :row-config="{keyField:'code',isCurrent: true, isHover: true}" show-overflow :sort-config="{trigger: 'cell', defaultSort: {field: 'rank', order: 'asc'}, orders: ['desc', 'asc', null]}" :data="company_ranks">
+      <vxe-table
+        ref="companyTable"
+        :align="allAlign"
+        size="mini"
+        :row-config="{ keyField: 'code', isCurrent: true, isHover: true }"
+        show-overflow
+        :sort-config="{
+          trigger: 'cell',
+          defaultSort: { field: 'rank', order: 'asc' },
+          orders: ['desc', 'asc', null]
+        }"
+        :data="company_ranks"
+      >
         <vxe-column type="checkbox" width="30" fixed="left"></vxe-column>
         <!-- <vxe-column type="seq" width="60"></vxe-column> -->
-        <vxe-column width="180" field="code" align="left" :title="prodTitle" fixed="left" :title-help="{message: '默认显示排名前30%和历史平均排名进入前30%次数超过70%的产品'}">
+        <vxe-column
+          width="180"
+          field="code"
+          align="left"
+          :title="prodTitle"
+          fixed="left"
+          :title-help="{
+            message: '默认显示排名前30%和历史平均排名进入前30%次数超过70%的产品'
+          }"
+        >
           <template #default="{ row }">
             <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
             <!-- <vxe-button  @click.native.prevent="addCart(row)" type="text" status="primary" size="small" ><i class="iconfont icon-mairu" ></i></vxe-button> -->
             <!-- &nbsp;<vxe-button  @click.native.prevent="oneKeyBuy(row)" type="text" status="primary" size="small"><i class="iconfont icon-yijiangoumai" ></i></vxe-button> -->
-            <a href="javascript:;" @click="showHis(row)">{{ showFundName(row.code)}}</a>
+            <a href="javascript:;" @click="showHis(row)">{{
+              showFundName(row.code)
+            }}</a>
             <!-- <el-button  @click.native.prevent="showFundHis(row)" type="text" size="small"><i class="el-icon-s-marketing" ></i></el-button>
                            <el-button  @click.native.prevent="showBaseHis(row)" type="text" size="small"><i class="el-icon-s-order" ></i></el-button>
                             <el-button  @click.native.prevent="showBaseInfo(row)" type="text" size="small"><i class="el-icon-info" ></i></el-button> -->
-
           </template>
         </vxe-column>
 
         <!-- -->
-        <vxe-column field="rank_type" width="80" sortable title="" :filters="[]">
+        <vxe-column
+          field="rank_type"
+          width="80"
+          sortable
+          title=""
+          :filters="[]"
+        >
         </vxe-column>
-        <vxe-column field="sub_type" width="80" sortable :title="'子'" :filters="[]">
+        <vxe-column
+          field="sub_type"
+          width="80"
+          sortable
+          :title="'子'"
+          :filters="[]"
+        >
         </vxe-column>
         <vxe-column field="rank" width="40" sortable :title="'rank'">
         </vxe-column>
-        <template v-if="type=='高费率'">
+        <template v-if="type == '高费率'">
           <vxe-column field="fee" width="60" title="fee"></vxe-column>
-          <vxe-column align="left" field="carry" width="160" title="carry"></vxe-column>
+          <vxe-column
+            align="left"
+            field="carry"
+            width="160"
+            title="carry"
+          ></vxe-column>
           <!-- <vxe-column field="perf_comp" width="80"  title="业绩提计方式"  ></vxe-column> -->
-          <vxe-column align="left" field="remark" width="240" title="备注"></vxe-column>
+          <vxe-column
+            align="left"
+            field="remark"
+            width="240"
+            title="备注"
+          ></vxe-column>
         </template>
         <template v-else>
-
-          <vxe-column field=" " width="2" sortable :title="' '">
-          </vxe-column>
-          <template v-for=" tp of ['hyr','1yr','2yr']">
-            <vxe-colgroup :key="tp" :title="yrdict[tp]+'排名信息('+rawlen+')平均'+avgcnt[range]+'个'" align="center">
-
-              <vxe-column :field="'mean'+winlength[tp]" width="48" sortable :title="'mean%'">
+          <vxe-column field=" " width="2" sortable :title="' '"> </vxe-column>
+          <template v-for="tp of ['hyr', '1yr', '2yr']">
+            <vxe-colgroup
+              :key="tp"
+              :title="
+                yrdict[tp] +
+                '排名信息(' +
+                rawlen +
+                ')平均' +
+                avgcnt[range] +
+                '个'
+              "
+              align="center"
+            >
+              <vxe-column
+                :field="'mean' + winlength[tp]"
+                width="48"
+                sortable
+                :title="'mean%'"
+              >
                 <template #default="{ row }">
-                  <span :class="'rank_text_color'+Math.floor(row['mean'+winlength[tp]+'_R']*4)">{{row['mean'+winlength[tp]]}}</span>
+                  <span
+                    :class="
+                      'rank_text_color' +
+                      Math.floor(row['mean' + winlength[tp] + '_R'] * 4)
+                    "
+                    >{{ row['mean' + winlength[tp]] }}</span
+                  >
                 </template>
               </vxe-column>
-              <vxe-column :field="'listrate'+winlength[tp]" width="48" sortable :title="'listrate%'">
+              <vxe-column
+                :field="'listrate' + winlength[tp]"
+                width="48"
+                sortable
+                :title="'listrate%'"
+              >
                 <template #default="{ row }">
-                  <span :class="'rank_text_color'+Math.floor((1-row['listrate'+winlength[tp]+'_R'])*4)">{{row['listrate'+winlength[tp]]}}</span>
+                  <span
+                    :class="
+                      'rank_text_color' +
+                      Math.floor(
+                        (1 - row['listrate' + winlength[tp] + '_R']) * 4
+                      )
+                    "
+                    >{{ row['listrate' + winlength[tp]] }}</span
+                  >
                 </template>
               </vxe-column>
-              <vxe-column :key="dkey" :field="dkey+winlength[tp]" width="48" sortable :title="dkey+'%'" v-for="dkey in ['std']">
+              <vxe-column
+                :key="dkey"
+                :field="dkey + winlength[tp]"
+                width="48"
+                sortable
+                :title="dkey + '%'"
+                v-for="dkey in ['std']"
+              >
                 <template #default="{ row }">
-                  <span :class="'rank_text_color'+Math.floor(row['std'+winlength[tp]+'_R']*4)">{{row['std'+winlength[tp]]}}</span>
+                  <span
+                    :class="
+                      'rank_text_color' +
+                      Math.floor(row['std' + winlength[tp] + '_R'] * 4)
+                    "
+                    >{{ row['std' + winlength[tp]] }}</span
+                  >
                 </template>
               </vxe-column>
-              <vxe-column :field="'meand'+winlength[tp]" width="48" sortable :title="'Δrank'">
+              <vxe-column
+                :field="'meand' + winlength[tp]"
+                width="48"
+                sortable
+                :title="'Δrank'"
+              >
               </vxe-column>
             </vxe-colgroup>
-            <vxe-column :key="'blank_'+tp" field=" " width="2" sortable :title="' '">
+            <vxe-column
+              :key="'blank_' + tp"
+              field=" "
+              width="2"
+              sortable
+              :title="' '"
+            >
             </vxe-column>
           </template>
         </template>
-        <vxe-colgroup :title="yrdict[range]+'指标数据'" align="center">
+        <vxe-colgroup :title="yrdict[range] + '指标数据'" align="center">
           <template #header>
             <vxe-radio-group v-model="arange" :strict="false">
               <vxe-radio label="hyr" content="半年"></vxe-radio>
@@ -181,15 +382,49 @@
           </template>
           <vxe-column field="tlength" width="48" sortable title="length">
           </vxe-column>
-          <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'dd_week', 'win_ratio', 'volatility','profit_loss','dd_ratio']" :title="af" :field="af">
-            <template v-if=" ['yeaily_return','sharpe','calmar','sortino', 'dd','win_ratio','profit_loss'].indexOf(af)>-1" #default="{ row }">
-              <span :class="'rank_text_color'+Math.floor(row[af+'_R']*4)">{{row[af]}}</span>
+          <vxe-column
+            :key="af"
+            :width="48"
+            sortable
+            v-for="af of [
+              'yeaily_return',
+              'sharpe',
+              'calmar',
+              'sortino',
+              'dd',
+              'dd_week',
+              'win_ratio',
+              'volatility',
+              'profit_loss',
+              'dd_ratio'
+            ]"
+            :title="af"
+            :field="af"
+          >
+            <template
+              v-if="
+                [
+                  'yeaily_return',
+                  'sharpe',
+                  'calmar',
+                  'sortino',
+                  'dd',
+                  'win_ratio',
+                  'profit_loss'
+                ].indexOf(af) > -1
+              "
+              #default="{ row }"
+            >
+              <span
+                :class="'rank_text_color' + Math.floor(row[af + '_R'] * 4)"
+                >{{ row[af] }}</span
+              >
             </template>
             <!-- <template v-else-if="['dd_ratio'].indexOf(af)>-1" #default="{ row }">
               <span :class="'rank_text_color'+Math.floor(row[af]/25)">{{row[af]}}</span>
             </template> -->
             <template v-else #default="{ row }">
-              <span>{{row[af]}}</span>
+              <span>{{ row[af] }}</span>
             </template>
           </vxe-column>
         </vxe-colgroup>
@@ -199,7 +434,6 @@
       </vxe-table>
     </el-dialog>
   </div>
-
 </template>
 
  <script>
@@ -424,10 +658,10 @@ export default {
       tmaxh: 560,
       type: 'cta0',
       titles: {
-        hydata: '半年',
-        y1data: '一年',
-        y2data: '前一年',
-        y3data: '前两年'
+        hydata: '00-6',
+        y1data: '0-12',
+        y2data: '1224',
+        y3data: '2436'
       },
       yrdict: { hyr: '半年', '1yr': '一年', '2yr': '两年', quarter: '三月' },
       avgcnt: {},
@@ -482,7 +716,7 @@ export default {
       ]) {
         // this.type=atp
         Vue.set(this, 'type', atp)
-        await this.sleep(1500)
+        await this.sleep(500)
         this.$nextTick(() => {
           console.log(atp)
           this.appendSheet(nwb, header, this.type)
@@ -965,7 +1199,7 @@ export default {
                 row['marketval'] = holds.reduce((prev, r) => {
                   return prev + r['marketval']
                 }, 0)
-                 console.log(row)
+                console.log(row)
               }
 
               row['dd_ratio'] = this.$tools.formatMoney(
@@ -1122,6 +1356,7 @@ export default {
           }
         })
         .then((response) => {
+          this.subtypes = []
           this.rawdata = response.data
           let rets = []
           let rkeys = ['y1data', 'y2data', 'y3data']
@@ -1139,14 +1374,17 @@ export default {
                 }
               }
             }
-             let holds = this.holding.filter(
-                (hd) => hd['b_code'] == arow['code']
-              )
-              if (holds.length > 0) {
-                arow['marketval'] = holds.reduce((prev, r) => {
-                  return prev + r['marketval']
-                }, 0)
-              }
+            let holds = this.holding.filter(
+              (hd) => hd['b_code'] == arow['code']
+            )
+            if (holds.length > 0) {
+              arow['marketval'] = holds.reduce((prev, r) => {
+                return prev + r['marketval']
+              }, 0)
+            }
+            if (this.subtypes.indexOf(arow['sub_type']) < 0) {
+              this.subtypes.push(arow['sub_type'])
+            }
             rets.push(arow)
           }
           let tlen = rets.length
@@ -1182,6 +1420,12 @@ export default {
           console.log(rets)
           this.tableData = rets
           this.filterNames()
+          this.$refs.rankTable.setFilter(
+            this.$refs.rankTable.getColumnByField('sub_type'),
+            this.subtypes.map((st) => {
+              return { label: st, value: st }
+            })
+          )
         })
         .catch((error) => {
           console.log(error)

@@ -487,6 +487,10 @@ axios.get('/sys/param').then((response) => {
   console.log(params)
   store.commit('setSysParam',params)
 }),
+//that.$store.dispatch('setDays',response.data.days)
+axios.get('/sys/days').then((response) => {
+  store.commit('updateDays',response.data['days'])
+}),
 axios
 .get("/fof/holding", { params: { code: "",extra:"1yr" } }) //axis后面的.get可以省略；
 .then((response) => {

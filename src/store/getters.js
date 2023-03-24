@@ -6,6 +6,7 @@ const getters = {
   visitedViews: state => state.tagsView.visitedViews,
   cachedViews: state => state.tagsView.cachedViews,
   avatar: state => state.user.avatar,
+  days:state => state.days,
   name: state => state.user.name,
   introduction: state => state.user.introduction,
   roles: state => state.user.roles,
@@ -49,6 +50,8 @@ const getters = {
           name=name+"🈵"
         }else if(item['scale']=="高费率") {
           name=name+"💎"
+        }else if(item['scale']=='同类可投'){
+          name=name+"🔃"
         }
         return name+item['name']+extra
       }

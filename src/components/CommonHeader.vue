@@ -1,16 +1,15 @@
 <template>
-<div>
+  <div>
     <header>
-
-        <div class="l-content">
-             <el-button type="primary" icon="el-icon-menu" size="mini"></el-button>
-         <!-- <el-tabs v-model="activeName" @tab-click="handleTabClick" type="border-card">
+      <div class="l-content">
+        <el-button type="primary" icon="el-icon-menu" size="mini"></el-button>
+        <!-- <el-tabs v-model="activeName" @tab-click="handleTabClick" type="border-card">
     <el-tab-pane label="投资渠道" name="company">投资渠道</el-tab-pane>
     <el-tab-pane label="尽职调查" name="invest">尽职调查</el-tab-pane>
     <el-tab-pane label="投资决策" name="decision">投资决策</el-tab-pane>
     <el-tab-pane label="投后管理" name="after">投后管理</el-tab-pane>
     <el-tab-pane label="系统设置" name="sys">系统设置</el-tab-pane>
-  </el-tabs> -->    
+  </el-tabs> -->
         <!-- <el-breadcrumb separator="/">
                   <el-breadcrumb-item >首页</el-breadcrumb-item>
                   <el-breadcrumb-item @click="changeMenu('company')">投资渠道</el-breadcrumb-item>
@@ -21,104 +20,152 @@
 
                  
         </el-breadcrumb> -->
-<el-row :gutter="5" v-if="!$isElectron">
-    <el-button-group  >
+        <el-row :gutter="5" v-if="!$isElectron">
+          <el-button-group>
+            <el-button @click="changeMenu('company')">投资渠道</el-button>
+            <el-button @click="changeMenu('invest')">尽职调查</el-button>
+            <el-button @click="changeMenu('decision')">投资决策</el-button>
+            <el-button @click="changeMenu('after')">投后管理</el-button>
+            <el-button @click="changeMenu('datamag')">数据管理</el-button>
+            <el-button @click="changeMenu('sys')">系统设置</el-button>
+          </el-button-group>
 
-    <el-button @click="changeMenu('company')" >投资渠道</el-button>
-    <el-button @click="changeMenu('invest')" >尽职调查</el-button>
-    <el-button @click="changeMenu('decision')">投资决策</el-button>
-    <el-button @click="changeMenu('after')">投后管理</el-button>
-    <el-button @click="changeMenu('datamag')">数据管理</el-button>
-    <el-button @click="changeMenu('sys')">系统设置</el-button>
-    </el-button-group>
-
-  <!-- <el-col :span="3"><div @click="changeMenu('company')" class="grid-content bg-purple-light">投资渠道</div></el-col>
+          <!-- <el-col :span="3"><div @click="changeMenu('company')" class="grid-content bg-purple-light">投资渠道</div></el-col>
   <el-col :span="3"><div @click="changeMenu('invest')" class="grid-content bg-purple-light">尽职调查</div></el-col>
   <el-col :span="3"><div @click="changeMenu('decision')" class="grid-content bg-purple-light">投资决策</div></el-col>
   <el-col :span="3"><div @click="changeMenu('after')" class="grid-content bg-purple-light">投后管理</div></el-col>
   <el-col :span="3"><div @click="changeMenu('sys')" class="grid-content bg-purple-light">系统设置</div></el-col> -->
-</el-row>
-  
-        </div>
+        </el-row>
+      </div>
 
-        <div class="r-content">
-            <el-dropdown trigger="click" size="mini" @command="handleCommand">
-              <span class="el-dropdown-link"><img :src="userImg" alt="" class="user"></span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="changepassword" >修改密码</el-dropdown-item>
-                <el-dropdown-item v-if="$isElectron" command="backupDB" >备份数据</el-dropdown-item>
-                <el-dropdown-item v-if="$isElectron" command="loadDB" >导入数据</el-dropdown-item>
+      <div class="r-content">
+        <el-dropdown trigger="click" size="mini" @command="handleCommand">
+          <span class="el-dropdown-link"
+            ><img :src="userImg" alt="" class="user"
+          /></span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="changepassword"
+              >修改密码</el-dropdown-item
+            >
+            <el-dropdown-item v-if="$isElectron" command="backupDB"
+              >备份数据</el-dropdown-item
+            >
+            <el-dropdown-item v-if="$isElectron" command="loadDB"
+              >导入数据</el-dropdown-item
+            >
 
-                <el-dropdown-item command="logout">退出</el-dropdown-item>
-
-              </el-dropdown-menu>
-            </el-dropdown>
-        </div>
+            <el-dropdown-item command="logout">退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
     </header>
-     <el-dialog
-    width="50%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="resetVisible"
-  >
-<el-form :model="current" ref="resetPassForm" label-width="120px" class="demo-dynamic">
-    <el-form-item label="密码"> 
-        <el-input placeholder="请输入密码" v-model="current.password" show-password></el-input>
-    </el-form-item>
-<el-form-item>
-    <el-button type="primary" @click="submitPass('resetPassForm')">提交</el-button>
-    <el-button @click="resetForm('resetPassForm')">重置</el-button>
-  </el-form-item>
-</el-form>
-
+    <el-dialog
+      width="50%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="resetVisible"
+    >
+      <el-form
+        :model="current"
+        ref="resetPassForm"
+        label-width="120px"
+        class="demo-dynamic"
+      >
+        <el-form-item label="密码">
+          <el-input
+            placeholder="请输入密码"
+            v-model="current.password"
+            show-password
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitPass('resetPassForm')"
+            >提交</el-button
+          >
+          <el-button @click="resetForm('resetPassForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
     <el-dialog
-    width="50%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="infoVisible"
-  >
-         <el-descriptions  :column="3" size="small" border>
-          <el-descriptions-item label="备案号">{{prodInfo.code}}</el-descriptions-item>
-          <el-descriptions-item label="名称">{{prodInfo.name}}</el-descriptions-item>
-          <el-descriptions-item label="简称">{{prodInfo.short_name}}</el-descriptions-item>
-          <el-descriptions-item label="基金类型">{{prodInfo.class_type}}</el-descriptions-item>
-          <el-descriptions-item label="子类型">{{prodInfo.sub_type}}</el-descriptions-item>
-          <el-descriptions-item label="所属公司">{{prodInfo.company}}</el-descriptions-item>
-          <el-descriptions-item span=3 label="备注">{{prodInfo.remark}}</el-descriptions-item>
-          <el-descriptions-item label="投资类型">{{prodInfo.scale}}</el-descriptions-item>
-          <el-descriptions-item label="购买时净值">{{prodInfo.buy_price}}</el-descriptions-item>
-          <el-descriptions-item label="购买时间">{{prodInfo.buy_date}}</el-descriptions-item>
-          <el-descriptions-item label="份额">{{prodInfo.amount}}</el-descriptions-item>
-          <el-descriptions-item label="渠道">{{prodInfo.type}}</el-descriptions-item>
-          <el-descriptions-item label="网站代码">{{prodInfo.scode}}</el-descriptions-item>
-          <el-descriptions-item label="基金成立时间">{{prodInfo.founded}}</el-descriptions-item>
-          <el-descriptions-item label="状态">{{prodInfo.stage}}</el-descriptions-item>
-          <el-descriptions-item label="子基金对标">{{prodInfo.compare}}</el-descriptions-item>
-          <el-descriptions-item label="管理费">{{prodInfo.fee}}</el-descriptions-item>
-          <el-descriptions-item label="carry">{{prodInfo.carry}}</el-descriptions-item>
-          <el-descriptions-item label="业绩报酬计提方式" span=2>{{prodInfo.perf_comp}}</el-descriptions-item>
-          <el-descriptions-item label="止损">{{prodInfo.lost}}</el-descriptions-item>
-          <el-descriptions-item label="预警">{{prodInfo.alarm}}</el-descriptions-item>
-          <el-descriptions-item label="风险等级">{{prodInfo.risk_level}}</el-descriptions-item>
-          <el-descriptions-item label="预期收益(年)">{{prodInfo.rate}}</el-descriptions-item>
-          <el-descriptions-item label="预期最大回撤">{{prodInfo.max_drawdown}}</el-descriptions-item>
-          <el-descriptions-item label="预期夏普">{{prodInfo.sharp}}</el-descriptions-item>
-          <el-descriptions-item label="预期卡玛">{{prodInfo.calmar}}</el-descriptions-item>
-          <el-descriptions-item label="其他关键条款">{{prodInfo.other}}</el-descriptions-item>
-    </el-descriptions>
-  </el-dialog>
+      width="50%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="infoVisible"
+    >
+      <el-descriptions :column="3" size="small" border>
+        <el-descriptions-item label="备案号">{{
+          prodInfo.code
+        }}</el-descriptions-item>
+        <el-descriptions-item label="名称">{{
+          prodInfo.name
+        }}</el-descriptions-item>
+        <el-descriptions-item label="简称">{{
+          prodInfo.short_name
+        }}</el-descriptions-item>
+        <el-descriptions-item label="基金类型">{{
+          prodInfo.class_type
+        }}</el-descriptions-item>
+        <el-descriptions-item label="子类型">{{
+          prodInfo.sub_type
+        }}</el-descriptions-item>
+        <el-descriptions-item label="所属公司">{{
+          prodInfo.company
+        }}</el-descriptions-item>
+        <el-descriptions-item span="3" label="备注">{{
+          prodInfo.remark
+        }}</el-descriptions-item>
+        <el-descriptions-item label="投资类型">{{
+          prodInfo.scale
+        }}</el-descriptions-item>
+        <el-descriptions-item label="购买时净值">{{
+          prodInfo.buy_price
+        }}</el-descriptions-item>
+        <el-descriptions-item label="购买时间">{{
+          prodInfo.buy_date
+        }}</el-descriptions-item>
+        <el-descriptions-item label="份额">{{
+          prodInfo.amount
+        }}</el-descriptions-item>
+        <el-descriptions-item label="来源">{{
+          prodInfo.prod_source
+        }}</el-descriptions-item>
+        <el-descriptions-item label="说明">{{
+          prodInfo.source_remark
+        }}</el-descriptions-item>
+        <el-descriptions-item label="基金成立时间">{{
+          prodInfo.founded
+        }}</el-descriptions-item>
+        <el-descriptions-item label="状态">{{
+          prodInfo.stage
+        }}</el-descriptions-item>
+        <el-descriptions-item label="子基金对标">{{
+          prodInfo.compare
+        }}</el-descriptions-item>
+        <el-descriptions-item label="管理费">{{
+          prodInfo.fee
+        }}</el-descriptions-item>
+        <el-descriptions-item label="carry">{{
+          prodInfo.carry
+        }}</el-descriptions-item>
+        <el-descriptions-item label="业绩报酬计提方式" span="2">{{
+          prodInfo.perf_comp
+        }}</el-descriptions-item>
+        <el-descriptions-item label="其他关键条款">{{
+          prodInfo.other
+        }}</el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
 
-     <el-dialog
-    width="50%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="buyVisible"
-  >
-  <el-form
+    <el-dialog
+      width="50%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="buyVisible"
+    >
+      <el-form
         :rules="rules"
         :model="curAction"
         ref="actionForm"
@@ -162,7 +209,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="标的">
-                    <el-select
+          <el-select
             v-model="curAction.b_code"
             filterable
             :disabled="curAction.prodDisabled"
@@ -171,7 +218,7 @@
             clearable
             placeholder="标的选择"
           >
-          <!-- <el-option   :key="'CASH'"
+            <!-- <el-option   :key="'CASH'"
               :label="'现金'"
               :value="'CASH'">
           </el-option> -->
@@ -191,10 +238,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input
-            placeholder="备注"
-            v-model="curAction.remark"
-          ></el-input>
+          <el-input placeholder="备注" v-model="curAction.remark"></el-input>
         </el-form-item>
         <!-- -->
         <el-form-item>
@@ -205,274 +249,367 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-       <el-dialog
-    width="50%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="auditVisible"
-  >
-    <el-form ref="form" :model="curAction" label-width="80px">
-  <el-form-item label="基金名称">
-    <label >{{curAction.name}}</label>
-  </el-form-item>
-  <el-form-item label="决策阶段">
-     <el-radio-group v-model="curAction.stage">    
-    <el-radio :key="idx" v-for="(item,idx) in sysparam.stage" :label="item.value"></el-radio>
-  </el-radio-group>
-  </el-form-item>
-  <el-form-item label="投资份额" v-if="curAction.stage!='投后'">
-    <el-input-number style="width:200px"
-    placeholder="份额"
-    v-model="curAction.amount">
-  </el-input-number>
-  </el-form-item>
-  <el-form-item label="评审意见">
-    <el-input type="textarea" v-model="curAction.remark"></el-input>
-  </el-form-item>
-  <el-form-item>
-    <el-button type="primary" @click="auditSubmit">确认提交</el-button>
-  </el-form-item>
-</el-form>
+    <el-dialog
+      width="50%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="auditVisible"
+    >
+      <el-form ref="form" :model="curAction" label-width="80px">
+        <el-form-item label="基金名称">
+          <label>{{ curAction.name }}</label>
+        </el-form-item>
+        <el-form-item label="决策阶段">
+          <el-radio-group v-model="curAction.stage">
+            <el-radio
+              :key="idx"
+              v-for="(item, idx) in sysparam.stage"
+              :label="item.value"
+            ></el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="投资份额" v-if="curAction.stage != '投后'">
+          <el-input-number
+            style="width: 200px"
+            placeholder="份额"
+            v-model="curAction.amount"
+          >
+          </el-input-number>
+        </el-form-item>
+        <el-form-item label="评审意见">
+          <el-input type="textarea" v-model="curAction.remark"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="auditSubmit">确认提交</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
-  <el-dialog
-    width="80%"
-    top="50px"
-    append-to-body
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-     :visible.sync="dialogVisible"
-     >
-    <stat-chart       @close="editClose" ref="statchart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='statChart'"></stat-chart>
-    <base-chart       @close="editClose" ref="basechart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='baseChart'"></base-chart>
-    <rank-chart       @close="editClose" ref="rankchart"    style="height: 600px" :code="cur_code" :rg="rg"  v-if="diagName=='rankChart'"></rank-chart>
-    <compare-table      @close="editClose" ref="comparetable"  :code="cur_code"   v-if="diagName=='compareTable'"></compare-table>
-    <fund-echart       @close="editClose" ref="hischart"    style="height: 500px" :code="cur_code"  :wk="wk"  :orig="orig" v-if="diagName=='hisChart'||diagName=='compareTable'"></fund-echart>
-    <his-table       @close="editClose" ref="histable"    style="height: 600px" :temp="temp" :code="cur_code"  v-if="diagName=='hisTable'"></his-table>
-    <rank-table       @close="editClose" ref="ranktable"    style="height: 800px"  :code="cur_code"  v-if="diagName=='rankDialog'"></rank-table>
-    <fof-simulate     @close="editClose" ref="simtable"   style="height: 900px"  :code="cur_code"  v-if="diagName=='simuDialog'"></fof-simulate>
-    <audit-log       @close="editClose" ref="auditlog"  :titles="current.name"  style="height: 600px" :code="cur_code"   v-if="diagName=='auditDialog'"></audit-log>
-    <fund-corr       @close="editClose" ref="fundcorr"   style="height: 600px" :code="cur_code"   v-if="diagName=='corrDialog'"></fund-corr>
-    <prod-table       @close="editClose" ref="prodtable"  :foflist="prodlist"    v-if="diagName=='prodDiag'"></prod-table>
-<el-tabs type="border-card"  :value="fullActive" v-if="diagName=='fullDialog'" @tab-click="handleDiagClick">
-      <el-tab-pane name="sumvaltab">
-        <span slot="label"><i class="el-icon-date"></i> 净值曲线</span> 
-    <compare-table      @close="editClose" ref="comparetable"  :code="cur_code"  ></compare-table>
-    <fund-echart       @close="editClose" ref="hischart"    style="height: 500px" :code="cur_code" ></fund-echart>
-
-      </el-tab-pane>
-            <el-tab-pane name="basedatatab">
-        <span slot="label"><i class="el-icon-date"></i> 指标信息</span>
-    <base-chart       @close="editClose" ref="basechart"    style="height: 600px" :code="cur_code" :visable="fullActive=='basedatatab'"></base-chart>
-
-      </el-tab-pane>
-          <!-- <el-tab-pane>
+    <el-dialog
+      width="80%"
+      top="50px"
+      append-to-body
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="dialogVisible"
+    >
+      <stat-chart
+        @close="editClose"
+        ref="statchart"
+        style="height: 600px"
+        :code="cur_code"
+        :rg="rg"
+        v-if="diagName == 'statChart'"
+      ></stat-chart>
+      <base-chart
+        @close="editClose"
+        ref="basechart"
+        style="height: 600px"
+        :code="cur_code"
+        :rg="rg"
+        v-if="diagName == 'baseChart'"
+      ></base-chart>
+      <rank-chart
+        @close="editClose"
+        ref="rankchart"
+        style="height: 600px"
+        :code="cur_code"
+        :rg="rg"
+        v-if="diagName == 'rankChart'"
+      ></rank-chart>
+      <compare-table
+        @close="editClose"
+        ref="comparetable"
+        :code="cur_code"
+        v-if="diagName == 'compareTable'"
+      ></compare-table>
+      <fund-echart
+        @close="editClose"
+        ref="hischart"
+        style="height: 500px"
+        :code="cur_code"
+        :wk="wk"
+        :orig="orig"
+        v-if="diagName == 'hisChart' || diagName == 'compareTable'"
+      ></fund-echart>
+      <his-table
+        @close="editClose"
+        ref="histable"
+        style="height: 600px"
+        :temp="temp"
+        :code="cur_code"
+        v-if="diagName == 'hisTable'"
+      ></his-table>
+      <rank-table
+        @close="editClose"
+        ref="ranktable"
+        style="height: 800px"
+        :code="cur_code"
+        v-if="diagName == 'rankDialog'"
+      ></rank-table>
+      <fof-simulate
+        @close="editClose"
+        ref="simtable"
+        style="height: 900px"
+        :code="cur_code"
+        v-if="diagName == 'simuDialog'"
+      ></fof-simulate>
+      <audit-log
+        @close="editClose"
+        ref="auditlog"
+        :titles="current.name"
+        style="height: 600px"
+        :code="cur_code"
+        v-if="diagName == 'auditDialog'"
+      ></audit-log>
+      <fund-corr
+        @close="editClose"
+        ref="fundcorr"
+        style="height: 600px"
+        :code="cur_code"
+        v-if="diagName == 'corrDialog'"
+      ></fund-corr>
+      <prod-table
+        @close="editClose"
+        ref="prodtable"
+        :foflist="prodlist"
+        v-if="diagName == 'prodDiag'"
+      ></prod-table>
+      <el-tabs
+        type="border-card"
+        :value="fullActive"
+        v-if="diagName == 'fullDialog'"
+        @tab-click="handleDiagClick"
+      >
+        <el-tab-pane name="sumvaltab">
+          <span slot="label"><i class="el-icon-date"></i> 净值曲线</span>
+          <compare-table
+            @close="editClose"
+            ref="comparetable"
+            :code="cur_code"
+          ></compare-table>
+          <fund-echart
+            @close="editClose"
+            ref="hischart"
+            style="height: 500px"
+            :code="cur_code"
+            :wk="wk"
+          ></fund-echart>
+        </el-tab-pane>
+        <el-tab-pane name="basedatatab">
+          <span slot="label"><i class="el-icon-date"></i> 指标信息</span>
+          <base-chart
+            @close="editClose"
+            ref="basechart"
+            style="height: 600px"
+            :code="cur_code"
+            :visable="fullActive == 'basedatatab'"
+          ></base-chart>
+        </el-tab-pane>
+        <!-- <el-tab-pane>
         <span slot="label"><i class="el-icon-date"></i> 排名曲线</span> 
             <rank-chart       @close="editClose" ref="rankchart"    style="height: 600px" :code="cur_code"  ></rank-chart>
       </el-tab-pane> -->
-</el-tabs>
+      </el-tabs>
     </el-dialog>
-<el-dialog
-    width="80%"
-    top="50px"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-     :visible.sync="dialogCompVisible"
-     >
-      <prod-table       @close="editClose" ref="protable"  :foflist="foflist" :full="true"    v-if="diagName=='prodDiag'"></prod-table>
+    <el-dialog
+      width="80%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="dialogCompVisible"
+    >
+      <prod-table
+        @close="editClose"
+        ref="protable"
+        :foflist="foflist"
+        :full="true"
+        v-if="diagName == 'prodDiag'"
+      ></prod-table>
     </el-dialog>
-</div>
+  </div>
 </template>
 
 <script>
-import { mapState,mapGetters, mapMutations } from 'vuex'
-import Bus from '../store/bus.js';
-import tools from '../store/tools.js';
+import { mapState, mapGetters, mapMutations } from 'vuex'
+import Bus from '../store/bus.js'
+import tools from '../store/tools.js'
 import axis from 'axios'
-import FundEchart from '@/components/FundEchart.vue';
-import HisTable from '@/components/HisTable.vue';
-import RankTable from '@/components/RankTable.vue';
-import RankChart from '@/components/RankChart.vue';
-import BaseChart from '@/components/BaseChart.vue';
-import StatChart from '@/components/StatChart.vue';
+import FundEchart from '@/components/FundEchart.vue'
+import HisTable from '@/components/HisTable.vue'
+import RankTable from '@/components/RankTable.vue'
+import RankChart from '@/components/RankChart.vue'
+import BaseChart from '@/components/BaseChart.vue'
+import StatChart from '@/components/StatChart.vue'
 
-import FofSimulate from '@/components/FofSimulate';
-import ReportTable from '@/components/ReportTable';
-import CompareTable from '@/components/CompareTable';
-import AuditLog from '@/components/AuditLog.vue';
-import FundCorr from '@/components/FundCorr.vue';
-import ProdTable from '@/components/ProdTable.vue';
+import FofSimulate from '@/components/FofSimulate'
+import ReportTable from '@/components/ReportTable'
+import CompareTable from '@/components/CompareTable'
+import AuditLog from '@/components/AuditLog.vue'
+import FundCorr from '@/components/FundCorr.vue'
+import ProdTable from '@/components/ProdTable.vue'
 
 export default {
-        components: {
-            FundEchart,
-            AuditLog,
-            FundCorr,
-            HisTable,
-            RankTable,
-            FofSimulate,
-            RankChart,
-            BaseChart,
-            StatChart,
-            CompareTable,
-            ReportTable,
-            ProdTable
-        },
-        watch: {
-        infoVisible :{
-              handler(n){
-                if(n){
-                  this.getInfo(this.cur_code)
-
-                }
-            },
-    
-    },
+  components: {
+    FundEchart,
+    AuditLog,
+    FundCorr,
+    HisTable,
+    RankTable,
+    FofSimulate,
+    RankChart,
+    BaseChart,
+    StatChart,
+    CompareTable,
+    ReportTable,
+    ProdTable
   },
-    computed: {
-        ...mapState({
-            current: state => state.tab.currentMenu,
-            foflist:state => state.foflist
-        }),
-       ...mapGetters(['token','sysparam']),
-
-    },
-      methods: {
-      ...mapMutations({
-          addAction : 'addAction'
-      }),
-      auditSubmit(){
-          axis({
+  watch: {
+    infoVisible: {
+      handler(n) {
+        if (n) {
+          this.getInfo(this.cur_code)
+        }
+      }
+    }
+  },
+  computed: {
+    ...mapState({
+      current: (state) => state.tab.currentMenu,
+      foflist: (state) => state.foflist
+    }),
+    ...mapGetters(['token', 'sysparam'])
+  },
+  methods: {
+    ...mapMutations({
+      addAction: 'addAction'
+    }),
+    auditSubmit() {
+      axis({
         method: 'post',
-        url: "/fof/updateinfo", // 请求地址
+        url: '/fof/updateinfo', // 请求地址
         data: this.curAction, // 参数
         responseType: 'json' // 表明返回服务器返回的数据类型
-      }).then(
-        response => {
-            if(response.data.status=="success"){
-                this.auditVisible=false
-                this.$message({
-                message: '保存成功',
-                type: 'success',
-                center: true
-        });
-                                        }
-
-        })
-      },
-        editClose() {
-        this.dialogVisible = false
-        },
-        loadDB(){
-        //     const { dialog } = require('electron').remote
-        //     console.log(dialog)
-        //     dialog.showOpenDialog({
-        //     title: '导入备份文件',
-        //     defaultPath: 'C:/',
-        //     filters: [{
-        //         name: '备份文件',
-        //         extensions: ['db', 'sqlite3']
-        //     }],
-        //     buttonLabel: '导入!'
-        // }).then(result => {
-        //   console.log(result)
-        //     fs.readFile(result.filePaths[0], (err, data) => {
-        //     if (!err) {
-        //       DB.reload(data)
-        //               this.$message({
-        //     showClose: true,
-        //     message: "导入数据成功 请重新启动APP",
-        //     type: "info"
-        //   })
-
-        //     }
-        // })
-        // }).catch(err=>{
-        //     console.log(err)
-        // })
-
-
-        },
-              backupDB(){
-
-                const fileName="backup.db"
-                console.log(fileName)
-              const buffer = DB.serialize()
-              console.log(buffer.length)
-                  let blob = new Blob([buffer])
-         if (window.navigator.msSaveOrOpenBlob) {
-            // console.log(2)
-            navigator.msSaveBlob(blob, fileName)
-          } else {
-            // console.log(3)
-            var link = document.createElement('a')
-            link.href = window.URL.createObjectURL(blob)
-            link.download = fileName
-            link.click()
-            //释放内存
-            window.URL.revokeObjectURL(link.href)
-          }
-
-      },
-          handleDiagClick(item){
-              console.log(item)
-              this.fullActive=item.name
-          },
-          handleTabClick(item){
-              console.log(item)
-              this.changeMenu(item.name)
-          },
-        handleCommand(item){
-            if(item=="logout"){
-            this.$router.push({name:'login'})  
-            this.$store.commit('selectMenu',item);
-            }else if(item=="changepassword"){
-                this.resetVisible=true
-                this.current.user=this.token
-            }else if(item=="backupDB"){
-              this.backupDB()
-            }else if(item=="loadDB"){
-              this.loadDB()
-            }
-            
-
-        },
-            changeStage(val){
-      if(val=='预入款'){
-        this.curAction.prodDisabled=true
-        this.curAction.b_code='CASH'
-      }else{
-        this.curAction.prodDisabled=false
-
+      }).then((response) => {
+        if (response.data.status == 'success') {
+          this.auditVisible = false
+          this.$message({
+            message: '保存成功',
+            type: 'success',
+            center: true
+          })
+        }
+      })
+    },
+    editClose() {
+      this.dialogVisible = false
+    },
+    loadDB() {
+      //     const { dialog } = require('electron').remote
+      //     console.log(dialog)
+      //     dialog.showOpenDialog({
+      //     title: '导入备份文件',
+      //     defaultPath: 'C:/',
+      //     filters: [{
+      //         name: '备份文件',
+      //         extensions: ['db', 'sqlite3']
+      //     }],
+      //     buttonLabel: '导入!'
+      // }).then(result => {
+      //   console.log(result)
+      //     fs.readFile(result.filePaths[0], (err, data) => {
+      //     if (!err) {
+      //       DB.reload(data)
+      //               this.$message({
+      //     showClose: true,
+      //     message: "导入数据成功 请重新启动APP",
+      //     type: "info"
+      //   })
+      //     }
+      // })
+      // }).catch(err=>{
+      //     console.log(err)
+      // })
+    },
+    backupDB() {
+      const fileName = 'backup.db'
+      console.log(fileName)
+      const buffer = DB.serialize()
+      console.log(buffer.length)
+      let blob = new Blob([buffer])
+      if (window.navigator.msSaveOrOpenBlob) {
+        // console.log(2)
+        navigator.msSaveBlob(blob, fileName)
+      } else {
+        // console.log(3)
+        var link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = fileName
+        link.click()
+        //释放内存
+        window.URL.revokeObjectURL(link.href)
       }
     },
-        changeTarget(){},
-        getInfo(code){
-           this.$axios
-        .get("/fof/info", { params: { "code":code }})
-        .then((response) => {this.prodInfo=response.data})
-        },
-        changeFOF(){},
-         submitForm(formName) {
+    handleDiagClick(item) {
+      console.log(item)
+      this.fullActive = item.name
+    },
+    handleTabClick(item) {
+      console.log(item)
+      this.changeMenu(item.name)
+    },
+    handleCommand(item) {
+      if (item == 'logout') {
+        this.$router.push({ name: 'login' })
+        this.$store.commit('selectMenu', item)
+      } else if (item == 'changepassword') {
+        this.resetVisible = true
+        this.current.user = this.token
+      } else if (item == 'backupDB') {
+        this.backupDB()
+      } else if (item == 'loadDB') {
+        this.loadDB()
+      }
+    },
+    changeStage(val) {
+      if (val == '预入款') {
+        this.curAction.prodDisabled = true
+        this.curAction.b_code = 'CASH'
+      } else {
+        this.curAction.prodDisabled = false
+      }
+    },
+    changeTarget() {},
+    getInfo(code) {
+      this.$axios
+        .get('/fof/info', { params: { 'code': code } })
+        .then((response) => {
+          this.prodInfo = response.data
+        })
+    },
+    changeFOF() {},
+    submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log(this.curAction)
-          if (this.curAction.stage == "预入款") {
-            this.curAction["b_code"] = "CASH";
-            this.curAction["b_name"] = "现金";
-            if(this.curAction["code"]=="SY9620"||this.curAction["code"]=="SSS105"){
+          if (this.curAction.stage == '预入款') {
+            this.curAction['b_code'] = 'CASH'
+            this.curAction['b_name'] = '现金'
+            if (
+              this.curAction['code'] == 'SY9620' ||
+              this.curAction['code'] == 'SSS105'
+            ) {
               //this.updateCash(this.curAction["code"],{"value":this.curAction["marketval"]})
               //this.saveAction()
               // this.actionDiagShow = !this.actionDiagShow;
               // return true
-            }else{
-               this.$message({
-            showClose: true,
-            message: "只有多策略和进取预入资金",
-            type: "error"
-          })
-                        return false;
-
+            } else {
+              this.$message({
+                showClose: true,
+                message: '只有多策略和进取预入资金',
+                type: 'error'
+              })
+              return false
             }
           }
           // if (this.curAction.id) {
@@ -483,197 +620,190 @@ export default {
           //     }
           //   }
           // } else {
-          this.curAction.add_time=new Date().getTime()
-          this.curAction.status="无"
-          delete this.curAction.name 
-          this.addAction(JSON.parse(JSON.stringify(this.curAction)));
+          this.curAction.add_time = new Date().getTime()
+          this.curAction.status = '无'
+          delete this.curAction.name
+          this.addAction(JSON.parse(JSON.stringify(this.curAction)))
           // }
-          this.buyVisible = !this.buyVisible;
+          this.buyVisible = !this.buyVisible
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
-        submitPass(formName){
-            if(this.current&&this.current.user){
-                axis({
-      method: 'post',
-      url: "/sys/updatepass", // 请求地址
-      data: {"user":this.current.user,"password":this.current.password}, // 参数
-      responseType: 'json' // 表明返回服务器返回的数据类型
-    }).then(
-      response => {
-          if(response.data["status"]=="success"){
-            this.resetVisible = false
-          }
-
-      },
-      err => {
-        reject(err)
-      }
-    )
+    submitPass(formName) {
+      if (this.current && this.current.user) {
+        axis({
+          method: 'post',
+          url: '/sys/updatepass', // 请求地址
+          data: {
+            'user': this.current.user,
+            'password': this.current.password
+          }, // 参数
+          responseType: 'json' // 表明返回服务器返回的数据类型
+        }).then(
+          (response) => {
+            if (response.data['status'] == 'success') {
+              this.resetVisible = false
             }
-        },
-        clickPerson(item) {
-          this.$router.push({name:item.name})
-          this.$store.commit('selectMenu',item);
-        },
-        changeMenu(type) {
-           Bus.$emit('changeMenu',type)
-
-        }
-
-      },
-    data(){
-        return{
-            activeName:"首页",
-            fullActive:"sumvaltab",
-            wk:"1",
-            orig:0,
-            curAction: {},
-            rules: {
-        code: [{ required: true, message: "请选择基金", trigger: "blur" }],
-        name: [{ required: true, message: "请选择基金", trigger: "blur" }],
-        marketval: [{ required: true, message: "请输入金额", trigger: "blur" }],
-      },
-            dialogVisible:false,
-            cur_code:"",
-            rg:"",
-            prodDisabled:false,
-            stages: ["预赎回", "待投资", "预入款"],
-            diagName:"",
-            temp:"",
-            dialogCompVisible:false,
-            resetVisible:false,
-            buyVisible:false,
-            infoVisible:false,
-            auditVisible:false,
-           userImg:require('../assets/images/user.png'),
-           prodInfo: {
-    
-              },
-           formItems4: [
-                {
-                  title: '产品信息',
-                  span: 24,
-                  children: [
-    {"title":"备案号","field":"code"},
-    {"title":"名称","field":"name"},
-    {"title":"简称","field":"short_name"},
-    {"title":"基金类型","field":"class_type","param":"class_type"},
-    {"title":"投资类型","field":"scale","param":"scale"},
-    {"title":"购买时净值","field":"buy_price"},
-    {"title":"子类型","field":"sub_type"},
-    {"title":"购买时间","field":"buy_date"},
-    {"title":"份额","field":"amount"},
-    {"title":"所属公司","field":"company"},
-    {"title":"渠道","field":"type","param":"data_type"},
-    {"title":"网站代码","field":"scode"},
-    {"title":"基金成立时间","field":"founded"},
-    {"title":"状态","field":"stage","param":"stage"},
-    {"title":"子基金对标","field":"compare"},
-    {"title":"管理费","field":"fee"},
-    {"title":"carry","field":"carry"},
-    {"title":"业绩报酬计提方式","field":"perf_comp"},
-    {"title":"止损","field":"lost"},
-    {"title":"预警","field":"alarm"},
-    {"title":"风险等级","field":"risk_level","param":"risk_"},
-    {"title":"预期收益(年)","field":"rate"},
-    {"title":"预期最大回撤","field":"max_return"},
-    {"title":"预期夏普","field":"sharp"},
-    {"title":"预期卡玛","field":"calmar"},
-    {"title":"其他关键条款","field":"other"},
-    {"title":"备注","field":"remark","type":"textarea"} 
-            ]
-                },
-              ]
-            
-        }
+          },
+          (err) => {
+            reject(err)
+          }
+        )
+      }
     },
-    created(){
-              Bus.$on('showChart',(arg)=> {
-                console.log("===============CHART show==================")
-                console.log(arg)
-              for(let key in arg){
-                this[key]=arg[key]
-              }
-              this.dialogVisible=true
-          console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
-      })
-              Bus.$on('oneKeyBuy',(arg)=> {
-              this.buyVisible=true
-              this.curAction=arg
-          console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
-      })
-      Bus.$on('showInfo',(arg)=> {
-              this.cur_code=arg["cur_code"]
-              this.infoVisible=true
-          console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
-      })
-      Bus.$on('auditAction',(arg)=> {
-              this.auditVisible=true
-              this.curAction=arg
-          console.log('on监听参数====',arg)  //['string',false,{name:'vue'}]
-      })
+    clickPerson(item) {
+      this.$router.push({ name: item.name })
+      this.$store.commit('selectMenu', item)
+    },
+    changeMenu(type) {
+      Bus.$emit('changeMenu', type)
     }
+  },
+  data() {
+    return {
+      activeName: '首页',
+      fullActive: 'sumvaltab',
+      wk: '1',
+      orig: 0,
+      curAction: {},
+      rules: {
+        code: [{ required: true, message: '请选择基金', trigger: 'blur' }],
+        name: [{ required: true, message: '请选择基金', trigger: 'blur' }],
+        marketval: [{ required: true, message: '请输入金额', trigger: 'blur' }]
+      },
+      dialogVisible: false,
+      cur_code: '',
+      rg: '',
+      prodDisabled: false,
+      stages: ['预赎回', '待投资', '预入款'],
+      diagName: '',
+      temp: '',
+      dialogCompVisible: false,
+      resetVisible: false,
+      buyVisible: false,
+      infoVisible: false,
+      auditVisible: false,
+      userImg: require('../assets/images/user.png'),
+      prodInfo: {},
+      formItems4: [
+        {
+          title: '产品信息',
+          span: 24,
+          children: [
+            { 'title': '备案号', 'field': 'code' },
+            { 'title': '名称', 'field': 'name' },
+            { 'title': '简称', 'field': 'short_name' },
+            {
+              'title': '基金类型',
+              'field': 'class_type',
+              'param': 'class_type'
+            },
+            { 'title': '投资类型', 'field': 'scale', 'param': 'scale' },
+            { 'title': '购买时净值', 'field': 'buy_price' },
+            { 'title': '子类型', 'field': 'sub_type' },
+            { 'title': '购买时间', 'field': 'buy_date' },
+            { 'title': '份额', 'field': 'amount' },
+            { 'title': '所属公司', 'field': 'company' },
+            { 'title': '来源', 'field': 'prod_source', 'param': 'prod_source' },
+            { 'title': '说明', 'field': 'source_remark' },
+            { 'title': '基金成立时间', 'field': 'founded' },
+            { 'title': '状态', 'field': 'stage', 'param': 'stage' },
+            { 'title': '子基金对标', 'field': 'compare' },
+            { 'title': '管理费', 'field': 'fee' },
+            { 'title': 'carry', 'field': 'carry' },
+            { 'title': '业绩报酬计提方式', 'field': 'perf_comp' },
+            { 'title': '其他关键条款', 'field': 'other' },
+            { 'title': '备注', 'field': 'remark', 'type': 'textarea' }
+          ]
+        }
+      ]
+    }
+  },
+  created() {
+    Bus.$on('showChart', (arg) => {
+      console.log('===============CHART show==================')
+      console.log(arg)
+      for (let key in arg) {
+        this[key] = arg[key]
+      }
+      this.dialogVisible = true
+      console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
+    })
+    Bus.$on('oneKeyBuy', (arg) => {
+      this.buyVisible = true
+      this.curAction = arg
+      console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
+    })
+    Bus.$on('showInfo', (arg) => {
+      this.cur_code = arg['cur_code']
+      this.infoVisible = true
+      console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
+    })
+    Bus.$on('auditAction', (arg) => {
+      this.auditVisible = true
+      this.curAction = arg
+      console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
+    })
+  }
 }
 </script>
 <style lang="scss" scoped>
 .el-row {
-    width:1000px;
-    margin-bottom: 20px;
-    &:last-child {
-      margin-bottom: 0;
-    }
+  width: 1000px;
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
   }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-  .bg-purple {
-    background: #d3dce6;
-  }
-  .bg-purple-light {
-    background: #e5e9f2;
-  }
-  .grid-content {
-    border-radius: 4px;
-  }
-  .row-bg {
-    padding: 10px 0;
-  }
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #e5e9f2;
+}
+.grid-content {
+  border-radius: 4px;
+}
+.row-bg {
+  padding: 10px 0;
+}
 
 header {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  justify-content: space-between;
 }
 .r-content {
   .user {
-      width: 40px;
-      height: 40px;
-      border-radius: 20%;
+    width: 40px;
+    height: 40px;
+    border-radius: 20%;
   }
 }
 .l-content {
-    display: flex;
-    align-items: center;
-    .el-button {
-        margin: 20px;
-    }
+  display: flex;
+  align-items: center;
+  .el-button {
+    margin: 20px;
+  }
 }
 </style >
 
 <style lang="scss">
-
 .el-breadcrumb__item {
   .el-breadcrumb__inner {
     color: #666666;
-      font-weight: normal;
+    font-weight: normal;
   }
   &:last-child {
     .el-breadcrumb__inner {

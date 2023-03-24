@@ -24,7 +24,7 @@ export default new Vuex.Store({
     // ccart: Cookies.get("cart"),
 //    ccart: JSON.parse(decodeURIComponent(Cookies.get("cart"))),
     cart:[],
-    
+    days:{},
     allparam:{},
     holding:[],
     usermenu:Cookies.get("umenu"),
@@ -150,7 +150,10 @@ export default new Vuex.Store({
         Cookies.set("umenu", params, { expires: 1 / 24 })
         if(params)
         state.usermenu=params.split(",")
-    }
+    },
+    updateDays(state,params){  
+      state.days=params
+  }
 
   },
   actions: {
@@ -192,6 +195,12 @@ export default new Vuex.Store({
     setUserMenu ({commit}, token) {
         return new Promise((resolve, reject) => {
           commit("updateUserMenu", token)
+          resolve()
+        })
+      },
+    setDays ({commit}, token) {
+        return new Promise((resolve, reject) => {
+          commit("updateDays", token)
           resolve()
         })
       }

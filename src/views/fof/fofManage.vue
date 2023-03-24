@@ -1,36 +1,104 @@
 <template>
-  <div ref="tableContainer" style="	height : 100%;">
-    <div class="block" style="display: flex;justify-content: space-between">
-      <div style="display: flex;justify-content: space-between">
+  <div ref="tableContainer" style="height: 100%">
+    <div class="block" style="display: flex; justify-content: space-between">
+      <div style="display: flex; justify-content: space-between">
         <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
         <el-button size="small" @click="toggleSelection()">取消选择</el-button>
         <!-- <el-button  size="small" @click="addInfo()">添加</el-button> -->
         <el-button size="small" @click="allrun()">对比</el-button>
         <el-button size="small" @click="showcorr()">相关性</el-button>
         <el-button size="small" @click="compare()">业绩对标</el-button>
-        <el-button v-if="usermenu.indexOf('rank-btn')>-1" size="small" @click="showRank()">排名</el-button>
-        <el-button v-if="usermenu.indexOf('sim-btn')>-1" size="small" @click="showSimulate()">仿真</el-button>
-        <el-button v-if="usermenu.indexOf('info-edit')>-1" @click="uploadInvestAll()" size="small">上传尽调表</el-button>
+        <el-button
+          v-if="usermenu.indexOf('rank-btn') > -1"
+          size="small"
+          @click="showRank()"
+          >排名</el-button
+        >
+        <el-button
+          v-if="usermenu.indexOf('sim-btn') > -1"
+          size="small"
+          @click="showSimulate()"
+          >仿真</el-button
+        >
+        <el-button
+          v-if="usermenu.indexOf('info-edit') > -1"
+          @click="uploadInvestAll()"
+          size="small"
+          >上传尽调表</el-button
+        >
 
-        <el-select v-model="filter.stage" @change="getList" style="width:80px" clearable placeholder="阶段">
-          <el-option v-for="item in sysparam.stage.filter(r=>r.value!='对标'&&r.value!='投后')" :key="item.value" :label="item.value" :value="item.code">
+        <el-select
+          v-model="filter.stage"
+          @change="getList"
+          style="width: 80px"
+          clearable
+          placeholder="阶段"
+        >
+          <el-option
+            v-for="item in sysparam.stage.filter(
+              (r) => r.value != '对标' && r.value != '投后'
+            )"
+            :key="item.value"
+            :label="item.value"
+            :value="item.code"
+          >
           </el-option>
         </el-select>
-        <el-select v-model="filter.scale" @change="getList" style="width:80px" clearable placeholder="可投状态">
-          <el-option v-for="item in sysparam.scale" :key="item.value" :label="item.value" :value="item.code">
+        <el-select
+          v-model="filter.scale"
+          @change="getList"
+          style="width: 80px"
+          clearable
+          placeholder="可投状态"
+        >
+          <el-option
+            v-for="item in sysparam.scale"
+            :key="item.value"
+            :label="item.value"
+            :value="item.code"
+          >
           </el-option>
         </el-select>
-        <el-select v-model="filter.class_type" @change="changeSub" style="width:80px" clearable placeholder="类型">
-          <el-option v-for="item in sysparam.class_type" :key="item.value" :label="item.value" :value="item.code">
+        <el-select
+          v-model="filter.class_type"
+          @change="changeSub"
+          style="width: 80px"
+          clearable
+          placeholder="类型"
+        >
+          <el-option
+            v-for="item in sysparam.class_type"
+            :key="item.value"
+            :label="item.value"
+            :value="item.code"
+          >
           </el-option>
         </el-select>
-        <el-select v-model="filter.sub_type" @change="getList" style="width:100px" clearable placeholder="子">
-          <el-option v-for="item in sub_type" :key="item.code" :label="item.value" :value="item.code">
+        <el-select
+          v-model="filter.sub_type"
+          @change="getList"
+          style="width: 100px"
+          clearable
+          placeholder="子"
+        >
+          <el-option
+            v-for="item in sub_type"
+            :key="item.code"
+            :label="item.value"
+            :value="item.code"
+          >
           </el-option>
         </el-select>
         <el-button size="small" @click="downFile()">下载</el-button>
-        <el-input v-model="filter.name" clearable placeholder="名称" style="width:180px"></el-input>
-        <el-button type="primary" @click="getList" style="margin-left: 10px;">搜索</el-button>
+        <el-input
+          v-model="filter.name"
+          clearable
+          placeholder="名称"
+          style="width: 180px"
+        ></el-input>
+        <el-button type="primary" @click="getList" style="margin-left: 10px"
+          >搜索</el-button
+        >
       </div>
     </div>
     <!-- -->
@@ -49,29 +117,109 @@
             <el-col :span="4">卡玛</el-col>
             <el-col :span="4">最大回撤</el-col>
           </el-row>
-          <el-row :key="year" v-for=" year in  ['2021','2020','2019','2018','all']">
-            <el-col :span="1">{{year}}</el-col>
+          <el-row
+            :key="year"
+            v-for="year in ['2021', '2020', '2019', '2018', 'all']"
+          >
+            <el-col :span="1">{{ year }}</el-col>
             <el-col :span="4">
-              <el-input @input="forceUpdate" v-model="filter['e_yr_'+year]" clearable :placeholder="'收益例:20'" style="width:100px"></el-input>-<el-input @input="forceUpdate" v-model="filter['e_yr@lt_'+year]" clearable :placeholder="'收益例:20'" style="width:100px"></el-input>
+              <el-input
+                @input="forceUpdate"
+                v-model="filter['e_yr_' + year]"
+                clearable
+                :placeholder="'收益例:20'"
+                style="width: 100px"
+              ></el-input
+              >-<el-input
+                @input="forceUpdate"
+                v-model="filter['e_yr@lt_' + year]"
+                clearable
+                :placeholder="'收益例:20'"
+                style="width: 100px"
+              ></el-input>
             </el-col>
             <el-col :span="4">
-              <el-input @input="forceUpdate" v-model="filter['e_volatility_'+year]" clearable :placeholder="'波动率'" style="width:100px"></el-input>-<el-input @input="forceUpdate" v-model="filter['e_volatility@lt_'+year]" clearable :placeholder="'波动率'" style="width:100px"></el-input>
+              <el-input
+                @input="forceUpdate"
+                v-model="filter['e_volatility_' + year]"
+                clearable
+                :placeholder="'波动率'"
+                style="width: 100px"
+              ></el-input
+              >-<el-input
+                @input="forceUpdate"
+                v-model="filter['e_volatility@lt_' + year]"
+                clearable
+                :placeholder="'波动率'"
+                style="width: 100px"
+              ></el-input>
             </el-col>
             <el-col :span="4">
-              <el-input @input="forceUpdate" v-model="filter['e_sharpe_'+year]" clearable :placeholder="'夏普'" style="width:100px"></el-input>-<el-input @input="forceUpdate" v-model="filter['e_sharp@lt_'+year]" clearable :placeholder="'夏普'" style="width:100px"></el-input>
+              <el-input
+                @input="forceUpdate"
+                v-model="filter['e_sharpe_' + year]"
+                clearable
+                :placeholder="'夏普'"
+                style="width: 100px"
+              ></el-input
+              >-<el-input
+                @input="forceUpdate"
+                v-model="filter['e_sharp@lt_' + year]"
+                clearable
+                :placeholder="'夏普'"
+                style="width: 100px"
+              ></el-input>
             </el-col>
             <el-col :span="4">
-              <el-input @input="forceUpdate" v-model="filter['e_calmar_'+year]" clearable :placeholder="'卡玛'" style="width:100px"></el-input>-<el-input @input="forceUpdate" v-model="filter['e_calmar@lt_'+year]" clearable :placeholder="'卡玛'" style="width:100px"></el-input>
+              <el-input
+                @input="forceUpdate"
+                v-model="filter['e_calmar_' + year]"
+                clearable
+                :placeholder="'卡玛'"
+                style="width: 100px"
+              ></el-input
+              >-<el-input
+                @input="forceUpdate"
+                v-model="filter['e_calmar@lt_' + year]"
+                clearable
+                :placeholder="'卡玛'"
+                style="width: 100px"
+              ></el-input>
             </el-col>
             <el-col :span="4">
-              <el-input @input="forceUpdate" v-model="filter['e_dd_'+year]" clearable :placeholder="'回撤:-10'" style="width:100px"></el-input>-<el-input @input="forceUpdate" v-model="filter['e_dd@lt_'+year]" clearable :placeholder="'最大回撤例:-10'" style="width:100px"></el-input>
+              <el-input
+                @input="forceUpdate"
+                v-model="filter['e_dd_' + year]"
+                clearable
+                :placeholder="'回撤:-10'"
+                style="width: 100px"
+              ></el-input
+              >-<el-input
+                @input="forceUpdate"
+                v-model="filter['e_dd@lt_' + year]"
+                clearable
+                :placeholder="'最大回撤例:-10'"
+                style="width: 100px"
+              ></el-input>
             </el-col>
           </el-row>
-
         </div>
       </el-collapse-item>
     </el-collapse>
-    <el-table ref="multipleTable" :data="tableData" :max-height="tmaxh" :row-key="(row)=>{ return row.code}" tooltip-effect="dark" style="width: 100%;margin-top:20px;" @select-all="onselectAll" @select="handleSelectionChange">
+    <el-table
+      ref="multipleTable"
+      :data="tableData"
+      :max-height="tmaxh"
+      :row-key="
+        (row) => {
+          return row.code
+        }
+      "
+      tooltip-effect="dark"
+      style="width: 100%; margin-top: 20px"
+      @select-all="onselectAll"
+      @select="handleSelectionChange"
+    >
       <!--    @row-click = "Selection"-->
 
       <el-table-column type="selection" :reserve-selection="true" width="55">
@@ -86,25 +234,58 @@
       <!--      用例编号-->
 
       <!--      测试项目-->
-      <el-table-column fixed prop="short_name" label="基金" min-width="160px" show-overflow-tooltip>
+      <el-table-column
+        fixed
+        prop="short_name"
+        label="基金"
+        min-width="160px"
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">
-          <el-button @click.native.prevent="addCart(scope.row)" type="text" size="small">
-            <el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full"></i></el-tooltip>
+          <el-button
+            @click.native.prevent="addCart(scope.row)"
+            type="text"
+            size="small"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="添加"
+              placement="left-start"
+              ><i class="el-icon-shopping-cart-full"></i
+            ></el-tooltip>
           </el-button>
-          <a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a>
+          <a href="javascript:;" @click="showHis(scope.row)">{{
+            scope.row.short_name
+          }}</a>
         </template>
       </el-table-column>
       <el-table-column prop="company" label="公司" show-overflow-tooltip>
         <template slot-scope="scope">{{ scope.row.company }}</template>
       </el-table-column>
-      <el-table-column prop="class_type" label="类型" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="class_type"
+        label="类型"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row.class_type }}</template>
       </el-table-column>
 
-      <el-table-column prop="sub_type" label="子类型" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="sub_type"
+        label="子类型"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row.sub_type }}</template>
       </el-table-column>
-      <el-table-column prop="scale" label="可投状态" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="scale"
+        label="可投状态"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row.scale }}</template>
       </el-table-column>
 
@@ -121,15 +302,34 @@
       <el-table-column prop="fee" label="管理费" sortable show-overflow-tooltip>
         <template slot-scope="scope">{{ scope.row.fee }}</template>
       </el-table-column>
-      <el-table-column prop="carry" label="carry" sortable show-overflow-tooltip>
-        <template slot-scope="scope">{{ scope.row.carry }}</template>
-      </el-table-column>>
+      <el-table-column
+        prop="carry"
+        label="carry"
+        sortable
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">{{
+          scope.row.carry
+        }}</template> </el-table-column
+      >>
 
-      <el-table-column prop="latest_date" label="净值日期" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="latest_date"
+        label="净值日期"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row.latest_date }}</template>
       </el-table-column>
-      <el-table-column prop="create_time" label="入库" sortable show-overflow-tooltip>
-        <template slot-scope="scope">{{ scope.row.create_time|formatDate }}</template>
+      <el-table-column
+        prop="create_time"
+        label="入库"
+        sortable
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">{{
+          scope.row.create_time | formatDate
+        }}</template>
       </el-table-column>
 
       <!--      测试输入-->
@@ -145,86 +345,260 @@
       </el-table-column>
       <el-table-column label="操作" fixed="right" width="160">
         <template slot-scope="scope">
-          <el-button @click.native.prevent="viewHis(scope.row)" type="text" size="small">
-            <el-tooltip class="item" effect="dark" content="查看净值历史" placement="left-start">
+          <el-button
+            @click.native.prevent="viewHis(scope.row)"
+            type="text"
+            size="small"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="查看净值历史"
+              placement="left-start"
+            >
               <i class="el-icon-info"></i>
             </el-tooltip>
           </el-button>
-          <el-button @click.native.prevent="viewAudit(scope.row)" type="text" size="small">
-            <el-tooltip class="item" effect="dark" content="查看审核历史" placement="left-start">
+          <el-button
+            @click.native.prevent="viewAudit(scope.row)"
+            type="text"
+            size="small"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="查看审核历史"
+              placement="left-start"
+            >
               <i class="el-icon-s-order"></i>
             </el-tooltip>
           </el-button>
           <!-- <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button> -->
-          <el-button v-if="usermenu.indexOf('info-audit')>-1" @click.native.prevent="editStatus(scope.row)" type="text" size="small">
-            <el-tooltip class="item" effect="dark" content="更新状态" placement="left-start"><i class="el-icon-s-tools"></i></el-tooltip>
+          <el-button
+            v-if="usermenu.indexOf('info-audit') > -1"
+            @click.native.prevent="editStatus(scope.row)"
+            type="text"
+            size="small"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="更新状态"
+              placement="left-start"
+              ><i class="el-icon-s-tools"></i
+            ></el-tooltip>
           </el-button>
-          <el-button @click.native.prevent="editInfo(scope.row)" type="text" size="small">
-            <el-tooltip class="item" effect="dark" content="编辑" placement="left-start"><i class="el-icon-edit"></i></el-tooltip>
+          <el-button
+            @click.native.prevent="editInfo(scope.row)"
+            type="text"
+            size="small"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="编辑"
+              placement="left-start"
+              ><i class="el-icon-edit"></i
+            ></el-tooltip>
           </el-button>
-          <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="uploadFile(scope.row)" type="text" size="small">
-            <el-tooltip class="item" effect="dark" content="上传报告" placement="left-start"><i class="el-icon-upload"></i></el-tooltip>
+          <el-button
+            v-if="usermenu.indexOf('info-edit') > -1"
+            @click.native.prevent="uploadFile(scope.row)"
+            type="text"
+            size="small"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="上传报告"
+              placement="left-start"
+              ><i class="el-icon-upload"></i
+            ></el-tooltip>
           </el-button>
           <el-button v-show="scope.row.filename" type="text" size="small">
-            <el-tooltip class="item" effect="dark" content="下载报告" placement="left-start"><a :href=" '/fof/downfile?code='+scope.row.code "><i class="el-icon-download"></i></a></el-tooltip>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="下载报告"
+              placement="left-start"
+              ><a :href="'/fof/downfile?code=' + scope.row.code"
+                ><i class="el-icon-download"></i></a
+            ></el-tooltip>
           </el-button>
-          <el-button v-show="scope.row.combine" @click.native.prevent="viewConcat(scope.row)" type="text" size="small">
-            <el-tooltip class="item" effect="dark" content="拼接历史" placement="left-start"><i class="el-icon-link"></i></el-tooltip>
+          <el-button
+            v-show="scope.row.combine"
+            @click.native.prevent="viewConcat(scope.row)"
+            type="text"
+            size="small"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="拼接历史"
+              placement="left-start"
+              ><i class="el-icon-link"></i
+            ></el-tooltip>
           </el-button>
-          <el-button v-show="scope.row.compare" @click.native.prevent="vcompare(scope.row)" type="text" size="small">
-            <el-tooltip class="item" effect="dark" content="业绩对标" placement="left-start"><i class="el-icon-sort"></i></el-tooltip>
+          <el-button
+            v-show="scope.row.compare"
+            @click.native.prevent="vcompare(scope.row)"
+            type="text"
+            size="small"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="业绩对标"
+              placement="left-start"
+              ><i class="el-icon-sort"></i
+            ></el-tooltip>
           </el-button>
-          <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="delFund0(scope.row)" type="text" size="small">
-            <el-tooltip class="item" effect="dark" content="删除" placement="left-start"><i class="el-icon-delete" style="color:red;"></i></el-tooltip>
+          <el-button
+            v-if="usermenu.indexOf('info-edit') > -1"
+            @click.native.prevent="delFund0(scope.row)"
+            type="text"
+            size="small"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="删除"
+              placement="left-start"
+              ><i class="el-icon-delete" style="color: red"></i
+            ></el-tooltip>
           </el-button>
-          <el-button v-if="usermenu.indexOf('info-edit')>-1" @click.native.prevent="doCheck(scope.row)" type="text" size="small">
-            <el-tooltip class="item" effect="dark" content="核对" placement="left-start"><i class="el-icon-finished"></i></el-tooltip>
+          <el-button
+            v-if="usermenu.indexOf('info-edit') > -1"
+            @click.native.prevent="doCheck(scope.row)"
+            type="text"
+            size="small"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="核对"
+              placement="left-start"
+              ><i class="el-icon-finished"></i
+            ></el-tooltip>
           </el-button>
 
           <!-- <vxe-button v-if="usermenu.indexOf('info-edit')>-1"  @click="uploadInvest(scope.row)" type="text" size="small">上传尽调表</vxe-button > -->
-
         </template>
       </el-table-column>
-
     </el-table>
-    <el-upload class="upload-demo" style="display:none" :accept="fileAccept" :action="uploadUrl" :data="{code:cur_code}" :before-upload="(file)=>loadModel(file)" auto-upload>
-      <el-button id="uploadButton" size="small" type="primary">点击上传</el-button>
+    <el-upload
+      class="upload-demo"
+      style="display: none"
+      :accept="fileAccept"
+      :action="uploadUrl"
+      :data="{ code: cur_code }"
+      :before-upload="(file) => loadModel(file)"
+      auto-upload
+    >
+      <el-button id="uploadButton" size="small" type="primary"
+        >点击上传</el-button
+      >
     </el-upload>
-    <div style="display: flex;justify-content: space-between">
-
-      <div class="block" style=" margin-top: 25px; height: 40px; ">
+    <div style="display: flex; justify-content: space-between">
+      <div class="block" style="margin-top: 25px; height: 40px">
         <!-- -->
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 15, 25, 30]" :page-size="PageSize" layout="total, sizes, prev, pager, next, jumper" :total="totaltableData.length">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 15, 25, 30]"
+          :page-size="PageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totaltableData.length"
+        >
         </el-pagination>
       </div>
     </div>
-    <el-dialog width="80%" top="50px" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="tableVisible">
-      <el-button @click="downFile('/fof/jreport_down')" size="small">下载数据</el-button>
+    <el-dialog
+      width="80%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="tableVisible"
+    >
+      <el-button @click="downFile('/fof/jreport_down')" size="small"
+        >下载数据</el-button
+      >
       <el-button @click="downPDF('comparediv')" size="small">导出PDF</el-button>
       <div ref="comparediv">
         <!-- <report-table  ref="compdata"  :titles="current.name"   :tableData="compData"  ></report-table> -->
-        <compare-table ref="compdata" :titles="current.name" :code="selcode"></compare-table>
-        <fund-echart ref="hischart1" :titles="current.name" style="height: 480px" :code="selcode"></fund-echart>
+        <compare-table
+          ref="compdata"
+          :titles="current.name"
+          :code="selcode"
+        ></compare-table>
+        <fund-echart
+          ref="hischart1"
+          :titles="current.name"
+          style="height: 480px"
+          :code="selcode"
+        ></fund-echart>
       </div>
     </el-dialog>
-    <el-dialog width="50%" top="50px" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="concatVisible">
-      <concat-log @close="editClose" ref="concatlog" :titles="current.name" style="height: 600px" :temp="temp" :code="cur_code" :visable="concatVisible"></concat-log>
+    <el-dialog
+      width="50%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="concatVisible"
+    >
+      <concat-log
+        @close="editClose"
+        ref="concatlog"
+        :titles="current.name"
+        style="height: 600px"
+        :temp="temp"
+        :code="cur_code"
+        :visable="concatVisible"
+      ></concat-log>
     </el-dialog>
-    <el-dialog width="80%" top="50px" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="corrVisible">
-      <fund-corr @close="editClose" ref="corrtable" :titles="current.name" style="height: 600px" :temp="temp" :code="selcode"></fund-corr>
+    <el-dialog
+      width="80%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="corrVisible"
+    >
+      <fund-corr
+        @close="editClose"
+        ref="corrtable"
+        :titles="current.name"
+        style="height: 600px"
+        :temp="temp"
+        :code="selcode"
+      ></fund-corr>
     </el-dialog>
-    <el-dialog width="80%" top="50px" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="editVisible">
+    <el-dialog
+      width="80%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="editVisible"
+    >
       <el-form ref="form" :model="current" label-width="80px">
         <el-form-item label="基金名称">
-          <label>{{current.name}}</label>
+          <label>{{ current.name }}</label>
         </el-form-item>
         <el-form-item label="决策阶段">
           <el-radio-group v-model="current.stage">
-            <el-radio :key="idx" v-for="(item,idx) in sysparam.stage" :label="item.value"></el-radio>
+            <el-radio
+              :key="idx"
+              v-for="(item, idx) in sysparam.stage"
+              :label="item.value"
+            ></el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="投资份额">
-          <el-input-number style="width:200px" placeholder="份额" v-model="current.amount">
+          <el-input-number
+            style="width: 200px"
+            placeholder="份额"
+            v-model="current.amount"
+          >
           </el-input-number>
         </el-form-item>
         <el-form-item label="评审意见">
@@ -235,31 +609,50 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-dialog width="50%" top="50px" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="checkVisible">
+    <el-dialog
+      width="50%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="checkVisible"
+    >
       <el-button type="primary" @click="reCrawl">重新爬取</el-button>
-      <vxe-table border ref="crawInfo" size="mini" :sort-config="{trigger: 'cell', orders: ['desc', 'asc', null]}" :data="checkData">
+      <vxe-table
+        border
+        ref="crawInfo"
+        size="mini"
+        :sort-config="{ trigger: 'cell', orders: ['desc', 'asc', null] }"
+        :data="checkData"
+      >
         <vxe-column field="source" title="来源" width="100">
-          <template slot-scope="scope">{{ scope.row.source}} <el-button @click.native.prevent="changeSource(scope.row.source)" type="text" size="small">
-              <el-tooltip class="item" effect="dark" content="切换" placement="left-start"><i class="el-icon-finished"></i></el-tooltip>
+          <template slot-scope="scope"
+            >{{ scope.row.source }}
+            <el-button
+              @click.native.prevent="changeSource(scope.row.source)"
+              type="text"
+              size="small"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="切换"
+                placement="left-start"
+                ><i class="el-icon-finished"></i
+              ></el-tooltip>
             </el-button>
           </template>
-
         </vxe-column>
-        <vxe-column field="start" title="开始">
-        </vxe-column>
-        <vxe-column field="end" title="结束">
-        </vxe-column>
-        <vxe-column field="cnt" title="总计">
-        </vxe-column>
-        <vxe-column field="total_week" title="合计周数">
-        </vxe-column>
-        <vxe-column field="miss_week" title="缺失周">
-        </vxe-column>
+        <vxe-column field="start" title="开始"> </vxe-column>
+        <vxe-column field="end" title="结束"> </vxe-column>
+        <vxe-column field="cnt" title="总计"> </vxe-column>
+        <vxe-column field="total_week" title="合计周数"> </vxe-column>
+        <vxe-column field="miss_week" title="缺失周"> </vxe-column>
         <vxe-column field="miss_week" title="缺失率">
-          <template slot-scope="scope">{{ $tools.formatMoney(scope.row.miss_week/scope.row.total_week ,3)}}</template>
+          <template slot-scope="scope">{{
+            $tools.formatMoney(scope.row.miss_week / scope.row.total_week, 3)
+          }}</template>
         </vxe-column>
-        <vxe-column field="ostd" title="异常std">
-        </vxe-column>
+        <vxe-column field="ostd" title="异常std"> </vxe-column>
         <vxe-column field="over_data" show-overflow-tooltip title="异常std">
         </vxe-column>
         <vxe-column field="rdiff" show-overflow-tooltip title="异常增长率">
@@ -272,28 +665,58 @@
       
     </el-table> -->
       <el-tabs type="border-card">
-        <el-tab-pane><span slot="label"><i class="el-icon-date"></i> 净值曲线</span>
-          <fund-echart ref="hischart" :titles="current.name" :code="current.code" :orig="1"></fund-echart>
+        <el-tab-pane
+          ><span slot="label"><i class="el-icon-date"></i> 净值曲线</span>
+          <fund-echart
+            ref="hischart"
+            :titles="current.name"
+            :code="current.code"
+            :orig="1"
+          ></fund-echart>
         </el-tab-pane>
-        <el-tab-pane><span slot="label">单位净值</span>
-          <vxe-table border ref="netValsInfo" size="mini" height="480" :sort-config="{trigger: 'cell', orders: ['desc', 'asc', null]}" :data="netvals">
+        <el-tab-pane
+          ><span slot="label">单位净值</span>
+          <vxe-table
+            border
+            ref="netValsInfo"
+            size="mini"
+            height="480"
+            :sort-config="{ trigger: 'cell', orders: ['desc', 'asc', null] }"
+            :data="netvals"
+          >
             <vxe-column field="date" sortable="" title="日期">
               <template #header>
-                {{'日期'}}
-                <vxe-switch v-model="showDiff" open-label="差异" :open-value="true" close-label="所有" :close-value="false"></vxe-switch>
+                {{ '日期' }}
+                <vxe-switch
+                  v-model="showDiff"
+                  open-label="差异"
+                  :open-value="true"
+                  close-label="所有"
+                  :close-value="false"
+                ></vxe-switch>
               </template>
             </vxe-column>
-            <vxe-column v-for="item in sources" :key="item" :field="item" :title="item">
-
+            <vxe-column
+              v-for="item in sources"
+              :key="item"
+              :field="item"
+              :title="item"
+            >
             </vxe-column>
           </vxe-table>
         </el-tab-pane>
       </el-tabs>
-
     </el-dialog>
-    <el-dialog width="80%" top="50px" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="formVisible">
+    <el-dialog
+      width="80%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="formVisible"
+    >
       <el-tabs type="border-card">
-        <el-tab-pane><span slot="label"><i class="el-icon-date"></i> 产品信息</span>
+        <el-tab-pane
+          ><span slot="label"><i class="el-icon-date"></i> 产品信息</span>
           <!-- <wad-form :cForm="cForm"></wad-form>
  -->
           <!-- <vxe-form :data="current" @submit="submitForm('dynamicValidateForm')" @reset="resetForm('dynamicValidateForm')">
@@ -306,39 +729,123 @@
          </vxe-form> -->
 
           <!---->
-          <el-form :model="current" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic" :rules=" {'code': [{ required: true, message: '请输入备案号', trigger: 'blur' }, { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur'}],
- 'short_name': [{ required: true, message: '简称必须输人', trigger: 'blur' }], 'name': [{ required: true, message: '基金名称必须输人', trigger: 'blur' }], 'class_type': [{ required: true, message: '类型必选', trigger: 'blur' }], 'type': [{ required: true, message: '渠道必选', trigger: 'blur' }]}">
-            <template v-for="(row,index)  in cForm">
-              <el-row :key="index" v-show="index%2==0">
+          <el-form
+            :model="current"
+            ref="dynamicValidateForm"
+            label-width="120px"
+            class="demo-dynamic"
+            :rules="{
+              'code': [
+                { required: true, message: '请输入备案号', trigger: 'blur' },
+                {
+                  min: 6,
+                  max: 20,
+                  message: '长度在 6 到 20 个字符',
+                  trigger: 'blur'
+                }
+              ],
+              'short_name': [
+                { required: true, message: '简称必须输人', trigger: 'blur' }
+              ],
+              'name': [
+                { required: true, message: '基金名称必须输人', trigger: 'blur' }
+              ],
+              'class_type': [
+                { required: true, message: '类型必选', trigger: 'blur' }
+              ],
+              'type': [{ required: true, message: '渠道必选', trigger: 'blur' }]
+            }"
+          >
+            <template v-for="(row, index) in cForm">
+              <el-row :key="index" v-show="index % 2 == 0">
                 <el-col :span="12">
-                  <el-form-item v-if="index<=cForm.length-1" :prop="row.dataIndex" :label=" row.tilte">
-                    <el-select v-if="row.param" v-model="current[row.dataIndex]" style="width:120px" clearable :placeholder="row.tilte">
-                      <el-option v-for="item in sysparam[row.param]" :key="item.value" :label="item.value" :value="item.code">
+                  <el-form-item
+                    v-if="index <= cForm.length - 1"
+                    :prop="row.dataIndex"
+                    :label="row.tilte"
+                  >
+                    <el-select
+                      v-if="row.param"
+                      v-model="current[row.dataIndex]"
+                      style="width: 120px"
+                      clearable
+                      :placeholder="row.tilte"
+                    >
+                      <el-option
+                        v-for="item in sysparam[row.param]"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.code"
+                      >
                       </el-option>
                     </el-select>
-                    <el-input v-else :type="row['type']" rows="3" v-model="current[row.dataIndex]"></el-input>
+                    <el-input
+                      v-else
+                      :type="row['type']"
+                      rows="3"
+                      v-model="current[row.dataIndex]"
+                    ></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item v-if="index+1<cForm.length" :prop="cForm[index+1].dataIndex" :label=" cForm[index+1].tilte">
-                    <el-select v-if="cForm[index+1].param" v-model="current[cForm[index+1].dataIndex]" @change="(v)=>cForm[index+1].dataIndex=='class_type' && changeSub(v)" style="width:120px" clearable :placeholder="cForm[index+1].tilte">
-                      <el-option v-for="item in cForm[index+1].dataIndex=='sub_type'?sub_type:sysparam[cForm[index+1].param]" :key="item.value" :label="item.value" :value="item.code">
+                  <el-form-item
+                    v-if="index + 1 < cForm.length"
+                    :prop="cForm[index + 1].dataIndex"
+                    :label="cForm[index + 1].tilte"
+                  >
+                    <el-select
+                      v-if="cForm[index + 1].param"
+                      v-model="current[cForm[index + 1].dataIndex]"
+                      @change="
+                        (v) =>
+                          cForm[index + 1].dataIndex == 'class_type' &&
+                          changeSub(v)
+                      "
+                      style="width: 120px"
+                      clearable
+                      :placeholder="cForm[index + 1].tilte"
+                    >
+                      <el-option
+                        v-for="item in cForm[index + 1].dataIndex == 'sub_type'
+                          ? sub_type
+                          : sysparam[cForm[index + 1].param]"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.code"
+                      >
                       </el-option>
                     </el-select>
-                    <el-input v-else v-model="current[cForm[index+1].dataIndex]"></el-input>
+                    <el-input
+                      v-else
+                      v-model="current[cForm[index + 1].dataIndex]"
+                    ></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
             </template>
             <el-form-item>
-              <el-button v-if="usermenu.indexOf('info-edit')>-1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
-              <el-button v-if="usermenu.indexOf('info-edit')>-1" @click="resetForm('dynamicValidateForm')">重置</el-button>
+              <el-button
+                v-if="usermenu.indexOf('info-edit') > -1"
+                type="primary"
+                @click="submitForm('dynamicValidateForm')"
+                >提交</el-button
+              >
+              <el-button
+                v-if="usermenu.indexOf('info-edit') > -1"
+                @click="resetForm('dynamicValidateForm')"
+                >重置</el-button
+              >
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane><span slot="label"><i class="el-icon-date"></i> 公司信息</span>
-          <el-form :model="curCompany" ref="companyForm" label-width="100px" class="demo-dynamic">
-
+        <el-tab-pane
+          ><span slot="label"><i class="el-icon-date"></i> 公司信息</span>
+          <el-form
+            :model="curCompany"
+            ref="companyForm"
+            label-width="100px"
+            class="demo-dynamic"
+          >
             <el-row>
               <el-col :span="12">
                 <el-form-item :prop="'name'" :label="'名称'">
@@ -346,72 +853,219 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item :span="12" :prop="curCompany.maintainer" :label="'对接人'">
-                  <el-select filterable allow-create v-model="curCompany['maintainer']" style="width:120px" clearable :placeholder="'对接人'">
-                    <el-option v-for="item in sysparam['maintainer']" :key="item.value" :label="item.value" :value="item.code">
+                <el-form-item
+                  :span="12"
+                  :prop="curCompany.maintainer"
+                  :label="'对接人'"
+                >
+                  <el-select
+                    filterable
+                    allow-create
+                    v-model="curCompany['maintainer']"
+                    style="width: 120px"
+                    clearable
+                    :placeholder="'对接人'"
+                  >
+                    <el-option
+                      v-for="item in sysparam['maintainer']"
+                      :key="item.value"
+                      :label="item.value"
+                      :value="item.code"
+                    >
                     </el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
-            <template v-for="(row,index)  in compForm">
-              <el-row :key="index" v-show="index%2==0">
+            <template v-for="(row, index) in compForm">
+              <el-row :key="index" v-show="index % 2 == 0">
                 <el-col :span="12">
-                  <el-form-item v-if="index<=compForm.length-1" :prop="row.dataIndex" :label=" row.tilte">
-
-                    <el-select v-if="row.param" v-model="curCompany[row.dataIndex]" filterable allow-create style="width:120px" clearable :placeholder="row.tilte">
-                      <el-option v-for="item in sysparam[row.param]" :key="item.value" :label="item.value" :value="item.code">
+                  <el-form-item
+                    v-if="index <= compForm.length - 1"
+                    :prop="row.dataIndex"
+                    :label="row.tilte"
+                  >
+                    <el-select
+                      v-if="row.param"
+                      v-model="curCompany[row.dataIndex]"
+                      filterable
+                      allow-create
+                      style="width: 120px"
+                      clearable
+                      :placeholder="row.tilte"
+                    >
+                      <el-option
+                        v-for="item in sysparam[row.param]"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.code"
+                      >
                       </el-option>
                     </el-select>
-                    <el-input v-else v-model="curCompany[row.dataIndex]"></el-input>
+                    <el-input
+                      v-else
+                      v-model="curCompany[row.dataIndex]"
+                    ></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item v-if="index+1<=compForm.length-1" :prop="compForm[index+1].dataIndex" :label=" compForm[index+1].tilte">
-                    <el-input :type="compForm[index+1].type" v-model="curCompany[compForm[index+1].dataIndex]"></el-input>
+                  <el-form-item
+                    v-if="index + 1 <= compForm.length - 1"
+                    :prop="compForm[index + 1].dataIndex"
+                    :label="compForm[index + 1].tilte"
+                  >
+                    <el-input
+                      :type="compForm[index + 1].type"
+                      v-model="curCompany[compForm[index + 1].dataIndex]"
+                    ></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
             </template>
             <el-form-item>
-              <el-button v-if="usermenu.indexOf('info-edit')>-1" type="primary" @click="submitCompForm('companyForm')">提交</el-button>
-              <el-button v-if="usermenu.indexOf('info-edit')>-1" @click="resetForm('companyForm')">重置</el-button>
+              <el-button
+                v-if="usermenu.indexOf('info-edit') > -1"
+                type="primary"
+                @click="submitCompForm('companyForm')"
+                >提交</el-button
+              >
+              <el-button
+                v-if="usermenu.indexOf('info-edit') > -1"
+                @click="resetForm('companyForm')"
+                >重置</el-button
+              >
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane><span slot="label"><i class="el-icon-date"></i> 尽调信息</span>
-          <vxe-table border ref="investTable" height="480px" align="right" size="mini" :sort-config="{trigger: 'cell', orders: ['desc', 'asc', null]}" :data="investList">
+        <el-tab-pane
+          ><span slot="label"><i class="el-icon-date"></i> 尽调信息</span>
+          <vxe-table
+            border
+            ref="investTable"
+            height="480px"
+            align="right"
+            size="mini"
+            :sort-config="{ trigger: 'cell', orders: ['desc', 'asc', null] }"
+            :data="investList"
+          >
             <!-- <vxe-column  type="checkbox" width="30" fixed="left"></vxe-column> -->
 
-            <vxe-column sortable width="80" field="invest_date" title="尽调时间" align="left"></vxe-column>
-            <vxe-column sortable width="80" field="investor" title="尽调人" align="left"></vxe-column>
-            <vxe-column sortable width="160" field="policy_scale" title="策略规模" align="left"></vxe-column>
-            <vxe-column sortable width="60" field="fee" title="管理费" align="right"></vxe-column>
-            <vxe-column sortable width="100" field="carry" title="carry" align="left"></vxe-column>
-            <vxe-column sortable width="100" field="carry2" title="carry2" align="left"></vxe-column>
-            <vxe-column sortable width="100" field="lock_period" title="锁定期" align="left"></vxe-column>
-            <vxe-column sortable width="100" field="open_date" title="开放日" align="left"></vxe-column>
-            <vxe-column sortable width="100" field="temp_open" title="临开" align="left"></vxe-column>
-            <vxe-column sortable width="100" field="margin" title="保证金上限" align="left"></vxe-column>
-            <vxe-column sortable width="100" field="ex_rate" title="换手率" align="left"></vxe-column>
-            <vxe-column sortable width="100" field="host" title="托管" align="left"></vxe-column>
-            <vxe-column sortable width="100" field="broker" title="交易商" align="left"></vxe-column>
-            <vxe-column sortable width="100" field="vip_account" title="专户" align="left"></vxe-column>
+            <vxe-column
+              sortable
+              width="80"
+              field="invest_date"
+              title="尽调时间"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="80"
+              field="investor"
+              title="尽调人"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="160"
+              field="policy_scale"
+              title="策略规模"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="60"
+              field="fee"
+              title="管理费"
+              align="right"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="carry"
+              title="carry"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="carry2"
+              title="carry2"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="lock_period"
+              title="锁定期"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="open_date"
+              title="开放日"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="temp_open"
+              title="临开"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="margin"
+              title="保证金上限"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="ex_rate"
+              title="换手率"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="host"
+              title="托管"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="broker"
+              title="交易商"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="vip_account"
+              title="专户"
+              align="left"
+            ></vxe-column>
           </vxe-table>
         </el-tab-pane>
-
       </el-tabs>
     </el-dialog>
 
-    <el-dialog title="提示" :visible.sync="confirmVisible" width="30%" :before-close="handleClose">
-      <span>确认删除{{current.name}}?</span>
+    <el-dialog
+      title="提示"
+      :visible.sync="confirmVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <span>确认删除{{ current.name }}?</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="confirmVisible = false">取 消</el-button>
         <el-button type="primary" @click="delFund()">确 定</el-button>
       </span>
     </el-dialog>
   </div>
-
 </template>
 
 <!--1、用例编号;-->
@@ -478,6 +1132,8 @@ const cForm = [
   { tilte: '止损', dataIndex: 'lost' },
   { tilte: '其他关键条款', dataIndex: 'other' },
   { tilte: '预警', dataIndex: 'alarm' },
+  { tilte: '产品来源', dataIndex: 'prod_source', param: 'prod_source' },
+  { tilte: '来源说明', dataIndex: 'source_remark' },
 
   // {"tilte":"网站代码","dataIndex":"scode"},
 
