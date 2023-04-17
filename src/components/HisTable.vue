@@ -1,10 +1,7 @@
 <template>
-
   <div>
-
-    <div class="block" style="display: flex;justify-content: space-between">
-
-      <div style="display: flex;justify-content: space-between">
+    <div class="block" style="display: flex; justify-content: space-between">
+      <div style="display: flex; justify-content: space-between">
         <!-- <el-button-group>
   <el-button type="primary">7天</el-button>
   <el-button type="primary">30天</el-button>
@@ -12,9 +9,14 @@
   <el-button type="primary">本年</el-button>
 </el-button-group> -->
         <vxe-button icon="fa fa-plus" @click="insertEvent()">新增</vxe-button>
-        <vxe-button v-show="temp==1" @click="confirmData">确认数据</vxe-button>
+        <vxe-button v-show="temp == 1" @click="confirmData"
+          >确认数据</vxe-button
+        >
         <vxe-button @click="downloadData" size="small">下载数据</vxe-button>
-        <vxe-button @click="uploadFile({ multiple : false,types:	['csv', 'xlsx',] })">导入净值</vxe-button>
+        <vxe-button
+          @click="uploadFile({ multiple: false, types: ['csv', 'xlsx'] })"
+          >导入净值</vxe-button
+        >
 
         <!-- <el-upload
               class="upload-demo"
@@ -27,28 +29,68 @@
               <vxe-button id="uploadButton" size="small" >导入净值</vxe-button>
     </el-upload> -->
         <vxe-button @click="saveHis">保存净值</vxe-button>
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;注意:净值日期格式为YYYYmmDD格式 即 20210304格式 </span>
-
+        <span
+          >&nbsp;&nbsp;&nbsp;&nbsp;注意:净值日期格式为YYYYmmDD格式 即
+          20210304格式
+        </span>
       </div>
     </div>
-    <vxe-table ref="hisTable" border keep-source align="right" size="mini" max-height="480" :mouse-config="{selected: true}" show-overflow :data="tableData" :edit-config="{trigger: 'dblclick', mode: 'cell'}" :keyboard-config="{isArrow: true, isDel: true, isEnter: true, isTab: true, isEdit: true}">
+    <vxe-table
+      ref="hisTable"
+      border
+      keep-source
+      align="right"
+      size="mini"
+      max-height="480"
+      :mouse-config="{ selected: true }"
+      show-overflow
+      :data="tableData"
+      :edit-config="{ trigger: 'dblclick', mode: 'cell' }"
+      :keyboard-config="{
+        isArrow: true,
+        isDel: true,
+        isEnter: true,
+        isTab: true,
+        isEdit: true
+      }"
+    >
       <!-- <vxe-column type="seq" width="60"></vxe-column> -->
-      <vxe-column width="140" field="date" title="日期" :edit-render="{autofocus: '.myinput'}">
+      <vxe-column
+        width="140"
+        field="date"
+        title="日期"
+        :edit-render="{ autofocus: '.myinput' }"
+      >
         <template #edit="{ row }">
           <vxe-input v-model="row.date" class="myinput"></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column width="140" field="netval" title="当前净值" :edit-render="{autofocus: '.myinput'}">
+      <vxe-column
+        width="140"
+        field="netval"
+        title="当前净值"
+        :edit-render="{ autofocus: '.myinput' }"
+      >
         <template #edit="{ row }">
           <vxe-input v-model="row.netval" class="myinput"></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column width="140" field="sumval" title="累计净值" :edit-render="{autofocus: '.myinput'}">
+      <vxe-column
+        width="140"
+        field="sumval"
+        title="累计净值"
+        :edit-render="{ autofocus: '.myinput' }"
+      >
         <template #edit="{ row }">
           <vxe-input v-model="row.sumval" class="myinput"></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column width="140" field="reval" title="复权净值" :edit-render="{autofocus: '.myinput'}">
+      <vxe-column
+        width="140"
+        field="reval"
+        title="复权净值"
+        :edit-render="{ autofocus: '.myinput' }"
+      >
         <template #edit="{ row }">
           <vxe-input v-model="row.reval" class="myinput"></vxe-input>
         </template>
@@ -58,12 +100,23 @@
       <!-- <vxe-select v-model="keymap[key]" placeholder="选择列">
               <vxe-option v-for="col of cols" :key="col" :value="col" :label="col"></vxe-option>
               </vxe-select> -->
-      <vxe-select v-model="keymap[idx]" :placeholder="fcol" style="width:140px" v-for="(fcol,idx) in cols" clearable :key="fcol">
-        <vxe-option v-for="(v,col) in frecord" :key="col" :value="col" :label="col"></vxe-option>
+      <vxe-select
+        v-model="keymap[idx]"
+        :placeholder="fcol"
+        style="width: 140px"
+        v-for="(fcol, idx) in cols"
+        clearable
+        :key="fcol"
+      >
+        <vxe-option
+          v-for="(v, col) in frecord"
+          :key="col"
+          :value="col"
+          :label="col"
+        ></vxe-option>
       </vxe-select>
       <vxe-button @click="importData">确认</vxe-button>
     </div>
-
   </div>
 </template>
 

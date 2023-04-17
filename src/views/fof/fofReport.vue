@@ -64,13 +64,13 @@
         <template slot-scope="scope">{{ scope.row['子类型'] }}</template>
       </el-table-column>
       <el-table-column
-        prop="购买时间"
-        width="60"
+        prop="buy_date"
+        width="90"
         label="购买时间"
         sortable
         show-overflow-tooltip
       >
-        <template slot-scope="scope">{{ scope.row['购买时间'] }}</template>
+        <template slot-scope="scope">{{ scope.row['buy_date'] }}</template>
       </el-table-column>
       <!-- <el-table-column
         prop="份额"

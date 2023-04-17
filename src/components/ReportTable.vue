@@ -1,30 +1,31 @@
 <template>
-
   <div>
-
- <div class="block" style="display: flex;justify-content: space-between">
-        
-
-        <div style="display: flex;justify-content: space-between">      <!-- <el-button-group>
+    <div class="block" style="display: flex; justify-content: space-between">
+      <div style="display: flex; justify-content: space-between">
+        <!-- <el-button-group>
   <el-button type="primary">7天</el-button>
   <el-button type="primary">30天</el-button>
   <el-button type="primary">90天</el-button>
   <el-button type="primary">本年</el-button>
 </el-button-group> -->
-        </div>
- </div>
-   <el-table
+      </div>
+    </div>
+    <el-table
       ref="multipleTable"
       :data="tableData"
       tooltip-effect="dark"
-      :default-sort="{prop:'类型',order:'ascending','当月收益':'descending'}"
+      :default-sort="{
+        prop: '类型',
+        order: 'ascending',
+        '当月收益': 'descending'
+      }"
       style="width: 100%; margin-top: 20px"
     >
       <!--    @row-click = "Selection"-->
 
       <!-- <el-table-column type="selection" width="55"> </el-table-column> -->
       <!--      测试ID-->
-     <!--  <el-table-column
+      <!--  <el-table-column
       prop="基金代码"
       label="基金代码"
       width="100">
@@ -37,22 +38,31 @@
         label="基金名称"
         show-overflow-tooltip
       >
-        <template slot-scope="scope"
-          >                       <el-button  @click.native.prevent="addCart(scope.row)" type="text" size="small"><el-tooltip class="item" effect="dark" content="添加" placement="left-start"><i class="el-icon-shopping-cart-full" ></i></el-tooltip></el-button>
-<a href="javascript:;" @click="showHis(scope.row)">{{
-            scope.row["基金名称"]
+        <template slot-scope="scope">
+          <el-button
+            @click.native.prevent="addCart(scope.row)"
+            type="text"
+            size="small"
+            ><el-tooltip
+              class="item"
+              effect="dark"
+              content="添加"
+              placement="left-start"
+              ><i class="el-icon-shopping-cart-full"></i></el-tooltip
+          ></el-button>
+          <a href="javascript:;" @click="showHis(scope.row)">{{
+            scope.row['基金名称']
           }}</a></template
         >
       </el-table-column>
-       <el-table-column
+      <el-table-column
         prop="类型"
         width="80"
         label="类型"
         sortable
         show-overflow-tooltip
       >
-             <template slot-scope="scope">{{ scope.row['类型'] }}</template>
-
+        <template slot-scope="scope">{{ scope.row['类型'] }}</template>
       </el-table-column>
       <!--      测试项目-->
       <!--      测试用例是否关联-->
@@ -60,112 +70,223 @@
       <el-table-column
         prop="本周收益"
         label="本周收益"
-        align="right" 
+        align="right"
         width="80"
         show-overflow-tooltip
       >
         <template slot-scope="scope">
-              <span :style="'text-align:right;color:'+(scope.row['本周收益']>=0?'red':'green') " >
-                    {{showResult(scope.row["本周收益"])}}</span>
-
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['本周收益'] >= 0 ? 'red' : 'green')
+            "
+          >
+            {{ showResult(scope.row['本周收益']) }}</span
+          >
         </template>
       </el-table-column>
       <el-table-column
         prop="当月收益"
         label="当月收益"
         sortable
-        align="right" 
+        align="right"
         width="80"
         show-overflow-tooltip
       >
         <template slot-scope="scope">
-              <span :style="'text-align:right;color:'+(scope.row['当月收益']>=0?'red':'green') " >
-                    {{showResult(scope.row["当月收益"])}}</span>
-
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['当月收益'] >= 0 ? 'red' : 'green')
+            "
+          >
+            {{ showResult(scope.row['当月收益']) }}</span
+          >
         </template>
       </el-table-column>
-      <el-table-column prop="当年收益"  label="当年收益" align="right"  show-overflow-tooltip>
+      <el-table-column
+        prop="当年收益"
+        label="当年收益"
+        align="right"
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">
-                          <span :style="'text-align:right;color:'+(scope.row['当年收益']>=0?'red':'green') " >
-{{
-          showResult(scope.row["当年收益"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="近6月收益" label="近6月收益" show-overflow-tooltip>
-        <template slot-scope="scope">
-                         <span :style="'text-align:right;color:'+(scope.row['近6月收益']>=0?'red':'green') " >
-{{
-          showResult(scope.row["近6月收益"])
-        }}</span></template>
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['当年收益'] >= 0 ? 'red' : 'green')
+            "
+          >
+            {{ showResult(scope.row['当年收益']) }}</span
+          ></template
+        >
       </el-table-column>
       <el-table-column
-      align="right" 
+        align="right"
+        prop="近6月收益"
+        label="近6月收益"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['近6月收益'] >= 0 ? 'red' : 'green')
+            "
+          >
+            {{ showResult(scope.row['近6月收益']) }}</span
+          ></template
+        >
+      </el-table-column>
+      <el-table-column
+        align="right"
         prop="近12月收益"
         label="近12月收益"
         show-overflow-tooltip
       >
-        <template slot-scope="scope"><span :style="'text-align:right;color:'+(scope.row['近12月收益']>=0?'red':'green') " >{{
-          showResult(scope.row["近12月收益"])
-        }}</span></template>
+        <template slot-scope="scope"
+          ><span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['近12月收益'] >= 0 ? 'red' : 'green')
+            "
+            >{{ showResult(scope.row['近12月收益']) }}</span
+          ></template
+        >
       </el-table-column>
-      <el-table-column align="right" prop="2021" label="2021" show-overflow-tooltip>
-        <template slot-scope="scope">
-                <span :style="'text-align:right;color:'+(scope.row['2021']>=0?'red':'green') " >
-{{
-          showResult(scope.row["2021"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="2020" label="2020" show-overflow-tooltip>
-        <template slot-scope="scope">
-            <span :style="'text-align:right;color:'+(scope.row['2020']>=0?'red':'green') " >{{
-          showResult(scope.row["2020"])
-        }}</span></template>
-      </el-table-column>
-      <el-table-column align="right" prop="2019" label="2019" show-overflow-tooltip>
-        <template slot-scope="scope">
-            <span :style="'text-align:right;color:'+(scope.row['2019']>=0?'red':'green') " >{{
-          showResult(scope.row["2019"])
-        }}</span></template>
-      </el-table-column>
-      <!--过去3年年均收益	夏普比率	卡玛比率	最大回撤-->
       <el-table-column
-      align="right" 
-        prop="过去3年年均收益"
-        label="过去3年年均收益"
+        align="right"
+        prop="2021"
+        label="2021"
         show-overflow-tooltip
       >
         <template slot-scope="scope">
-                    <span :style="'text-align:right;color:'+(scope.row['过去3年年均收益']>=0?'red':'green') " >{{
-          showResult(scope.row["过去3年年均收益"])
-        }}</span></template>
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['2021'] >= 0 ? 'red' : 'green')
+            "
+          >
+            {{ showResult(scope.row['2021']) }}</span
+          ></template
+        >
       </el-table-column>
-      <el-table-column align="right" prop="夏普比率" label="夏普比率" sortable show-overflow-tooltip>
+      <el-table-column
+        align="right"
+        prop="2020"
+        label="2020"
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">
-                                <span :style="'text-align:right;color:'+(scope.row['夏普比率']>=0?'red':'green') " >{{
-
-          showResult(scope.row["夏普比率"],1)
-        }}</span></template>
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['2020'] >= 0 ? 'red' : 'green')
+            "
+            >{{ showResult(scope.row['2020']) }}</span
+          ></template
+        >
       </el-table-column>
-      <el-table-column align="right" prop="波动率" label="波动率" sortable show-overflow-tooltip>
+      <el-table-column
+        align="right"
+        prop="2019"
+        label="2019"
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">
-                                <span :style="'text-align:right;color:'+(scope.row['波动率']>=0?'red':'green') " >{{
-
-          showResult(scope.row["波动率"],1)
-        }}</span></template>
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['2019'] >= 0 ? 'red' : 'green')
+            "
+            >{{ showResult(scope.row['2019']) }}</span
+          ></template
+        >
       </el-table-column>
-      <el-table-column align="right" prop="卡玛比率" label="卡玛比率" sortable show-overflow-tooltip>
+      <!--过去3年年均收益	夏普比率	卡玛比率	最大回撤-->
+      <el-table-column
+        align="right"
+        prop="过去3年年均收益"
+        label="0-36年均收益"
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">
-                 <span :style="'text-align:right;color:'+(scope.row['卡玛比率']>=0?'red':'green') " >{{
-
-          showResult(scope.row["卡玛比率"],1)
-        }}</span></template>
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['过去3年年均收益'] >= 0 ? 'red' : 'green')
+            "
+            >{{ showResult(scope.row['过去3年年均收益']) }}</span
+          ></template
+        >
       </el-table-column>
-      <el-table-column align="right" prop="最大回撤" label="最大回撤" sortable show-overflow-tooltip>
+      <el-table-column
+        align="right"
+        prop="夏普比率"
+        label="0-36夏普比率"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">
-                 <span :style="'text-align:right;color:'+(scope.row['最大回撤']>=0?'red':'green') " >{{
-
-          showResult(scope.row["最大回撤"])
-        }}</span></template>
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['夏普比率'] >= 0 ? 'red' : 'green')
+            "
+            >{{ showResult(scope.row['夏普比率'], 1) }}</span
+          ></template
+        >
+      </el-table-column>
+      <el-table-column
+        align="right"
+        prop="波动率"
+        label="0-36波动率"
+        sortable
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['波动率'] >= 0 ? 'red' : 'green')
+            "
+            >{{ showResult(scope.row['波动率'], 1) }}</span
+          ></template
+        >
+      </el-table-column>
+      <el-table-column
+        align="right"
+        prop="卡玛比率"
+        label="0-36卡玛比率"
+        sortable
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['卡玛比率'] >= 0 ? 'red' : 'green')
+            "
+            >{{ showResult(scope.row['卡玛比率'], 1) }}</span
+          ></template
+        >
+      </el-table-column>
+      <el-table-column
+        align="right"
+        prop="最大回撤"
+        label="0-36最大回撤"
+        sortable
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['最大回撤'] >= 0 ? 'red' : 'green')
+            "
+            >{{ showResult(scope.row['最大回撤']) }}</span
+          ></template
+        >
       </el-table-column>
     </el-table>
   </div>
@@ -174,8 +295,8 @@
 // <script>
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
-import Bus from '../store/bus.js';
-var echarts = require('echarts');
+import Bus from '../store/bus.js'
+var echarts = require('echarts')
 // 引入柱状图
 // require('echarts/lib/chart/line');
 // // 引入提示框和标题组件
@@ -183,19 +304,19 @@ var echarts = require('echarts');
 // require('echarts/lib/component/title');
 export default {
   props: {
-    visable:{
+    visable: {
       type: Boolean,
       default: false
     },
-     code:{
+    code: {
       type: String,
-      default: ""
+      default: ''
     },
-    temp:{
+    temp: {
       type: Number,
       default: 0
     },
-     title: {
+    title: {
       type: String,
       default: ''
     },
@@ -208,27 +329,22 @@ export default {
       default: true
     }
   },
-  watch: {
-
-  },
+  watch: {},
   data() {
-    return {
-    
-    }
+    return {}
   },
   methods: {
-    addCart(row){
-      if(row['基金名称']){
-        row['name']=row['基金名称']
-        Bus.$emit("addcart",row)
+    addCart(row) {
+      if (row['基金名称']) {
+        row['name'] = row['基金名称']
+        Bus.$emit('addcart', row)
       }
     },
-    showResult(number,rate=100){
-       if (null == number)
-          return '' 
-        var color=number>=0?"red":"green"
-        //return '<span style="text-align:right;color='+color+'">'+this.formatMoney(number,4)+'</span>'
-        return this.$tools.formatMoney(number*rate,3)
+    showResult(number, rate = 100) {
+      if (null == number) return ''
+      var color = number >= 0 ? 'red' : 'green'
+      //return '<span style="text-align:right;color='+color+'">'+this.formatMoney(number,4)+'</span>'
+      return this.$tools.formatMoney(number * rate, 3)
     }
   },
   mounted() {

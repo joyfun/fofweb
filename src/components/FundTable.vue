@@ -8,7 +8,8 @@
   <el-button type="primary">90天</el-button>
   <el-button type="primary">本年</el-button>
 </el-button-group> -->
-        <el-select
+
+        <!-- <el-select
           v-model="filter.class_type"
           @change="changeSub"
           style="width: 80px"
@@ -22,10 +23,26 @@
             :value="item.code"
           >
           </el-option>
+        </el-select> -->
+        <el-select
+          v-model="suser"
+          style="width: 140px"
+          clearable
+          @change="getCart"
+          placeholder="切换购物车"
+        >
+          <el-option
+            v-for="item of selusers"
+            :key="item"
+            v-show="item != token"
+            :label="item"
+            :value="item"
+          >
+          </el-option>
         </el-select>
         <el-select
           v-model="mult"
-          style="width: 180px"
+          style="width: 140px"
           multiple
           popper-class="pop-div-my"
           :popper-append-to-body="true"
@@ -99,6 +116,18 @@
         >+添加</el-button
       >
     </div>
+    <div>
+      <el-tag
+        :key="tag"
+        v-for="(item, tag) in otherCart"
+        @click="changeCart(tag, true)"
+        :effect="tag == nowcart ? 'dark' : 'light'"
+        type="info"
+        :disable-transitions="false"
+      >
+        {{ tag }}
+      </el-tag>
+    </div>
     <el-table
       ref="multipleTable"
       :data="foflist"
@@ -131,7 +160,7 @@
       <el-table-column v-if="full" label="阶段" sortable show-overflow-tooltip>
         <template slot-scope="scope">{{ scope.row['stage'] }}</template>
       </el-table-column>
-      <el-table-column width="40" fixed="right">
+      <el-table-column v-if="showmy" width="40" fixed="right">
         <template slot-scope="scope">
           <el-button
             @click.native.prevent="delCart(scope.row)"
@@ -230,6 +259,10 @@ export default {
     return {
       foflist: [],
       filter: {},
+      suser: '',
+      showmy: true,
+      otherCart: {},
+      selusers: ['chenjie', 'zhoujian', 'ccc'],
       fofoptions: [],
       inputVisible: false,
       nTagName: '',
@@ -250,6 +283,27 @@ export default {
     ...mapMutations({
       setFoflist: 'setFoflist'
     }),
+    getCart() {
+      if (this.suser) {
+        this.$axios({
+          url: '/sys/getcart',
+          method: 'GET',
+          params: { 'user': this.suser }
+        }).then((response) => {
+          console.log('======get cart=======')
+          console.log(response.data)
+          this.otherCart = {}
+          for (let cname in response.data) {
+            this.otherCart[cname] = JSON.parse(response.data[cname])
+          }
+          console.log(this.otherCart)
+
+          //})
+        })
+      } else {
+        this.otherCart = {}
+      }
+    },
     filterMethod(query) {
       console.log(query)
       console.log(this.alllist)
@@ -329,18 +383,24 @@ export default {
       }
       return null
     },
-    changeCart(row) {
-      this.$store.dispatch('changeCart', row)
-      let ret = this.allCart[row]
-      console.log(ret)
+    changeCart(row, other) {
+      let allCart = this.allCart
+      if (other) {
+        allCart = this.otherCart
+        this.showmy = false
+      } else {
+        this.showmy = true
+        this.$store.dispatch('changeCart', row)
+      }
+      let ret = allCart[row]
       for (var i in ret) {
-        console.log(ret[i])
         let aret = this.get_info(ret[i]['code'])
         if (aret) {
           Vue.set(ret, i, aret)
         }
       }
-      Vue.set(this, 'foflist', this.allCart[row])
+      console.log(ret)
+      Vue.set(this, 'foflist', ret)
       console.log(this.foflist)
     },
     delCart(row) {

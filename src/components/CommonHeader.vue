@@ -729,6 +729,9 @@ export default {
       for (let key in arg) {
         this[key] = arg[key]
       }
+      if (!arg['orig']) {
+        this.orig = 0
+      }
       this.dialogVisible = true
       console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
     })

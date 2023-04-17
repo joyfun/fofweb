@@ -89,8 +89,7 @@
             '近12月收益',
             '2022',
             '2021',
-            '2020',
-            '过去3年年均收益'
+            '2020'
           ]"
         >
           <template #default="{ row }">
@@ -105,9 +104,27 @@
         >
         <vxe-column
           sortable
+          width="60"
+          field="过去3年年均收益"
+          title="0-36年均收益"
+          align="left"
+        >
+          <template #default="{ row }">
+            <span
+              :style="
+                'text-align:right;color:' +
+                (row['过去3年年均收益'] >= 0 ? 'red' : 'green')
+              "
+            >
+              {{ showResult(row['过去3年年均收益']) }}</span
+            >
+          </template></vxe-column
+        >
+        <vxe-column
+          sortable
           :key="key"
           :field="key"
-          :title="key"
+          :title="'0-36' + key"
           align="right"
           v-for="key in ['夏普比率', '波动率', '卡玛比率']"
         >
@@ -122,7 +139,7 @@
           </template></vxe-column
         >
 
-        <vxe-column field="最大回撤" title="最大回撤" align="right">
+        <vxe-column field="最大回撤" title="0-36最大回撤" align="right">
           <template #default="{ row }">
             <span
               :style="

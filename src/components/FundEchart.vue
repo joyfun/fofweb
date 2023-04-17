@@ -238,7 +238,7 @@ export default {
       firstIdx: 0,
       lowest: 0.9,
       startdate: '',
-      range: 8,
+      range: 6,
       showdrop: false,
       tags: [
         '对齐',
@@ -871,35 +871,7 @@ export default {
               mhidx = hidx
             }
           }
-          if (this.raw_data[cname + '_超额']) {
-            var result = []
-            for (var i in sdata) {
-              var lastval = null
-              if (sdata[i] > 0) {
-                let indexdata = zz500data
-                if (cname.endsWith('I3')) {
-                  indexdata = hs300data
-                } else if (cname.endsWith('I0')) {
-                  indexdata = zz10000data
-                }
-                if (sdata[i]) lastval = (sdata[i] - indexdata[i]).toFixed(4)
-              }
-              result.push(lastval)
-            }
-            this.chartData.series.push({
-              data: result,
-              type: 'line',
-              connectNulls: true,
-              //   areaStyle:{},
-              name: cname + '_超额',
-              //   smooth: true,
-              yAxisIndex: 1
-            })
-            this.axisOption.legend[0].selected[cname] = false
-            this.axisOption.legend[0].selected['中证500指数'] = false
-            this.axisOption.legend[0].selected['沪深300指数'] = false
-            this.axisOption.legend[0].selected['中证1000指数'] = false
-          }
+
           var mp = {
             symbol: 'circle',
             symbolSize: 20,
@@ -932,41 +904,130 @@ export default {
             }
             mp.data.push({
               name: '回',
+              pidx: mhidx,
               coord: [this.raw_data.date[mhidx], sdata[mhidx]]
             })
             mp.data.push({
               name: '低',
+              pidx: midx,
               coord: [this.raw_data.date[midx], sdata[midx]]
             })
           }
-
-          var cdate = this.raw_data.combine_date[idx]
-
-          var bdate = this.raw_data.buy_date[idx]
-          var cidx = 0
-          if (bdate > '20170101') {
-            //  cidx = this.raw_data.date.indexOf(bdate);
-            for (let i = 0; i < this.raw_data.date.length; i++) {
-              if (this.raw_data.date[i] >= bdate) {
-                cidx = i
-                break
+          // let actionpts = []
+          if (this.raw_data['actions']) {
+            let actions = this.raw_data['actions'][cname]
+            if (actions) {
+              let invest = null
+              let redeem = null
+              for (let ac of actions) {
+                if (ac.stage == '已投' || ac.stage == '已赎') {
+                  var cidx = 0
+                  for (let i = 0; i < this.raw_data.date.length; i++) {
+                    if (this.raw_data.date[i] >= ac.date) {
+                      cidx = i
+                      break
+                    }
+                  }
+                  const point = {
+                    name: ac.stage[1],
+                    coord: [this.raw_data.date[cidx], sdata[cidx]],
+                    pidx: cidx,
+                    tooltip: {
+                      trigger: 'item',
+                      widht: '100px',
+                      formatter: function (item) {
+                        return ac.remark
+                      },
+                      show: true
+                    }
+                  }
+                  if (ac.stage == '已投' && invest == null) {
+                    invest = point
+                    mp.data.push(point)
+                    // actionpts.push(point)
+                  }
+                  if (ac.stage == '已赎') {
+                    redeem = point
+                  }
+                }
+              }
+              if (redeem) {
+                mp.data.push(redeem)
+                // actionpts.push(redeem)
               }
             }
-            // cidx=this.raw_data.date.some(r=> {return r>=bdate})
-            mp.data.push({
-              name: '购',
-              coord: [this.raw_data.date[cidx], sdata[cidx]]
-            })
-          } else if (cdate) {
-            var didx = this.raw_data.date.some((r) => {
-              return r >= bdate
-            })
-            if (didx > 0 && didx != cidx)
-              mp.data.push({
-                name: '拼',
-                coord: [cdate, sdata[didx]]
-              })
           }
+          if (this.raw_data[cname + '_超额']) {
+            var result = []
+            console.log(mp)
+            let nmp = JSON.parse(JSON.stringify(mp))
+            nmp.data = JSON.parse(
+              JSON.stringify(
+                nmp.data.filter((r) => {
+                  return r.name != '回' && r.name != '低'
+                })
+              )
+            )
+            console.log(nmp)
+            for (var i in sdata) {
+              var lastval = null
+              if (sdata[i] > 0) {
+                let indexdata = zz500data
+                if (cname.endsWith('I3')) {
+                  indexdata = hs300data
+                } else if (cname.endsWith('I0')) {
+                  indexdata = zz10000data
+                }
+                if (sdata[i]) lastval = (sdata[i] - indexdata[i]).toFixed(4)
+              }
+              result.push(lastval)
+            }
+            for (let apt of nmp.data) {
+              apt.coord[1] = result[apt.pidx]
+              apt.value = apt.name
+            }
+            this.chartData.series.push({
+              data: result,
+              type: 'line',
+              connectNulls: true,
+              //   areaStyle:{},
+              name: cname + '_超额',
+              markPoint: nmp,
+              //   smooth: true,
+              yAxisIndex: 1
+            })
+            this.axisOption.legend[0].selected[cname] = false
+            this.axisOption.legend[0].selected['中证500指数'] = false
+            this.axisOption.legend[0].selected['沪深300指数'] = false
+            this.axisOption.legend[0].selected['中证1000指数'] = false
+          }
+          // var cdate = this.raw_data.combine_date[idx]
+
+          // var bdate = this.raw_data.buy_date[idx]
+          // var cidx = 0
+          // if (bdate > '20170101') {
+          //   //  cidx = this.raw_data.date.indexOf(bdate);
+          //   for (let i = 0; i < this.raw_data.date.length; i++) {
+          //     if (this.raw_data.date[i] >= bdate) {
+          //       cidx = i
+          //       break
+          //     }
+          //   }
+          //   // cidx=this.raw_data.date.some(r=> {return r>=bdate})
+          //   mp.data.push({
+          //     name: '购',
+          //     coord: [this.raw_data.date[cidx], sdata[cidx]]
+          //   })
+          // } else if (cdate) {
+          //   var didx = this.raw_data.date.some((r) => {
+          //     return r >= bdate
+          //   })
+          //   if (didx > 0 && didx != cidx)
+          //     mp.data.push({
+          //       name: '拼',
+          //       coord: [cdate, sdata[didx]]
+          //     })
+          // }
           var asery = {
             data: sdata,
             type: 'line',

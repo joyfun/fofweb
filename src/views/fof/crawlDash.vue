@@ -1,16 +1,31 @@
 <template>
-  <div ref="tableContainer" style="	height : 100%;">
+  <div ref="tableContainer" style="height: 100%">
     <div class="block" style="display: flex; justify-content: space-between">
-      <div style=" width: 800px;">
+      <div style="width: 800px">
         <el-radio-group v-model="reqType">
-          <el-radio-button type="primary" :key="i" :label="item" icon="el-icon-edit" v-for="(item,i) in types">{{tags[i]}}</el-radio-button>
+          <el-radio-button
+            type="primary"
+            :key="i"
+            :label="item"
+            icon="el-icon-edit"
+            v-for="(item, i) in types"
+            >{{ tags[i] }}</el-radio-button
+          >
         </el-radio-group>
         <el-button type="primary" @click="exportExcel">导出</el-button>
         <el-button type="primary" @click="batchConfirm">批量确认</el-button>
-
       </div>
     </div>
-    <el-table id="out-table" ref="multipleTable" :data="tableData" :max-height="tmaxh" tooltip-effect="dark" :default-sort="{prop:'ncnt',order:'descending','cnt':'descending'}" @selection-change="handleSelectionChange" style="width: 100%; margin-top: 20px">
+    <el-table
+      id="out-table"
+      ref="multipleTable"
+      :data="tableData"
+      :max-height="tmaxh"
+      tooltip-effect="dark"
+      :default-sort="{ prop: 'ncnt', order: 'descending', 'cnt': 'descending' }"
+      @selection-change="handleSelectionChange"
+      style="width: 100%; margin-top: 20px"
+    >
       <!--    @row-click = "Selection"       :default-sort="{prop:'类型',order:'ascending','当月收益':'descending'}"-->
 
       <el-table-column type="selection" width="55"> </el-table-column>
@@ -22,80 +37,216 @@
       <template slot-scope="scope">{{ scope.row["基金代码"]}}</a></template>
     </el-table-column>
       用例编号-->
-      <el-table-column prop="type" width="100" label="来源" sortable show-overflow-tooltip> <template slot-scope="scope">{{ scope.row['type'] }}</template>
-
+      <el-table-column
+        prop="type"
+        width="100"
+        label="来源"
+        sortable
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">{{ scope.row['type'] }}</template>
       </el-table-column>
-      <el-table-column prop="amount" sortable width="200" label="基金名称" show-overflow-tooltip>
+      <el-table-column
+        prop="amount"
+        sortable
+        width="200"
+        label="基金名称"
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">
-          <a href="javascript:;" @click="showHis(scope.row)"><span :style="'text-align:right;color:'+(scope.row['amount']>0?'red':'black') ">{{
-            scope.row["name"]
-          }}</span></a>
+          <a href="javascript:;" @click="showHis(scope.row)"
+            ><span
+              :style="
+                'text-align:right;color:' +
+                (scope.row['amount'] > 0 ? 'red' : 'black')
+              "
+              >{{ scope.row['name'] }}</span
+            ></a
+          >
         </template>
       </el-table-column>
-      <el-table-column prop="start_date" width="100" label="开始日期" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="scale"
+        width="100"
+        label="状态"
+        sortable
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">{{ scope.row['scale'] }}</template>
+      </el-table-column>
+      <el-table-column
+        prop="start_date"
+        width="100"
+        label="开始日期"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row['start_date'] }}</template>
       </el-table-column>
 
-      <el-table-column prop="lastval_date" width="100" label="最后更新" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="lastval_date"
+        width="100"
+        label="最后更新"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row['lastval_date'] }}</template>
-
       </el-table-column>
-      <el-table-column prop="cnt" width="100" label="未确认" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="cnt"
+        width="100"
+        label="未确认"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row['cnt'] }}</template>
-
       </el-table-column>
-      <el-table-column prop="ncnt" width="100" label="新数据" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="ncnt"
+        width="100"
+        label="新数据"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row['ncnt'] }}</template>
-
       </el-table-column>
-      <el-table-column prop="code" width="140" label="备案号" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="code"
+        width="140"
+        label="备案号"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row['code'] }}</template>
       </el-table-column>
 
-      <el-table-column prop="scode" width="140" label="网站代码" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="scode"
+        width="140"
+        label="网站代码"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row['scode'] }}</template>
-
       </el-table-column>
-      <el-table-column prop="miss" width="140" label="缺失日期" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="miss"
+        width="140"
+        label="缺失日期"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row['miss'] }}</template>
-
       </el-table-column>
-      <el-table-column prop="miss" width="160" label="说明" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="miss"
+        width="160"
+        label="说明"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row['remark'] }}</template>
-
       </el-table-column>
-      <el-table-column prop="code" width="120" label="原始值" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="code"
+        width="120"
+        label="原始值"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">
-          <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="medium">
-            <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip>
+          <el-button
+            @click.native.prevent="viewHisTemp(scope.row)"
+            type="text"
+            size="medium"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="核对数据"
+              placement="left-start"
+              ><i class="el-icon-success"></i
+            ></el-tooltip>
           </el-button>
-          <el-button @click.native.prevent="jumpToSource(scope.row)" type="text" size="medium">
-            <el-tooltip class="item" effect="dark" content="原始值" placement="left-start"><i class="el-icon-info"></i></el-tooltip>
+          <el-button
+            @click.native.prevent="jumpToSource(scope.row)"
+            type="text"
+            size="medium"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="原始值"
+              placement="left-start"
+              ><i class="el-icon-info"></i
+            ></el-tooltip>
           </el-button>
-          <el-button @click.native.prevent="reCrawl(scope.row)" type="text" size="medium">
-            <el-tooltip class="item" effect="dark" content="重新爬取" placement="left-start"><i class="el-icon-receiving"></i></el-tooltip>
+          <el-button
+            @click.native.prevent="reCrawl(scope.row)"
+            type="text"
+            size="medium"
+          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="重新爬取"
+              placement="left-start"
+              ><i class="el-icon-receiving"></i
+            ></el-tooltip>
           </el-button>
-
         </template>
       </el-table-column>
       <!--      测试项目-->
       <!--      测试用例是否关联-->
       <!--      测试输入-->
-
     </el-table>
     <div style="display: flex; justify-content: space-between">
-
       <div class="block" style="margin-top: 25px; height: 40px">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 15, 25, 30]" :page-size="PageSize" layout="total, sizes, prev, pager, next, jumper" :total="totaltableData.length">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 15, 25, 30]"
+          :page-size="PageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totaltableData.length"
+        >
         </el-pagination>
       </div>
     </div>
 
-    <el-dialog width="80%" top="50px" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="hisVisible">
-      <his-table @close="editClose" ref="histable" :titles="current.name" style="height: 600px" :temp="temp" :code="cur_code" :visable="dialogVisible"></his-table>
+    <el-dialog
+      width="80%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="hisVisible"
+    >
+      <his-table
+        @close="editClose"
+        ref="histable"
+        :titles="current.name"
+        style="height: 600px"
+        :temp="temp"
+        :code="cur_code"
+        :visable="dialogVisible"
+      ></his-table>
     </el-dialog>
-    <el-dialog width="80%" top="50px" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="dialogVisible">
-      <fund-echart @close="editClose" ref="hischart" :titles="current.name" :code="cur_code" :visable="dialogVisible"></fund-echart>
+    <el-dialog
+      width="80%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="dialogVisible"
+    >
+      <fund-echart
+        @close="editClose"
+        ref="hischart"
+        :titles="current.name"
+        :code="cur_code"
+        :visable="dialogVisible"
+      ></fund-echart>
     </el-dialog>
   </div>
 </template>

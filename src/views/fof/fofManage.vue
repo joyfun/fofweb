@@ -1571,7 +1571,11 @@ export default {
       return this.$tools.formatMoney(number * rate, 3)
     },
     showHis(row) {
-      Bus.$emit('showChart', { cur_code: row.code, diagName: 'hisChart' })
+      Bus.$emit('showChart', {
+        cur_code: row.code,
+        wk: '1',
+        diagName: 'hisChart'
+      })
     },
     showRank() {
       this.cur_code = ''
