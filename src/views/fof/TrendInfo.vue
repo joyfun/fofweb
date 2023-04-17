@@ -1428,6 +1428,9 @@ export default {
               for (let i = 0, k = 0; i < tlen; i++) {
                 if (dkey in rets[i]) {
                   rets[i][r1 + '_' + subkey + '_R'] = k / tcnt
+                  if (subkey == 'volatility') {
+                    rets[i][r1 + '_' + subkey + '_R'] = 1 - k / tcnt
+                  }
                   k++
                 } else {
                   // rets[i][dkey]=""
