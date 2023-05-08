@@ -920,7 +920,11 @@ export default {
               let invest = null
               let redeem = null
               for (let ac of actions) {
-                if (ac.stage == '已投' || ac.stage == '已赎') {
+                if (
+                  ac.stage == '已投' ||
+                  ac.stage == '已赎' ||
+                  ac.stage == '提醒'
+                ) {
                   var cidx = 0
                   for (let i = 0; i < this.raw_data.date.length; i++) {
                     if (this.raw_data.date[i] >= ac.date) {
@@ -928,7 +932,7 @@ export default {
                       break
                     }
                   }
-                  const point = {
+                  let point = {
                     name: ac.stage[1],
                     coord: [this.raw_data.date[cidx], sdata[cidx]],
                     pidx: cidx,
@@ -948,6 +952,23 @@ export default {
                   }
                   if (ac.stage == '已赎') {
                     redeem = point
+                  }
+                  if (ac.stage == '提醒') {
+                    point = {
+                      name: '*',
+                      symbol:
+                        'image://data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7',
+                      coord: [this.raw_data.date[cidx], sdata[cidx]],
+                      pidx: cidx,
+                      tooltip: {
+                        trigger: 'item',
+                        widht: '100px',
+                        formatter: ac.date + ac.remark,
+
+                        show: true
+                      }
+                    }
+                    mp.data.push(point)
                   }
                 }
               }

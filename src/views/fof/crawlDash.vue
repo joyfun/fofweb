@@ -14,6 +14,7 @@
         </el-radio-group>
         <el-button type="primary" @click="exportExcel">导出</el-button>
         <el-button type="primary" @click="batchConfirm">批量确认</el-button>
+        <el-switch v-model="showall"></el-switch>
       </div>
     </div>
     <el-table
@@ -279,6 +280,7 @@ export default {
 
   data() {
     return {
+      showall: false,
       tags: ['SiMuWang', 'GeShang', 'ZhaoYang', '邮件其它'],
       types: ['SiMuWang', 'GeShang', 'ZhaoYang', '1'],
       current: {},
@@ -315,6 +317,11 @@ export default {
         this.getList()
       }
     },
+    showall: {
+      handler: function (sa) {
+        this.filterList(sa)
+      }
+    },
     $route: {
       handler(n) {
         console.log(n)
@@ -334,6 +341,18 @@ export default {
     }
   },
   methods: {
+    filterList(sa) {
+      if (sa) {
+        this.tableData = this.rawData
+      } else {
+        this.tableData = this.rawData.filter(
+          (row) =>
+            ['不可投', '数据存疑', '已封盘', '黑名单'].indexOf(row['scale']) <
+              0 && row['cnt']
+        )
+      }
+      console.log(this.tableData)
+    },
     exportExcel() {
       var title = '数据面板' + new Date().getTime()
       var workbook = XLSX.utils.book_new()
@@ -537,7 +556,9 @@ export default {
       axis
         .get('/fof/crawl', { params: { type: this.reqType } }) //axis后面的.get可以省略；
         .then((response) => {
-          this.tableData = response.data
+          this.rawData = JSON.parse(JSON.stringify(response.data))
+          // this.tableData = response.data
+          this.filterList(this.showall)
           this.resizeChart()
           //this.tableData = this.totaltableData;
         })

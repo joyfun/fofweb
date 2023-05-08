@@ -1403,7 +1403,7 @@ export default {
               let dkey = r1 + '_' + subkey
               let tcnt = 0
               for (let arow of rets) {
-                if (dkey in arow) {
+                if (dkey in arow && arow[dkey] != '0') {
                   tcnt++
                 }
               }

@@ -75,6 +75,7 @@ export default new Vuex.Store({
         {lable:"周剑指数",value:"stat-info"},
         {lable:"指标分析1",value:"trend-info"},
         {lable:"指标分析2",value:"trend-info2"},
+        {lable:"指标分析3",value:"trend-info3"},
         {lable:"投后排名",value:"rank-infoa"},
         {lable:"投后分析",value:"rank-infoa1"},
         {lable:"数据监控",value:"data-monitor"},

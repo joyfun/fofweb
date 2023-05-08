@@ -137,6 +137,11 @@ const routes = [
         component:() => import('@/views/fof/TrendInfo2.vue')
       }
       ,{
+        path: '/trendinfo3',
+        name: 'trend-info3',
+        component:() => import('@/views/fof/TrendInfo3.vue')
+      }
+      ,{
         path: '/rankinfoa',
         name: 'rank-infoa',
         component:() => import('@/views/fof/rankInfoA.vue'),

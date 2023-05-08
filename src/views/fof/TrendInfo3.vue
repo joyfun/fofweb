@@ -7,22 +7,10 @@
         <vxe-button @click="showRankHis">排名对比</vxe-button>
         <vxe-button @click="compareData">业绩对比</vxe-button>
         <vxe-button @click="compareInvest">已投对比</vxe-button>
-        <vxe-button @click="downExport('allexport')">导出全部</vxe-button>
-        <!-- <el-button type="primary" v-if="row.source=='爬取异常'" @click="down_realfile('未投产品复权差异.xlsx')">下载未投复权差异</el-button> -->
-
-        <el-date-picker
-          style="width: 130px"
-          v-model="date"
-          value-format="yyyyMMdd"
-          format="yyyyMMdd"
-          align="right"
-          type="date"
-        >
-        </el-date-picker>
+        <vxe-button @click="exportEvent">导出.xlsx</vxe-button>
         <vxe-radio-group v-model="type" size="mini">
           <vxe-radio-button label="cta0" content="CTA0"></vxe-radio-button>
           <vxe-radio-button label="cta1" content="CTA1"></vxe-radio-button>
-          <vxe-radio-button label="指增" content="指增"></vxe-radio-button>
           <vxe-radio-button label="I3" content="I3"></vxe-radio-button>
           <vxe-radio-button label="I5" content="I5"></vxe-radio-button>
           <vxe-radio-button label="I1" content="I1"></vxe-radio-button>
@@ -31,13 +19,6 @@
           <vxe-radio-button label="套利" content="套利"></vxe-radio-button>
           <vxe-radio-button label="期权" content="期权"></vxe-radio-button>
         </vxe-radio-group>
-
-        <!-- <vxe-radio-group v-model="range" :strict="false">
-            <vxe-radio  label="quarter" content="3月"></vxe-radio>
-            <vxe-radio v-if="ftype=='投后'" label="quarter" content="3月"></vxe-radio>
-            <vxe-radio label="1yr" content="1年"></vxe-radio>
-            
-          </vxe-radio-group> -->
         <vxe-button @click="exportDataEvent">导出</vxe-button>
 
         <!-- <vxe-button @click="jumptodash">排名信息</vxe-button> -->
@@ -57,14 +38,13 @@
       :scroll-y="{ oSize: 500 }"
       :sort-config="{
         trigger: 'cell',
-        defaultSort: { field: 'rank', order: 'asc' },
+        defaultSort: { field: '00-3_平', order: 'asc' },
         orders: ['desc', 'asc', null]
       }"
       :data="tableList"
     >
-      <vxe-column type="checkbox" width="30" fixed="left"></vxe-column>
-      <!-- <vxe-column  field="type" width="40" ></vxe-column> -->
-      <vxe-column type="seq" width="30" fixed="left"></vxe-column>
+      <vxe-column type="checkbox" width="30"></vxe-column>
+      <vxe-column type="seq" width="30"></vxe-column>
       <vxe-column width="80" title="公司" field="company" align="left">
         <template #default="{ row }">
           <a href="javascript:;" @click="showCompany(row.company_code)">{{
@@ -111,14 +91,7 @@
           {{ $tools.formatMoney(row['marketval'] / 10000, 0) }}
         </template>
       </vxe-column>
-      <vxe-column
-        sortable
-        title="信息"
-        fixed="left"
-        width="80"
-        align="center"
-        field="level"
-      >
+      <vxe-column sortable title="信息" width="80" align="center" field="level">
         <template #default="{ row }">
           <el-button
             @click.native.prevent="showFundHis(row)"
@@ -155,16 +128,58 @@
         :filters="[]"
       >
       </vxe-column>
-      <vxe-column field="tlength" width="40" sortable :title="'总'">
-      </vxe-column>
-      <vxe-colgroup :key="af" title="mean" v-for="af of ['平']" align="center">
+      <!-- <vxe-column field="tlength" width="40" sortable :title="'总'">
+      </vxe-column> -->
+      <vxe-colgroup :key="rg" :title="rg" v-for="rg of titles" align="center">
         <!-- <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return', 'sharpe', 'calmar', 'profit', 'risk', 'adj_profit', 'adj_risk', 'max_dd', 'volatility']"  :title="af" :field="af"  > -->
         <vxe-column
-          :key="rg"
-          v-for="rg of titles"
-          :width="42"
+          :key="af"
+          v-for="af of ['平']"
+          :width="48"
           sortable
-          :title="rg"
+          title="MEAN"
+          :field="rg + '_' + af"
+        >
+          <template #default="{ row }">
+            <span
+              :class="
+                'rank_text_color' +
+                Math.floor(4 - row[rg + '_' + af + '_R'] * 4)
+              "
+            >
+              {{ $tools.formatMoney(row[rg + '_' + af] * 100, 0) }}
+            </span>
+          </template>
+        </vxe-column>
+        <vxe-column
+          :key="af"
+          v-for="af of ['优']"
+          :width="48"
+          sortable
+          title="LIST"
+          :field="rg + '_' + af"
+        >
+          <template #default="{ row }">
+            <span
+              :class="
+                'rank_text_color' + Math.floor(row[rg + '_' + af + '_R'] * 4)
+              "
+            >
+              {{
+                $tools.formatMoney(
+                  (row[rg + '_' + af] * 100) / row[rg + '_sum'],
+                  0
+                )
+              }}
+            </span>
+          </template>
+        </vxe-column>
+        <vxe-column
+          :key="af"
+          v-for="af of ['差']"
+          :width="48"
+          sortable
+          title="BOTT"
           :field="rg + '_' + af"
         >
           <template #default="{ row }">
@@ -175,106 +190,15 @@
               "
             >
               {{
-                '' == row[rg + '_' + af]
-                  ? ''
-                  : $tools.formatMoney(row[rg + '_' + af] * 100, 0)
+                $tools.formatMoney(
+                  (row[rg + '_' + af] * 100) / row[rg + '_sum'],
+                  0
+                )
               }}
             </span>
           </template>
         </vxe-column>
       </vxe-colgroup>
-      <vxe-colgroup :key="af" title="list" v-for="af of ['优']" align="center">
-        <vxe-column
-          :key="rg"
-          v-for="rg of titles"
-          :width="42"
-          sortable
-          :title="rg"
-          :field="rg + '_' + af"
-        >
-          <template #default="{ row }">
-            <span
-              :class="
-                'rank_text_color' + Math.floor(row[rg + '_' + af + '_R'] * 4)
-              "
-            >
-              {{
-                '' == row[rg + '_' + af]
-                  ? ''
-                  : $tools.formatMoney(
-                      (row[rg + '_' + af] * 100) / row[rg + '_sum'],
-                      0
-                    )
-              }}
-            </span>
-          </template>
-        </vxe-column>
-      </vxe-colgroup>
-      <vxe-colgroup :key="af" title="bott" v-for="af of ['差']" align="center">
-        <vxe-column
-          :key="rg"
-          v-for="rg of titles"
-          :width="42"
-          sortable
-          :title="rg"
-          :field="rg + '_' + af"
-        >
-          <template #default="{ row }">
-            <span
-              :class="
-                'rank_text_color' +
-                Math.floor(4 - row[rg + '_' + af + '_R'] * 4)
-              "
-            >
-              {{
-                '' == row[rg + '_' + af]
-                  ? ''
-                  : $tools.formatMoney(
-                      (row[rg + '_' + af] * 100) / row[rg + '_sum'],
-                      0
-                    )
-              }}
-            </span>
-          </template>
-        </vxe-column>
-      </vxe-colgroup>
-      <vxe-colgroup
-        :key="af"
-        v-for="af of [
-          'yeaily_return',
-          'dd',
-          'volatility',
-          'sharpe',
-          'calmar',
-          'profit_loss',
-          'win_ratio'
-        ]"
-        :title="af"
-        align="center"
-      >
-        <!-- <vxe-column :key="af" :width="48" sortable v-for="af of ['yeaily_return', 'sharpe', 'calmar', 'profit', 'risk', 'adj_profit', 'adj_risk', 'max_dd', 'volatility']"  :title="af" :field="af"  > -->
-        <vxe-column
-          :key="rg"
-          :width="42"
-          sortable
-          v-for="rg of ['hydata', 'y1data', 'y2data', 'y3data']"
-          :title="titles[rg]"
-          :field="rg + '_' + af"
-        >
-          <!-- <template v-else-if="['dd_ratio'].indexOf(af)>-1" #default="{ row }">
-              <span :class="'rank_text_color'+Math.floor(row[af]/25)">{{row[af]}}</span>
-            </template> -->
-          <template #default="{ row }">
-            <span
-              :class="
-                'rank_text_color' + Math.floor(row[rg + '_' + af + '_R'] * 4)
-              "
-              >{{ $tools.formatMoney(row[rg + '_' + af], 2) }}</span
-            >
-          </template>
-        </vxe-column>
-      </vxe-colgroup>
-
       <!-- <vxe-column sortable  title="分"  field="lscore" >
           </vxe-column>  -->
     </vxe-table>
@@ -732,24 +656,24 @@ export default {
       tableList: [],
       winlength: { hyr: 26, '1yr': 52, '2yr': 104, quarter: 13 },
       showList: false,
-      range: '1yr',
+      range: 'quarter',
       srange: '1yr',
       brange: '1yr',
       arange: '1yr',
       company_code: '',
       calcdate: '',
       baseData: {},
-      tdict: { '优': 'LIST', '平': 'MEAN', '差': 'BOTT' },
-      titles: {
-        hydata: '00-6',
-        y1data: '0012',
-        y2data: '1224',
-        y3data: '2436'
-      },
       rgdict: {},
       date: '',
       tmaxh: 560,
       type: 'cta0',
+      titles: {
+        qtdata: '00-3',
+        hydata: '0306',
+        y1data: '0612',
+        y2data: '1224',
+        y3data: '2436'
+      },
       yrdict: { hyr: '半年', '1yr': '一年', '2yr': '两年', quarter: '三月' },
       avgcnt: {},
       subtypes: [],
@@ -771,14 +695,6 @@ export default {
     }
   },
   methods: {
-    sleep(n) {
-      var start = new Date().getTime()
-      while (true) {
-        if (new Date().getTime() - start > n) {
-          break
-        }
-      }
-    },
     appendSheet(nwb, header, atp) {
       let workBook = XLSX.utils.table_to_sheet(
         this.$refs.rankTable.$el.querySelector(
@@ -811,19 +727,13 @@ export default {
       ]) {
         // this.type=atp
         Vue.set(this, 'type', atp)
-        await this.sleep(1500)
+        await this.sleep(500)
         this.$nextTick(() => {
           console.log(atp)
           this.appendSheet(nwb, header, this.type)
         })
       }
       XLSX.writeFile(nwb, '数据导出.xlsx')
-    },
-    downExport(fname) {
-      fname = fname + this.calcdate + '.xlsx'
-      console.log(fname)
-      window.location.href =
-        '/fof/downrfile?fname=' + fname + '&r=' + Math.random()
     },
     exportEvent() {
       const header = XLSX.utils.table_to_sheet(
@@ -841,6 +751,26 @@ export default {
       this.appendSheet(nwb, header, this.type)
       // }
       XLSX.writeFile(nwb, '数据导出.xlsx')
+    },
+    customSortMethod({ data, sortList }) {
+      const sortItem = sortList[0]
+      // 取出第一个排序的列
+      const { property, order } = sortItem
+      let list = []
+      if (order === 'asc' || order === 'desc') {
+        // if (property === 'name') {
+        //   // 例如：实现中英文混排，按照字母排序
+        //   list = data.sort((a, b) => {
+        //     return this.getPinYin(a.name).localeCompare(this.getPinYin(b.name))
+        //   })
+        // } else {
+        list = data.sort()
+        // }
+      }
+      if (order === 'desc') {
+        list.reverse()
+      }
+      return list
     },
     getBaseInfoA() {
       this.$axios
@@ -1280,6 +1210,7 @@ export default {
                 row['marketval'] = holds.reduce((prev, r) => {
                   return prev + r['marketval']
                 }, 0)
+                console.log(row)
               }
 
               row['dd_ratio'] = this.$tools.formatMoney(
@@ -1337,13 +1268,12 @@ export default {
               row['length'] = this.baseData[row.code]['tlength']
             }
             // this.nclassify(row)
-
             return row
           })
           console.log(this.tableData)
           // for var prop in ['yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio']:
           // this.tableData.sort(sort_by('price', true, parseFloat))
-          // this.filterCompay()
+          this.filterCompay()
           this.filterNames()
 
           // this.$nextTick(()=>{
@@ -1353,7 +1283,6 @@ export default {
               return { label: st, value: st }
             })
           )
-
           this.$refs.rankTable.reloadData(this.tableList)
           this.setSelect()
           // this.$refs.rankTable.sort({field: 'rank', order: 'asc'})
@@ -1427,32 +1356,24 @@ export default {
       //   return this.rgbaToHex("rgb(" + r + "," + g + "," + b + ")");
     },
     getProducts() {
-      Promise.all([
-        this.$axios.get('/fof/basedataby', {
-          params: {
-            ftype: this.ftype,
-            date: this.date,
-            type: this.type,
-            range: this.range,
-            weight_type: this.filters['weight_type']
-          }
-        }),
-        this.$axios.get('/fof/raterank', {
+      this.$axios
+        .get('/fof/raterank', {
           params: {
             type: this.type
           }
-        }) //axis后面的.get可以省略；
-      ])
-        .then((r) => {
-          let response = r[0]
-          let ratedata = r[1].data
-          let ratedict = {}
-          let rtlen = ratedata.length
+        })
+        .then((response) => {
+          this.subtypes = []
+          this.rawdata = response.data
+          let rets = this.rawdata
+
+          this.tableData = this.rawdata
+          let tlen = this.tableData.length
           for (let r1 in this.titles) {
             if (this.titles[r1]) {
               let lb = this.titles[r1]
               for (let subkey of ['优', '平', '差']) {
-                ratedata.sort((b, a) => {
+                rets.sort((b, a) => {
                   let ckey = lb + '_' + subkey
                   if (ckey in a && ckey in b) {
                     return a[lb + '_' + subkey] - b[lb + '_' + subkey]
@@ -1464,14 +1385,14 @@ export default {
                 })
                 let dkey = lb + '_' + subkey
                 let tcnt = 0
-                for (let arow of ratedata) {
+                for (let arow of rets) {
                   if (dkey in arow && arow[dkey] != '0') {
                     tcnt++
                   }
                 }
-                for (let i = 0, k = 0; i < rtlen; i++) {
-                  if (dkey in ratedata[i]) {
-                    ratedata[i][lb + '_' + subkey + '_R'] = k / tcnt
+                for (let i = 0, k = 0; i < tlen; i++) {
+                  if (dkey in rets[i]) {
+                    rets[i][lb + '_' + subkey + '_R'] = k / tcnt
                     k++
                   } else {
                   }
@@ -1479,109 +1400,20 @@ export default {
               }
             }
           }
-          for (let rrow of ratedata) {
-            ratedict[rrow['code']] = rrow
-          }
-          this.subtypes = []
-          this.rawdata = response.data
-          let rets = []
-          let rkeys = ['y1data', 'y2data', 'y3data']
-          for (let akey in this.rawdata['hydata']) {
-            let arow = Object.assign(
-              this.rawdata['hydata'][akey],
-              ratedict[akey]
-            )
-            arow['code'] = akey
-            for (let skey in this.rawdata['hydata'][akey]) {
-              arow['hydata' + '_' + skey] = this.rawdata['hydata'][akey][skey]
-            }
-            this.rawdata['hydata'][akey]
-            for (let ykey of rkeys) {
-              if (this.rawdata[ykey][akey]) {
-                for (let skey in this.rawdata[ykey][akey]) {
-                  arow[ykey + '_' + skey] = this.rawdata[ykey][akey][skey]
-                }
-              }
-            }
-            arow['type'] = this.type
-            let holds = this.holding.filter(
-              (hd) => hd['b_code'] == arow['code']
-            )
+
+          this.tableData.map((row) => {
+            // row['company_code'] = this.baseData[row.code]['company_code']
+            //获取持仓信息 待优化
+            let holds = this.holding.filter((hd) => hd['b_code'] == row['code'])
             if (holds.length > 0) {
-              arow['marketval'] = holds.reduce((prev, r) => {
+              row['marketval'] = holds.reduce((prev, r) => {
                 return prev + r['marketval']
               }, 0)
+              console.log(row)
             }
-            if (this.subtypes.indexOf(arow['sub_type']) < 0) {
-              this.subtypes.push(arow['sub_type'])
-            }
-            rets.push(arow)
-          }
-          // for (let acode in this.rawdata['hydata']){
-          //   for
-          // }
-          let tlen = rets.length
-          // for (let r1 of ['hydata','y1data','y2data','y3data']){
-          //   for (let subkey of ['yeaily_return', 'sharpe', 'calmar', 'win_ratio','profit_loss','dd', 'volatility']){
-          //     rets.sort((b,a)=>{
-          //      return a[r1+"_"+subkey]-b[r1+"_"+subkey]
-          //     })
-          //     for (let i = 0; i < tlen; i++){
-          //       rets[i][r1+"_"+subkey+"_R"]=i/tlen
-          //     }
-          // }
-          // }
-          for (let r1 of ['hydata', 'y1data', 'y2data', 'y3data']) {
-            for (let subkey of [
-              'yeaily_return',
-              'sharpe',
-              'calmar',
-              'win_ratio',
-              'profit_loss',
-              'dd',
-              'volatility'
-            ]) {
-              rets.sort((b, a) => {
-                let ckey = r1 + '_' + subkey
-                if (ckey in a && ckey in b) {
-                  return a[r1 + '_' + subkey] - b[r1 + '_' + subkey]
-                } else if (ckey in a) {
-                  return -1
-                } else if (ckey in b) {
-                  return 1
-                }
-              })
-              let dkey = r1 + '_' + subkey
-              let tcnt = 0
-              for (let arow of rets) {
-                if (dkey in arow) {
-                  tcnt++
-                }
-              }
-              for (let i = 0, k = 0; i < tlen; i++) {
-                if (dkey in rets[i]) {
-                  rets[i][r1 + '_' + subkey + '_R'] = k / tcnt
-                  if (subkey == 'volatility') {
-                    rets[i][r1 + '_' + subkey + '_R'] = 1 - k / tcnt
-                  }
-                  k++
-                } else {
-                  // rets[i][dkey]=""
-                }
-              }
-            }
-          }
-
-          console.log(rets)
-          this.tableData = rets
+          })
+          console.log(this.tableData)
           this.filterNames()
-          console.log(this.subtypes)
-          this.$refs.rankTable.setFilter(
-            this.$refs.rankTable.getColumnByField('sub_type'),
-            this.subtypes.map((st) => {
-              return { label: st, value: st }
-            })
-          )
         })
         .catch((error) => {
           console.log(error)
@@ -1591,10 +1423,12 @@ export default {
   mounted() {
     this.date = this.$moment().format('YYYYMMDD')
     this.tmaxh = this.$refs['tableContainer'].clientHeight - 80
-    // this.getMisc("fof_action")
     //this.getProducts();
   },
-  created() {}
+  created() {
+    // this.tmaxh=this.$refs['tableContainer'].clientHeight-40
+    // this.getMisc("fof_action")
+  }
 }
 </script>
 <style lang="scss"  >
