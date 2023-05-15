@@ -149,6 +149,24 @@ export default {
             label: '初选基金管理',
             name: 'fund-info',
             icon: 'setting'
+          },
+          {
+            path: '/investtask',
+            label: '尽调任务',
+            name: 'invest-task',
+            icon: 'setting'
+          },
+          {
+            path: '/addstat',
+            label: '添加统计',
+            name: 'add-stat',
+            icon: 'setting'
+          },
+          {
+            path: '/investstat',
+            label: '尽调统计',
+            name: 'invest-stat',
+            icon: 'setting'
           }
         ],
         'invest': [

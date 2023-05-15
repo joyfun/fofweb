@@ -35,6 +35,9 @@ export default new Vuex.Store({
     allmenu:[
         {lable:"基金公司",value:"fund-comp"},
         {lable:"初选基金",value:"fund-info"},
+        {lable:"尽调任务",value:"invest-task"},
+        {lable:"添加统计",value:"add-stat"},
+        {lable:"尽调统计",value:"invest-stat"},
         {lable:"CTA",value:"fund-info1"},
         {lable:"指数增强",value:"fund-info2"},
         {lable:"套利",value:"fund-info3"},

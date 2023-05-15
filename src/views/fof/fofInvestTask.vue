@@ -4,9 +4,9 @@
       <div style="display: flex; justify-content: space-between">
         <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
         <el-button size="small" @click="toggleSelection()">取消选择</el-button>
-        <el-button size="small" @click="addInfo()">添加</el-button>
+        <!-- <el-button size="small" @click="addInfo()">添加</el-button> -->
         <el-button size="small" @click="allrun()">对比</el-button>
-        <el-button size="small" @click="showcorr()">相关性</el-button>
+        <!-- <el-button size="small" @click="showcorr()">相关性</el-button> -->
         <el-button size="small" @click="compare()">业绩对标</el-button>
         <el-button
           v-if="usermenu.indexOf('rank-btn') > -1"
@@ -27,7 +27,7 @@
           >上传尽调表</el-button
         >
 
-        <el-select
+        <!-- <el-select
           v-model="filter.stage"
           @change="getList"
           style="width: 80px"
@@ -58,10 +58,10 @@
             :value="item.code"
           >
           </el-option>
-        </el-select>
+        </el-select> -->
         <el-select
           v-model="filter.class_type"
-          @change="changeSub"
+          @change="getList"
           style="width: 80px"
           clearable
           placeholder="类型"
@@ -75,6 +75,21 @@
           </el-option>
         </el-select>
         <el-select
+          v-model="filter.status"
+          @change="getList"
+          style="width: 80px"
+          clearable
+          placeholder="状态"
+        >
+          <el-option
+            v-for="item in sysparam.invest_status"
+            :key="item.value"
+            :label="item.value"
+            :value="item.code"
+          >
+          </el-option>
+        </el-select>
+        <!-- <el-select
           v-model="filter.sub_type"
           @change="getList"
           style="width: 100px"
@@ -88,7 +103,7 @@
             :value="item.code"
           >
           </el-option>
-        </el-select>
+        </el-select> -->
         <el-button size="small" @click="downFile()">下载</el-button>
         <el-input
           v-model="filter.name"
@@ -101,111 +116,7 @@
         >
       </div>
     </div>
-    <!-- -->
-    <el-collapse @change="handlecollapse">
-      <el-collapse-item title="高级搜索" name="1">
-        <div>
-          <!-- <el-row>
-        <el-col :span="4">年化收益<el-input @input="forceUpdate" v-model="filter['yavg']" clearable placeholder="年化收益" style="width:80px"></el-input></el-col>
-        <el-col :span="6">近三年平均收益<el-input @input="forceUpdate" v-model="filter['y3avg']" clearable placeholder="近3年均收益" style="width:80px"></el-input></el-col>
-      </el-row> -->
-          <el-row>
-            <el-col :span="1">年份</el-col>
-            <el-col :span="4">收益</el-col>
-            <el-col :span="4">波动率</el-col>
-            <el-col :span="4">夏普</el-col>
-            <el-col :span="4">卡玛</el-col>
-            <el-col :span="4">最大回撤</el-col>
-          </el-row>
-          <el-row
-            :key="year"
-            v-for="year in ['2021', '2020', '2019', '2018', 'all']"
-          >
-            <el-col :span="1">{{ year }}</el-col>
-            <el-col :span="4">
-              <el-input
-                @input="forceUpdate"
-                v-model="filter['e_yr_' + year]"
-                clearable
-                :placeholder="'收益例:20'"
-                style="width: 100px"
-              ></el-input
-              >-<el-input
-                @input="forceUpdate"
-                v-model="filter['e_yr@lt_' + year]"
-                clearable
-                :placeholder="'收益例:20'"
-                style="width: 100px"
-              ></el-input>
-            </el-col>
-            <el-col :span="4">
-              <el-input
-                @input="forceUpdate"
-                v-model="filter['e_volatility_' + year]"
-                clearable
-                :placeholder="'波动率'"
-                style="width: 100px"
-              ></el-input
-              >-<el-input
-                @input="forceUpdate"
-                v-model="filter['e_volatility@lt_' + year]"
-                clearable
-                :placeholder="'波动率'"
-                style="width: 100px"
-              ></el-input>
-            </el-col>
-            <el-col :span="4">
-              <el-input
-                @input="forceUpdate"
-                v-model="filter['e_sharpe_' + year]"
-                clearable
-                :placeholder="'夏普'"
-                style="width: 100px"
-              ></el-input
-              >-<el-input
-                @input="forceUpdate"
-                v-model="filter['e_sharp@lt_' + year]"
-                clearable
-                :placeholder="'夏普'"
-                style="width: 100px"
-              ></el-input>
-            </el-col>
-            <el-col :span="4">
-              <el-input
-                @input="forceUpdate"
-                v-model="filter['e_calmar_' + year]"
-                clearable
-                :placeholder="'卡玛'"
-                style="width: 100px"
-              ></el-input
-              >-<el-input
-                @input="forceUpdate"
-                v-model="filter['e_calmar@lt_' + year]"
-                clearable
-                :placeholder="'卡玛'"
-                style="width: 100px"
-              ></el-input>
-            </el-col>
-            <el-col :span="4">
-              <el-input
-                @input="forceUpdate"
-                v-model="filter['e_dd_' + year]"
-                clearable
-                :placeholder="'回撤:-10'"
-                style="width: 100px"
-              ></el-input
-              >-<el-input
-                @input="forceUpdate"
-                v-model="filter['e_dd@lt_' + year]"
-                clearable
-                :placeholder="'最大回撤例:-10'"
-                style="width: 100px"
-              ></el-input>
-            </el-col>
-          </el-row>
-        </div>
-      </el-collapse-item>
-    </el-collapse>
+
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -281,14 +192,21 @@
         <template slot-scope="scope">{{ scope.row.sub_type }}</template>
       </el-table-column>
       <el-table-column
+        prop="status"
+        label="状态"
+        sortable
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">{{ scope.row.status }}</template>
+      </el-table-column>
+      <!-- <el-table-column
         prop="scale"
         label="可投状态"
         sortable
         show-overflow-tooltip
       >
         <template slot-scope="scope">{{ scope.row.scale }}</template>
-      </el-table-column>
-
+      </el-table-column> -->
       <!-- <el-table-column
       prop="buy_date"
       label="建仓日期"
@@ -296,7 +214,15 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.buy_date }}</template>
     </el-table-column> -->
-      <el-table-column prop="stage" label="状态" sortable show-overflow-tooltip>
+      <!-- <el-table-column
+        prop="status"
+        label="处理阶段"
+        sortable
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">{{ scope.row.status }}</template>
+      </el-table-column> -->
+      <el-table-column prop="stage" label="阶段" sortable show-overflow-tooltip>
         <template slot-scope="scope">{{ scope.row.stage }}</template>
       </el-table-column>
       <el-table-column prop="fee" label="管理费" sortable show-overflow-tooltip>
@@ -1941,6 +1867,7 @@ export default {
         this.filter = param
       }
       var data = this.filter
+      // data['user'] = this.token
       console.log(data)
       //  if(this.input)
       //  data["name"]=this.input
@@ -1949,23 +1876,15 @@ export default {
       //  data["stage"]=this.stage
       //   axis.get('/fof/list')//axis后面的.get可以省略；
       axis({
-        url: '/fof/list',
+        url: '/fof/tasklist',
         method: 'GET',
         params: data
       })
         .then((response) => {
-          this.totaltableData = response.data.sort((a, b) => {
-            return b['create_time'].localeCompare(a['create_time'])
-          })
-          if (this.token == 'demo') {
-            for (var row in this.totaltableData) {
-              this.totaltableData[row]['name'] =
-                this.totaltableData[row]['mcode']
-              this.totaltableData[row]['short_name'] =
-                this.totaltableData[row]['mcode']
-              this.totaltableData[row]['company'] = ''
-            }
-          }
+          this.totaltableData = response.data
+          // this.totaltableData = response.data.sort((a, b) => {
+          //   return b['create_time'].localeCompare(a['create_time'])
+          // })
           this.tableData = this.totaltableData.slice(0, $this.PageSize)
           this.resizeChart()
         })
@@ -1989,47 +1908,6 @@ export default {
   },
   created() {
     console.log(this.$moment().date(-7))
-    Bus.$on('cartchart', (arg) => {
-      console.log('========cartchart========')
-      var selcode = ''
-      for (let i = 0; i < this.multipleSelection.length; i++) {
-        selcode += this.multipleSelection[i].code + ','
-      }
-      this.showcomapre(selcode + arg)
-      // this.showChartByCodes(arg)
-    })
-
-    Bus.$on('cartrank', (arg) => {
-      console.log('========cartrank========')
-      this.cur_code = ''
-
-      var selcode = ''
-      for (let i = 0; i < this.multipleSelection.length; i++) {
-        if (this.multipleSelection[i].stage != '非卖') {
-          selcode += this.multipleSelection[i].code + ','
-        }
-      }
-      this.cur_code = selcode + arg
-      this.diagName = 'rankDialog'
-      this.dialogVisible = true
-      // this.showChartByCodes(arg)
-    })
-
-    Bus.$on('calcsimu', (arg) => {
-      console.log('========cartrank========')
-      this.cur_code = ''
-
-      var selcode = ''
-      for (let i = 0; i < this.multipleSelection.length; i++) {
-        if (this.multipleSelection[i].stage != '非卖') {
-          selcode += this.multipleSelection[i].code + ','
-        }
-      }
-      this.cur_code = selcode + arg
-      this.diagName = 'simuDialog'
-      this.dialogVisible = true
-      // this.showChartByCodes(arg)
-    })
   },
   filters: {
     formatDate: function (time) {
@@ -2043,6 +1921,7 @@ export default {
   },
   mounted() {
     window.addEventListener('resize', this.resizeChart)
+    // this.getList({})
   }
 }
 </script>

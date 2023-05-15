@@ -47,6 +47,24 @@ const routes = [
         
       },
       {
+        path: '/investtask',
+        name: 'invest-task',
+        component:() => import('@/views/fof/fofInvestTask.vue'),
+        
+      },
+      {
+        path: '/addstat',
+        name: 'add-stat',
+        component:() => import('@/views/fof/fofAddStat.vue'),
+        
+      },
+      {
+        path: '/investstat',
+        name: 'invest-stat',
+        component:() => import('@/views/fof/fofInvestStat.vue'),
+        
+      },
+      {
         path: '/fundext',
         name: 'fund-ext',
         component:() => import('@/views/fof/fofExternal.vue'),
