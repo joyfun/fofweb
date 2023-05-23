@@ -279,7 +279,7 @@ export default {
     cellClickEvent({ column, row }) {
       console.log(`单元格点击${column.title} ${column.field}`)
       let cls_type = column.field
-      if (column.field == 'sum') {
+      if (!row[column.field]) {
         return
       }
       let qdata = {
@@ -287,6 +287,9 @@ export default {
         'end_date': this.enddate,
         'user': row['user'],
         'class_type': column.field
+      }
+      if (column.field == 'sum') {
+        qdata['class_type'] = ''
       }
       if (column.field && column.field.endsWith('_lr')) {
         qdata['class_type'] = column.field.split('_')[0]

@@ -21,6 +21,8 @@ export default new Vuex.Store({
     nowcart:'default',
     allCart:{},
     token: Cookies.get("token"),
+    Authorization:'',
+    access_key:'',
     // ccart: Cookies.get("cart"),
 //    ccart: JSON.parse(decodeURIComponent(Cookies.get("cart"))),
     cart:[],
@@ -157,7 +159,14 @@ export default new Vuex.Store({
     },
     updateDays(state,params){  
       state.days=params
-  }
+  },
+  updateAccessKey(state,params){  
+    console.log(params)
+    state.Authorization="Bearer "+params
+    state.access_key=params
+    console.log(state)
+}
+
 
   },
   actions: {
@@ -207,7 +216,15 @@ export default new Vuex.Store({
           commit("updateDays", token)
           resolve()
         })
-      }
-  },
+      },
+    setAuths ({commit}, token) {
+      return new Promise((resolve, reject) => {
+        commit("updateAccessKey",  token)
+        resolve()
+      })
+
+    }}
+
+  ,
   getters:getters
 })

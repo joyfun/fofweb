@@ -274,12 +274,12 @@ export default {
       )
       var nwb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(nwb, header, 'Sheet1')
-      XLSX.writeFile(nwb, '添加统计.xlsx')
+      XLSX.writeFile(nwb, '尽调统计.xlsx')
     },
     cellClickEvent({ column, row }) {
       console.log(`单元格点击${column.title} ${column.field}`)
       let cls_type = column.field
-      if (column.field == 'sum') {
+      if (!row[column.field]) {
         return
       }
       let qdata = {
@@ -289,6 +289,9 @@ export default {
         'status': '已尽调',
         'stat': '已尽调',
         'class_type': column.field
+      }
+      if (column.field == 'sum') {
+        qdata['class_type'] = ''
       }
       if (column.field && column.field.endsWith('_lr')) {
         qdata['class_type'] = column.field.split('_')[0]
@@ -377,7 +380,7 @@ export default {
           }
         })
         .then((res) => {
-          this.tableList = res.data
+          this.tableList = res.data.filter((row) => row['user'])
           this.tableList.map((r) => {
             r['sum'] = 0
             for (let k of this.tps) {

@@ -14,6 +14,7 @@
           format="yyyyMMdd"
           align="right"
           type="date"
+          :picker-options="pickerOptions"
         >
         </el-date-picker>
         <vxe-radio-group v-model="type" size="mini">
@@ -824,6 +825,25 @@ export default {
         '1224': '1224',
         '2436': '2436'
       },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now()
+        },
+        shortcuts: [
+          // {
+          //   text: '7日',
+          //   onClick(picker) {
+          //     picker.$emit('pick', '20230101')
+          //   }
+          // },
+          // {
+          //   text: '14日',
+          //   onClick(picker) {
+          //     picker.$emit('pick', '20230101')
+          //   }
+          // }
+        ]
+      },
       avgcnt: {},
       subtypes: [],
       trank: {},
@@ -844,6 +864,20 @@ export default {
     }
   },
   methods: {
+    getWeeks() {
+      this.$axios.get('/fof/lastweeks?cnt=10').then((res) => {
+        let wks = res.data['weeks']
+        for (let wk of wks) {
+          this.pickerOptions.shortcuts.push({
+            text: wk,
+            onClick: (picker) => {
+              picker.$emit('pick', wk)
+            }
+          })
+        }
+        console.log(this.pickerOptions)
+      })
+    },
     getBaseInfoA() {
       this.$axios
         .get('/fof/baseinfoNew', {
@@ -1573,11 +1607,15 @@ export default {
     //   this.range = 'quarter'
     // } else {
     this.date = this.$moment().format('YYYYMMDD')
+    // console.log('xxxxxmounted')
+    // this.getWeeks()
     // }
     //this.getProducts();
   },
   created() {
     // this.getMisc("fof_action")
+    console.log('xxxxxcreated')
+    this.getWeeks()
     Bus.$on('cartchart', (arg) => {
       var selcode = ''
       for (let i = 0; i < this.multipleSelection.length; i++) {

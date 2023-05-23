@@ -13,6 +13,7 @@ const getters = {
   permission_routes: state => state.permission.routes,
   errorLogs: state => state.errorLog.logs,
   token: state => state.token,
+  Authorization: state => state.Authorization,
   allCart:state =>{
     console.log("call get allCart")
     console.log(state)

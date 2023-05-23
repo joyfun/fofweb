@@ -24,13 +24,14 @@ import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 import '@/assets/iconfont/iconfont.css'
 import {parseTime}  from '@/utils'
+import service from '@/api/config.js'
 // import VXETablePluginExportXLSX from 'vxe-table-plugin-export-xlsx'
 
 // VXETable.use(VXETablePluginExportXLSX)
 Vue.use(VXETable)
 Vue.use(tools)
 Vue.prototype.$process=process
-Vue.prototype.$axios = axios
+Vue.prototype.$axios = axios //需要验证jwt场景service
 var dayOfYear = require('dayjs/plugin/dayOfYear')
 dayjs.extend(dayOfYear)
 Vue.prototype.$moment = dayjs

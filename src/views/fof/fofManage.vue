@@ -303,13 +303,13 @@
         <template slot-scope="scope">{{ scope.row.fee }}</template>
       </el-table-column>
       <el-table-column
-        prop="carry"
+        prop="carry1"
         label="carry"
         sortable
         show-overflow-tooltip
       >
         <template slot-scope="scope">{{
-          scope.row.carry
+          scope.row.carry1
         }}</template> </el-table-column
       >>
 
@@ -1311,7 +1311,7 @@ export default {
           break
         }
       }
-
+      this.current['sub_type'] = ''
       this.sub_type = this.allparam['param_' + id]
     },
     changeFormSub(row) {
@@ -1322,15 +1322,17 @@ export default {
           break
         }
       }
-
+      // this.current['sub_type'] = ''
       this.sub_type = this.allparam['param_' + id]
     },
     editInfo(row) {
       //   this.cur_id=row.id
       //   this.current=JSON.parse(JSON.stringify(row))
       this.current = row
+      let sub_type = this.current['sub_type']
       this.cForm = [...cForm0, ...cForm1]
       this.changeSub(this.current.class_type)
+      this.current['sub_type'] = sub_type
       this.formVisible = true
       this.$axios
         .get('/fof/compinfoby', {
