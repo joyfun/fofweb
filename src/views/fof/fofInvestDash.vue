@@ -2,49 +2,7 @@
   <div ref="tableContainer" style="height: 100%">
     <vxe-toolbar>
       <template #buttons>
-        <!-- <vxe-button size="mini" @click="clearSelect">取消</vxe-button> -->
-        <span class="demonstration">起</span>
-        <el-date-picker
-          style="width: 130px"
-          v-model="startdate"
-          value-format="yyyyMMdd"
-          format="yyyyMMdd"
-          align="right"
-          @change="changeDate"
-          type="date"
-          placeholder="选择日期"
-          :picker-options="pickerOptions"
-        >
-        </el-date-picker>
-        <span class="demonstration">止</span>
-        <el-date-picker
-          style="width: 130px"
-          v-model="enddate"
-          value-format="yyyyMMdd"
-          format="yyyyMMdd"
-          align="right"
-          @change="changeDate"
-          type="date"
-          placeholder="截止日期"
-          :picker-options="pickerOptions"
-        >
-        </el-date-picker>
-        <el-select
-          v-model="suser"
-          style="width: 140px"
-          clearable
-          @change="changeUser"
-          placeholder="选择用户"
-        >
-          <el-option
-            v-for="item of selusers"
-            :key="item"
-            :label="item"
-            :value="item"
-          >
-          </el-option>
-        </el-select>
-        <vxe-button size="mini" @click="exportDataEvent">导出</vxe-button>
+        <vxe-button size="small" @click="exportDataEvent">导出</vxe-button>
       </template>
     </vxe-toolbar>
     <vxe-table
@@ -52,39 +10,43 @@
       show-footer
       :footer-method="footerMethod1"
       border
-      @cell-click="cellClickEvent"
       ref="statTable"
       :align="allAlign"
-      size="mini"
+      size="small"
       :row-config="{ keyField: 'code', isCurrent: true, isHover: true }"
       show-overflow
       :scroll-y="{ oSize: 500 }"
       :sort-config="{
         trigger: 'cell',
-        defaultSort: { field: 'weekday', order: 'desc' },
+        defaultSort: { field: 'rank', order: 'asc' },
         orders: ['desc', 'asc', null]
       }"
     >
       <!-- <vxe-column type="checkbox" width="30" fixed="left"></vxe-column> -->
-      <!-- <vxe-column type="seq" width="30" fixed="left"></vxe-column> -->
-      <vxe-column field="user" width="80" sortable title="用户"> </vxe-column>
-      <vxe-column field="weekday" width="80" sortable title="周"> </vxe-column>
-      <vxe-colgroup title="已完成" align="center">
+      <vxe-column type="seq" width="40" fixed="left"></vxe-column>
+      <!-- <vxe-column field="idx" width="80" sortable title="序号"> </vxe-column> -->
+      <vxe-colgroup title="待尽调产品" align="center">
         <vxe-column
           :key="af"
-          :width="60"
+          :width="160"
           sortable
+          align="left"
           v-for="af of tps"
           :title="af"
           :field="af"
         >
           <template #default="{ row }">
-            <span>{{ row[af] }}</span>
+            <span @click="getCompanyProduct(row[af])"
+              >{{ row[af]['company'] }}-</span
+            >
+            <span :class="getClass(row[af]['status'])">{{
+              row[af]['name']
+            }}</span>
           </template>
         </vxe-column>
       </vxe-colgroup>
 
-      <vxe-column field="sum" width="48" sortable title="合计"> </vxe-column>
+      <!-- <vxe-column field="sum" width="48" sortable title="合计"> </vxe-column> -->
       <!-- <vxe-colgroup title="未完成" align="center">
         <vxe-column
           :key="af"
@@ -170,13 +132,12 @@ export default {
     return {
       statdict: {},
       tps: ['指增', '中性', 'CTA', '混合', '套利', '期权', '可转债'],
-      selusers: ['chenjie', 'mayh', 'wangl', 'liuxq', 'qiwq'],
-      suser: '',
       company_ranks: [],
       startdate: '20230501',
       enddate: '',
       showCompanyRanks: false,
       rawlen: 0,
+      sublist: {},
       filter: '',
       multipleSelection: [],
       basedict: {},
@@ -274,6 +235,39 @@ export default {
     }
   },
   methods: {
+    getCompanyProduct(row) {
+      console.log(row)
+      let qdata = { 'company_code': row['company_code'] }
+      if (!qdata['company_code']) {
+        qdata['ccode'] = row['code']
+      }
+      this.$axios
+        .get('/fof/tasklist', {
+          params: qdata
+        })
+        .then((res) => {
+          Bus.$emit('showChart', {
+            'prodlist': res.data,
+            'canEdit': true,
+            'diagName': 'prodDiag'
+          })
+        })
+    },
+    getClass(status) {
+      if (status == '未尽调') {
+        return 'col-red'
+      } else if (status == '信息不完整') {
+        return 'col-yellow'
+      }
+      return ''
+    },
+    getCellDis(tp, idx) {
+      let tlist = this.sublist[tp]
+      if (tlist && idx < tlist.length) {
+        return tlist[idx]
+      }
+      return {}
+    },
     exportDataEvent() {
       const header = XLSX.utils.table_to_sheet(
         this.$refs.statTable.$el.querySelector(
@@ -292,49 +286,17 @@ export default {
       )
       var nwb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(nwb, header, 'Sheet1')
-      XLSX.writeFile(nwb, '尽调统计.xlsx')
+      XLSX.writeFile(nwb, '运营尽调列表.xlsx')
     },
     cellClickEvent({ column, row }) {
       console.log(`单元格点击${column.title} ${column.field}`)
-      let cls_type = column.field
-      if (!row[column.field]) {
-        return
-      }
-      let qdata = {
-        'start_date': this.startdate,
-        'end_date': this.enddate,
-        'qry_week': row['weekday'],
-        'user': row['user'],
-        'status': '已尽调',
-        'stat': '已尽调',
-        'class_type': column.field
-      }
-      console.log(qdata)
-      if (column.field == 'sum') {
-        qdata['class_type'] = ''
-      }
-      if (column.field && column.field.endsWith('_lr')) {
-        qdata['class_type'] = column.field.split('_')[0]
-        qdata['list_rate'] = '0.5'
-      }
-      this.$axios
-        .get('/fof/tasklist', {
-          params: qdata
-        })
-        .then((res) => {
-          Bus.$emit('showChart', {
-            'prodlist': res.data,
-            'diagName': 'prodDiag'
-          })
-        })
+      if (row[column.field]['code'])
+        Bus.$emit('editInfo', { 'cur_code': row[column.field]['code'] })
     },
     changeDate(date) {
       this.getStatInfo()
     },
     changeEndDate(date) {
-      this.getStatInfo()
-    },
-    changeUser(date) {
       this.getStatInfo()
     },
     getDis(row, af) {
@@ -348,10 +310,15 @@ export default {
       }
       return ''
     },
-    sumNum(list, field) {
+    sumNum(list, field, status) {
       let count = 0
       list.forEach((item) => {
-        count += Number(item[field])
+        if (item[field]['code']) {
+          if (status && status != item[field]['status']) {
+          } else {
+            count++
+          }
+        }
       })
       if (count == count) return count
       return 0
@@ -361,62 +328,76 @@ export default {
     },
     footerMethod1({ columns, data }) {
       console.log(data)
-      const means = []
+      const sums0 = []
       const sums = []
-      const others = []
+      const sums1 = []
       columns.forEach((column, columnIndex) => {
         console.log(column.property)
         if (columnIndex === 0) {
-          means.push('平均')
+          sums0.push('红')
           sums.push('合计')
-          others.push('其他')
-          means.push('')
-          sums.push('')
-          others.push('')
-        } else if (columnIndex > 1) {
-          let meanCell = null
+          sums1.push('黄')
+        } else {
+          let sum0Cell = null
           let sumCell = null
-          let otherCell = '-'
+          let sum1Cell = null
           // switch (column.property) {
           //   case 'age':
           //   case 'amount':
           //     meanCell = this.meanNum(data, column.property)
-          sumCell = this.sumNum(data, column.property)
+          sumCell = this.sumNum(data, column.property, '')
+          sum0Cell = this.sumNum(data, column.property, '未尽调')
+          sum1Cell = this.sumNum(data, column.property, '信息不完整')
+
           //     break
           //   case 'sex':
           //     otherCell = '无'
           //     break
           // }
-          means.push(meanCell)
+          sums1.push(sum1Cell)
           sums.push(sumCell)
-          others.push(otherCell)
+          sums0.push(sum0Cell)
         }
       })
       // 返回一个二维数组的表尾合计
       console.log(sums)
-      return [sums]
+      return [sums0, sums1, sums]
     },
     getStatInfo() {
       this.$axios
-        .get('/fof/addstat_user', {
+        .get('/fof/invest_dash', {
           params: {
             'start_date': this.startdate,
             'end_date': this.enddate,
-            'user': this.suser,
             'stat': '完成'
           }
         })
         .then((res) => {
-          this.tableList = res.data.filter((row) => row['user'])
-          this.tableList.map((r) => {
-            r['sum'] = 0
-            for (let k of this.tps) {
-              if (r[k]) {
-                r['sum'] += r[k]
+          let maxlen = 0
+          this.sublist = {}
+          for (var tp of this.tps) {
+            this.sublist[tp] = res.data
+              .filter((r) => r.class_type == tp)
+              .sort((a, b) => b['yr'] - a['yr'])
+            if (this.sublist[tp].length > maxlen) {
+              maxlen = this.sublist[tp].length
+            }
+          }
+          console.log(this.sublist)
+          console.log(maxlen)
+          this.tableList = []
+          for (let i = 0; i < maxlen; i++) {
+            let row = { 'idx': i }
+            for (let ap of this.tps) {
+              if (this.sublist[ap].length > i) {
+                row[ap] = this.sublist[ap][i]
+              } else {
+                row[ap] = {}
               }
             }
-            return r
-          })
+            this.tableList.push(row)
+          }
+
           this.$refs.statTable.loadData(this.tableList)
         })
     }
@@ -435,3 +416,31 @@ export default {
   }
 }
 </script>
+<style lang="scss"  >
+.mytable-style .vxe-body--row.row-green {
+  background-color: #187;
+  color: #fff;
+}
+.mytable-style .vxe-header--column.col-blue {
+  background-color: #2db7f5;
+  color: rgb(170, 8, 8);
+}
+.col-red {
+  //   background-color: #ff0000;
+  color: #ff0000;
+}
+.col-yellow {
+  //   background-color: yellow;
+  color: #ffb703;
+
+  // color: #000;
+}
+.col-green {
+  background-color: #006400;
+  //color: #000;
+}
+.col-yellowgreen {
+  background-color: yellowgreen;
+  //color: #fff;
+}
+</style>

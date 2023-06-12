@@ -93,6 +93,15 @@ export default {
       this.asideMenu = this.asideMenu.concat(
         this.allMenu[arg].filter(this.checkMenu)
       )
+      if (this.asideMenu) {
+        let pmenu = this.asideMenu.filter((r) => r.primary)
+        if (pmenu.length > 0) {
+          this.clickMenu(pmenu[0])
+        } else {
+          this.clickMenu(this.asideMenu[1])
+        }
+      }
+
       // }
       console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
     })
@@ -118,6 +127,7 @@ export default {
           {
             path: '/dataMonitor',
             label: '数据监控',
+            primary: true,
             name: 'data-monitor',
             icon: 'setting'
           },
@@ -127,11 +137,36 @@ export default {
             name: 'fof-crawl',
             icon: 'setting'
           },
+          // {
+          //   path: '/funddash',
+          //   label: '数据时效',
+          //   name: 'fund-dash',
+          //   icon: 'setting'
+          // },
           {
-            path: '/funddash',
-            label: '数据时效',
+            label: '管理统计',
+            icon: 'other',
             name: 'fund-dash',
-            icon: 'setting'
+            children: [
+              {
+                path: '/addstat',
+                label: '添加统计',
+                name: 'add-stat',
+                icon: 'setting'
+              },
+              {
+                path: '/investstat',
+                label: '尽调统计',
+                name: 'invest-stat',
+                icon: 'setting'
+              },
+              {
+                path: '/norankprod',
+                label: '未排名统计',
+                name: 'norank-prod',
+                icon: 'setting'
+              }
+            ]
           }
         ],
         'company': [
@@ -147,32 +182,22 @@ export default {
           {
             path: '/fundinfo',
             label: '初选基金管理',
+            primary: true,
             name: 'fund-info',
             icon: 'setting'
-          },
-          {
-            path: '/investtask',
-            label: '尽调任务',
-            name: 'invest-task',
-            icon: 'setting'
-          },
-          {
-            path: '/addstat',
-            label: '添加统计',
-            name: 'add-stat',
-            icon: 'setting'
-          },
-          {
-            path: '/investstat',
-            label: '尽调统计',
-            name: 'invest-stat',
-            icon: 'setting'
           }
+          // {
+          //   path: '/investtask',
+          //   label: '尽调任务',
+          //   name: 'invest-task',
+          //   icon: 'setting'
+          // },
         ],
         'invest': [
           {
             path: '/rankinfo',
             label: '投资排名',
+            primary: true,
             name: 'rank-info',
             icon: 'setting'
           },
@@ -198,6 +223,12 @@ export default {
             path: '/trendinfo3',
             label: '统计指标3',
             name: 'trend-info3',
+            icon: 'setting'
+          },
+          {
+            path: '/investdash',
+            label: '运营尽调列表',
+            name: 'invest-dash',
             icon: 'setting'
           }
           // {
@@ -245,18 +276,10 @@ export default {
           {
             path: '/fundinfo',
             label: '备投列表',
+            primary: true,
             name: 'fund-info',
             params: {
               stage: '备投'
-            },
-            icon: 'setting'
-          },
-          {
-            path: '/fundinfo6',
-            label: '相关性分析',
-            name: 'fund-info4',
-            params: {
-              class_type: '中性'
             },
             icon: 'setting'
           },
@@ -318,6 +341,7 @@ export default {
           {
             path: '/fund-report',
             label: '业绩对标',
+            primary: true,
             name: 'fund-report',
             params: {
               class_type: '1'

@@ -584,6 +584,17 @@
         <el-form-item label="基金名称">
           <label>{{ current.name }}</label>
         </el-form-item>
+        <el-form-item label="可投状态">
+          <el-select v-model="current.scale">
+            <el-option
+              v-for="item in sysparam['scale']"
+              :key="item.value"
+              :label="item.value"
+              :value="item.code"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="决策阶段">
           <el-radio-group v-model="current.stage">
             <el-radio
@@ -591,6 +602,7 @@
               v-for="(item, idx) in sysparam.stage"
               :label="item.value"
             ></el-radio>
+            <el-radio label="提醒"></el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="投资份额">
@@ -601,7 +613,18 @@
           >
           </el-input-number>
         </el-form-item>
-        <el-form-item label="评审意见">
+        <el-form-item label="发生时间">
+          <el-date-picker
+            style="width: 130px"
+            v-model="actiondate"
+            value-format="yyyyMMdd"
+            format="yyyyMMdd"
+            align="right"
+            type="date"
+            placeholder="发生时间"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="备注">
           <el-input type="textarea" v-model="current.remark"></el-input>
         </el-form-item>
         <el-form-item>
@@ -708,7 +731,7 @@
       </el-tabs>
     </el-dialog>
     <el-dialog
-      width="80%"
+      width="50%"
       top="50px"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
@@ -1129,7 +1152,7 @@ const cForm1 = [
   // { tilte: 'carry%', dataIndex: 'carry' },
   { tilte: 'carry第一级%', dataIndex: 'carry_gap1' },
   { tilte: 'carry1%', dataIndex: 'carry1' },
-  { tilte: 'carry第一级%', dataIndex: 'carry_gap2' },
+  { tilte: 'carry第二级%', dataIndex: 'carry_gap2' },
   { tilte: 'carry2%', dataIndex: 'carry2' },
   { tilte: '购买时间', dataIndex: 'buy_date' },
   { tilte: '购买时净值', dataIndex: 'buy_price' },
@@ -1181,6 +1204,7 @@ export default {
   data() {
     return {
       cForm: [],
+      actiondate: '',
       compForm,
       fcompanys: [],
       investList: [],
@@ -1370,6 +1394,17 @@ export default {
       if (this.current.type && this.current.class_type) {
         this.current.code = this.current.code.trim()
         this.current.user = this.token
+        if (
+          (this.current.type == 1 || this.current.type == 2) &
+          !this.current.mail
+        ) {
+          this.$message({
+            showClose: true,
+            message: '托管邮箱必填',
+            type: 'error'
+          })
+          return
+        }
         if (
           this.current.type.length < 2 ||
           (this.current.type.length > 2 && this.current[this.current.type])
@@ -1618,6 +1653,10 @@ export default {
       ret['code'] = this.origin.code
       ret['stage'] = this.current.stage
       ret['user'] = this.token
+      ret['scale'] = this.current.scale
+      if (this.actiondate) {
+        ret['actiondate'] = this.actiondate
+      }
       axis({
         method: 'post',
         url: '/fof/updateinfo', // 请求地址
@@ -1943,6 +1982,9 @@ export default {
         this.filter = param
       }
       var data = this.filter
+      if (data) {
+        data = this.$tools.cleanNulls(data)
+      }
       console.log(data)
       //  if(this.input)
       //  data["name"]=this.input

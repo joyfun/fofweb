@@ -157,7 +157,342 @@
         }}</el-descriptions-item>
       </el-descriptions>
     </el-dialog>
-
+    <el-dialog
+      width="60%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="formVisible"
+    >
+      <el-tabs type="border-card">
+        <el-tab-pane
+          ><span slot="label"><i class="el-icon-date"></i> 产品信息</span>
+          <el-form
+            :model="prodInfo"
+            ref="prodValidateForm"
+            label-width="120px"
+            class="demo-dynamic"
+            :rules="{
+              'code': [
+                { required: true, message: '请输入备案号', trigger: 'blur' },
+                {
+                  min: 6,
+                  max: 20,
+                  message: '长度在 6 到 20 个字符',
+                  trigger: 'blur'
+                }
+              ],
+              'short_name': [
+                { required: true, message: '简称必须输人', trigger: 'blur' }
+              ],
+              'name': [
+                { required: true, message: '基金名称必须输人', trigger: 'blur' }
+              ],
+              'class_type': [
+                { required: true, message: '类型必选', trigger: 'blur' }
+              ],
+              'type': [{ required: true, message: '渠道必选', trigger: 'blur' }]
+            }"
+          >
+            <template v-for="(row, index) in cForm">
+              <el-row :key="index" v-show="index % 2 == 0">
+                <el-col :span="12">
+                  <el-form-item
+                    v-if="index <= cForm.length - 1"
+                    :prop="row.dataIndex"
+                    :label="row.tilte"
+                    style="color: #409eff"
+                  >
+                    <el-select
+                      v-if="row.param"
+                      v-model="prodInfo[row.dataIndex]"
+                      style="width: 120px"
+                      clearable
+                      :placeholder="row.tilte"
+                    >
+                      <el-option
+                        v-for="item in sysparam[row.param]"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.code"
+                      >
+                      </el-option>
+                    </el-select>
+                    <el-input
+                      v-else
+                      :type="row['type']"
+                      rows="3"
+                      v-model="prodInfo[row.dataIndex]"
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item
+                    v-if="index + 1 < cForm.length"
+                    :prop="cForm[index + 1].dataIndex"
+                    :label="cForm[index + 1].tilte"
+                  >
+                    <el-select
+                      v-if="cForm[index + 1].param"
+                      v-model="prodInfo[cForm[index + 1].dataIndex]"
+                      @change="
+                        (v) =>
+                          cForm[index + 1].dataIndex == 'class_type' &&
+                          changeSub(v)
+                      "
+                      style="width: 120px"
+                      clearable
+                      :placeholder="cForm[index + 1].tilte"
+                    >
+                      <el-option
+                        v-for="item in cForm[index + 1].dataIndex == 'sub_type'
+                          ? sub_type
+                          : sysparam[cForm[index + 1].param]"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.code"
+                      >
+                      </el-option>
+                    </el-select>
+                    <el-input
+                      v-else
+                      v-model="prodInfo[cForm[index + 1].dataIndex]"
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </template>
+            <el-form-item>
+              <el-button
+                v-if="usermenu.indexOf('info-edit') > -1"
+                type="primary"
+                @click="submitForm('prodValidateForm')"
+                >提交</el-button
+              >
+              <el-button
+                v-if="usermenu.indexOf('info-edit') > -1"
+                @click="resetForm('prodValidateForm')"
+                >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane
+          ><span slot="label"><i class="el-icon-date"></i> 公司信息</span>
+          <el-form
+            :model="curCompany"
+            ref="companyForm"
+            label-width="100px"
+            class="demo-dynamic"
+          >
+            <el-row>
+              <el-col :span="12">
+                <el-form-item
+                  :prop="'name'"
+                  :label="'名称1'"
+                  style="color: #409eff"
+                >
+                  <el-input v-model="curCompany.name"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item
+                  :span="12"
+                  :prop="curCompany.maintainer"
+                  :label="'对接人'"
+                >
+                  <el-select
+                    filterable
+                    allow-create
+                    v-model="curCompany['maintainer']"
+                    style="width: 120px"
+                    clearable
+                    :placeholder="'对接人'"
+                  >
+                    <el-option
+                      v-for="item in sysparam['maintainer']"
+                      :key="item.value"
+                      :label="item.value"
+                      :value="item.code"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <template v-for="(row, index) in compForm">
+              <el-row :key="index" v-show="index % 2 == 0">
+                <el-col :span="12">
+                  <el-form-item
+                    v-if="index <= compForm.length - 1"
+                    :prop="row.dataIndex"
+                    :label="row.tilte"
+                  >
+                    <el-select
+                      v-if="row.param"
+                      v-model="curCompany[row.dataIndex]"
+                      filterable
+                      allow-create
+                      style="width: 120px"
+                      clearable
+                      :placeholder="row.tilte"
+                    >
+                      <el-option
+                        v-for="item in sysparam[row.param]"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.code"
+                      >
+                      </el-option>
+                    </el-select>
+                    <el-input
+                      v-else
+                      v-model="curCompany[row.dataIndex]"
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item
+                    v-if="index + 1 <= compForm.length - 1"
+                    :prop="compForm[index + 1].dataIndex"
+                    :label="compForm[index + 1].tilte"
+                  >
+                    <el-input
+                      :type="compForm[index + 1].type"
+                      v-model="curCompany[compForm[index + 1].dataIndex]"
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </template>
+            <el-form-item>
+              <el-button
+                v-if="usermenu.indexOf('info-edit') > -1"
+                type="primary"
+                @click="submitCompForm('companyForm')"
+                >提交</el-button
+              >
+              <el-button
+                v-if="usermenu.indexOf('info-edit') > -1"
+                @click="resetForm('companyForm')"
+                >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <!-- <el-tab-pane
+          ><span slot="label"><i class="el-icon-date"></i> 尽调信息</span>
+          <vxe-table
+            border
+            ref="investTable"
+            height="480px"
+            align="right"
+            size="mini"
+            :sort-config="{ trigger: 'cell', orders: ['desc', 'asc', null] }"
+            :data="investList"
+          >
+            <vxe-column
+              sortable
+              width="80"
+              field="invest_date"
+              title="尽调时间"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="80"
+              field="investor"
+              title="尽调人"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="160"
+              field="policy_scale"
+              title="策略规模"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="60"
+              field="fee"
+              title="管理费"
+              align="right"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="carry"
+              title="carry"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="carry2"
+              title="carry2"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="lock_period"
+              title="锁定期"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="open_date"
+              title="开放日"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="temp_open"
+              title="临开"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="margin"
+              title="保证金上限"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="ex_rate"
+              title="换手率"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="host"
+              title="托管"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="broker"
+              title="交易商"
+              align="left"
+            ></vxe-column>
+            <vxe-column
+              sortable
+              width="100"
+              field="vip_account"
+              title="专户"
+              align="left"
+            ></vxe-column>
+          </vxe-table>
+        </el-tab-pane>-->
+      </el-tabs>
+    </el-dialog>
     <el-dialog
       width="50%"
       top="50px"
@@ -277,6 +612,17 @@
           >
           </el-input-number>
         </el-form-item>
+        <el-form-item label="发生时间">
+          <el-date-picker
+            style="width: 130px"
+            v-model="curAction.actiondate"
+            value-format="yyyyMMdd"
+            format="yyyyMMdd"
+            align="right"
+            type="date"
+            placeholder="发生时间"
+          ></el-date-picker>
+        </el-form-item>
         <el-form-item label="评审意见">
           <el-input type="textarea" v-model="curAction.remark"></el-input>
         </el-form-item>
@@ -373,6 +719,7 @@
         @close="editClose"
         ref="prodtable"
         :foflist="prodlist"
+        :canEdit="canEdit"
         v-if="diagName == 'prodDiag'"
       ></prod-table>
       <el-tabs
@@ -423,6 +770,7 @@
         @close="editClose"
         ref="protable"
         :foflist="foflist"
+        :canEdit="canEdit"
         :full="true"
         v-if="diagName == 'prodDiag'"
       ></prod-table>
@@ -448,7 +796,66 @@ import CompareTable from '@/components/CompareTable'
 import AuditLog from '@/components/AuditLog.vue'
 import FundCorr from '@/components/FundCorr.vue'
 import ProdTable from '@/components/ProdTable.vue'
+const cForm0 = [
+  { tilte: '备案号', dataIndex: 'code', required: 'true' },
+  { tilte: '所属公司', dataIndex: 'company' },
+  { tilte: '运作时间', dataIndex: 'founded' },
+  { tilte: '产品简称', dataIndex: 'short_name', required: 'true' },
+  { tilte: '可投状态', dataIndex: 'scale', param: 'scale', bold: true },
+  { tilte: '产品全称', dataIndex: 'name', required: 'true' },
+  { tilte: '投资阶段', dataIndex: 'stage', param: 'stage' },
+  {
+    tilte: '一级策略',
+    dataIndex: 'class_type',
+    param: 'class_type',
+    change: 'changeSub'
+  },
+  {
+    tilte: '数据渠道',
+    dataIndex: 'type',
+    param: 'data_type',
+    required: 'true'
+  },
+  { tilte: '子类型', dataIndex: 'sub_type', param: 'sub_type', bold: true },
+  { tilte: '私募网代码', dataIndex: 'SiMuWang' },
+  { tilte: '格上代码', dataIndex: 'GeShang' },
+  { tilte: '朝阳代码', dataIndex: 'ZhaoYang' },
+  { tilte: '托管邮箱', dataIndex: 'mail' },
+  { tilte: '产品来源', dataIndex: 'prod_source', param: 'prod_source' },
+  { tilte: '来源说明', dataIndex: 'source_remark' }
+]
+const cForm1 = [
+  { tilte: '管理费%', dataIndex: 'fee', bold: true },
+  { tilte: '计提方式', dataIndex: 'perf_comp' },
+  // { tilte: 'carry%', dataIndex: 'carry' },
+  { tilte: 'carry第一级%', dataIndex: 'carry_gap1', bold: true },
+  { tilte: 'carry1%', dataIndex: 'carry1', bold: true },
+  { tilte: 'carry第二级%', dataIndex: 'carry_gap2' },
+  { tilte: 'carry2%', dataIndex: 'carry2' },
+  { tilte: '购买时间', dataIndex: 'buy_date' },
+  { tilte: '购买时净值', dataIndex: 'buy_price' },
+  { tilte: '持有份额', dataIndex: 'amount' },
+  { tilte: '止损', dataIndex: 'lost' },
+  { tilte: '其他关键条款', dataIndex: 'other' },
+  { tilte: '预警', dataIndex: 'alarm' },
+  { tilte: '备注', dataIndex: 'remark', type: 'textarea' },
+  { tilte: '已投基金对标', dataIndex: 'compare' }
+]
 
+const compForm = [
+  { tilte: '简称', dataIndex: 'short_name' },
+  { tilte: '城市', dataIndex: 'city' },
+  { tilte: '主策略', dataIndex: 'master_strategy', param: 'strategy' },
+  { tilte: '负责人', dataIndex: 'manager' },
+  { tilte: '管理规模', dataIndex: 'scale', param: 'mgt_scale' },
+  { tilte: '渠道', dataIndex: 'channel' },
+  { tilte: '市场经理', dataIndex: 'business_man' },
+  { tilte: '联系方式', dataIndex: 'contact' },
+  { tilte: '渠道联系人', dataIndex: 'channel_man' },
+  { tilte: '渠道联系方式', dataIndex: 'channel_contact' },
+  { tilte: '产品', dataIndex: 'product' },
+  { tilte: '备注', dataIndex: 'remark', type: 'textarea' }
+]
 export default {
   components: {
     FundEchart,
@@ -471,6 +878,13 @@ export default {
           this.getInfo(this.cur_code)
         }
       }
+    },
+    formVisible: {
+      handler(n) {
+        if (n) {
+          this.getInfo(this.cur_code)
+        }
+      }
     }
   },
   computed: {
@@ -478,9 +892,20 @@ export default {
       current: (state) => state.tab.currentMenu,
       foflist: (state) => state.foflist
     }),
-    ...mapGetters(['token', 'sysparam'])
+    ...mapGetters(['token', 'sysparam', 'usermenu', 'allparam'])
   },
   methods: {
+    changeSub(row) {
+      var id = -1
+      for (var ap of this.sysparam.class_type) {
+        if (ap.code == row) {
+          id = ap.id
+          break
+        }
+      }
+      this.prodInfo['sub_type'] = ''
+      this.sub_type = this.allparam['param_' + id]
+    },
     ...mapMutations({
       addAction: 'addAction'
     }),
@@ -585,47 +1010,92 @@ export default {
         .get('/fof/info', { params: { 'code': code } })
         .then((response) => {
           this.prodInfo = response.data
+          if (this.formVisible) {
+            let sub_type = this.prodInfo.sub_type
+            this.changeSub(this.prodInfo.class_type)
+            this.prodInfo['sub_type'] = sub_type
+          }
+          if (this.prodInfo.company_code) {
+            this.$axios
+              .get('/fof/compinfoby', {
+                params: { reg_code: this.prodInfo.company_code }
+              })
+              .then((r) => {
+                this.curCompany = r.data
+                this.curCompany['reg_code'] = this.current.company_code
+                console.log(this.curCompany)
+              })
+          }
         })
+    },
+    submitCompForm(formName) {
+      console.log(this.$refs[formName].model)
+      axis({
+        method: 'post',
+        url: '/fof/savecompany', // 请求地址
+        data: this.curCompany, // 参数
+        responseType: 'json' // 表明返回服务器返回的数据类型
+      }).then(
+        (response) => {
+          if (response.data['status'] == 'success') {
+          }
+        },
+        (err) => {
+          reject(err)
+        }
+      )
     },
     changeFOF() {},
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.curAction)
-          if (this.curAction.stage == '预入款') {
-            this.curAction['b_code'] = 'CASH'
-            this.curAction['b_name'] = '现金'
-            if (
-              this.curAction['code'] == 'SY9620' ||
-              this.curAction['code'] == 'SSS105'
-            ) {
-              //this.updateCash(this.curAction["code"],{"value":this.curAction["marketval"]})
-              //this.saveAction()
-              // this.actionDiagShow = !this.actionDiagShow;
-              // return true
-            } else {
-              this.$message({
-                showClose: true,
-                message: '只有多策略和进取预入资金',
-                type: 'error'
-              })
-              return false
+          if (formName == 'actionForm') {
+            console.log(this.curAction)
+            if (this.curAction.stage == '预入款') {
+              this.curAction['b_code'] = 'CASH'
+              this.curAction['b_name'] = '现金'
+              if (
+                this.curAction['code'] == 'SY9620' ||
+                this.curAction['code'] == 'SSS105'
+              ) {
+                //this.updateCash(this.curAction["code"],{"value":this.curAction["marketval"]})
+                //this.saveAction()
+                // this.actionDiagShow = !this.actionDiagShow;
+                // return true
+              } else {
+                this.$message({
+                  showClose: true,
+                  message: '只有多策略和进取预入资金',
+                  type: 'error'
+                })
+                return false
+              }
             }
+            this.curAction.add_time = new Date().getTime()
+            this.curAction.status = '无'
+            delete this.curAction.name
+            this.addAction(JSON.parse(JSON.stringify(this.curAction)))
+            // }
+            this.buyVisible = !this.buyVisible
+          } else if (formName == 'prodValidateForm') {
+            this.prodInfo['user'] = this.token
+            this.$axios({
+              method: 'post',
+              url: '/fof/saveinfo', // 请求地址
+              data: this.prodInfo, // 参数
+              responseType: 'json' // 表明返回服务器返回的数据类型
+            }).then(
+              (response) => {
+                if (response.data['status'] == 'success') {
+                  // this.getList(this.filter)
+                  this.formVisible = false
+                }
+              },
+              (err) => {
+                reject(err)
+              }
+            )
           }
-          // if (this.curAction.id) {
-          //   for (let i in this.actionData) {
-          //     if (this.actionData[i]["id"] == curAction.id) {
-          //       this.actionData[i] = JSON.parse(JSON.stringify(this.curAction));
-          //       return;
-          //     }
-          //   }
-          // } else {
-          this.curAction.add_time = new Date().getTime()
-          this.curAction.status = '无'
-          delete this.curAction.name
-          this.addAction(JSON.parse(JSON.stringify(this.curAction)))
-          // }
-          this.buyVisible = !this.buyVisible
         } else {
           console.log('error submit!!')
           return false
@@ -665,10 +1135,14 @@ export default {
   data() {
     return {
       activeName: '首页',
+      sub_type: [],
       fullActive: 'sumvaltab',
       wk: '1',
+      cForm: [...cForm0, ...cForm1],
       orig: 0,
       curAction: {},
+      compForm,
+      curCompany: {},
       rules: {
         code: [{ required: true, message: '请选择基金', trigger: 'blur' }],
         name: [{ required: true, message: '请选择基金', trigger: 'blur' }],
@@ -685,6 +1159,7 @@ export default {
       resetVisible: false,
       buyVisible: false,
       infoVisible: false,
+      formVisible: false,
       auditVisible: false,
       userImg: require('../assets/images/user.png'),
       prodInfo: {},
@@ -713,7 +1188,7 @@ export default {
             { 'title': '状态', 'field': 'stage', 'param': 'stage' },
             { 'title': '子基金对标', 'field': 'compare' },
             { 'title': '管理费', 'field': 'fee' },
-            { 'title': 'carry', 'field': 'carry' },
+            { 'title': 'carry', 'field': 'carry1' },
             { 'title': '业绩报酬计提方式', 'field': 'perf_comp' },
             { 'title': '其他关键条款', 'field': 'other' },
             { 'title': '备注', 'field': 'remark', 'type': 'textarea' }
@@ -745,9 +1220,17 @@ export default {
       this.infoVisible = true
       console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
     })
+    Bus.$on('editInfo', (arg) => {
+      this.cur_code = arg['cur_code']
+      this.formVisible = true
+      console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
+    })
     Bus.$on('auditAction', (arg) => {
       this.auditVisible = true
       this.curAction = arg
+      if (!this.curAction['actiondate']) {
+        this.curAction['actiondate'] = this.$moment().format('YYYYMMDD')
+      }
       console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
     })
   }

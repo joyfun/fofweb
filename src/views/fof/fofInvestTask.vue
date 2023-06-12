@@ -229,15 +229,13 @@
         <template slot-scope="scope">{{ scope.row.fee }}</template>
       </el-table-column>
       <el-table-column
-        prop="carry"
+        prop="carry1"
         label="carry"
         sortable
         show-overflow-tooltip
       >
-        <template slot-scope="scope">{{
-          scope.row.carry
-        }}</template> </el-table-column
-      >>
+        <template slot-scope="scope">{{ scope.row.carry1 }}</template>
+      </el-table-column>
 
       <el-table-column
         prop="latest_date"
@@ -420,7 +418,7 @@
       ></fund-corr>
     </el-dialog>
     <el-dialog
-      width="80%"
+      width="50%"
       top="50px"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
@@ -554,7 +552,7 @@
       </el-tabs>
     </el-dialog>
     <el-dialog
-      width="80%"
+      width="50%"
       top="50px"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
@@ -563,18 +561,6 @@
       <el-tabs type="border-card">
         <el-tab-pane
           ><span slot="label"><i class="el-icon-date"></i> 产品信息</span>
-          <!-- <wad-form :cForm="cForm"></wad-form>
- -->
-          <!-- <vxe-form :data="current" @submit="submitForm('dynamicValidateForm')" @reset="resetForm('dynamicValidateForm')">
-                <vxe-form-item span=12 title-width="100px" :key="index" v-for="(row,index)  in cForm" :title="row.tilte" :field="row.dataIndex" :item-render="{}">
-                  <vxe-select v-if="row.param" v-model="current[row.dataIndex]" clearable >
-                    <vxe-option v-for="item in sysparam[row.param]" :key="item.value" :value="item.code" :label="item.value"></vxe-option>
-                  </vxe-select> 
-                    <vxe-input v-else v-model="current[row.dataIndex]"  clearable></vxe-input>
-                </vxe-form-item>
-         </vxe-form> -->
-
-          <!---->
           <el-form
             :model="current"
             ref="dynamicValidateForm"
@@ -975,7 +961,7 @@ const cForm1 = [
   // { tilte: 'carry%', dataIndex: 'carry' },
   { tilte: 'carry第一级%', dataIndex: 'carry_gap1' },
   { tilte: 'carry1%', dataIndex: 'carry1' },
-  { tilte: 'carry第一级%', dataIndex: 'carry_gap2' },
+  { tilte: 'carry第二级%', dataIndex: 'carry_gap2' },
   { tilte: 'carry2%', dataIndex: 'carry2' },
   { tilte: '购买时间', dataIndex: 'buy_date' },
   { tilte: '购买时净值', dataIndex: 'buy_price' },

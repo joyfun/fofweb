@@ -923,7 +923,8 @@ export default {
                 if (
                   ac.stage == '已投' ||
                   ac.stage == '已赎' ||
-                  ac.stage == '提醒'
+                  ac.stage == '提醒' ||
+                  ac.stage == '投后'
                 ) {
                   var cidx = 0
                   for (let i = 0; i < this.raw_data.date.length; i++) {
@@ -931,6 +932,14 @@ export default {
                       cidx = i
                       break
                     }
+                  }
+                  //如果事件发生日期大于最大净值日期 取最近净值日期
+                  if (
+                    cidx < 1 &&
+                    this.raw_data.date.length > 0 &&
+                    ac.date > this.raw_data.date[0]
+                  ) {
+                    cidx = this.raw_data.date.length - 1
                   }
                   let point = {
                     name: ac.stage[1],
@@ -953,17 +962,18 @@ export default {
                   if (ac.stage == '已赎') {
                     redeem = point
                   }
-                  if (ac.stage == '提醒') {
+                  if (ac.stage == '提醒' || ac.stage == '投后') {
                     point = {
                       name: '*',
                       symbol:
                         'image://data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7',
                       coord: [this.raw_data.date[cidx], sdata[cidx]],
                       pidx: cidx,
+                      raw: ac,
                       tooltip: {
                         trigger: 'item',
                         widht: '100px',
-                        formatter: ac.date + ac.remark,
+                        formatter: ac.date + ': ' + ac.remark,
 
                         show: true
                       }
@@ -1056,8 +1066,11 @@ export default {
             connectNulls: true,
             yAxisIndex: 0,
             markLine: {
-              symbol: 'none', //去掉警戒线最后面的箭头
+              symbol: 'none',
               silent: true,
+              label: {
+                formatter: '{b}'
+              },
               lineStyle: {
                 color: '#333'
               },
@@ -1068,6 +1081,15 @@ export default {
               ]
             },
             markPoint: mp
+          }
+          console.log(mp)
+          let nml = mp.data.filter((r) => r.name == '*')
+          console.log(nml)
+          for (let mlin of nml) {
+            asery.markLine.data.push({
+              name: mlin.raw['stage'],
+              xAxis: mlin.coord[0]
+            })
           }
           if (this.token == 'demo') {
             asery.name = this.raw_data['mcodes'][idx]
@@ -1082,6 +1104,7 @@ export default {
               }
             }
           }
+          console.log(asery)
           this.chartData.series.push(asery)
           var max = parseInt(this.getLastIndex(asery.data))
           if (max > this.firstIdx) {
@@ -1384,6 +1407,9 @@ export default {
     },
     getstart(vady) {
       var arr = this.raw_data.date
+      if (arr && arr.length > 0 && vady == arr[0]) {
+        return 0
+      }
       for (var i = 0; i < arr.length; i++) {
         if (arr[i] >= vady && i > 0) return i
       }

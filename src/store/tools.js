@@ -194,6 +194,15 @@ tools.showName=function(code,sysparam){
   }
   return ""
 },
+tools.cleanNulls=(obj)=>{
+  const cleaned = {};
+  Object.entries(obj).forEach(([key, value]) => {
+    if (value != null && value !== '') {
+      cleaned[key] = value;
+    }
+  });
+  return cleaned;
+},
 tools.JsonSort=(jsonData)=> {
   try {
     let tempJsonObj = {};

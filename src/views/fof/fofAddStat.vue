@@ -29,6 +29,21 @@
           :picker-options="pickerOptions"
         >
         </el-date-picker>
+        <el-select
+          v-model="suser"
+          style="width: 140px"
+          clearable
+          @change="changeUser"
+          placeholder="选择用户"
+        >
+          <el-option
+            v-for="item of selusers"
+            :key="item"
+            :label="item"
+            :value="item"
+          >
+          </el-option>
+        </el-select>
         <vxe-button size="mini" @click="exportDataEvent">导出</vxe-button>
       </template>
     </vxe-toolbar>
@@ -46,13 +61,14 @@
       :scroll-y="{ oSize: 500 }"
       :sort-config="{
         trigger: 'cell',
-        defaultSort: { field: 'rank', order: 'asc' },
+        defaultSort: { field: 'weekday', order: 'desc' },
         orders: ['desc', 'asc', null]
       }"
     >
       <!-- <vxe-column type="checkbox" width="30" fixed="left"></vxe-column> -->
       <!-- <vxe-column type="seq" width="30" fixed="left"></vxe-column> -->
       <vxe-column field="user" width="80" sortable title="用户"> </vxe-column>
+      <vxe-column field="weekday" width="80" sortable title="周"> </vxe-column>
       <vxe-colgroup title="数量" align="center">
         <vxe-column
           :key="af"
@@ -155,8 +171,10 @@ export default {
       statdict: {},
       tps: ['指增', '中性', 'CTA', '混合', '套利', '期权', '可转债'],
       company_ranks: [],
+      selusers: ['chenjie', 'mayh', 'wangl', 'liuxq', 'qiwq'],
       startdate: '20230501',
       enddate: '',
+      suser: '',
       showCompanyRanks: false,
       rawlen: 0,
       filter: '',
@@ -285,6 +303,7 @@ export default {
       let qdata = {
         'start_date': this.startdate,
         'end_date': this.enddate,
+        'qry_week': row['weekday'],
         'user': row['user'],
         'class_type': column.field
       }
@@ -293,7 +312,7 @@ export default {
       }
       if (column.field && column.field.endsWith('_lr')) {
         qdata['class_type'] = column.field.split('_')[0]
-        qdata['list_rate'] = '0.5'
+        qdata['listrate'] = '0.5'
       }
       this.$axios
         .get('/fof/tasklist', {
@@ -307,6 +326,9 @@ export default {
         })
     },
     changeDate(date) {
+      this.getStatInfo()
+    },
+    changeUser(date) {
       this.getStatInfo()
     },
     changeEndDate(date) {
@@ -345,7 +367,10 @@ export default {
           means.push('平均')
           sums.push('合计')
           others.push('其他')
-        } else {
+          means.push('')
+          sums.push('')
+          others.push('')
+        } else if (columnIndex > 1) {
           let meanCell = null
           let sumCell = null
           let otherCell = '-'
@@ -370,9 +395,10 @@ export default {
     },
     getStatInfo() {
       this.$axios
-        .get('/fof/addstat', {
+        .get('/fof/addstat_user', {
           params: {
             'start_date': this.startdate,
+            'user': this.suser,
             'end_date': this.enddate
           }
         })
