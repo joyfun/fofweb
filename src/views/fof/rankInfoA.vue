@@ -61,6 +61,7 @@
       :scroll-y="{ oSize: 500 }"
       :sort-config="{
         trigger: 'cell',
+        sortMethod: customSort,
         defaultSort: { field: 'rank', order: 'asc' },
         orders: ['desc', 'asc', null]
       }"
@@ -188,7 +189,7 @@
         <vxe-column field="fee" width="60" title="fee"></vxe-column>
         <vxe-column
           align="left"
-          field="carry"
+          field="carry1"
           width="160"
           title="carry"
         ></vxe-column>
@@ -864,6 +865,42 @@ export default {
     }
   },
   methods: {
+    customSort({ data, sortList }) {
+      const sortItem = sortList[0]
+      console.log(sortItem)
+      // 取出第一个排序的列
+      const { property, order } = sortItem
+      let list = []
+      if (order === 'asc') {
+        // 例如：实现中英文混排，按照字母排序
+        list = data.sort((a, b) => {
+          let ret = a[property] - b[property]
+          console.log(a['mean26'])
+          if (a['mean26'] < 0.01) {
+            ret = 1
+          }
+          if (b['mean26'] < 0.01) {
+            ret = -1
+          }
+          return ret
+        })
+      }
+      if (order === 'desc') {
+        list = data.sort((b, a) => {
+          let ret = a[property] - b[property]
+          console.log(a['mean26'])
+          if (a['mean26'] < 0.01) {
+            ret = -1
+          }
+          if (b['mean26'] < 0.01) {
+            ret = 1
+          }
+          return ret
+        })
+      }
+      return list
+    },
+
     getWeeks() {
       this.$axios.get('/fof/lastweeks?cnt=10').then((res) => {
         let wks = res.data['weeks']
@@ -1318,6 +1355,7 @@ export default {
         .then((response) => {
           this.baseData = response.data
           this.tableData.map((row) => {
+            row['marketval'] = 0
             this.trank[row.code] = {}
             if (this.baseData[row.code]) {
               row['company_code'] = this.baseData[row.code]['company_code']

@@ -23,7 +23,7 @@
       }"
     >
       <!-- <vxe-column type="checkbox" width="30" fixed="left"></vxe-column> -->
-      <vxe-column type="seq" width="40" fixed="left"></vxe-column>
+      <vxe-column type="seq" width="48" fixed="left"></vxe-column>
       <!-- <vxe-column field="idx" width="80" sortable title="序号"> </vxe-column> -->
       <vxe-colgroup title="待尽调产品" align="center">
         <vxe-column
@@ -36,12 +36,15 @@
           :field="af"
         >
           <template #default="{ row }">
+            <i v-if="row['idx'] < statdict[af] / 2" class="vxe-icon-check"></i>
             <span @click="getCompanyProduct(row[af])"
               >{{ row[af]['company'] }}-</span
             >
-            <span :class="getClass(row[af]['status'])">{{
-              row[af]['name']
-            }}</span>
+            <span
+              @click="showHis(row[af])"
+              :class="getClass(row[af]['status'])"
+              >{{ row[af]['name'] }}</span
+            >
           </template>
         </vxe-column>
       </vxe-colgroup>
@@ -235,6 +238,24 @@ export default {
     }
   },
   methods: {
+    getSymbol(data) {
+      for (let row of data) {
+        let classtype = row['class_type']
+        let found = this.sublist[classtype].filter(
+          (r) => r['code'] == row['code']
+        )
+        if (found && found.length == 1) {
+          if (found[0]['idx'] < this.statdict[classtype] / 2) {
+            row['name'] = '✔' + row['name']
+            row['short_name'] = '✔' + row['short_name']
+          }
+        }
+      }
+      return data
+    },
+    showHis(row) {
+      Bus.$emit('showChart', { 'cur_code': row.code, 'diagName': 'hisChart' })
+    },
     getCompanyProduct(row) {
       console.log(row)
       let qdata = { 'company_code': row['company_code'] }
@@ -246,8 +267,9 @@ export default {
           params: qdata
         })
         .then((res) => {
+          let data = this.getSymbol(res.data)
           Bus.$emit('showChart', {
-            'prodlist': res.data,
+            'prodlist': data,
             'canEdit': true,
             'diagName': 'prodDiag'
           })
@@ -391,12 +413,22 @@ export default {
             for (let ap of this.tps) {
               if (this.sublist[ap].length > i) {
                 row[ap] = this.sublist[ap][i]
+                this.sublist[ap][i]['idx'] = i
+                let cnt = this.statdict[ap]
+                if (cnt) {
+                  cnt = cnt + 1
+                } else {
+                  cnt = 1
+                }
+                this.statdict[ap] = cnt
               } else {
                 row[ap] = {}
               }
             }
             this.tableList.push(row)
           }
+          console.log(this.statdict)
+          console.log(this.tableList)
 
           this.$refs.statTable.loadData(this.tableList)
         })

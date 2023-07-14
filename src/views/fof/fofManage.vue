@@ -88,6 +88,7 @@
             :value="item.code"
           >
           </el-option>
+          <el-option key="无" label="无" value="无"> </el-option>
         </el-select>
         <el-button size="small" @click="downFile()">下载</el-button>
         <el-input
@@ -602,6 +603,7 @@
               v-for="(item, idx) in sysparam.stage"
               :label="item.value"
             ></el-radio>
+            <el-radio label="分红"></el-radio>
             <el-radio label="提醒"></el-radio>
           </el-radio-group>
         </el-form-item>
@@ -1613,7 +1615,7 @@ export default {
       Bus.$emit('showChart', {
         cur_code: row.code,
         wk: '1',
-        diagName: 'hisChart'
+        diagName: 'compareTable'
       })
     },
     showRank() {

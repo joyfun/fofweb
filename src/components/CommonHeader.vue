@@ -119,8 +119,8 @@
         <el-descriptions-item label="投资类型">{{
           prodInfo.scale
         }}</el-descriptions-item>
-        <el-descriptions-item label="购买时净值">{{
-          prodInfo.buy_price
+        <el-descriptions-item label="入库时间">{{
+          prodInfo.create_time
         }}</el-descriptions-item>
         <el-descriptions-item label="购买时间">{{
           prodInfo.buy_date
@@ -845,6 +845,7 @@ const cForm1 = [
 const compForm = [
   { tilte: '简称', dataIndex: 'short_name' },
   { tilte: '城市', dataIndex: 'city' },
+  { tilte: '成立时间', dataIndex: 'founded' },
   { tilte: '主策略', dataIndex: 'master_strategy', param: 'strategy' },
   { tilte: '负责人', dataIndex: 'manager' },
   { tilte: '管理规模', dataIndex: 'scale', param: 'mgt_scale' },

@@ -90,7 +90,17 @@
               </vxe-select>
             </template>
           </vxe-form-item>
-          <vxe-form-item title="对接人" field="maintainer" span="3">
+          <vxe-form-item title="代表产品" field="product" span="3">
+            <template #default="{ data }">
+              <vxe-input
+                v-model="data.product"
+                type="text"
+                placeholder="请输入名称"
+                clearable
+              ></vxe-input>
+            </template>
+          </vxe-form-item>
+          <vxe-form-item title="对接人" field="maintainer" span="2">
             <template #default="{ data }">
               <vxe-select v-model="data.maintainer" clearable>
                 <vxe-option
@@ -114,6 +124,9 @@
             </template>
           </vxe-form-item>
         </vxe-form>
+      </template>
+      <template #sex_default="{ row }">
+        <span @click="searchProd(row, true)">{{ row.name }}</span>
       </template>
     </vxe-grid>
     <!-- <vxe-table
@@ -350,9 +363,10 @@ import Bus from '@/store/bus.js'
 
 const cForm = [
   { 'tilte': '简称', 'dataIndex': 'short_name' },
-  { 'tilte': '备案号', 'dataIndex': 'reg_code' },
+  { 'tilte': '登记号', 'dataIndex': 'reg_code' },
   { 'tilte': '接触状态', 'dataIndex': 'status', 'param': 'corp_status' },
   { 'tilte': '城市', 'dataIndex': 'city' },
+  { 'tilte': '成立时间', 'dataIndex': 'founded' },
   { 'tilte': '主策略', 'dataIndex': 'master_strategy', 'param': 'strategy' },
   { 'tilte': '负责人', 'dataIndex': 'manager' },
   { 'tilte': '管理规模', 'dataIndex': 'scale', 'param': 'mgt_scale' },
@@ -443,16 +457,24 @@ export default {
         columns: [
           { type: 'checkbox', width: 50 },
           { type: 'seq', width: 40 },
-          { field: 'name', minWidth: 240, title: '名称' },
+          {
+            field: 'name',
+            minWidth: 240,
+            sortable: true,
+            title: '名称',
+            slots: { default: 'sex_default' }
+          },
           { field: 'scale', title: '规模' },
           { field: 'master_strategy', title: '主策略' },
           {
             field: 'product',
             minWidth: 240,
             title: '代表产品',
+            sortable: true,
             showOverflow: true
           },
           { field: 'city', title: '城市' },
+          { field: 'founded', title: '成立时间' },
           { field: 'status', title: '接触状态' },
           { field: 'maintainer', title: '对接人' },
           {
@@ -559,11 +581,14 @@ export default {
       for (let key in this.formData) {
         if (ret) {
           if (this.formData[key]) {
-            if (key == 'name' || key == 'city') {
-              console.log(ret)
-              ret = ret.filter(
-                (r) => r[key] && r[key].indexOf(this.formData[key]) > -1
-              )
+            if (key == 'name' || key == 'city' || key == 'product') {
+              if (this.formData[key] == '无') {
+                ret = ret.filter((r) => !r[key])
+              } else {
+                ret = ret.filter(
+                  (r) => r[key] && r[key].indexOf(this.formData[key]) > -1
+                )
+              }
             } else {
               ret = ret.filter(
                 (r) =>

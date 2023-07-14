@@ -211,7 +211,7 @@ export default {
         this.tableData = this.records.map((rc) => {
           let ret = {
             code: this.code,
-            date: rc[this.keymap[0]].replaceAll('-', ''),
+            date: rc[this.keymap[0]].replaceAll('-', '').replaceAll('/', ''),
             netval: null,
             sumval: rc[this.keymap[2]],
             reval: null

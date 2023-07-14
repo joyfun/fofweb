@@ -21,6 +21,7 @@
       <el-table-column
         label="名称"
         sortable
+        width="180"
         prop="short_name"
         show-overflow-tooltip
       >
@@ -70,6 +71,15 @@
         show-overflow-tooltip
       >
       </el-table-column>
+      <el-table-column label="管理费" sortable prop="fee" show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        label="carry"
+        sortable
+        prop="carry1"
+        show-overflow-tooltip
+      >
+      </el-table-column>
       <el-table-column
         v-if="canEdit"
         label="状态"
@@ -81,8 +91,17 @@
           <span :class="getClass(row['status'])">{{ row['status'] }}</span>
         </template>
       </el-table-column>
+      <el-table-column
+        v-if="canEdit"
+        label="可投"
+        sortable
+        prop="scale"
+        show-overflow-tooltip
+      >
+      </el-table-column>
       <el-table-column label="阶段" sortable prop="stage" show-overflow-tooltip>
       </el-table-column>
+
       <el-table-column
         label="最新净值"
         sortable

@@ -813,7 +813,7 @@
             <vxe-column
               sortable
               width="100"
-              field="carry"
+              field="carry1"
               title="carry"
               align="left"
             ></vxe-column>

@@ -65,6 +65,18 @@ const routes = [
         
       },
       {
+        path: '/norankprod',
+        name: 'norank-prod',
+        component:() => import('@/views/fof/fofNoRankDash.vue'),
+        
+      },
+      {
+        path: '/investdash',
+        name: 'invest-dash',
+        component:() => import('@/views/fof/fofInvestDash.vue'),
+        
+      },
+      {
         path: '/fundext',
         name: 'fund-ext',
         component:() => import('@/views/fof/fofExternal.vue'),

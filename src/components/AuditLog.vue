@@ -130,6 +130,11 @@ export default {
           .get('/fof/auditlog', { params: param }) //axis后面的.get可以省略；
           .then((response) => {
             $this.raw_data = response.data.datas
+            $this.raw_data.sort((b, a) => {
+              if (a['time'] > b['time']) return 1
+              else return -1
+            })
+            console.log($this.raw_data)
             Vue.set(
               this,
               'keygrps',

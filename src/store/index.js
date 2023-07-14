@@ -91,7 +91,7 @@ export default new Vuex.Store({
   mutations: {
     setToken (state, token) {
       state.token = token
-      Cookies.set("token", token, { expires: 1 / 24 })
+      Cookies.set("token", token, { expires: 1 })
       // Cookies.remove("acart")
       // this.commit('nowCart','default')
     },
@@ -155,7 +155,7 @@ export default new Vuex.Store({
       state.holding=params
   },
     updateUserMenu(state,params){  
-        Cookies.set("umenu", params, { expires: 1 / 24 })
+        Cookies.set("umenu", params, { expires: 1 })
         if(params)
         state.usermenu=params.split(",")
     },

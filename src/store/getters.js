@@ -49,7 +49,7 @@ const getters = {
       if (code==item['code']){
         if(item['scale']=="无额度"||item['scale']=="已封盘"){
           name=name+"🈵"
-        }else if(item['scale']=="高费率") {
+        }else if(item['other_stage']=="高费率") {
           name=name+"💎"
         }else if(item['scale']=='同类可投'){
           name=name+"🔃"

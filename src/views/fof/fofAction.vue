@@ -26,6 +26,7 @@
         <el-button type="primary" @click="updateparam">刷新参数</el-button>
         <el-button type="primary" @click="sendmail">发送邮件</el-button>
         <el-button type="primary" @click="fetchmail">收取邮件</el-button>
+        <el-button type="primary" @click="calcWeekly">排名计算</el-button>
         <el-button type="primary" @click="testAction">测试事件</el-button>
       </el-col>
     </el-row>
@@ -177,6 +178,15 @@ export default {
       this.$axios({
         url: '/fof/action',
         data: { 'code': 'fetchmail' }, //
+        method: 'POST'
+      }).then((response) => {
+        console.log(response.data)
+      })
+    },
+    calcWeekly() {
+      this.$axios({
+        url: '/fof/action',
+        data: { 'code': 'calcWeekly' }, //
         method: 'POST'
       }).then((response) => {
         console.log(response.data)

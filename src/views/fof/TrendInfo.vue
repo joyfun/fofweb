@@ -361,7 +361,7 @@
           <vxe-column field="fee" width="60" title="fee"></vxe-column>
           <vxe-column
             align="left"
-            field="carry"
+            field="carry1"
             width="160"
             title="carry"
           ></vxe-column>

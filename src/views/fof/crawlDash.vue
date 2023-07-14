@@ -348,7 +348,9 @@ export default {
         this.tableData = this.rawData.filter(
           (row) =>
             ['不可投', '数据存疑', '已封盘', '黑名单'].indexOf(row['scale']) <
-              0 && row['cnt']
+              0 &&
+            row['cnt'] &&
+            row['other_stage'] != '数据存疑'
         )
       }
       console.log(this.tableData)

@@ -863,7 +863,7 @@ export default {
             }
             var ndrop = sdata[s] / high - 1
             if (sdata[s]) {
-              ddata[s] = sdata[s] / high - 1
+              ddata[s] = Math.floor((sdata[s] / high - 1) * 10000) / 10000
             }
             if (ndrop < maxdrop) {
               maxdrop = ndrop
@@ -1082,14 +1082,16 @@ export default {
             },
             markPoint: mp
           }
-          console.log(mp)
+          // console.log(mp)
           let nml = mp.data.filter((r) => r.name == '*')
-          console.log(nml)
+          // console.log(nml)
           for (let mlin of nml) {
-            asery.markLine.data.push({
-              name: mlin.raw['stage'],
-              xAxis: mlin.coord[0]
-            })
+            if (mlin.raw['stage'] == '提醒') {
+              asery.markLine.data.push({
+                name: mlin.raw['stage'],
+                xAxis: mlin.coord[0]
+              })
+            }
           }
           if (this.token == 'demo') {
             asery.name = this.raw_data['mcodes'][idx]
@@ -1110,16 +1112,17 @@ export default {
           if (max > this.firstIdx) {
             this.firstIdx = max
           }
-          if (this.showdrop && !cname.endsWith('指数')) {
+          if (this.showdrop) {
             var dsery = {
               data: ddata,
               type: 'line',
-              name: cname + '_d',
-              areaStyle: {},
+              name: cname + '_回',
+              // areaStyle: {},
               connectNulls: true,
               yAxisIndex: 1
             }
-            // this.axisOption.yAxis[0]["min"] = this.lowest;
+            this.axisOption.yAxis[1]['min'] = -0.4
+            // this.axisOption.legend[0].selected[cname] = true
             this.chartData.series.push(dsery)
           }
           //
@@ -1176,6 +1179,20 @@ export default {
         this.echart = echarts.init(this.$refs.echart)
         this.axisOption.toolbox.feature.myDrop.onclick = () => {
           this.showdrop = !this.showdrop
+          var option = this.echart.getOption()
+          if (!this.showdrop) {
+            for (let as of this.chartData.series) {
+              option.legend[0].selected[as['name']] = true
+            }
+            for (let as of this.chartData.series) {
+              if (as['name'].endsWith('_超额')) {
+                const tlen = as['name'].length
+                let prevname = as['name'].substring(0, tlen - 3)
+                option.legend[0].selected[prevname] = false
+              }
+            }
+          }
+          this.echart.setOption(option, true)
           this.changeDate(this.startdate)
         }
         /**
@@ -1403,6 +1420,18 @@ export default {
       option.dataZoom[0].end = params.end
       option.series = this.chartData.series
       option.yAxis[0].min = this.lowest
+      if (this.showdrop) {
+        for (let as of this.chartData.series) {
+          if (!as['name'].endsWith('_回')) {
+            option.legend[0].selected[as['name']] = !this.showdrop
+          }
+        }
+      }
+      //  else {
+      //   for (let as of this.chartData.series) {
+      //     option.legend[0].selected[as['name']] = true
+      //   }
+      // }
       this.echart.setOption(option, true)
     },
     getstart(vady) {

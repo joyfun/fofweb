@@ -13,6 +13,7 @@
       :data="tableData"
       :max-height="tmaxh"
       tooltip-effect="dark"
+      @filter-change="filterChange"
       @selection-change="handleSelectionChange"
       style="width: 100%; margin-top: 20px"
     >
@@ -33,6 +34,9 @@
         label="基金名称"
         show-overflow-tooltip
       >
+        <template slot="header" slot-scope="scope">
+          <el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+        </template>
         <template slot-scope="scope"
           ><a href="javascript:;" @click="showHis(scope.row)">{{
             scope.row['基金名称']
@@ -40,15 +44,18 @@
         >
       </el-table-column>
       <el-table-column
+        column-key="class_type"
         prop="类型"
         width="60"
         label="类型"
         sortable
         show-overflow-tooltip
         :filters="
-          sysparam.class_type.map((r) => {
-            return { text: r.code, value: r.value }
-          })
+          sysparam.class_type
+            .filter((r) => r.value != '股票主观' && r.value != '灵活对冲')
+            .map((r) => {
+              return { text: r.code, value: r.value }
+            })
         "
         :filter-method="filterClassType"
       >
@@ -56,9 +63,11 @@
       </el-table-column>
       <el-table-column
         prop="子类型"
-        width="80"
+        width="100"
         label="子"
         sortable
+        :filters="subfilters"
+        :filter-method="filterHandler"
         show-overflow-tooltip
       >
         <template slot-scope="scope">{{ scope.row['子类型'] }}</template>
@@ -389,7 +398,9 @@ export default {
   data() {
     return {
       current: {},
+      subfilters: [],
       cur_code: '',
+      search: '',
       dialogVisible: false,
       rowdata: '',
       value2: '',
@@ -406,6 +417,7 @@ export default {
       },
       input: '',
       tableData: [],
+      rawData: [],
       totaltableData: [],
       currentPage: 1,
       PageSize: 10,
@@ -429,9 +441,39 @@ export default {
       handler(n) {
         this.getList()
       }
+    },
+    search: {
+      handler(n) {
+        if (this.search) {
+          this.tableData = this.rawData.filter(
+            (r) => r['基金名称'].indexOf(this.search) > -1
+          )
+        } else {
+          this.tableData = this.rawData
+        }
+      }
     }
   },
   methods: {
+    filterChange(kdict) {
+      console.log(kdict['class_type'])
+      if (kdict['class_type']) {
+        this.subfilters = []
+        let filterdata = this.tableData.filter(
+          (row) => kdict['class_type'].indexOf(row['类型']) > -1
+        )
+        console.log(filterdata)
+        for (let r of filterdata) {
+          if (
+            this.subfilters.filter((s) => s['value'] == r['子类型']).length < 1
+          )
+            this.subfilters.push({
+              'text': r['子类型'],
+              'value': r['子类型']
+            })
+        }
+      }
+    },
     filterClassType(value, row) {
       return row['类型'] === value
     },
@@ -446,7 +488,7 @@ export default {
       var color = number >= 0 ? 'red' : 'green'
       //return '<span style="text-align:right;color='+color+'">'+this.formatMoney(number,4)+'</span>'
       let aret = this.$tools.formatMoney(number * rate, 2)
-      console.log(`${number}__${aret}`)
+      // console.log(`${number}__${aret}`)
       return aret
     },
 
@@ -578,11 +620,11 @@ export default {
         .get(this.url) //axis后面的.get可以省略；
         .then((response) => {
           if (this.url.indexOf('jcompare') > 0) {
-            this.tableData = this.$tools
+            this.rawData = this.$tools
               .pandasToJson(response.data)
               .filter((row) => row['类型'] != '指增')
           } else {
-            this.tableData = this.$tools
+            this.rawData = this.$tools
               .pandasToJson(response.data)
               .sort((a, b) => {
                 var r =
@@ -594,12 +636,28 @@ export default {
                 return r
               })
           }
+          this.tableData = this.rawData
+          this.subfilters = []
+          for (let r of this.tableData) {
+            if (
+              this.subfilters.filter((s) => s['value'] == r['子类型']).length <
+              1
+            )
+              this.subfilters.push({
+                'text': r['子类型'],
+                'value': r['子类型']
+              })
+          }
           this.resizeChart()
           //this.tableData = this.totaltableData;
         })
         .catch((error) => {
           console.log(error)
         })
+    },
+    filterHandler(value, row, column) {
+      const property = column['property']
+      return row[property] === value
     }
     //
   },
