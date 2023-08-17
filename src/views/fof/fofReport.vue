@@ -5,6 +5,7 @@
         <el-button size="small" @click="toggleSelection()">取消选择</el-button>
         <el-button size="small" @click="compare()">对比</el-button>
         <el-button size="small" @click="downFile()">下载业绩对比</el-button>
+        <el-button size="small" @click="doFresh()">刷新报表</el-button>
         <el-button size="small" @click="downNetFile()">下载净值</el-button>
       </div>
     </div>
@@ -405,6 +406,7 @@ export default {
     return {
       current: {},
       subfilters: [],
+      nocache: '',
       cur_code: '',
       search: '',
       dialogVisible: false,
@@ -621,9 +623,13 @@ export default {
     },
 
     //
+    doFresh() {
+      this.nocache = '1'
+      this.getList()
+    },
     getList() {
       axis
-        .get(this.url) //axis后面的.get可以省略；
+        .get(this.url, { params: { 'nocache': this.nocache } }) //axis后面的.get可以省略；
         .then((response) => {
           if (this.url.indexOf('jcompare') > 0) {
             this.rawData = this.$tools
