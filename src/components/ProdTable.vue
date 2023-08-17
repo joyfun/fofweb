@@ -58,9 +58,9 @@
       >
       </el-table-column>
       <el-table-column
-        label="渠道"
+        label="来源"
         sortable
-        prop="product_source"
+        prop="prod_source"
         show-overflow-tooltip
       >
       </el-table-column>
@@ -70,6 +70,8 @@
         prop="source_remark"
         show-overflow-tooltip
       >
+      </el-table-column>
+      <el-table-column label="可投" sortable prop="scale" show-overflow-tooltip>
       </el-table-column>
       <el-table-column label="管理费" sortable prop="fee" show-overflow-tooltip>
       </el-table-column>

@@ -1,11 +1,12 @@
 <template>
   <div>
-    <div class="el-card">
+    <div class="el-card mydiv">
       <vxe-table
         class="mytable-style"
         border
         ref="rankTable"
         height="auto"
+        min-width="400"
         :max-height="tmaxh"
         align="right"
         size="mini"
@@ -58,6 +59,7 @@
           field="类型"
           title="类型"
           align="left"
+          :filters="[]"
           fixed="left"
         ></vxe-column>
         <vxe-column
@@ -233,6 +235,7 @@ export default {
   },
   data() {
     return {
+      clsfilters: [],
       tableData: []
     }
   },
@@ -277,6 +280,22 @@ export default {
       }) //axis后面的.get可以省略；
         .then((response) => {
           this.tableData = this.$tools.pandasToJson(response.data)
+          this.clsfilters = []
+          this.tableData.map((row) => {
+            if (
+              this.clsfilters.filter((ar) => ar['value'] == row['类型'])
+                .length < 1
+            ) {
+              this.clsfilters.push({
+                'value': row['类型'],
+                'label': row['类型']
+              })
+            }
+          })
+          this.$refs.rankTable.setFilter(
+            this.$refs.rankTable.getColumnByField('类型'),
+            this.clsfilters
+          )
           if (this.showDrop) {
             this.$axios({
               url: '/fof/recentDrop',
@@ -337,6 +356,10 @@ export default {
           color: 'green'
         }
       }
+    },
+    filterHandler(value, row, column) {
+      const property = column['property']
+      return row[property] === value
     }
   },
   mounted() {
@@ -349,4 +372,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.mydiv {
+  z-index: 999 !important;
+}
+</style>

@@ -241,9 +241,12 @@ export default {
     getSymbol(data) {
       for (let row of data) {
         let classtype = row['class_type']
-        let found = this.sublist[classtype].filter(
-          (r) => r['code'] == row['code']
-        )
+        let found = false
+        if (this.sublist[classtype]) {
+          found = this.sublist[classtype].filter(
+            (r) => r['code'] == row['code']
+          )
+        }
         if (found && found.length == 1) {
           if (found[0]['idx'] < this.statdict[classtype] / 2) {
             row['name'] = '✔' + row['name']

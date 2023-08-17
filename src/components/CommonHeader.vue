@@ -147,7 +147,7 @@
           prodInfo.fee
         }}</el-descriptions-item>
         <el-descriptions-item label="carry">{{
-          prodInfo.carry
+          prodInfo.carry1
         }}</el-descriptions-item>
         <el-descriptions-item label="业绩报酬计提方式" span="2">{{
           prodInfo.perf_comp
@@ -156,6 +156,92 @@
           prodInfo.other
         }}</el-descriptions-item>
       </el-descriptions>
+    </el-dialog>
+    <el-dialog
+      width="50%"
+      top="50px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="companyVisible"
+    >
+      <el-descriptions :column="3" size="small" border>
+        <el-descriptions-item label="名称">{{
+          curCompany.name
+        }}</el-descriptions-item>
+        <el-descriptions-item label="简称">{{
+          curCompany.short_name
+        }}</el-descriptions-item>
+        <el-descriptions-item label="登记号">{{
+          curCompany.reg_code
+        }}</el-descriptions-item>
+        <el-descriptions-item label="接触状态">{{
+          curCompany.status
+        }}</el-descriptions-item>
+        <el-descriptions-item label="城市">{{
+          curCompany.city
+        }}</el-descriptions-item>
+        <el-descriptions-item label="成立时间">{{
+          curCompany.founded
+        }}</el-descriptions-item>
+        <el-descriptions-item span="3" label="备注">{{
+          curCompany.remark
+        }}</el-descriptions-item>
+        <el-descriptions-item label="主策略">{{
+          curCompany.master_strategy
+        }}</el-descriptions-item>
+        <el-descriptions-item label="负责人">{{
+          curCompany.manager
+        }}</el-descriptions-item>
+        <el-descriptions-item label="管理规模">{{
+          curCompany.scale
+        }}</el-descriptions-item>
+        <el-descriptions-item label="渠道">{{
+          curCompany.channel
+        }}</el-descriptions-item>
+        <el-descriptions-item label="渠道联系人">{{
+          curCompany.channel_man
+        }}</el-descriptions-item>
+        <el-descriptions-item label="渠道联系方式">{{
+          curCompany.channel_contact
+        }}</el-descriptions-item>
+        <el-descriptions-item label="市场经理">{{
+          curCompany.business_man
+        }}</el-descriptions-item>
+        <el-descriptions-item label="代表产品">{{
+          curCompany.product
+        }}</el-descriptions-item>
+        <el-descriptions-item label="对接人">{{
+          curCompany.maintainer
+        }}</el-descriptions-item>
+      </el-descriptions>
+      <vxe-table :data="fileInfos" ref="fileTable" max-height="600">
+        <!-- <vxe-column field="status" width="20" title="状态"></vxe-column> -->
+        <vxe-column field="filename" title="文件名">
+          <template #default="{ row }">
+            <!-- <a :href="'/fof/downdoc?fileid=' + row['fileid']">{{
+                  row['filename']
+                }}</a>showFile -->
+            <a
+              href="#"
+              @click="openFile('/fof/downdoc?fileid=' + row['fileid'])"
+              >{{ row['filename'] }}</a
+            >
+          </template></vxe-column
+        >
+        <vxe-column field="create_time" width="160" title="上传时间"
+          ><template #default="{ row }">
+            {{ row['create_time'] }}
+          </template></vxe-column
+        >
+        <vxe-column field="uploader" width="80" title="上传人"></vxe-column>
+
+        <!-- <vxe-column
+              field="cnt"
+              width="60"
+              title="总个数"
+              align="right"
+            ></vxe-column> -->
+      </vxe-table>
     </el-dialog>
     <el-dialog
       width="60%"
@@ -666,13 +752,14 @@
       <compare-table
         @close="editClose"
         ref="comparetable"
+        style="z-index: 9999"
         :code="cur_code"
         v-if="diagName == 'compareTable'"
       ></compare-table>
       <fund-echart
         @close="editClose"
         ref="hischart"
-        style="height: 500px"
+        style="height: 500px; z-index: 10"
         :code="cur_code"
         :wk="wk"
         :orig="orig"
@@ -880,6 +967,13 @@ export default {
         }
       }
     },
+    companyVisible: {
+      handler(n) {
+        if (n) {
+          this.getCompany(this.cur_company_code)
+        }
+      }
+    },
     formVisible: {
       handler(n) {
         if (n) {
@@ -896,6 +990,9 @@ export default {
     ...mapGetters(['token', 'sysparam', 'usermenu', 'allparam'])
   },
   methods: {
+    openFile(url) {
+      window.open(url)
+    },
     changeSub(row) {
       var id = -1
       for (var ap of this.sysparam.class_type) {
@@ -1029,6 +1126,26 @@ export default {
           }
         })
     },
+    getCompany(company_code) {
+      this.$axios
+        .get('/fof/compinfoby', {
+          params: { reg_code: company_code }
+        })
+        .then((r) => {
+          this.curCompany = r.data
+          this.curCompany['reg_code'] = company_code
+          console.log(this.curCompany)
+        })
+
+      this.$axios
+        .get('/fof/showfile', {
+          params: { 'company_code': company_code }
+        })
+        .then((res) => {
+          this.fileInfos = res.data.filter((file) => file['status'] == '1')
+          // this.$refs.fileTable.loadData(res.data)
+        })
+    },
     submitCompForm(formName) {
       console.log(this.$refs[formName].model)
       axis({
@@ -1143,6 +1260,7 @@ export default {
       orig: 0,
       curAction: {},
       compForm,
+      fileInfos: [],
       curCompany: {},
       rules: {
         code: [{ required: true, message: '请选择基金', trigger: 'blur' }],
@@ -1151,6 +1269,7 @@ export default {
       },
       dialogVisible: false,
       cur_code: '',
+      cur_company_code: '',
       rg: '',
       prodDisabled: false,
       stages: ['预赎回', '待投资', '预入款'],
@@ -1160,6 +1279,7 @@ export default {
       resetVisible: false,
       buyVisible: false,
       infoVisible: false,
+      companyVisible: false,
       formVisible: false,
       auditVisible: false,
       userImg: require('../assets/images/user.png'),
@@ -1219,6 +1339,11 @@ export default {
     Bus.$on('showInfo', (arg) => {
       this.cur_code = arg['cur_code']
       this.infoVisible = true
+      console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
+    })
+    Bus.$on('showCompany', (arg) => {
+      this.cur_company_code = arg['company_code']
+      this.companyVisible = true
       console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
     })
     Bus.$on('editInfo', (arg) => {

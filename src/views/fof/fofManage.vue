@@ -100,6 +100,7 @@
         <el-button type="primary" @click="getList" style="margin-left: 10px"
           >搜索</el-button
         >
+        <!-- {{ days['quarter_day'] }} -->
       </div>
     </div>
     <!-- -->
@@ -262,7 +263,11 @@
         </template>
       </el-table-column>
       <el-table-column prop="company" label="公司" show-overflow-tooltip>
-        <template slot-scope="scope">{{ scope.row.company }}</template>
+        <template slot-scope="scope">
+          <a href="javascript:;" @click="showCompany(scope.row)">{{
+            scope.row.company
+          }}</a></template
+        >
       </el-table-column>
       <el-table-column
         prop="class_type"
@@ -320,7 +325,11 @@
         sortable
         show-overflow-tooltip
       >
-        <template slot-scope="scope">{{ scope.row.latest_date }}</template>
+        <template slot-scope="scope"
+          ><span :class="lateClass(scope.row)">{{
+            scope.row.latest_date
+          }}</span></template
+        >
       </el-table-column>
       <el-table-column
         prop="create_time"
@@ -522,10 +531,6 @@
       :close-on-press-escape="false"
       :visible.sync="tableVisible"
     >
-      <el-button @click="downFile('/fof/jreport_down')" size="small"
-        >下载数据</el-button
-      >
-      <el-button @click="downPDF('comparediv')" size="small">导出PDF</el-button>
       <div ref="comparediv">
         <!-- <report-table  ref="compdata"  :titles="current.name"   :tableData="compData"  ></report-table> -->
         <compare-table
@@ -533,6 +538,13 @@
           :titles="current.name"
           :code="selcode"
         ></compare-table>
+
+        <el-button @click="downFile('/fof/jreport_down')" size="small"
+          >下载数据</el-button
+        >
+        <el-button @click="downPDF('comparediv')" size="small"
+          >导出PDF</el-button
+        >
         <fund-echart
           ref="hischart1"
           :titles="current.name"
@@ -603,6 +615,7 @@
               v-for="(item, idx) in sysparam.stage"
               :label="item.value"
             ></el-radio>
+            <el-radio label="部分赎回"></el-radio>
             <el-radio label="分红"></el-radio>
             <el-radio label="提醒"></el-radio>
           </el-radio-group>
@@ -781,6 +794,37 @@
               'type': [{ required: true, message: '渠道必选', trigger: 'blur' }]
             }"
           >
+            <el-row>
+              <el-col :span="12">
+                <el-form-item prop="code" label="备案号">
+                  <el-input v-model="current.code"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item
+                  v-if="curCompany.company_code"
+                  :prop="'name'"
+                  :label="'所属公司'"
+                  ><el-input v-model="current.company"></el-input>
+                </el-form-item>
+                <el-form-item v-else label="所属公司">
+                  <el-select
+                    v-model="org_id"
+                    placeholder="请选择"
+                    filterable
+                    remote
+                    :remote-method="remoteMethod"
+                  >
+                    <el-option
+                      v-for="item in fcompanys"
+                      :key="item.org_id"
+                      :label="item.org_full_name"
+                      :value="item.org_id"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item> </el-col
+            ></el-row>
             <template v-for="(row, index) in cForm">
               <el-row :key="index" v-show="index % 2 == 0">
                 <el-col :span="12">
@@ -1075,6 +1119,37 @@
             ></vxe-column>
           </vxe-table>
         </el-tab-pane>
+        <el-tab-pane
+          ><span slot="label"><i class="el-icon-date"></i> 相关资料</span>
+          <vxe-table :data="fileInfos" ref="fileTable" max-height="600">
+            <!-- <vxe-column field="status" width="20" title="状态"></vxe-column> -->
+            <vxe-column field="filename" title="文件名">
+              <template #default="{ row }">
+                <!-- <a :href="'/fof/downdoc?fileid=' + row['fileid']">{{
+                  row['filename']
+                }}</a>showFile -->
+                <a
+                  href="#"
+                  @click="openFile('/fof/downdoc?fileid=' + row['fileid'])"
+                  >{{ row['filename'] }}</a
+                >
+              </template></vxe-column
+            >
+            <vxe-column field="create_time" width="160" title="上传时间"
+              ><template #default="{ row }">
+                {{ row['create_time'] }}
+              </template></vxe-column
+            >
+            <vxe-column field="uploader" width="60" title="上传人"></vxe-column>
+
+            <!-- <vxe-column
+              field="cnt"
+              width="60"
+              title="总个数"
+              align="right"
+            ></vxe-column> -->
+          </vxe-table></el-tab-pane
+        >
       </el-tabs>
     </el-dialog>
 
@@ -1088,6 +1163,23 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="confirmVisible = false">取 消</el-button>
         <el-button type="primary" @click="delFund()">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="提示"
+      :visible.sync="codeConfirmVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <span
+        >产品代码
+        <font style="color: red">{{ current.code }} </font>不是常见私募代码
+        确定保存?</span
+      >
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="codeConfirmVisible = false">取消</el-button>
+        <el-button ype="primary" @click="forceSaveCode">确定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -1121,8 +1213,8 @@ import Vue from 'vue'
 
 import FundCorr from '../../components/FundCorr.vue'
 const cForm0 = [
-  { tilte: '备案号', dataIndex: 'code', required: 'true' },
-  { tilte: '所属公司', dataIndex: 'company' },
+  // { tilte: '备案号', dataIndex: 'code', required: 'true' },
+  // { tilte: '所属公司', dataIndex: 'company' },
   { tilte: '运作时间', dataIndex: 'founded' },
   { tilte: '产品简称', dataIndex: 'short_name', required: 'true' },
   { tilte: '可投状态', dataIndex: 'scale', param: 'scale' },
@@ -1201,14 +1293,25 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sysparam', 'token', 'usermenu', 'allparam', 'sources'])
+    ...mapGetters([
+      'sysparam',
+      'token',
+      'usermenu',
+      'allparam',
+      'sources',
+      'days'
+    ])
   },
   data() {
     return {
       cForm: [],
+      fcompanys: [],
+      codeConfirmVisible: false,
       actiondate: '',
       compForm,
+      fileInfos: [],
       fcompanys: [],
+      org_id: '',
       investList: [],
       showDiff: true,
       selcode: '',
@@ -1226,6 +1329,7 @@ export default {
       uploadUrl: '/fof/upload',
       diagName: '',
       dialogVisible: false,
+      forceCode: false,
       confirmVisible: false,
       corrVisible: false,
       formVisible: false,
@@ -1277,9 +1381,50 @@ export default {
       handler(n) {
         this.showNetVals()
       }
+    },
+    org_id: {
+      handler(n) {
+        let arow = this.fcompanys.filter((r) => r.org_id == n)
+        if (arow && arow.length == 1) {
+          this.curCompany = JSON.parse(JSON.stringify(arow[0]))
+          this.current['company'] = this.curCompany['org_name']
+          this.current['company_code'] = this.curCompany['reg_code']
+        }
+        // 初始化操作
+      }
     }
   },
   methods: {
+    remoteMethod(query) {
+      if (query && query.length > 1) {
+        axis({
+          url: '/fof/compinfo',
+          method: 'GET',
+          params: { 'qry': query }
+        }).then((response) => {
+          this.fcompanys = response.data
+        })
+      }
+    },
+    loadFiles(company_code) {
+      // console.log(this.curCompany)
+      axis({
+        method: 'get',
+        url: '/fof/showfile', // 请求地址
+        params: { 'company_code': company_code }, // 参数
+        responseType: 'json' // 表明返回服务器返回的数据类型
+      }).then((res) => {
+        this.fileInfos = res.data.filter((file) => file['status'] == '1')
+        // this.$refs.fileTable.loadData(res.data)
+      })
+    },
+    openFile(url) {
+      window.open(url)
+    },
+    forceSaveCode() {
+      this.codeConfirmVisible = false
+      this.forceCode = true
+    },
     reCrawl() {
       axis
         .get('/fof/reCrawl', { params: { code: this.current.code } })
@@ -1360,6 +1505,7 @@ export default {
       this.changeSub(this.current.class_type)
       this.current['sub_type'] = sub_type
       this.formVisible = true
+      this.loadFiles(this.current.company_code)
       this.$axios
         .get('/fof/compinfoby', {
           params: { reg_code: this.current.company_code }
@@ -1395,6 +1541,16 @@ export default {
     submitForm(formName) {
       if (this.current.type && this.current.class_type) {
         this.current.code = this.current.code.trim()
+        let codecorrect = false
+        if (!this.forceCode) {
+          if (/S[A-Z0-9]{5}$/.test(this.current.code)) {
+            codecorrect = true
+            this.codeConfirmVisible = false
+          } else {
+            this.codeConfirmVisible = true
+            return
+          }
+        }
         this.current.user = this.token
         if (
           (this.current.type == 1 || this.current.type == 2) &
@@ -1421,6 +1577,7 @@ export default {
               if (response.data['status'] == 'success') {
                 this.getList(this.filter)
                 this.formVisible = false
+                this.forceCode = false
               }
             },
             (err) => {
@@ -1611,11 +1768,32 @@ export default {
       //return '<span style="text-align:right;color='+color+'">'+this.formatMoney(number,4)+'</span>'
       return this.$tools.formatMoney(number * rate, 3)
     },
+    lateClass(row) {
+      var clr = row.latest_date < this.days['quarter_day'] ? 'span-green' : ''
+      // let ret = "color:'" + clr + "'"
+      return clr
+    },
+    showLate(row) {
+      // console.log(this.days['quarter_day'])
+      var clr = row.latest_date < this.days['quarter_day'] ? 'green' : ''
+      let ret =
+        '<span style="text-align:right;color:\'' +
+        clr +
+        '\'">' +
+        row.latest_date +
+        '</span>'
+      return ret
+    },
     showHis(row) {
       Bus.$emit('showChart', {
         cur_code: row.code,
         wk: '1',
         diagName: 'compareTable'
+      })
+    },
+    showCompany(row) {
+      Bus.$emit('showCompany', {
+        company_code: row.company_code
       })
     },
     showRank() {
@@ -2095,5 +2273,8 @@ export default {
 <style lang="scss" scoped>
 .el-dialog__body {
   padding: 10px 10px;
+}
+.span-green {
+  color: green;
 }
 </style>

@@ -50,13 +50,7 @@
         label="类型"
         sortable
         show-overflow-tooltip
-        :filters="
-          sysparam.class_type
-            .filter((r) => r.value != '股票主观' && r.value != '灵活对冲')
-            .map((r) => {
-              return { text: r.code, value: r.value }
-            })
-        "
+        :filters="cls_filter"
         :filter-method="filterClassType"
       >
         <template slot-scope="scope">{{ scope.row['类型'] }}</template>
@@ -97,6 +91,7 @@
         align="right"
         prop="净值日期"
         width="100"
+        sortable
         label="净值日期"
         show-overflow-tooltip
       >
@@ -387,7 +382,18 @@ export default {
     FundEchart
   },
   computed: {
-    ...mapGetters(['class_order', 'sysparam'])
+    ...mapGetters(['class_order', 'sysparam']),
+    cls_filter: {
+      get() {
+        let filters = this.sysparam.class_type
+          .filter((r) => r.value != '股票主观' && r.value != '灵活对冲')
+          .map((r) => {
+            return { text: r.code, value: r.value }
+          })
+        filters.splice(2, 0, { text: '超额', value: '超额' })
+        return filters
+      }
+    }
   },
   props: {
     url: {
@@ -638,7 +644,17 @@ export default {
           }
           this.tableData = this.rawData
           this.subfilters = []
+          // this.cls_filter = []
           for (let r of this.tableData) {
+            // if (
+            //   this.cls_filter.filter((ar) => ar['value'] == row['类型'])
+            //     .length < 1
+            // ) {
+            //   this.cls_filter.push({
+            //     'value': row['类型'],
+            //     'text': row['类型']
+            //   })
+            // }
             if (
               this.subfilters.filter((s) => s['value'] == r['子类型']).length <
               1

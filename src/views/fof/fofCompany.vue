@@ -318,6 +318,66 @@
             :full="true"
           ></prod-table>
         </el-tab-pane>
+        <el-tab-pane
+          ><span slot="label"><i class="el-icon-date"></i> 相关资料</span>
+          <el-col :span="16">
+            <el-card>
+              <vxe-table :data="fileInfos" ref="fileTable" max-height="600">
+                <!-- <vxe-column field="status" width="20" title="状态"></vxe-column> -->
+                <vxe-column field="filename" title="文件名">
+                  <template #default="{ row }">
+                    <a href="#" @click="openFile(row['fileid'])">{{
+                      row['filename']
+                    }}</a>
+                    <vxe-button
+                      type="text"
+                      @click="deleteFile(row['fileid'])"
+                      icon="vxe-icon-delete"
+                      style="color: red"
+                    ></vxe-button> </template
+                ></vxe-column>
+                <vxe-column field="create_time" width="160" title="上传时间"
+                  ><template #default="{ row }">
+                    {{ row['create_time'] }}
+                  </template></vxe-column
+                >
+                <vxe-column
+                  field="uploader"
+                  width="80"
+                  title="上传人"
+                ></vxe-column>
+
+                <!-- <vxe-column
+              field="cnt"
+              width="60"
+              title="总个数"
+              align="right"
+            ></vxe-column> -->
+              </vxe-table>
+            </el-card>
+          </el-col>
+          <el-col :span="8">
+            <el-card>
+              <el-upload
+                class="upload-demo"
+                ref="fuper"
+                drag
+                :data="{
+                  'uploader': token,
+                  'company_code': curCompany.reg_code
+                }"
+                :on-success="uploadDone"
+                action="fof/upCompanyFile"
+                multiple
+                ><i class="el-icon-upload"></i>
+                <div class="el-upload__text">
+                  将文件拖到此处，或<em>点击上传</em>
+                </div>
+                <div class="el-upload__tip" slot="tip">文档大小不超过100M</div>
+              </el-upload>
+            </el-card></el-col
+          >
+        </el-tab-pane>
       </el-tabs>
     </el-dialog>
     <!-- <el-dialog
@@ -391,6 +451,7 @@ export default {
         { value: '0', label: '女' }
       ],
       cForm,
+      fileInfos: [],
       filter: {},
       formData: {
         name: '',
@@ -575,6 +636,38 @@ export default {
     }
   },
   methods: {
+    openFile(fileid) {
+      window.open('/fof/downdoc?fileid=' + fileid)
+    },
+    deleteFile(fileid) {
+      console.log(fileid)
+      axis({
+        method: 'post',
+        url: '/fof/delfile', // 请求地址
+        data: { 'company_code': this.curCompany.reg_code, 'fileid': fileid }, // 参数
+        responseType: 'json' // 表明返回服务器返回的数据类型
+      }).then((res) => {
+        // this.fileInfos = res.data
+        // this.$refs.fileTable.loadData(res.data)
+        this.loadFiles()
+      })
+    },
+    uploadDone(response, file, fileList) {
+      console.log('#### upload Done')
+      this.loadFiles()
+    },
+    loadFiles() {
+      // console.log(this.curCompany)
+      axis({
+        method: 'get',
+        url: '/fof/showfile', // 请求地址
+        params: { 'company_code': this.curCompany.reg_code }, // 参数
+        responseType: 'json' // 表明返回服务器返回的数据类型
+      }).then((res) => {
+        this.fileInfos = res.data.filter((file) => file['status'] == '1')
+        // this.$refs.fileTable.loadData(res.data)
+      })
+    },
     filterResult(alldata) {
       let ret = alldata
       console.log(this.formData)
@@ -688,7 +781,9 @@ export default {
       this.current = JSON.parse(JSON.stringify(row))
       this.curCompany = row
       this.dialogVisible = true
+      this.loadFiles()
       this.searchProd(row)
+      this.$refs.fuper.clearFiles()
     },
     addCompany() {
       this.curCompany = {}
