@@ -52,7 +52,7 @@
       :scroll-y="{ oSize: 500 }"
       :sort-config="{
         trigger: 'cell',
-        defaultSort: { field: 'rank', order: 'asc' },
+        defaultSort: { field: 'hydata_yeaily_return', order: 'desc' },
         orders: ['desc', 'asc', null]
       }"
       :data="tableList"
@@ -275,7 +275,7 @@
           <vxe-column field="fee" width="60" title="fee"></vxe-column>
           <vxe-column
             align="left"
-            field="carry"
+            field="carry1"
             width="160"
             title="carry"
           ></vxe-column>

@@ -57,7 +57,7 @@
       :scroll-y="{ oSize: 500 }"
       :sort-config="{
         trigger: 'cell',
-        defaultSort: { field: 'rank', order: 'asc' },
+        defaultSort: { field: 'hydata_yeaily_return', order: 'desc' },
         orders: ['desc', 'asc', null]
       }"
       :data="tableList"
