@@ -28,7 +28,6 @@
       <vxe-colgroup title="待尽调产品" align="center">
         <vxe-column
           :key="af"
-          :width="160"
           sortable
           align="left"
           v-for="af of tps"
@@ -403,7 +402,15 @@ export default {
           for (var tp of this.tps) {
             this.sublist[tp] = res.data
               .filter((r) => r.class_type == tp)
-              .sort((a, b) => b['yr'] - a['yr'])
+              .sort((a, b) => {
+                if (a['rankr'] == null) {
+                  return 1
+                }
+                if (b['rankr'] == null) {
+                  return -1
+                }
+                return parseFloat(a['rankr']) - parseFloat(b['rankr'])
+              })
             if (this.sublist[tp].length > maxlen) {
               maxlen = this.sublist[tp].length
             }
