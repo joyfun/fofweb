@@ -45,6 +45,39 @@
         >
       </el-table-column>
       <el-table-column
+        prop="code"
+        width="30"
+        label="信息"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+          <!-- <el-button
+            @click.native.prevent="showFundHis(scope.row)"
+            type="text"
+            size="small"
+            ><i class="el-icon-s-marketing"></i
+          ></el-button>
+          <el-button
+            @click.native.prevent="showBaseHis(scope.row)"
+            type="text"
+            size="small"
+            ><i class="el-icon-s-order"></i
+          ></el-button>
+          <el-button
+            @click.native.prevent="showStatHis(scope.row)"
+            type="text"
+            size="small"
+            ><i class="el-icon-s-data"></i
+          ></el-button> -->
+          <el-button
+            @click.native.prevent="showBaseInfo(scope.row)"
+            type="text"
+            size="small"
+            ><i class="el-icon-info"></i
+          ></el-button>
+        </template>
+      </el-table-column>
+      <el-table-column
         column-key="class_type"
         prop="类型"
         width="60"
@@ -409,6 +442,7 @@ export default {
       nocache: '',
       cur_code: '',
       search: '',
+      range: 'quarter',
       dialogVisible: false,
       rowdata: '',
       value2: '',
@@ -463,6 +497,46 @@ export default {
     }
   },
   methods: {
+    showFundHis(row) {
+      let acode = row.code
+      if (acode.endsWith('_E')) {
+        acode = acode.substring(0, 6)
+      }
+      Bus.$emit('showChart', {
+        cur_code: acode,
+        diagName: 'hisChart',
+        wk: '1'
+      })
+    },
+    showBaseHis(row) {
+      let acode = row.code
+      if (acode.endsWith('_E')) {
+        acode = acode.substring(0, 6)
+      }
+      Bus.$emit('showChart', {
+        cur_code: acode,
+        rg: this.range,
+        diagName: 'baseChart'
+      })
+    },
+    showStatHis(row) {
+      let acode = row.code
+      if (acode.endsWith('_E')) {
+        acode = acode.substring(0, 6)
+      }
+      Bus.$emit('showChart', {
+        cur_code: acode,
+        rg: this.range,
+        diagName: 'statChart'
+      })
+    },
+    showBaseInfo(row) {
+      let acode = row.code
+      if (acode.endsWith('_E')) {
+        acode = acode.substring(0, 6)
+      }
+      Bus.$emit('showInfo', { cur_code: acode })
+    },
     filterChange(kdict) {
       console.log(kdict['class_type'])
       if (kdict['class_type']) {
