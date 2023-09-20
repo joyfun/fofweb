@@ -802,7 +802,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item
-                  v-if="curCompany.company_code"
+                  v-if="current.company_code"
                   :prop="'name'"
                   :label="'所属公司'"
                   ><el-input v-model="current.company"></el-input>
@@ -1254,8 +1254,9 @@ const cForm1 = [
   { tilte: '止损', dataIndex: 'lost' },
   { tilte: '其他关键条款', dataIndex: 'other' },
   { tilte: '预警', dataIndex: 'alarm' },
-  { tilte: '备注', dataIndex: 'remark', type: 'textarea' },
-  { tilte: '已投基金对标', dataIndex: 'compare' }
+  { tilte: '开放日', dataIndex: 'open_info' },
+  { tilte: '已投基金对标', dataIndex: 'compare' },
+  { tilte: '备注', dataIndex: 'remark', type: 'textarea' }
 ]
 const compForm = [
   { tilte: '简称', dataIndex: 'short_name' },
