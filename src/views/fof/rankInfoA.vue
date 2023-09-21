@@ -624,7 +624,7 @@ const class_dict = {
   cta0: ['CTA'],
   cta1: ['CTA'],
   中性: ['中性'],
-  指增: ['指增'],
+  指增: ['指增', '可转债'],
   套利: ['套利', '可转债'],
   期权: ['期权'],
   混合: ['混合'],
@@ -1298,10 +1298,17 @@ export default {
         ntype = '指增'
       }
       let clss = class_dict[ntype]
+      console.log(clss)
       // let sels=this.$refs.rankTable.getCheckboxRecords()
       // if(sels.length==0){
       //   sels=this.tableList
       // }
+      console.log(
+        this.foflist.filter(
+          (row) =>
+            this.holding.filter((hd) => hd['b_code'] == row['code']).length > 0
+        )
+      )
       let holds = this.foflist
         .filter(
           (row) =>
@@ -1313,6 +1320,11 @@ export default {
         )
         .filter((row) => clss.indexOf(row['class_type']) > -1)
         .map((row) => row['code'])
+      if (['中性', '混合'].indexOf(ntype) > -1 && holds.indexOf('ST8876') < 0) {
+        holds.push('ST8876')
+      }
+
+      console.log(holds)
       let sels = this.multipleSelection.concat(holds)
       Bus.$emit('showChart', {
         cur_code: sels.join(','),
