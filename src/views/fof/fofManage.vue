@@ -5,9 +5,9 @@
         <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
         <el-button size="small" @click="toggleSelection()">取消选择</el-button>
         <el-button size="small" @click="addInfo()">添加</el-button>
-        <el-button size="small" @click="allrun()">对比</el-button>
+        <el-button size="small" @click="compare()">对比</el-button>
         <el-button size="small" @click="showcorr()">相关性</el-button>
-        <el-button size="small" @click="compare()">业绩对标</el-button>
+        <!-- <el-button size="small" @click="compare()">业绩对标</el-button> -->
         <el-button
           v-if="usermenu.indexOf('rank-btn') > -1"
           size="small"
