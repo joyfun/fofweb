@@ -155,6 +155,9 @@
         <el-descriptions-item label="其他关键条款">{{
           prodInfo.other
         }}</el-descriptions-item>
+        <el-descriptions-item label="开放日">{{
+          prodInfo.open_info
+        }}</el-descriptions-item>
       </el-descriptions>
     </el-dialog>
     <el-dialog
@@ -725,6 +728,12 @@
       :close-on-press-escape="false"
       :visible.sync="dialogVisible"
     >
+      <iframe
+        :src="cur_code"
+        v-if="diagName == 'iframe'"
+        width="100%"
+        style="height: 600px"
+      ></iframe>
       <stat-chart
         @close="editClose"
         ref="statchart"
