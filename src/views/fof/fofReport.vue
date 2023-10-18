@@ -37,6 +37,7 @@
       >
         <template slot="header" slot-scope="scope">
           <el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+          <!-- <el-button size="small" @click="showHelp()">?说明</el-button> -->
         </template>
         <template slot-scope="scope"
           ><a href="javascript:;" @click="showHis(scope.row)">{{
@@ -50,6 +51,9 @@
         label="信息"
         show-overflow-tooltip
       >
+        <template slot="header" slot-scope="scope">
+          <a target="_blank" @click="showHelp()">?</a>
+        </template>
         <template slot-scope="scope">
           <!-- <el-button
             @click.native.prevent="showFundHis(scope.row)"
@@ -497,6 +501,16 @@ export default {
     }
   },
   methods: {
+    showHelp() {
+      Bus.$emit('showChart', {
+        cur_code:
+          'http://192.168.0.21:4999/web/#/p/8f5ce9a1813e060d275b1fb454c227cd',
+        diagName: 'iframe'
+      })
+      // window.open(
+      //   'http://192.168.0.21:4999/web/#/p/8f5ce9a1813e060d275b1fb454c227cd'
+      // )
+    },
     showFundHis(row) {
       let acode = row.code
       if (acode.endsWith('_E')) {
@@ -717,7 +731,8 @@ export default {
                   this.class_order.indexOf(a['类型']) -
                   this.class_order.indexOf(b['类型'])
                 if (r == 0) {
-                  return b['当月收益'] - a['当月收益']
+                  //   return b['当月收益'] - a['当月收益']
+                  return b['基金名称'].localeCompare(a['基金名称'])
                 }
                 return r
               })
