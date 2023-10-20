@@ -51,7 +51,7 @@ import { mapGetters } from 'vuex'
 export default {
   components: {},
   computed: {
-    ...mapGetters(['sysparam']),
+    ...mapGetters(['sysparam', 'token']),
     compares: {
       get() {
         //   console.log(this.filter.class_type)
@@ -136,7 +136,7 @@ export default {
     genWeekly() {
       this.$axios({
         url: '/fof/action',
-        data: { 'code': 'weekly', 'fof': this.cur_fof }, //
+        data: { 'code': 'weekly', 'fof': this.cur_fof, 'user': this.token }, //
         method: 'POST'
       }).then((response) => {
         console.log(response.data)
@@ -159,7 +159,7 @@ export default {
     doaction() {
       this.$axios({
         url: '/fof/action',
-        data: { 'code': 'update_cur' }, //
+        data: { 'code': 'update_cur', 'user': this.token }, //
         method: 'POST'
       }).then((response) => {
         console.log(response.data)
@@ -168,7 +168,7 @@ export default {
     sendmail() {
       this.$axios({
         url: '/fof/action',
-        data: { 'code': 'sendmail' }, //
+        data: { 'code': 'sendmail', 'user': this.token }, //
         method: 'POST'
       }).then((response) => {
         console.log(response.data)
@@ -177,7 +177,7 @@ export default {
     fetchmail() {
       this.$axios({
         url: '/fof/action',
-        data: { 'code': 'fetchmail' }, //
+        data: { 'code': 'fetchmail', 'user': this.token }, //
         method: 'POST'
       }).then((response) => {
         console.log(response.data)
@@ -186,7 +186,7 @@ export default {
     calcWeekly() {
       this.$axios({
         url: '/fof/action',
-        data: { 'code': 'calcWeekly' }, //
+        data: { 'code': 'calcWeekly', 'user': this.token }, //
         method: 'POST'
       }).then((response) => {
         console.log(response.data)
