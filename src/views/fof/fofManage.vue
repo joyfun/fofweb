@@ -655,6 +655,13 @@
       :visible.sync="checkVisible"
     >
       <el-button type="primary" @click="reCrawl">重新爬取</el-button>
+      <el-button
+        v-if="current.other_stage != '正常'"
+        type="primary"
+        @click="markOk"
+        >标记正常</el-button
+      >
+
       <vxe-table
         border
         ref="crawInfo"
@@ -742,6 +749,10 @@
             >
             </vxe-column>
           </vxe-table>
+        </el-tab-pane>
+        <el-tab-pane>
+          <span slot="label">异常信息</span>
+          <alarm-table :code="current.code"></alarm-table>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -1200,6 +1211,8 @@ import AuditLog from '../../components/AuditLog.vue'
 import ConcatLog from '../../components/ConcatLog.vue'
 import Bus from '@/store/bus.js'
 import HisTable from '../../components/HisTable.vue'
+import AlarmTable from '../../components/AlarmTable.vue'
+
 import RankTable from '../../components/RankTable.vue'
 import FofSimulate from '../../components/FofSimulate'
 import WadForm from '../../components/WadForm'
@@ -1276,6 +1289,7 @@ export default {
   components: {
     FundEchart,
     HisTable,
+    AlarmTable,
     RankTable,
     AuditLog,
     ConcatLog,
@@ -1426,6 +1440,7 @@ export default {
       this.codeConfirmVisible = false
       this.forceCode = true
     },
+    markOk() {},
     reCrawl() {
       axis
         .get('/fof/reCrawl', { params: { code: this.current.code } })
@@ -1793,9 +1808,22 @@ export default {
       })
     },
     showCompany(row) {
-      Bus.$emit('showCompany', {
-        company_code: row.company_code
+      axis({
+        url: '/fof/list',
+        method: 'GET',
+        params: { 'company_code': row.company_code }
+      }).then((response) => {
+        this.foflist = response.data
+        Bus.$emit('showCompany', {
+          company_code: row.company_code,
+          'prodlist': response.data
+        })
       })
+
+      // Bus.$emit('showCompany', {
+      //   company_code: row.company_code
+      //   foflist:
+      // })
     },
     showRank() {
       this.cur_code = ''
@@ -1921,7 +1949,7 @@ export default {
     viewHis(row) {
       Bus.$emit('showChart', {
         cur_code: row.code,
-        diagName: 'hisTable',
+        diagName: 'hisTable', //hisTable
         temp: -1
       })
     },

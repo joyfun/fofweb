@@ -167,84 +167,97 @@
       :close-on-press-escape="false"
       :visible.sync="companyVisible"
     >
-      <el-descriptions :column="3" size="small" border>
-        <el-descriptions-item label="名称">{{
-          curCompany.name
-        }}</el-descriptions-item>
-        <el-descriptions-item label="简称">{{
-          curCompany.short_name
-        }}</el-descriptions-item>
-        <el-descriptions-item label="登记号">{{
-          curCompany.reg_code
-        }}</el-descriptions-item>
-        <el-descriptions-item label="接触状态">{{
-          curCompany.status
-        }}</el-descriptions-item>
-        <el-descriptions-item label="城市">{{
-          curCompany.city
-        }}</el-descriptions-item>
-        <el-descriptions-item label="成立时间">{{
-          curCompany.founded
-        }}</el-descriptions-item>
-        <el-descriptions-item span="3" label="备注">{{
-          curCompany.remark
-        }}</el-descriptions-item>
-        <el-descriptions-item label="主策略">{{
-          curCompany.master_strategy
-        }}</el-descriptions-item>
-        <el-descriptions-item label="负责人">{{
-          curCompany.manager
-        }}</el-descriptions-item>
-        <el-descriptions-item label="管理规模">{{
-          curCompany.scale
-        }}</el-descriptions-item>
-        <el-descriptions-item label="渠道">{{
-          curCompany.channel
-        }}</el-descriptions-item>
-        <el-descriptions-item label="渠道联系人">{{
-          curCompany.channel_man
-        }}</el-descriptions-item>
-        <el-descriptions-item label="渠道联系方式">{{
-          curCompany.channel_contact
-        }}</el-descriptions-item>
-        <el-descriptions-item label="市场经理">{{
-          curCompany.business_man
-        }}</el-descriptions-item>
-        <el-descriptions-item label="代表产品">{{
-          curCompany.product
-        }}</el-descriptions-item>
-        <el-descriptions-item label="对接人">{{
-          curCompany.maintainer
-        }}</el-descriptions-item>
-      </el-descriptions>
-      <vxe-table :data="fileInfos" ref="fileTable" max-height="600">
-        <!-- <vxe-column field="status" width="20" title="状态"></vxe-column> -->
-        <vxe-column field="filename" title="文件名">
-          <template #default="{ row }">
-            <!-- <a :href="'/fof/downdoc?fileid=' + row['fileid']">{{
+      <el-tabs type="border-card">
+        <el-tab-pane
+          ><span slot="label"><i class="el-icon-date"></i> 公司信息</span>
+
+          <el-descriptions :column="3" size="small" border>
+            <el-descriptions-item label="名称">{{
+              curCompany.name
+            }}</el-descriptions-item>
+            <el-descriptions-item label="简称">{{
+              curCompany.short_name
+            }}</el-descriptions-item>
+            <el-descriptions-item label="登记号">{{
+              curCompany.reg_code
+            }}</el-descriptions-item>
+            <el-descriptions-item label="接触状态">{{
+              curCompany.status
+            }}</el-descriptions-item>
+            <el-descriptions-item label="城市">{{
+              curCompany.city
+            }}</el-descriptions-item>
+            <el-descriptions-item label="成立时间">{{
+              curCompany.founded
+            }}</el-descriptions-item>
+            <el-descriptions-item span="3" label="备注">{{
+              curCompany.remark
+            }}</el-descriptions-item>
+            <el-descriptions-item label="主策略">{{
+              curCompany.master_strategy
+            }}</el-descriptions-item>
+            <el-descriptions-item label="负责人">{{
+              curCompany.manager
+            }}</el-descriptions-item>
+            <el-descriptions-item label="管理规模">{{
+              curCompany.scale
+            }}</el-descriptions-item>
+            <el-descriptions-item label="渠道">{{
+              curCompany.channel
+            }}</el-descriptions-item>
+            <el-descriptions-item label="渠道联系人">{{
+              curCompany.channel_man
+            }}</el-descriptions-item>
+            <el-descriptions-item label="渠道联系方式">{{
+              curCompany.channel_contact
+            }}</el-descriptions-item>
+            <el-descriptions-item label="市场经理">{{
+              curCompany.business_man
+            }}</el-descriptions-item>
+            <el-descriptions-item label="代表产品">{{
+              curCompany.product
+            }}</el-descriptions-item>
+            <el-descriptions-item label="对接人">{{
+              curCompany.maintainer
+            }}</el-descriptions-item>
+          </el-descriptions>
+          <vxe-table :data="fileInfos" ref="fileTable" max-height="600">
+            <!-- <vxe-column field="status" width="20" title="状态"></vxe-column> -->
+            <vxe-column field="filename" title="文件名">
+              <template #default="{ row }">
+                <!-- <a :href="'/fof/downdoc?fileid=' + row['fileid']">{{
                   row['filename']
                 }}</a>showFile -->
-            <a
-              href="#"
-              @click="openFile('/fof/downdoc?fileid=' + row['fileid'])"
-              >{{ row['filename'] }}</a
+                <a
+                  href="#"
+                  @click="openFile('/fof/downdoc?fileid=' + row['fileid'])"
+                  >{{ row['filename'] }}</a
+                >
+              </template></vxe-column
             >
-          </template></vxe-column
-        >
-        <vxe-column field="create_time" width="160" title="上传时间"
-          ><template #default="{ row }">
-            {{ row['create_time'] }}
-          </template></vxe-column
-        >
-        <vxe-column field="uploader" width="80" title="上传人"></vxe-column>
+            <vxe-column field="create_time" width="160" title="上传时间"
+              ><template #default="{ row }">
+                {{ row['create_time'] }}
+              </template></vxe-column
+            >
+            <vxe-column field="uploader" width="80" title="上传人"></vxe-column>
 
-        <!-- <vxe-column
+            <!-- <vxe-column
               field="cnt"
               width="60"
               title="总个数"
               align="right"
             ></vxe-column> -->
-      </vxe-table>
+          </vxe-table>
+        </el-tab-pane>
+        <el-tab-pane
+          ><span slot="label"><i class="el-icon-date"></i> 产品信息</span>
+          <prod-table
+            ref="compProdtable"
+            :foflist="prodlist"
+            :canEdit="false"
+          ></prod-table></el-tab-pane
+      ></el-tabs>
     </el-dialog>
     <el-dialog
       width="60%"
@@ -774,6 +787,7 @@
         :orig="orig"
         v-if="diagName == 'hisChart' || diagName == 'compareTable'"
       ></fund-echart>
+      <!-- -->
       <his-table
         @close="editClose"
         ref="histable"
@@ -782,6 +796,14 @@
         :code="cur_code"
         v-if="diagName == 'hisTable'"
       ></his-table>
+      <alarm-table
+        @close="editClose"
+        ref="alarmtable"
+        style="height: 600px"
+        :temp="temp"
+        :code="cur_code"
+        v-if="diagName == 'alarmTable'"
+      ></alarm-table>
       <rank-table
         @close="editClose"
         ref="ranktable"
@@ -881,6 +903,8 @@ import tools from '../store/tools.js'
 import axis from 'axios'
 import FundEchart from '@/components/FundEchart.vue'
 import HisTable from '@/components/HisTable.vue'
+import AlarmTable from '@/components/AlarmTable.vue'
+
 import RankTable from '@/components/RankTable.vue'
 import RankChart from '@/components/RankChart.vue'
 import BaseChart from '@/components/BaseChart.vue'
@@ -959,6 +983,7 @@ export default {
     AuditLog,
     FundCorr,
     HisTable,
+    AlarmTable,
     RankTable,
     FofSimulate,
     RankChart,
@@ -1353,6 +1378,7 @@ export default {
     Bus.$on('showCompany', (arg) => {
       this.cur_company_code = arg['company_code']
       this.companyVisible = true
+      this.prodlist = arg['prodlist']
       console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
     })
     Bus.$on('editInfo', (arg) => {
