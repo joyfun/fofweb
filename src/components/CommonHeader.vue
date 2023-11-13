@@ -1208,7 +1208,8 @@ export default {
               this.curAction['b_name'] = '现金'
               if (
                 this.curAction['code'] == 'SY9620' ||
-                this.curAction['code'] == 'SSS105'
+                this.curAction['code'] == 'SSS105' ||
+                this.curAction['code'] == 'SACG06'
               ) {
                 //this.updateCash(this.curAction["code"],{"value":this.curAction["marketval"]})
                 //this.saveAction()
