@@ -140,6 +140,60 @@
                 size="mini"
                 :mouse-config="{ selected: true }"
                 show-overflow
+                :data="compData21"
+                :edit-config="{
+                  trigger: 'dblclick',
+                  mode: 'cell',
+                  activeMethod: activeCellMethod
+                }"
+                @edit-closed="changeIncome21"
+                :keyboard-config="{
+                  isArrow: true,
+                  isDel: true,
+                  isEnter: true,
+                  isTab: true,
+                  isEdit: true
+                }"
+              >
+                <!-- <vxe-column type="seq" width="60"></vxe-column> -->
+                <vxe-column
+                  width="160"
+                  field="name"
+                  title="募集层三"
+                  :edit-render="{ autofocus: '.myinput' }"
+                >
+                  <template #edit="{ row }">
+                    <vxe-input v-model="row.name" class="myinput"></vxe-input>
+                  </template>
+                </vxe-column>
+                <vxe-column
+                  :key="af"
+                  v-for="af of ['SSN818', 'SSN369', 'STE599', 'SACG06']"
+                  :field="af"
+                  :title="showFundName(af)"
+                  :edit-render="{}"
+                  :class-name="cellClass1"
+                >
+                  <template #default="{ row }">
+                    <span>{{ row[af] }}</span>
+                  </template>
+                  <template #edit="{ row }">
+                    <vxe-input
+                      type="number"
+                      v-model="row[af]"
+                      class="myinput"
+                    ></vxe-input>
+                  </template>
+                </vxe-column>
+              </vxe-table>
+            </el-card>
+            <el-card>
+              <vxe-table
+                border
+                :align="allAlign"
+                size="mini"
+                :mouse-config="{ selected: true }"
+                show-overflow
                 :data="compData3"
                 :edit-config="{
                   trigger: 'dblclick',
@@ -248,7 +302,7 @@
             <sankey-chart
               ref="vchart"
               titles="虚拟FOF"
-              style="height: 640px"
+              style="height: 800px"
               :finalData="detailData"
               :total="compData1.length"
             ></sankey-chart>
@@ -794,6 +848,7 @@ export default {
       data_time: '',
       compData1: [],
       compData2: [],
+      compData21: [],
       status: ['维投', '观察', '预警', '减退'],
       compData3: [],
       statuslabel: [
@@ -1000,13 +1055,21 @@ export default {
       this.saveAction()
     },
     changeIncome2(row, cell) {
-      this.genNoUsed2()
+      this.genNoUsed2('SSS105')
+      this.genNoUsed3()
+      this.saveAction()
+      // this.updateCash("SSS105",row)
+    },
+    changeIncome21(row, cell) {
+      this.genNoUsed2('SACG06')
       this.genNoUsed3()
       this.saveAction()
       // this.updateCash("SSS105",row)
     },
     changeIncome3(row, cell) {
-      this.genNoUsed2()
+      this.genNoUsed2('SSS105')
+      this.genNoUsed2('SACG06')
+
       this.saveAction()
     },
     genNoUsed1() {
@@ -1053,37 +1116,39 @@ export default {
         Math.round(this.compData1[4]['SY9620'] * 10000) / 10000
       // this.genNoUsed3()
     },
-    genNoUsed2() {
+    genNoUsed2(scode) {
+      let rdata = this.compData2
+      if (scode == 'SACG06') {
+        rdata = this.compData21
+      }
       let toinvest = 0
       let toredeem = 0
       for (var key of ['SSN818', 'SSN369', 'STE599']) {
-        this.updateInvest('SSS105', key, { 'value': this.compData2[0][key] })
-        this.compData2[4][key] = this.compData2[0][key]
-        if (this.compData2[0][key]) {
-          toinvest += parseFloat(this.compData2[0][key])
+        this.updateInvest(scode, key, { 'value': rdata[0][key] })
+        rdata[4][key] = rdata[0][key]
+        if (rdata[0][key]) {
+          toinvest += parseFloat(rdata[0][key])
         }
-        if (this.compData2[1][key]) {
-          toredeem += parseFloat(this.compData2[1][key])
+        if (rdata[1][key]) {
+          toredeem += parseFloat(rdata[1][key])
         }
       }
-      this.updateCash('SSS105', { 'value': this.compData2[0]['SSS105'] })
-      this.compData2[1]['SSS105'] = toredeem
-      this.compData2[3]['SSS105'] = Math.round(
+      this.updateCash(scode, { 'value': rdata[0][scode] })
+      rdata[1][scode] = toredeem
+      rdata[3][scode] = Math.round(
         this.detailData.reduce((prev, next) => {
-          if (next['code'] == 'SSS105') {
+          if (next['code'] == scode) {
             return prev + next['marketval']
           }
           return prev
         }, 0) / 10000
       )
-      this.compData2[2]['SSS105'] = Math.round(
-        this.finalData.filter((row) => row['code'] == 'SSS105')[0]['cash'] /
-          10000
+      rdata[2][scode] = Math.round(
+        this.finalData.filter((row) => row['code'] == scode)[0]['cash'] / 10000
       )
-      this.compData2[4]['SSS105'] = -toinvest
+      rdata[4][scode] = -toinvest
       for (let i = 0; i < 3; i++) {
-        if (this.compData2[i]['SSS105'])
-          this.compData2[4]['SSS105'] += parseFloat(this.compData2[i]['SSS105'])
+        if (rdata[i][scode]) rdata[4][scode] += parseFloat(rdata[i][scode])
       }
     },
 
@@ -1093,38 +1158,28 @@ export default {
       for (var key of ['SSN818', 'SSN369', 'STE599']) {
         this.compData3[0][key] =
           parseFloat(this.compData1[0][key]) +
-          parseFloat(this.compData2[0][key])
+          parseFloat(this.compData2[0][key]) +
+          parseFloat(this.compData21[0][key])
         this.compData3[5][key] =
           parseFloat(this.compData3[1][key]) +
           parseFloat(this.compData3[2][key]) +
           parseFloat(this.compData1[4][key]) +
-          parseFloat(this.compData2[4][key]) -
+          parseFloat(this.compData2[4][key]) +
+          parseFloat(this.compData21[4][key]) -
           parseFloat(this.compData3[4][key])
         this.compData3[7][key] =
           this.compData3[6][key] + parseFloat(this.compData3[0][key])
       }
-      let fofs = ['SY9620', 'SSS105', 'SSN818', 'SSN369', 'STE599']
+      let fofs = ['SY9620', 'SSS105', 'SSN818', 'SSN369', 'STE599', 'SACG06']
       this.finalData.sort((a, b) => {
         return fofs.indexOf(a.code) - fofs.indexOf(b.code)
       })
-
-      // this.compData2[1]['SSS105']=toredeem
-      // this.compData2[3]["SSS105"]=Math.round(this.detailData.reduce((prev,next)=>{if(next['code']=='SSS105'){
-      //   return prev+next['marketval']
-      // }return prev},0)/10000)
-      // this.compData2[2]["SSS105"]=Math.round(this.finalData.filter(row=>row["code"]=='SSS105')[0]['cash']/10000)
-
-      // this.compData2[4]["SSS105"]=-toinvest
-      // for (let i=0;i<3;i++){
-      //   if(this.compData2[i]["SSS105"])
-      //   this.compData2[4]["SSS105"]+=parseFloat(this.compData2[i]["SSS105"])
-      // }
     },
     footerMethod1(columns, data) {
       let cols = columns.columns
       let ret = ['总投资规模']
       let selffund = this.finalData.filter(
-        (row) => ['SY9620', 'SSS105'].indexOf(row.code) > -1
+        (row) => ['SY9620', 'SSS105', 'SACG06'].indexOf(row.code) > -1
       )
       for (let cidx = 1; cidx < cols.length; cidx++) {
         let cf = cols[cidx].field
@@ -1198,7 +1253,7 @@ export default {
       this.compData1 = rets
       this.genNoUsed1()
     },
-    genTitleData2() {
+    genTitleData2(scode) {
       const cols = ['预入款', '预赎回', '现金', '在投', '待分配合计']
       const keys = ['income', 'redeem', 'cash', 'marketval', 'unused']
       const fofs = ['SSN818', 'SSN369', 'STE599'] //["SY9620"]
@@ -1208,7 +1263,7 @@ export default {
         for (var af of fofs) {
           var doact = this.detailData.filter(
             (row) =>
-              row['b_code'] && row['b_code'] == af && row['code'] == 'SSS105'
+              row['b_code'] && row['b_code'] == af && row['code'] == scode
           )
           if (doact && doact.length > 0) {
             if (doact[0]['stage'] == ret['name']) {
@@ -1226,9 +1281,9 @@ export default {
             ret[af] = '-'
           }
         }
-        let holds = this.detailData.filter((row) => row['code'] == 'SSS105')
+        let holds = this.detailData.filter((row) => row['code'] == scode)
         if (ret['name'] == '在投') {
-          ret['SSS105'] = Math.round(
+          ret[scode] = Math.round(
             holds.reduce(function (prev, next) {
               return prev + next['marketval']
             }, 0) / 10000
@@ -1236,12 +1291,12 @@ export default {
         }
         rets.push(ret)
       }
-      rets[0]['SSS105'] = this.getCash('SSS105')
+      rets[0][scode] = this.getCash(scode)
       for (let key of fofs) {
         rets[0][key] = this.actionData.reduce((prev, row) => {
           if (
             row['status'] != '结束' &&
-            row['code'] == 'SSS105' &&
+            row['code'] == scode &&
             row['stage'] == '待投资' &&
             row['b_code'] == key
           ) {
@@ -1250,8 +1305,14 @@ export default {
           return prev
         }, 0)
       }
-      this.compData2 = rets
-      this.genNoUsed2()
+      // this.compData2 = rets
+      // let rdata = this.compData2
+      if (scode == 'SACG06') {
+        this.compData21 = rets
+      } else {
+        this.compData2 = rets
+      }
+      this.genNoUsed2(scode)
     },
     genTitleData3() {
       const cols = [
@@ -1302,6 +1363,7 @@ export default {
           rets[3][af] +
           rets[2][af] -
           this.compData2[3][af] -
+          this.compData21[3][af] -
           this.compData1[3][af] //check市值差
         //rets[8][af]=rets[6][af]+parseFloat(rets[4][af])+parseFloat(rets[5][af])//check市值差
       }
@@ -1531,7 +1593,9 @@ export default {
         this.finalData.push(rdict[key])
       }
       this.genTitleData1()
-      this.genTitleData2()
+      this.genTitleData2('SSS105')
+      this.genTitleData2('SACG06')
+
       this.genTitleData3()
       this.detailData.sort((b, a) => {
         let ret = a['list'] - b['list']
