@@ -210,6 +210,7 @@ export default {
     filter: {
       handler: function (val) {
         console.log('watch filter by')
+        this.selseries = []
         this.getChart(this.code)
       }
     },
@@ -239,6 +240,7 @@ export default {
       lowest: 0.9,
       startdate: '',
       range: 6,
+      selseries: [],
       showdrop: false,
       tags: [
         '对齐',
@@ -632,6 +634,8 @@ export default {
     changeDate(vday) {
       var arr = this.echart.getModel().option.xAxis[0].data
       var sidx = this.getstart(vday)
+      console.log(vday)
+      console.log(sidx)
       var datasize = arr.length
       this.divideBy(sidx, { start: arr[sidx], end: 100 })
       this.refreshData({ startValue: sidx, end: 100 })
@@ -824,12 +828,17 @@ export default {
       var zz500data = []
       var zz10000data = []
       var hs300data = []
-      if (this.raw_data['中证500指数'])
+      var isExtra = false
+      var idxname = ''
+      if (this.raw_data['中证500指数']) {
         zz500data = this.getDividedData('中证500指数', oneindex)
-      if (this.raw_data['中证1000指数'])
+      }
+      if (this.raw_data['中证1000指数']) {
         zz10000data = this.getDividedData('中证1000指数', oneindex)
-      if (this.raw_data['沪深300指数'])
+      }
+      if (this.raw_data['沪深300指数']) {
         hs300data = this.getDividedData('沪深300指数', oneindex)
+      }
       var lowest = 1
       for (var idx in this.raw_data['columns']) {
         var cname = this.raw_data['columns'][idx]
@@ -854,6 +863,9 @@ export default {
           var mhidx = sidx
           var maxdrop = 0
           for (var s = sidx; s <= eidx; s++) {
+            if (sdata[s] == null) {
+              continue
+            }
             if (sdata[s] > high) {
               high = sdata[s]
               hidx = s
@@ -915,7 +927,12 @@ export default {
           }
           // let actionpts = []
           if (this.raw_data['actions']) {
-            let actions = this.raw_data['actions'][cname]
+            let acname = cname
+            if (acname.endsWith('_超额')) {
+              acname = acname.split('_')[0]
+            }
+
+            let actions = this.raw_data['actions'][acname]
             if (actions) {
               let invest = null
               let redeem = null
@@ -949,7 +966,7 @@ export default {
                       trigger: 'item',
                       widht: '100px',
                       formatter: function (item) {
-                        return ac.remark
+                        return acname + ':' + ac.remark
                       },
                       show: true
                     }
@@ -957,23 +974,27 @@ export default {
                   if (ac.stage == '已投' && invest == null) {
                     invest = point
                     mp.data.push(point)
-                    // actionpts.push(point)
                   }
                   if (ac.stage == '已赎') {
                     redeem = point
                   }
-                  if (ac.stage == '提醒' || ac.stage == '投后') {
+                  if (ac.stage == '已投' || ac.stage == '已赎') {
+                    point.y = '78%'
+                  }
+                  if (ac.stage == '提醒') {
                     point = {
                       name: '*',
-                      symbol:
-                        'image://data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7',
-                      coord: [this.raw_data.date[cidx], sdata[cidx]],
+                      symbol: 'triangle',
+                      symbolSize: 10,
+                      // symbol:
+                      //   'image://data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7',
+                      coord: [this.raw_data.date[cidx], this.lowest],
                       pidx: cidx,
                       raw: ac,
                       tooltip: {
                         trigger: 'item',
                         widht: '100px',
-                        formatter: ac.date + ': ' + ac.remark,
+                        formatter: ac.date + ': ' + cname + ac.remark,
 
                         show: true
                       }
@@ -999,7 +1020,6 @@ export default {
                 })
               )
             )
-            console.log(nmp)
             for (var i in sdata) {
               var lastval = null
               if (sdata[i] > 0) {
@@ -1009,21 +1029,60 @@ export default {
                 } else if (cname.endsWith('I0')) {
                   indexdata = zz10000data
                 }
-                if (sdata[i]) lastval = (sdata[i] - indexdata[i]).toFixed(4)
+                if (sdata[i]) {
+                  if (indexdata[i]) {
+                    lastval = (sdata[i] - indexdata[i]).toFixed(4)
+                  }
+                }
               }
               result.push(lastval)
             }
+            // console.log(zz500data)
             for (let apt of nmp.data) {
               apt.coord[1] = result[apt.pidx]
+              if (apt.name == '*') {
+                apt.coord[1] = -0.1
+                apt.y = '80%'
+              }
               apt.value = apt.name
+            }
+            let cnull = false
+            let fidx = parseInt(this.getLastIndex(result))
+            let sub = result.slice(fidx)
+            if (this.wk == '1' && sub.filter((r) => r == null).length > 2) {
+              this.chartData.series.push({
+                data: result,
+                type: 'line',
+                connectNulls: true,
+                //   areaStyle:{},
+                itemStyle: {
+                  normal: {
+                    lineStyle: {
+                      width: 2,
+                      type: 'dotted' //'dotted'虚线 'solid'实线
+                    }
+                  }
+                },
+                tooltip: {
+                  show: false // Set to true or false based on your requirement
+                },
+                name: cname + '_超额',
+                markPoint: nmp,
+                min: -0.1,
+                //   smooth: true,
+                yAxisIndex: 1
+              })
+            } else {
+              cnull = true
             }
             this.chartData.series.push({
               data: result,
               type: 'line',
-              connectNulls: true,
+              connectNulls: cnull,
               //   areaStyle:{},
               name: cname + '_超额',
               markPoint: nmp,
+              min: -0.1,
               //   smooth: true,
               yAxisIndex: 1
             })
@@ -1031,6 +1090,8 @@ export default {
             this.axisOption.legend[0].selected['中证500指数'] = false
             this.axisOption.legend[0].selected['沪深300指数'] = false
             this.axisOption.legend[0].selected['中证1000指数'] = false
+          } else {
+            this.axisOption.legend[0].selected['中证500指数'] = false
           }
           // var cdate = this.raw_data.combine_date[idx]
 
@@ -1085,14 +1146,14 @@ export default {
           // console.log(mp)
           let nml = mp.data.filter((r) => r.name == '*')
           // console.log(nml)
-          for (let mlin of nml) {
-            if (mlin.raw['stage'] == '提醒') {
-              asery.markLine.data.push({
-                name: mlin.raw['stage'],
-                xAxis: mlin.coord[0]
-              })
-            }
-          }
+          // for (let mlin of nml) {
+          //   if (mlin.raw['stage'] == '提醒') {
+          //     asery.markLine.data.push({
+          //       name: mlin.raw['stage'],
+          //       xAxis: mlin.coord[0]
+          //     })
+          //   }
+          // }
           if (this.token == 'demo') {
             asery.name = this.raw_data['mcodes'][idx]
           }
@@ -1106,24 +1167,47 @@ export default {
               }
             }
           }
-          console.log(asery)
+          let fidx = parseInt(this.getLastIndex(asery.data))
+          let sub = asery.data.slice(fidx)
+          if (this.wk == '1' && sub.filter((r) => r == null).length > 2) {
+            let a0sery = JSON.parse(JSON.stringify(asery))
+            a0sery.itemStyle = {
+              normal: {
+                lineStyle: {
+                  width: 2,
+                  type: 'dotted' //'dotted'虚线 'solid'实线
+                }
+              }
+            }
+            a0sery.tooltip = {
+              show: false
+            }
+            asery.connectNulls = false
+            this.chartData.series.push(a0sery)
+          }
           this.chartData.series.push(asery)
+
           var max = parseInt(this.getLastIndex(asery.data))
           if (max > this.firstIdx) {
             this.firstIdx = max
           }
           if (this.showdrop) {
-            var dsery = {
-              data: ddata,
-              type: 'line',
-              name: cname + '_回',
-              // areaStyle: {},
-              connectNulls: true,
-              yAxisIndex: 1
+            console.log(this.selseries)
+            if (this.selseries.indexOf(cname) < 0) {
+              console.log('dont show desel items')
+            } else {
+              var dsery = {
+                data: ddata,
+                type: 'line',
+                name: cname + '_回',
+                // areaStyle: {},
+                connectNulls: true,
+                yAxisIndex: 1
+              }
+              this.axisOption.yAxis[1]['min'] = -0.4
+              // this.axisOption.legend[0].selected[cname] = true
+              this.chartData.series.push(dsery)
             }
-            this.axisOption.yAxis[1]['min'] = -0.4
-            // this.axisOption.legend[0].selected[cname] = true
-            this.chartData.series.push(dsery)
           }
           //
         }
@@ -1180,9 +1264,18 @@ export default {
         this.axisOption.toolbox.feature.myDrop.onclick = () => {
           this.showdrop = !this.showdrop
           var option = this.echart.getOption()
+          var psel = option.legend[0].selected
+          this.selseries = option.series
+            .map((r) => r.name)
+            .filter((r) => false != psel[r])
+          console.log(this.selseries)
+          // console.log(psel)
+          // console.log(option)
           if (!this.showdrop) {
             for (let as of this.chartData.series) {
-              option.legend[0].selected[as['name']] = true
+              if (this.selseries.indexOf(as['name'] + '_回') > -1) {
+                option.legend[0].selected[as['name']] = true
+              }
             }
             for (let as of this.chartData.series) {
               if (as['name'].endsWith('_超额')) {
@@ -1194,6 +1287,7 @@ export default {
           }
           this.echart.setOption(option, true)
           this.changeDate(this.startdate)
+          console.log(option.legend[0].selected)
         }
         /**
         this.axisOption.toolbox.feature.myTool1.onclick = () => {
@@ -1318,6 +1412,12 @@ export default {
         })
       }
       this.echart.on('click', function (params) {
+        if (params['componentType'] == 'markPoint') {
+          if (params['data'] && params['data'] && params['data']['coord']) {
+            $this.changeDate(params['data']['coord'][0])
+            return
+          }
+        }
         var option = $this.echart.getOption()
         option.legend[0].selected[params.seriesName] = false
         console.log(params)
@@ -1344,10 +1444,10 @@ export default {
         )
         this.combineGroup(cols, this.raw_data['wts'])
       }
-      if (this.range) {
-        let vday = this.getVday(this.range)
-        this.changeDate(vday)
-      }
+      // if (this.range || this.range == 0) {
+      let vday = this.getVday(this.range)
+      this.changeDate(vday)
+      // }
     },
     combineGroup(validx, wts) {
       var cnt = validx.length
@@ -1436,7 +1536,7 @@ export default {
     },
     getstart(vady) {
       var arr = this.raw_data.date
-      if (arr && arr.length > 0 && vady == arr[0]) {
+      if (arr && arr.length > 0 && vady <= arr[0]) {
         return 0
       }
       for (var i = 0; i < arr.length; i++) {
