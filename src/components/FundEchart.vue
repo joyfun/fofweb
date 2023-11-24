@@ -1021,6 +1021,7 @@ export default {
               )
             )
             for (var i in sdata) {
+              i = parseInt(i)
               var lastval = null
               if (sdata[i] > 0) {
                 let indexdata = zz500data
