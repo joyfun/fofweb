@@ -1091,9 +1091,10 @@ export default {
             this.axisOption.legend[0].selected['中证500指数'] = false
             this.axisOption.legend[0].selected['沪深300指数'] = false
             this.axisOption.legend[0].selected['中证1000指数'] = false
-          } else {
-            this.axisOption.legend[0].selected['中证500指数'] = false
           }
+          // else {
+          //   this.axisOption.legend[0].selected['中证500指数'] = false
+          // }
           // var cdate = this.raw_data.combine_date[idx]
 
           // var bdate = this.raw_data.buy_date[idx]
