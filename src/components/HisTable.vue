@@ -115,7 +115,7 @@
           :label="col"
         ></vxe-option>
       </vxe-select>
-      <vxe-button @click="importData">确认</vxe-button>
+      <vxe-button @click="importData">预览</vxe-button>
     </div>
   </div>
 </template>

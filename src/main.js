@@ -64,6 +64,19 @@ Vue.use(ElementUI)
 Vue.filter('formatTime', function(time) {
   return parseTime(time)
 })
+// 防止el-button重复点击
+Vue.directive('preventReClick', {
+	inserted(el, binding) {
+   	  el.addEventListener('click', () => {
+     	if (!el.disabled) {
+      	 el.disabled = true
+      	 setTimeout(() => {
+        	 el.disabled = false
+       	}, binding.value || 3000)
+     	}
+   	})
+	 }
+});
 
 new Vue({
   router,
