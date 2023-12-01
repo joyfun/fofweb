@@ -216,7 +216,12 @@ tools.JsonSort=(jsonData)=> {
     return jsonData;
   }
 }
-
+tools.showDate=(dstr)=> {
+if (dstr && dstr.length > 10) {
+  return dstr.substring(0,4) + '' +dstr.substring(5,7) + '' +dstr.substring(8,10)
+}
+return dstr ;
+}
 tools.isElectron = ()=>{
   return window && window.process && window.process.versions && window.process.versions['electron'];
 }

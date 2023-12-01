@@ -121,7 +121,7 @@
           </el-row>
           <el-row
             :key="year"
-            v-for="year in ['2021', '2020', '2019', '2018', 'all']"
+            v-for="year in ['2023', '2022', '2021', '2020', 'all']"
           >
             <el-col :span="1">{{ year }}</el-col>
             <el-col :span="4">
@@ -355,143 +355,144 @@
       </el-table-column>
       <el-table-column label="操作" fixed="right" width="160">
         <template slot-scope="scope">
-          <el-button
-            @click.native.prevent="viewHis(scope.row)"
-            type="text"
-            size="small"
-          >
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="查看净值历史"
-              placement="left-start"
+          <div v-if="scope.row.class_type != '指数'">
+            <el-button
+              @click.native.prevent="viewHis(scope.row)"
+              type="text"
+              size="small"
             >
-              <i class="el-icon-info"></i>
-            </el-tooltip>
-          </el-button>
-          <el-button
-            @click.native.prevent="viewAudit(scope.row)"
-            type="text"
-            size="small"
-          >
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="查看审核历史"
-              placement="left-start"
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="查看净值历史"
+                placement="left-start"
+              >
+                <i class="el-icon-info"></i>
+              </el-tooltip>
+            </el-button>
+            <el-button
+              @click.native.prevent="viewAudit(scope.row)"
+              type="text"
+              size="small"
             >
-              <i class="el-icon-s-order"></i>
-            </el-tooltip>
-          </el-button>
-          <!-- <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button> -->
-          <el-button
-            v-if="usermenu.indexOf('info-audit') > -1"
-            @click.native.prevent="editStatus(scope.row)"
-            type="text"
-            size="small"
-          >
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="更新状态"
-              placement="left-start"
-              ><i class="el-icon-s-tools"></i
-            ></el-tooltip>
-          </el-button>
-          <el-button
-            @click.native.prevent="editInfo(scope.row)"
-            type="text"
-            size="small"
-          >
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="编辑"
-              placement="left-start"
-              ><i class="el-icon-edit"></i
-            ></el-tooltip>
-          </el-button>
-          <el-button
-            v-if="usermenu.indexOf('info-edit') > -1"
-            @click.native.prevent="uploadFile(scope.row)"
-            type="text"
-            size="small"
-          >
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="上传报告"
-              placement="left-start"
-              ><i class="el-icon-upload"></i
-            ></el-tooltip>
-          </el-button>
-          <el-button v-show="scope.row.filename" type="text" size="small">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="下载报告"
-              placement="left-start"
-              ><a :href="'/fof/downfile?code=' + scope.row.code"
-                ><i class="el-icon-download"></i></a
-            ></el-tooltip>
-          </el-button>
-          <el-button
-            v-show="scope.row.combine"
-            @click.native.prevent="viewConcat(scope.row)"
-            type="text"
-            size="small"
-          >
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="拼接历史"
-              placement="left-start"
-              ><i class="el-icon-link"></i
-            ></el-tooltip>
-          </el-button>
-          <el-button
-            v-show="scope.row.compare"
-            @click.native.prevent="vcompare(scope.row)"
-            type="text"
-            size="small"
-          >
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="业绩对标"
-              placement="left-start"
-              ><i class="el-icon-sort"></i
-            ></el-tooltip>
-          </el-button>
-          <el-button
-            v-if="usermenu.indexOf('info-edit') > -1"
-            @click.native.prevent="delFund0(scope.row)"
-            type="text"
-            size="small"
-          >
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="删除"
-              placement="left-start"
-              ><i class="el-icon-delete" style="color: red"></i
-            ></el-tooltip>
-          </el-button>
-          <el-button
-            v-if="usermenu.indexOf('info-edit') > -1"
-            @click.native.prevent="doCheck(scope.row)"
-            type="text"
-            size="small"
-          >
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="核对"
-              placement="left-start"
-              ><i class="el-icon-finished"></i
-            ></el-tooltip>
-          </el-button>
-
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="查看审核历史"
+                placement="left-start"
+              >
+                <i class="el-icon-s-order"></i>
+              </el-tooltip>
+            </el-button>
+            <!-- <el-button @click.native.prevent="viewHisTemp(scope.row)" type="text" size="small"> <el-tooltip class="item" effect="dark" content="核对数据" placement="left-start"><i class="el-icon-success"></i></el-tooltip></el-button> -->
+            <el-button
+              v-if="usermenu.indexOf('info-audit') > -1"
+              @click.native.prevent="editStatus(scope.row)"
+              type="text"
+              size="small"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="更新状态"
+                placement="left-start"
+                ><i class="el-icon-s-tools"></i
+              ></el-tooltip>
+            </el-button>
+            <el-button
+              @click.native.prevent="editInfo(scope.row)"
+              type="text"
+              size="small"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="编辑"
+                placement="left-start"
+                ><i class="el-icon-edit"></i
+              ></el-tooltip>
+            </el-button>
+            <el-button
+              v-if="usermenu.indexOf('info-edit') > -1"
+              @click.native.prevent="uploadFile(scope.row)"
+              type="text"
+              size="small"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="上传报告"
+                placement="left-start"
+                ><i class="el-icon-upload"></i
+              ></el-tooltip>
+            </el-button>
+            <el-button v-show="scope.row.filename" type="text" size="small">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="下载报告"
+                placement="left-start"
+                ><a :href="'/fof/downfile?code=' + scope.row.code"
+                  ><i class="el-icon-download"></i></a
+              ></el-tooltip>
+            </el-button>
+            <el-button
+              v-show="scope.row.combine"
+              @click.native.prevent="viewConcat(scope.row)"
+              type="text"
+              size="small"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="拼接历史"
+                placement="left-start"
+                ><i class="el-icon-link"></i
+              ></el-tooltip>
+            </el-button>
+            <el-button
+              v-show="scope.row.compare"
+              @click.native.prevent="vcompare(scope.row)"
+              type="text"
+              size="small"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="业绩对标"
+                placement="left-start"
+                ><i class="el-icon-sort"></i
+              ></el-tooltip>
+            </el-button>
+            <el-button
+              v-if="usermenu.indexOf('info-edit') > -1"
+              @click.native.prevent="delFund0(scope.row)"
+              type="text"
+              size="small"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="删除"
+                placement="left-start"
+                ><i class="el-icon-delete" style="color: red"></i
+              ></el-tooltip>
+            </el-button>
+            <el-button
+              v-if="usermenu.indexOf('info-edit') > -1"
+              @click.native.prevent="doCheck(scope.row)"
+              type="text"
+              size="small"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="核对"
+                placement="left-start"
+                ><i class="el-icon-finished"></i
+              ></el-tooltip>
+            </el-button>
+          </div>
           <!-- <vxe-button v-if="usermenu.indexOf('info-edit')>-1"  @click="uploadInvest(scope.row)" type="text" size="small">上传尽调表</vxe-button > -->
         </template>
       </el-table-column>
@@ -549,6 +550,7 @@
           ref="hischart1"
           :titles="current.name"
           style="height: 480px"
+          :wk="'1'"
           :code="selcode"
         ></fund-echart>
       </div>
@@ -905,7 +907,10 @@
             </template>
             <el-form-item>
               <el-button
-                v-if="usermenu.indexOf('info-edit') > -1"
+                v-if="
+                  usermenu.indexOf('info-edit') > -1 &&
+                  current['class_type'] != '指数'
+                "
                 type="primary"
                 @click="submitForm('dynamicValidateForm')"
                 >提交</el-button
@@ -1159,8 +1164,29 @@
               title="总个数"
               align="right"
             ></vxe-column> -->
-          </vxe-table></el-tab-pane
-        >
+          </vxe-table>
+          <el-card
+            v-show="usermenu.indexOf('info-edit') > -1 && curCompany.reg_code"
+          >
+            <el-upload
+              class="upload-demo"
+              ref="fuper"
+              drag
+              :data="{
+                'uploader': token,
+                'company_code': curCompany.reg_code
+              }"
+              :on-success="uploadDone"
+              action="fof/upCompanyFile"
+              multiple
+              ><i class="el-icon-upload"></i>
+              <div class="el-upload__text">
+                将文件拖到此处，或<em>点击上传</em>
+              </div>
+              <div class="el-upload__tip" slot="tip">文档大小不超过100M</div>
+            </el-upload>
+          </el-card>
+        </el-tab-pane>
       </el-tabs>
     </el-dialog>
 
@@ -1399,17 +1425,23 @@ export default {
     },
     org_id: {
       handler(n) {
-        let arow = this.fcompanys.filter((r) => r.org_id == n)
-        if (arow && arow.length == 1) {
-          this.curCompany = JSON.parse(JSON.stringify(arow[0]))
-          this.current['company'] = this.curCompany['org_name']
-          this.current['company_code'] = this.curCompany['reg_code']
+        if (n) {
+          let arow = this.fcompanys.filter((r) => r.org_id == n)
+          if (arow && arow.length == 1) {
+            this.curCompany = JSON.parse(JSON.stringify(arow[0]))
+            this.current['company'] = this.curCompany['org_name']
+            this.current['company_code'] = this.curCompany['reg_code']
+          }
+          // 初始化操作
         }
-        // 初始化操作
       }
     }
   },
   methods: {
+    uploadDone(response, file, fileList) {
+      console.log('#### upload Done')
+      this.loadFiles(this.current.company_code)
+    },
     remoteMethod(query) {
       if (query && query.length > 1) {
         axis({
@@ -1440,7 +1472,29 @@ export default {
       this.codeConfirmVisible = false
       this.forceCode = true
     },
-    markOk() {},
+    markOk() {
+      axis({
+        method: 'post',
+        url: '/fof/updateinfo', // 请求地址
+        data: {
+          'code': this.current.code,
+          'other_stage': '正常',
+          'user': this.token
+        }, // 参数
+        responseType: 'json' // 表明返回服务器返回的数据类型
+      }).then(
+        (response) => {
+          if (response.data['status'] == 'success') {
+            this.getList(this.filter)
+            this.formVisible = false
+            this.forceCode = false
+          }
+        },
+        (err) => {
+          reject(err)
+        }
+      )
+    },
     reCrawl() {
       axis
         .get('/fof/reCrawl', { params: { code: this.current.code } })
@@ -1643,6 +1697,9 @@ export default {
     },
     addInfo() {
       this.current = { stage: '入库', scale: '待尽调', sub_type: '' }
+      this.curCompany = {}
+      this.org_id = ''
+      this.fcompanys = []
       this.cForm = cForm0
       this.formVisible = true
     },

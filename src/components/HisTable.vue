@@ -28,7 +28,7 @@
             >
               <vxe-button id="uploadButton" size="small" >导入净值</vxe-button>
     </el-upload> -->
-        <vxe-button @click="saveHis">保存净值</vxe-button>
+        <vxe-button @click="saveHis" v-preventReClick>保存净值</vxe-button>
         <span
           >&nbsp;&nbsp;&nbsp;&nbsp;注意:净值日期格式为YYYYmmDD格式 即
           20210304格式
@@ -279,26 +279,34 @@ export default {
       if (this.loaded) {
         tosave = this.tableData
       }
-      console.log(tosave)
-      // axis.post('/fof/savehis',{params:{code:this.code}})//axis后面的.get可以省略；
-      //                   .then((response) => {
-      //                       if(response.data.status=="success")
-      //                       $this.getTable(this.code)
-      //                   })
-      axis({
-        method: 'post',
-        url: '/fof/savehis', // 请求地址
-        data: { code: this.code, data: tosave }, // 参数
-        responseType: 'json' // 表明返回服务器返回的数据类型
-      }).then(
-        (response) => {
-          this.loaded = false
-          console.log(response.data)
-        },
-        (err) => {
-          reject(err)
-        }
-      )
+      if (tosave && tosave.length > 0) {
+        console.log(tosave)
+        // axis.post('/fof/savehis',{params:{code:this.code}})//axis后面的.get可以省略；
+        //                   .then((response) => {
+        //                       if(response.data.status=="success")
+        //                       $this.getTable(this.code)
+        //                   })
+        axis({
+          method: 'post',
+          url: '/fof/savehis', // 请求地址
+          data: { code: this.code, data: tosave }, // 参数
+          responseType: 'json' // 表明返回服务器返回的数据类型
+        }).then(
+          (response) => {
+            this.loaded = false
+            console.log(response.data)
+            this.$message({
+              message: response.data['msg'],
+              type: 'success',
+              center: true
+            })
+            console.log(response.data)
+          },
+          (err) => {
+            reject(err)
+          }
+        )
+      }
     },
     confirmData() {
       var $this = this
