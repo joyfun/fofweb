@@ -1225,9 +1225,9 @@
         >朝阳永续代码</span
       ><br />
       <span v-show="errs.indexOf('GeShang') > -1"
-        ><font style="color: red">{{ current.GeShang }} </font>格上代码 存疑
-        确定保存?</span
-      >
+        ><font style="color: red">{{ current.GeShang }} </font>格上代码
+      </span>
+      存疑 确定保存?
       <span slot="footer" class="dialog-footer">
         <el-button @click="codeConfirmVisible = false">取消</el-button>
         <el-button ype="primary" @click="forceSaveCode">确定</el-button>
@@ -2286,6 +2286,10 @@ export default {
         this.filter = param
       }
       var data = this.filter
+      if (data && data['extra'] == 0) {
+        console.log('user extra')
+        delete data['extra']
+      }
       if (data) {
         data = this.$tools.cleanNulls(data)
       }
