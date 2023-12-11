@@ -660,8 +660,11 @@
       <el-button
         v-if="current.other_stage != '正常'"
         type="primary"
-        @click="markOk"
+        @click="markOk('正常')"
         >标记正常</el-button
+      >
+      <el-button v-else type="primary" @click="markOk('波动异常')"
+        >标记波动异常</el-button
       >
 
       <vxe-table
@@ -1209,9 +1212,20 @@
       width="30%"
       :before-close="handleClose"
     >
-      <span
+      <span v-show="errs.indexOf('code') > -1"
         >产品代码
-        <font style="color: red">{{ current.code }} </font>不是常见私募代码
+        <font style="color: red">{{ current.code }} </font>备案号</span
+      ><br />
+      <span v-show="errs.indexOf('SiMuWang') > -1"
+        ><font style="color: red">{{ current.SiMuWang }} </font
+        >私募排排代码</span
+      ><br />
+      <span v-show="errs.indexOf('ZhaoYang') > -1"
+        ><font style="color: red">{{ current.ZhaoYang }} </font
+        >朝阳永续代码</span
+      ><br />
+      <span v-show="errs.indexOf('GeShang') > -1"
+        ><font style="color: red">{{ current.GeShang }} </font>格上代码 存疑
         确定保存?</span
       >
       <span slot="footer" class="dialog-footer">
@@ -1350,6 +1364,7 @@ export default {
       codeConfirmVisible: false,
       actiondate: '',
       compForm,
+      errs: [],
       fileInfos: [],
       fcompanys: [],
       org_id: '',
@@ -1472,13 +1487,13 @@ export default {
       this.codeConfirmVisible = false
       this.forceCode = true
     },
-    markOk() {
+    markOk(status) {
       axis({
         method: 'post',
         url: '/fof/updateinfo', // 请求地址
         data: {
           'code': this.current.code,
-          'other_stage': '正常',
+          'other_stage': status,
           'user': this.token
         }, // 参数
         responseType: 'json' // 表明返回服务器返回的数据类型
@@ -1609,6 +1624,7 @@ export default {
       )
     },
     submitForm(formName) {
+      this.errs = []
       if (this.current.type && this.current.class_type) {
         this.current.code = this.current.code.trim()
         let codecorrect = false
@@ -1617,7 +1633,29 @@ export default {
             codecorrect = true
             this.codeConfirmVisible = false
           } else {
+            this.errs.push('code')
             this.codeConfirmVisible = true
+          }
+
+          if (this.current.GeShang && !/P\d+/.test(this.current.GeShang)) {
+            this.$message.error(`GeShang 代码错误`)
+            this.errs.push('GeShang')
+            this.codeConfirmVisible = true
+          }
+          if (
+            this.current.SiMuWang &&
+            !/H[0-9A-Z]+/.test(this.current.SiMuWang)
+          ) {
+            this.$message.error(`SiMuWang 代码错误`)
+            this.errs.push('SiMuWang')
+            this.codeConfirmVisible = true
+          }
+          if (this.current.Zhaoyang && !/\d+/.test(this.current.Zhaoyang)) {
+            this.$message.error(`ZhaoYang 代码错误`)
+            this.errs.push('ZhaoYang')
+            this.codeConfirmVisible = true
+          }
+          if (this.codeConfirmVisible) {
             return
           }
         }
