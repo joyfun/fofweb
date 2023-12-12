@@ -34,6 +34,7 @@
           <vxe-radio-button label="混合" content="混合"></vxe-radio-button>
           <vxe-radio-button label="套利" content="套利"></vxe-radio-button>
           <vxe-radio-button label="期权" content="期权"></vxe-radio-button>
+          <vxe-radio-button label="FOF" content="FOF"></vxe-radio-button>
           <vxe-radio-button label="非常规" content="非常规"></vxe-radio-button>
         </vxe-radio-group>
         <vxe-radio-group size="mini" v-model="range" :strict="false">
@@ -628,6 +629,7 @@ const class_dict = {
   套利: ['套利', '可转债'],
   期权: ['期权'],
   混合: ['混合'],
+  FOF: ['FOF'],
   aas: ['中性', 'CTA', '期权', '套利', '混合']
 }
 function isNumber(val) {
