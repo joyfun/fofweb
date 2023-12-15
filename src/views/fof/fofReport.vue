@@ -394,7 +394,7 @@
         :titles="current.name"
         style="height: 600px"
         :code="cur_code"
-        :wk="0"
+        :wk="'0'"
         :visable="dialogVisible"
       ></fund-echart>
     </el-dialog>

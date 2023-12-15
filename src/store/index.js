@@ -27,6 +27,7 @@ export default new Vuex.Store({
 //    ccart: JSON.parse(decodeURIComponent(Cookies.get("cart"))),
     cart:[],
     days:{},
+    mholding:{},
     allparam:{},
     holding:[],
     usermenu:Cookies.get("umenu"),
@@ -162,6 +163,9 @@ export default new Vuex.Store({
     updateDays(state,params){  
       state.days=params
   },
+  updatemHolding(state,params){  
+    state.mholding=params
+},
   updateAccessKey(state,params){  
     console.log(params)
     state.Authorization="Bearer "+params

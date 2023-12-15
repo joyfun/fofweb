@@ -18,6 +18,7 @@
           <vxe-radio-button label="混合" content="混合"></vxe-radio-button>
           <vxe-radio-button label="套利" content="套利"></vxe-radio-button>
           <vxe-radio-button label="期权" content="期权"></vxe-radio-button>
+          <vxe-radio-button label="FOF" content="FOF"></vxe-radio-button>
         </vxe-radio-group>
         <vxe-button @click="exportDataEvent">导出</vxe-button>
 
@@ -465,6 +466,7 @@ const class_dict = {
   指增: ['指增'],
   套利: ['套利', '可转债'],
   期权: ['期权'],
+  FOF: ['FOF'],
   混合: ['混合'],
   aas: ['中性', 'CTA', '期权', '套利', '混合']
 }
@@ -637,7 +639,7 @@ export default {
         return '产品名称/' + this.calcdate
       }
     },
-    ...mapState(['foflist', 'holding']),
+    ...mapState(['foflist', 'holding', 'mholding']),
     ...mapGetters(['sysparam', 'token', 'showFundName'])
   },
   data() {
@@ -723,6 +725,7 @@ export default {
         '中性',
         '混合',
         '套利',
+        'FOF',
         '期权'
       ]) {
         // this.type=atp
@@ -1203,14 +1206,18 @@ export default {
             if (this.baseData[row.code]) {
               row['company_code'] = this.baseData[row.code]['company_code']
               //获取持仓信息 待优化
-              let holds = this.holding.filter(
-                (hd) => hd['b_code'] == row['code']
-              )
-              if (holds.length > 0) {
-                row['marketval'] = holds.reduce((prev, r) => {
-                  return prev + r['marketval']
-                }, 0)
-                console.log(row)
+              if (this.mholding[row['code']]) {
+                console.log('存在持仓信息')
+                row['marketval'] = this.mholding[row['code']]
+              } else {
+                let holds = this.holding.filter(
+                  (hd) => hd['b_code'] == row['code']
+                )
+                if (holds.length > 0) {
+                  row['marketval'] = holds.reduce((prev, r) => {
+                    return prev + r['marketval']
+                  }, 0)
+                }
               }
 
               row['dd_ratio'] = this.$tools.formatMoney(

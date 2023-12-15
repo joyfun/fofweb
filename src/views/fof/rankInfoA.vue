@@ -789,7 +789,7 @@ export default {
         return '产品名称/' + this.calcdate
       }
     },
-    ...mapState(['foflist', 'holding']),
+    ...mapState(['foflist', 'holding', 'mholding']),
     ...mapGetters(['sysparam', 'token', 'showFundName'])
   },
   data() {
@@ -1374,13 +1374,18 @@ export default {
             if (this.baseData[row.code]) {
               row['company_code'] = this.baseData[row.code]['company_code']
               //获取持仓信息 待优化
-              let holds = this.holding.filter(
-                (hd) => hd['b_code'] == row['code']
-              )
-              if (holds.length > 0) {
-                row['marketval'] = holds.reduce((prev, r) => {
-                  return prev + r['marketval']
-                }, 0)
+              if (this.mholding[row['code']]) {
+                console.log('存在持仓信息')
+                row['marketval'] = this.mholding[row['code']]
+              } else {
+                let holds = this.holding.filter(
+                  (hd) => hd['b_code'] == row['code']
+                )
+                if (holds.length > 0) {
+                  row['marketval'] = holds.reduce((prev, r) => {
+                    return prev + r['marketval']
+                  }, 0)
+                }
               }
 
               row['dd_ratio'] = this.$tools.formatMoney(
