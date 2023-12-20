@@ -87,6 +87,7 @@ export default new Vuex.Store({
         {lable:"投后排名",value:"rank-infoa"},
         {lable:"投后分析",value:"rank-infoa1"},
         {lable:"数据监控",value:"data-monitor"},
+        {lable:"额外信息",value:"info-meta"},
         {lable:"用户管理",value:"user-manage"}]
   },
   mutations: {

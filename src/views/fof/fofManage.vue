@@ -260,6 +260,18 @@
           <a href="javascript:;" @click="showHis(scope.row)">{{
             scope.row.short_name
           }}</a>
+          <el-tooltip
+            class="item"
+            v-if="usermenu.indexOf('info-meta') > -1"
+            :content="
+              '添加人:' +
+              scope.row.create_user +
+              '\n添加时间:' +
+              scope.row.create_time
+            "
+            placement="right-start"
+            ><i class="el-icon-info"></i
+          ></el-tooltip>
         </template>
       </el-table-column>
       <el-table-column prop="company" label="公司" show-overflow-tooltip>
