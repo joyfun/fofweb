@@ -270,7 +270,7 @@ export default {
         })
         .then((res) => {
           let data = this.getSymbol(res.data)
-          Bus.$emit('showChart', {
+          Bus.$emit('showProds', {
             'prodlist': data,
             'canEdit': true,
             'diagName': 'prodDiag'
@@ -409,7 +409,9 @@ export default {
                 if (b['rankr'] == null) {
                   return -1
                 }
-                return parseFloat(a['rankr']) - parseFloat(b['rankr'])
+                return b['score'] - a['score']
+
+                // return parseFloat(a['rankr']) - parseFloat(b['rankr'])
               })
             if (this.sublist[tp].length > maxlen) {
               maxlen = this.sublist[tp].length

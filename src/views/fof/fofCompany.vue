@@ -715,7 +715,7 @@ export default {
       }).then((response) => {
         this.foflist = response.data
         if (show) {
-          Bus.$emit('showChart', {
+          Bus.$emit('showProds', {
             'prodlist': response.data,
             'diagName': 'prodDiag'
           })

@@ -882,15 +882,13 @@
       top="50px"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
-      :visible.sync="dialogCompVisible"
+      :visible.sync="prodVisible"
     >
       <prod-table
-        @close="editClose"
-        ref="protable"
-        :foflist="foflist"
+        ref="protables"
+        :foflist="prodlist"
         :canEdit="canEdit"
         :full="true"
-        v-if="diagName == 'prodDiag'"
       ></prod-table>
     </el-dialog>
   </div>
@@ -1303,6 +1301,7 @@ export default {
         marketval: [{ required: true, message: '请输入金额', trigger: 'blur' }]
       },
       dialogVisible: false,
+      prodVisible: false,
       cur_code: '',
       cur_company_code: '',
       rg: '',
@@ -1374,6 +1373,12 @@ export default {
     Bus.$on('showInfo', (arg) => {
       this.cur_code = arg['cur_code']
       this.infoVisible = true
+      console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
+    })
+    Bus.$on('showProds', (arg) => {
+      this.prodlist = arg['prodlist']
+      this.prodVisible = true
+      this.canEdit = arg['canEidt']
       console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
     })
     Bus.$on('showCompany', (arg) => {
