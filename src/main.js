@@ -16,7 +16,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 //第三方包
 import ElementUI from 'element-ui'
-import axios from 'axios'
+import instance  from '@/api/config.js'
 
 import tools from '@/store/tools.js'
 import 'xe-utils'
@@ -31,7 +31,8 @@ import service from '@/api/config.js'
 Vue.use(VXETable)
 Vue.use(tools)
 Vue.prototype.$process=process
-Vue.prototype.$axios = axios //需要验证jwt场景service
+
+Vue.prototype.$axios = instance //需要验证jwt场景service
 var dayOfYear = require('dayjs/plugin/dayOfYear')
 dayjs.extend(dayOfYear)
 Vue.prototype.$moment = dayjs

@@ -773,7 +773,7 @@ export default {
           }
           data = { code: car.join(','), w: this.wts, wk: this.wk }
         }
-        axis
+        this.$axios
           .get(charturl, { params: data }) //axis后面的.get可以省略；
           .then((response) => {
             console.log(response)
@@ -1050,7 +1050,7 @@ export default {
             let cnull = false
             let fidx = parseInt(this.getLastIndex(result))
             let sub = result.slice(fidx)
-            if (this.wk == '1' && sub.filter((r) => r == null).length > 2) {
+            if (this.wk != '2' && sub.filter((r) => r == null).length > 2) {
               this.chartData.series.push({
                 data: result,
                 type: 'line',
@@ -1171,7 +1171,7 @@ export default {
           }
           let fidx = parseInt(this.getLastIndex(asery.data))
           let sub = asery.data.slice(fidx)
-          if (this.wk == '1' && sub.filter((r) => r == null).length > 2) {
+          if (this.wk != '2' && sub.filter((r) => r == null).length > 2) {
             let a0sery = JSON.parse(JSON.stringify(asery))
             a0sery.itemStyle = {
               normal: {
