@@ -227,6 +227,22 @@
       </el-table-column>
       <el-table-column
         align="right"
+        prop="2023"
+        label="2023"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+          <span
+            :style="
+              'text-align:right;color:' +
+              (scope.row['2023'] >= 0 ? 'red' : 'green')
+            "
+            >{{ showResult(scope.row['2023']) }}</span
+          ></template
+        >
+      </el-table-column>
+      <el-table-column
+        align="right"
         prop="2022"
         label="2022"
         show-overflow-tooltip
@@ -255,22 +271,6 @@
             "
           >
             {{ showResult(scope.row['2021']) }}</span
-          ></template
-        >
-      </el-table-column>
-      <el-table-column
-        align="right"
-        prop="2020"
-        label="2020"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope">
-          <span
-            :style="
-              'text-align:right;color:' +
-              (scope.row['2020'] >= 0 ? 'red' : 'green')
-            "
-            >{{ showResult(scope.row['2020']) }}</span
           ></template
         >
       </el-table-column>
