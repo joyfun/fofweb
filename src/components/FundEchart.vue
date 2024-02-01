@@ -1270,6 +1270,7 @@ export default {
           this.selseries = option.series
             .map((r) => r.name)
             .filter((r) => false != psel[r])
+
           console.log(this.selseries)
           // console.log(psel)
           // console.log(option)
@@ -1281,8 +1282,10 @@ export default {
             }
             for (let as of this.chartData.series) {
               if (as['name'].endsWith('_超额')) {
+                option.legend[0].selected[as['name']] = true
                 const tlen = as['name'].length
                 let prevname = as['name'].substring(0, tlen - 3)
+                console.log(prevname)
                 option.legend[0].selected[prevname] = false
               }
             }
@@ -1558,6 +1561,11 @@ export default {
         this.echart ? this.echart.resize() : ''
       }
     }
+  },
+  created() {
+    Bus.$on('chartFilter', (arg) => {
+      this.getChart(arg['ncode'])
+    })
   },
   mounted() {
     window.addEventListener('resize', this.resizeChart)
