@@ -505,6 +505,22 @@
               ></el-tooltip>
             </el-button>
           </div>
+          <div v-else>
+            <el-button
+              @click.native.prevent="viewHis(scope.row)"
+              type="text"
+              size="small"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="查看净值历史"
+                placement="left-start"
+              >
+                <i class="el-icon-info"></i>
+              </el-tooltip>
+            </el-button>
+          </div>
           <!-- <vxe-button v-if="usermenu.indexOf('info-edit')>-1"  @click="uploadInvest(scope.row)" type="text" size="small">上传尽调表</vxe-button > -->
         </template>
       </el-table-column>

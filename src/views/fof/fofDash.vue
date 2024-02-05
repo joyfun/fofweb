@@ -1510,7 +1510,8 @@ export default {
         if (
           (row['b_code'].startsWith('SUBJECT10') &&
             row['b_code'] != 'SUBJECT1021') ||
-          row['b_code'] == 'SUBJECT3003'
+          row['b_code'] == 'SUBJECT3003' ||
+          row['b_code'] == 'SUBJECT1203'
         ) {
           pdict['cash'] += row['marketval']
         } else if (row['b_code'].startsWith('SUBJECT11')) {

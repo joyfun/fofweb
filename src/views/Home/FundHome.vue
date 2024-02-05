@@ -1,29 +1,48 @@
 <template>
-<div>
-  <el-row class="home" :gutter="20">
-    <!-- <el-col :span="8">
+  <div>
+    <el-row class="home" :gutter="20">
+      <!-- <el-col :span="8">
       
     </el-col> -->
-    <el-col :span="24">
-              <el-select v-model="cur_fof" @change="changeFOF" style="width:160px"  clearable placeholder="基金选择">
-    <el-option
-      v-for="item in sysparam.FOF"
-      :key="item.value"
-      :label="item.value"
-      :value="item.code">
-    </el-option>
-    <!-- <el-option
+      <el-col :span="24">
+        <el-select
+          v-model="cur_fof"
+          @change="changeFOF"
+          style="width: 160px"
+          clearable
+          placeholder="基金选择"
+        >
+          <el-option
+            v-for="item in sysparam.FOF"
+            :key="item.value"
+            :label="item.value"
+            :value="item.code"
+          >
+          </el-option>
+          <!-- <el-option
       key="全部"
       label="全部"
       value="SY9620,SSN818,SSN369,SSS105,STE599">
     </el-option> -->
-  </el-select>
-      <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptodash">资金明细</vxe-button>
-      <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptorank">投资排名</vxe-button>
-      <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptopressure">压力测试</vxe-button>
-      <vxe-button v-if="usermenu.indexOf('fof-dash')>-1" @click="jumptoReport">回撤信息</vxe-button>
+        </el-select>
+        <vxe-button v-if="usermenu.indexOf('fof-dash') > -1" @click="jumptodash"
+          >资金明细</vxe-button
+        >
+        <vxe-button v-if="usermenu.indexOf('fof-dash') > -1" @click="jumptorank"
+          >投资排名</vxe-button
+        >
+        <vxe-button
+          v-if="usermenu.indexOf('fof-dash') > -1"
+          @click="jumptopressure"
+          >压力测试</vxe-button
+        >
+        <vxe-button
+          v-if="usermenu.indexOf('fof-dash') > -1"
+          @click="jumptoReport"
+          >回撤信息</vxe-button
+        >
 
-      <!-- <div class="num">
+        <!-- <div class="num">
                 <el-card shadow="hover" v-for="item in countData" :key="item.name"
                          :body-style="{ display: 'flex', padding: 0 }">
                     <i class="icon" :class="`el-icon-${item.icon}`" :style="{ background: item.color }"></i>
@@ -34,29 +53,30 @@
                 </el-card>
             </div> -->
 
-      <el-card shadow="hover">
-        <fund-echart
-          ref="hischart"
-          :wk="'0'"
-          style="height: 500px"
-          :code="code"
-        ></fund-echart>
-      </el-card>
-      <el-card shadow="hover">
-        <el-table
-    ref="profiltTable"
-    :data="profitlist"
-    tooltip-effect="dark"
-    max-height="480"
-    :default-sort="{prop:'year',order:'descending'}"
-    style="width: 100%;margin-top:20px;">
-    <!-- <el-table-column
+        <el-card shadow="hover">
+          <fund-echart
+            ref="hischart"
+            :wk="'0'"
+            style="height: 500px"
+            :code="code"
+          ></fund-echart>
+        </el-card>
+        <el-card shadow="hover">
+          <el-table
+            ref="profiltTable"
+            :data="profitlist"
+            tooltip-effect="dark"
+            max-height="480"
+            :default-sort="{ prop: 'year', order: 'descending' }"
+            style="width: 100%; margin-top: 20px"
+          >
+            <!-- <el-table-column
       label="年份"
       sortable
       prop="year"
       show-overflow-tooltip>
     </el-table-column> -->
-        <!-- <el-table-column
+            <!-- <el-table-column
       label="产品"
       sortable
       min-width="100"
@@ -65,315 +85,421 @@
                    {{ $tools.showName(scope.row['code'],sysparam) }}
         </template>
     </el-table-column> -->
-    <el-table-column
-      label="年份"
-      sortable
-      min-width="60"
-      show-overflow-tooltip>
-            <template slot-scope="scope">
-                   {{ scope.row['year'] }}
-        </template>
-    </el-table-column> 
-    <el-table-column
-    v-for=" n in 13" :key="'col'+n"
-      :label="mcols[n]"
-      show-overflow-tooltip>
-      <template slot-scope="scope">
-              <span :style="'text-align:right;color:'+((scope.row[mindx[n]]&&scope.row[mindx[n]].startsWith('-'))?'green':'red') " >
-                    {{ scope.row[mindx[n]] }}</span>
-        </template>
-    </el-table-column>
-    </el-table> 
-      </el-card>
-      <el-card shadow="hover">
-        <!-- <echart           ref="piechart"
+            <el-table-column
+              label="年份"
+              sortable
+              min-width="60"
+              show-overflow-tooltip
+            >
+              <template slot-scope="scope">
+                {{ scope.row['year'] }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              v-for="n in 13"
+              :key="'col' + n"
+              :label="mcols[n]"
+              show-overflow-tooltip
+            >
+              <template slot-scope="scope">
+                <span
+                  :style="
+                    'text-align:right;color:' +
+                    (scope.row[mindx[n]] && scope.row[mindx[n]].startsWith('-')
+                      ? 'green'
+                      : 'red')
+                  "
+                >
+                  {{ scope.row[mindx[n]] }}</span
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+        <el-card shadow="hover" v-if="usermenu.indexOf('holding-info') > -1">
+          <!-- <echart           ref="piechart"
 :chartData="pieData"  style="height: 260px" :isAxisChart="false"></echart> -->
-<el-row>
-    <el-col :span="12">
-  <echart
-    ref="piechart"
-    :chartData="pieData"
-    style="height: 480px"
-    :isAxisChart="false"
-  ></echart>
-    </el-col>
-     <el-col :span="12">
-  <echart
-    ref="subPie"
-    :chartData="subData"
-    style="height: 480px"
-    :isAxisChart="false"
-  ></echart>
-    </el-col>
-</el-row>
-      </el-card>
-      <el-card shadow="hover">
-        <el-table
-          :data="tableData"
-          :span-method="cellMerge"
-          :summary-method="getSummaries"
-          show-summary
-          border
-          style="width: 100%; margin-top: 20px"
-        >
-          <el-table-column prop="rank_type" label="类型"> </el-table-column>
-          <el-table-column prop="short_name" label="名称">     <template slot-scope="scope"><a href="javascript:;" @click="showHis(scope.row)">{{ scope.row.short_name }}</a></template>
- </el-table-column>
-           <el-table-column align="right"  prop="s_date" label="建仓时间"> </el-table-column>
-           <el-table-column align="right"  prop="latest_date" label="净值日期"> </el-table-column>
-          <!-- <el-table-column hide="true" prop="amount" label="份额"> </el-table-column> -->
-          <el-table-column align="right"  :formatter	="formatterNum" prop="netval" label="当前净值"> </el-table-column>
+          <el-row>
+            <el-col :span="12">
+              <echart
+                ref="piechart"
+                :chartData="pieData"
+                style="height: 480px"
+                :isAxisChart="false"
+              ></echart>
+            </el-col>
+            <el-col :span="12">
+              <echart
+                ref="subPie"
+                :chartData="subData"
+                style="height: 480px"
+                :isAxisChart="false"
+              ></echart>
+            </el-col>
+          </el-row>
+        </el-card>
+        <el-card shadow="hover" v-if="usermenu.indexOf('holding-info') > -1">
+          <el-table
+            :data="tableData"
+            :span-method="cellMerge"
+            :summary-method="getSummaries"
+            show-summary
+            border
+            style="width: 100%; margin-top: 20px"
+          >
+            <el-table-column prop="rank_type" label="类型"> </el-table-column>
+            <el-table-column prop="short_name" label="名称">
+              <template slot-scope="scope"
+                ><a href="javascript:;" @click="showHis(scope.row)">{{
+                  scope.row.short_name
+                }}</a></template
+              >
+            </el-table-column>
+            <el-table-column align="right" prop="s_date" label="建仓时间">
+            </el-table-column>
+            <el-table-column align="right" prop="latest_date" label="净值日期">
+            </el-table-column>
+            <!-- <el-table-column hide="true" prop="amount" label="份额"> </el-table-column> -->
+            <el-table-column
+              align="right"
+              :formatter="formatterNum"
+              prop="netval"
+              label="当前净值"
+            >
+            </el-table-column>
 
-          <el-table-column align="right"  :formatter	="formatterNum" prop="sumrate" label="累计收益率"> </el-table-column>
-          <el-table-column  align="right" :formatter	="formatterNum" prop="profit" label="市值"> </el-table-column>
-
-        </el-table>
-      </el-card>
-      <!-- <div class="graph">
+            <el-table-column
+              align="right"
+              :formatter="formatterNum"
+              prop="sumrate"
+              label="累计收益率"
+            >
+            </el-table-column>
+            <el-table-column
+              align="right"
+              :formatter="formatterNum"
+              prop="profit"
+              label="市值"
+            >
+            </el-table-column>
+          </el-table>
+        </el-card>
+        <!-- <div class="graph">
                 <el-card shadow="hover">
                     <echart :chartData="echartData.user" style="height: 260px"></echart>
                 </el-card>
                
             </div> -->
-    </el-col>
-  </el-row>
-</div> 
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
-import Echart from "../../components/Echart.vue";
-import FundEchart from "../../components/FundEchart.vue";
-import Bus from '@/store/bus.js';
-import Vue from 'vue';
-import axis from "axios";
-import {mapGetters} from 'vuex'
+import Echart from '../../components/Echart.vue'
+import FundEchart from '../../components/FundEchart.vue'
+import Bus from '@/store/bus.js'
+import Vue from 'vue'
+import axis from 'axios'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
     Echart,
-    FundEchart,
+    FundEchart
   },
-   computed: {
-     ...mapGetters(['class_order','token','sysparam','usermenu','showFundName'])
-
-   },
+  computed: {
+    ...mapGetters([
+      'class_order',
+      'token',
+      'sysparam',
+      'usermenu',
+      'showFundName'
+    ])
+  },
   data() {
     return {
-      subsum:{},
-      subresult:{},
-      holdings:[],
-      rawData:[],
-      cur_code:"",
-      cur_fof:"SY9620",
-      current:{},
-      mcols:["年份","一月","二月","三月", "四月","五月", "六月","七月","八月","九月", "十月", "十一月","十二月","年收益"],
-      mindx:["year","m01","m02","m03","m04","m05","m06","m07","m08","m09","m10","m11","m12","vyear"],
-      dialogVisible:false,
-      code: "",
-      subtype:"",
+      subsum: {},
+      subresult: {},
+      holdings: [],
+      rawData: [],
+      cur_code: '',
+      cur_fof: 'SY9620',
+      current: {},
+      mcols: [
+        '年份',
+        '一月',
+        '二月',
+        '三月',
+        '四月',
+        '五月',
+        '六月',
+        '七月',
+        '八月',
+        '九月',
+        '十月',
+        '十一月',
+        '十二月',
+        '年收益'
+      ],
+      mindx: [
+        'year',
+        'm01',
+        'm02',
+        'm03',
+        'm04',
+        'm05',
+        'm06',
+        'm07',
+        'm08',
+        'm09',
+        'm10',
+        'm11',
+        'm12',
+        'vyear'
+      ],
+      dialogVisible: false,
+      code: '',
+      subtype: '',
       tableData: [],
-      profitlist:[],
-      pieData:{
-          action:{},
-           legend: {type: 'scroll',
-        top: 2,
-        data: []},
-          series:{     name:"资金占比",       type: 'pie',
-                //   radius: ['50%', '70%'],
-            avoidLabelOverlap: true,
+      profitlist: [],
+      pieData: {
+        action: {},
+        legend: { type: 'scroll', top: 2, data: [] },
+        series: {
+          name: '资金占比',
+          type: 'pie',
+          //   radius: ['50%', '70%'],
+          avoidLabelOverlap: true,
 
-            label: {
-                formatter:(params) => {  //格式化数据的函数
-            return params.name+":\n"+(params.value/10000).toFixed(1)+"万 "+params.percent+"%" 
-              },
-            },
-    tooltip: {
-        trigger: 'item',
-        valueFormatter: (value) =>   (value/10000).toFixed(1)+"万"
-    },
-                    data:[
-            
-            ]}},
-    subData: {
-        legend: { type: "scroll", top: 2, data: [] },
-        series: [{
-          name: "资金占比",
-          type: "pie",
-          avoidLabelOverlap: true ,
-
-        //   radius: ["0%", "60%"],
           label: {
-            formatter:(params) => {  //格式化数据的函数
-            return params.name+":\n"+(params.value/10000).toFixed(1)+"万 "+params.percent+"%" 
-              }          },
-          tooltip: {
-                   trigger: 'item',
-                  valueFormatter: (value) =>   (value/10000).toFixed(1)+"万"
+            formatter: (params) => {
+              //格式化数据的函数
+              return (
+                params.name +
+                ':\n' +
+                (params.value / 10000).toFixed(1) +
+                '万 ' +
+                params.percent +
+                '%'
+              )
+            }
           },
-          data: [],
-        }]
-      },
-      spanArr:[],
-      pspanArr:[],
-      curId: 0,
-
-      userImg: require("../../assets/images/user.png"),
-
-      tableLabel: {
-        name: "课程",
-        todayBuy: "今日购买",
-        monthBuy: "本月购买",
-        totalBuy: "总购买",
-      },
-    };
-  },
-    watch: {
-    cur_fof: {
-      handler: function (val) {
-        this.code=this.cur_fof+",000300.SH,000905.SH,000852.SH";
-        this.changePie() 
-        this.getTableData();
-      },
-    }},
-  methods: {
-      jumptodash(){
-            this.$router.push({name:'fof-dash'})  
-            this.$store.commit('selectMenu',{
-		"path": "/fofdash",
-		"label": "资金明细",
-		"name": "fof-dash",
-	})},
-     jumptorank(){
-            this.$router.push({name:'rank-info'})  
-            this.$store.commit('selectMenu',{
-		"path": "/rankinfo",
-		"label": "投资排名",
-		"name": "rank-info",
-		"icon": "setting"
-	});
-      },
-    jumptopressure(){
-            this.$router.push({name:'fund-pressure'})  
-            this.$store.commit('selectMenu',{
-		"path": "/fundpressure",
-		"label": "压力测试",
-		"name": "fund-pressure",
-		"icon": "setting"
-	});
-      },
-    jumptoReport(){
-            this.$router.push({name:'holding-report'})  
-            this.$store.commit('selectMenu',{
-		"path": "/holdingReprot",
-		"label": "回撤信息",
-		"name": "holding-report",
-		"icon": "setting"
-	});
-      },
-
-     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
-        if (rowIndex % 2 === 0) {
-          if (columnIndex === 0) {
-            return [1, 2];
-          } else if (columnIndex === 1) {
-            return [0, 0];
-          }
+          tooltip: {
+            trigger: 'item',
+            valueFormatter: (value) => (value / 10000).toFixed(1) + '万'
+          },
+          data: []
         }
       },
-      changeFOF(fofcode){
-        // this.changePie()
+      subData: {
+        legend: { type: 'scroll', top: 2, data: [] },
+        series: [
+          {
+            name: '资金占比',
+            type: 'pie',
+            avoidLabelOverlap: true,
+
+            //   radius: ["0%", "60%"],
+            label: {
+              formatter: (params) => {
+                //格式化数据的函数
+                return (
+                  params.name +
+                  ':\n' +
+                  (params.value / 10000).toFixed(1) +
+                  '万 ' +
+                  params.percent +
+                  '%'
+                )
+              }
+            },
+            tooltip: {
+              trigger: 'item',
+              valueFormatter: (value) => (value / 10000).toFixed(1) + '万'
+            },
+            data: []
+          }
+        ]
       },
-      getSummaries(param) {
-			const { columns, data } = param;
-			const sums = [];
-			columns.forEach((column, index) => {
-				 if (index === 0) {
-				   sums[index] = '合计';
-				   return;
-				 }
-				 const values = data.map(item => Number(item[column.property]));
-				     if (column.property === 'profit' ) {
-							sums[index] = this.$tools.formatMoney(values.reduce((prev, curr) => {
-							 const value = Number(curr);
-							 if (!isNaN(value)) {
-							   return prev + curr;
-							 } else {
-							   return prev;
-							 }
-							}, 0),2);
-							sums[index];
- 
-				     }
-				});
-				return sums
-	    	},
-       editClose() {
-        this.dialogVisible = false
-        },
-         showHis(row){
-          this.cur_code=""
-          this.current=row
-          this.cur_code=row.code
-          Bus.$emit("showChart",{"cur_code":this.cur_code,"diagName":"hisChart","wk":'0'})
-        //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
-      },
-            showChartByCodes(codes){
-          this.cur_code=""
-          this.current={}
-          this.dialogVisible=true
-          this.cur_code=codes
-      },
-      formatterNum(row, column, value) {
-      if (!value) return "0.00";
-      if(row.class_type=='指增' && column.label=='累计收益率')
-      return this.$tools.formatMoney(value,3)+'\n(α:'+this.$tools.formatMoney(value-row['irate'],3)+'  β:'+this.$tools.formatMoney(row['irate'],3)+')'
-      return this.$tools.formatMoney(value,2)
+      spanArr: [],
+      pspanArr: [],
+      curId: 0,
+
+      userImg: require('../../assets/images/user.png'),
+
+      tableLabel: {
+        name: '课程',
+        todayBuy: '今日购买',
+        monthBuy: '本月购买',
+        totalBuy: '总购买'
+      }
+    }
+  },
+  watch: {
+    cur_fof: {
+      handler: function (val) {
+        this.code = this.cur_fof + ',000300.SH,000905.SH,000852.SH'
+        this.getProfitTable()
+        if (this.$refs.piechart) {
+          this.changePie()
+          this.getTableData()
+        }
+      }
+    }
+  },
+  methods: {
+    jumptodash() {
+      this.$router.push({ name: 'fof-dash' })
+      this.$store.commit('selectMenu', {
+        'path': '/fofdash',
+        'label': '资金明细',
+        'name': 'fof-dash'
+      })
     },
-    getSpanArr(data,rname) {
-      var sar=[]
+    jumptorank() {
+      this.$router.push({ name: 'rank-info' })
+      this.$store.commit('selectMenu', {
+        'path': '/rankinfo',
+        'label': '投资排名',
+        'name': 'rank-info',
+        'icon': 'setting'
+      })
+    },
+    jumptopressure() {
+      this.$router.push({ name: 'fund-pressure' })
+      this.$store.commit('selectMenu', {
+        'path': '/fundpressure',
+        'label': '压力测试',
+        'name': 'fund-pressure',
+        'icon': 'setting'
+      })
+    },
+    jumptoReport() {
+      this.$router.push({ name: 'holding-report' })
+      this.$store.commit('selectMenu', {
+        'path': '/holdingReprot',
+        'label': '回撤信息',
+        'name': 'holding-report',
+        'icon': 'setting'
+      })
+    },
+
+    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex % 2 === 0) {
+        if (columnIndex === 0) {
+          return [1, 2]
+        } else if (columnIndex === 1) {
+          return [0, 0]
+        }
+      }
+    },
+    changeFOF(fofcode) {
+      // this.changePie()
+    },
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        const values = data.map((item) => Number(item[column.property]))
+        if (column.property === 'profit') {
+          sums[index] = this.$tools.formatMoney(
+            values.reduce((prev, curr) => {
+              const value = Number(curr)
+              if (!isNaN(value)) {
+                return prev + curr
+              } else {
+                return prev
+              }
+            }, 0),
+            2
+          )
+          sums[index]
+        }
+      })
+      return sums
+    },
+    editClose() {
+      this.dialogVisible = false
+    },
+    showHis(row) {
+      this.cur_code = ''
+      this.current = row
+      this.cur_code = row.code
+      Bus.$emit('showChart', {
+        'cur_code': this.cur_code,
+        'diagName': 'hisChart',
+        'wk': '0'
+      })
+      //   this.$refs.hischart.$emit("getChart",row.code)    //子组件$on中的名字
+    },
+    showChartByCodes(codes) {
+      this.cur_code = ''
+      this.current = {}
+      this.dialogVisible = true
+      this.cur_code = codes
+    },
+    formatterNum(row, column, value) {
+      if (!value) return '0.00'
+      if (row.class_type == '指增' && column.label == '累计收益率')
+        return (
+          this.$tools.formatMoney(value, 3) +
+          '\n(α:' +
+          this.$tools.formatMoney(value - row['irate'], 3) +
+          '  β:' +
+          this.$tools.formatMoney(row['irate'], 3) +
+          ')'
+        )
+      return this.$tools.formatMoney(value, 2)
+    },
+    getSpanArr(data, rname) {
+      var sar = []
 
       for (var i = 0; i < data.length; i++) {
         if (i === 0) {
-          sar.push(1);
-          this.pos = 0;
+          sar.push(1)
+          this.pos = 0
         } else {
           // 判断当前元素与上一个元素是否相同
           if (data[i][rname] === data[i - 1][rname]) {
-            sar[this.pos] += 1;
-            sar.push(0);
+            sar[this.pos] += 1
+            sar.push(0)
           } else {
-            sar.push(1);
-            this.pos = i;
+            sar.push(1)
+            this.pos = i
           }
         }
       }
-      if(rname=='rank_type'){
-        Vue.set(this,"spanArr",sar)
-      }else if(rname=='year'){
-        Vue.set(this,"pspanArr",sar)
+      if (rname == 'rank_type') {
+        Vue.set(this, 'spanArr', sar)
+      } else if (rname == 'year') {
+        Vue.set(this, 'pspanArr', sar)
       }
     },
-    getPieDataOuter(data){
-        var ret=[]
-        for(var idx in data){
-            var row=data[idx]
-            if(this.subtype){
-                if(row.class_type!=this.subtype)
-                {
-                    continue;
-                }
-            }
-            if(this.token=='demo'){
-                row["short_name"]=row["mcode"]
-                row["name"]=row["mcode"]
-
-            }
-            row["profit"]=row.amount*(row["n_netval"])
-            row["sumrate"]=parseFloat(row["n_sumval"])/parseFloat(row["s_sumval"])-1
-
-            ret.push({name:row.short_name,value:row["profit"]})
+    getPieDataOuter(data) {
+      var ret = []
+      for (var idx in data) {
+        var row = data[idx]
+        if (this.subtype) {
+          if (row.class_type != this.subtype) {
+            continue
+          }
         }
-        return ret;
+        if (this.token == 'demo') {
+          row['short_name'] = row['mcode']
+          row['name'] = row['mcode']
+        }
+        row['profit'] = row.amount * row['n_netval']
+        row['sumrate'] =
+          parseFloat(row['n_sumval']) / parseFloat(row['s_sumval']) - 1
+
+        ret.push({ name: row.short_name, value: row['profit'] })
+      }
+      return ret
     },
     // getPieData(data){
     //     var dict={};
@@ -391,89 +517,101 @@ export default {
     //     }
     //     return ret;
     // },
-    getLegend(data){
-        var ret=[]
-        for (var idx in data){
-            ret.push(data[idx].name)
-        }
+    getLegend(data) {
+      var ret = []
+      for (var idx in data) {
+        ret.push(data[idx].name)
+      }
     },
     cellMerge({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
-        const _row = this.spanArr[rowIndex];
-        const _col = _row > 0 ? 1 : 0;
+        const _row = this.spanArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
         return {
           rowspan: _row,
-          colspan: _col,
-        };
+          colspan: _col
+        }
       }
     },
     cellMergep({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
-        const _row = this.pspanArr[rowIndex];
-        const _col = _row > 0 ? 1 : 0;
+        const _row = this.pspanArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
         return {
           rowspan: _row,
-          colspan: _col,
-        };
+          colspan: _col
+        }
       }
     },
-    getTableData() {
-       //const acode=["SY9620","SSN818","SSN369","SSS105","STE599"]
-       const acode=this.cur_fof.split(",")
-        axis({
-        url: "/fof/profits",
-        method: "GET",
-        params: {codes:this.cur_fof},
-      })
-        .then((response) => {
-            //this.profitlist=response.data[this.cur_fof]
-            let profitlist=[]
-              for(var code of acode){
-                if(response.data[code])
-                profitlist=profitlist.concat(response.data[code])
-              }
-            this.profitlist=profitlist.sort((a,b)=>b['year']-a['year'])
-            // this.getSpanArr(this.profitlist,"year")
-        }),
+    getProfitTable() {
+      const acode = this.cur_fof.split(',')
       axis({
-        url: "/fof/summary",
-        method: "GET",
-        params: {fof:this.cur_fof},
+        url: '/fof/profits',
+        method: 'GET',
+        params: { codes: this.cur_fof }
+      }).then((response) => {
+        //this.profitlist=response.data[this.cur_fof]
+        let profitlist = []
+        for (var code of acode) {
+          if (response.data[code])
+            profitlist = profitlist.concat(response.data[code])
+        }
+        this.profitlist = profitlist.sort((a, b) => b['year'] - a['year'])
+        // this.getSpanArr(this.profitlist,"year")
+      })
+    },
+    getTableData() {
+      //const acode=["SY9620","SSN818","SSN369","SSS105","STE599"]
+      const acode = this.cur_fof.split(',')
+      axis({
+        url: '/fof/summary',
+        method: 'GET',
+        params: { fof: this.cur_fof }
       })
         .then((response) => {
-          this.tableData = response.data.datas.sort((a,b)=>{
-              return this.class_order.indexOf(a['rank_type'])-this.class_order.indexOf(b['rank_type'])
-          });
+          this.tableData = response.data.datas.sort((a, b) => {
+            return (
+              this.class_order.indexOf(a['rank_type']) -
+              this.class_order.indexOf(b['rank_type'])
+            )
+          })
           this.getPieDataOuter(this.tableData)
-          let cashdata=this.pieData.series.data
-          let cash=cashdata.filter(r=>r['name']=='现金')[0]["value"]
+          let cashdata = this.pieData.series.data
+          let cash = cashdata.filter((r) => r['name'] == '现金')[0]['value']
           //增加现金信息
-          this.tableData.push({"class_type":"现金","netval":1,"short_name":"现金","code":"CASH","amount":cash,"profit":cash})
+          this.tableData.push({
+            'class_type': '现金',
+            'netval': 1,
+            'short_name': '现金',
+            'code': 'CASH',
+            'amount': cash,
+            'profit': cash
+          })
           // this.subData.series[0].data=this.getPieDataOuter(this.tableData)
           // this.pieData.series.data=this.getPieData(this.tableData)
           // this.pieData.legend.data=this.getLegend(this.pieData.series.data)
           // this.$refs.piechart.initChart()   //子组件$on中的名字
           // this.subData.legend.data=this.getLegend(this.subData.series.data)
           // this.$refs.subPie.initChart()   //子组件$on中的名字
-          this.getSpanArr(this.tableData,"rank_type")
-          
+          this.getSpanArr(this.tableData, 'rank_type')
         })
         .catch((error) => {
-          console.log(error);
-        });
-
+          console.log(error)
+        })
     },
-    changePie(){
-          console.log(this.subresult)
-          if(this.subresult[this.cur_fof]){
-          this.holdings= JSON.parse(JSON.stringify(this.subresult[this.cur_fof]))
-          this.holdings.filter(row=> !row["type"]).forEach((srow,idx)=>{
-              if(srow["b_code"]){
-                if(srow['b_code'].startsWith("SUBJECT")){
-                 srow['class_type']="现金"
-                 srow['type']="现金"
-                 return true 
-                }
+    changePie() {
+      console.log(this.subresult)
+      if (this.subresult[this.cur_fof]) {
+        this.holdings = JSON.parse(JSON.stringify(this.subresult[this.cur_fof]))
+        this.holdings
+          .filter((row) => !row['type'])
+          .forEach((srow, idx) => {
+            if (srow['b_code']) {
+              if (srow['b_code'].startsWith('SUBJECT')) {
+                srow['class_type'] = '现金'
+                srow['type'] = '现金'
+                return true
+              }
               // console.log(srow)
               // let rt=srow["marketval"]/this.subsum[srow["b_code"]]
               // this.subresult[srow["b_code"]].map(prow=>{
@@ -483,93 +621,124 @@ export default {
               //     nrow["marketval"]=nrow["marketval"]*rt
               //     this.holdings.push(nrow)
               // })
-              }
-
-          })
-          
-          let cdata={}
-          console.log(this.holdings)
-          this.holdings.map(row=>{
-            if(row["b_code"].startsWith("SUBJECT")){
-            row["name"]='现金'
-            }else{
-            row["name"]=this.showFundName(row["b_code"]).substring(2)
-
             }
-            if(row["class_type"]){
-              if(row["class_type"]=='FOF'){
-                cdata[row["name"]]=row["marketval"]
-              }else{
-              let key=row["rank_type"]
-              if(key){}
-              else{
-                key=row['class_type']
-              }
-              let ov=cdata[key]
-              if(!ov){
-                ov=0
-              }
-              ov+=row["marketval"]
-              cdata[key]=ov
-            }}
           })
-          let chartdata=[]
-          for (let key in cdata){
-            chartdata.push({"name":key,"value":cdata[key]})
 
+        let cdata = {}
+        console.log(this.holdings)
+        this.holdings.map((row) => {
+          if (row['b_code'].startsWith('SUBJECT')) {
+            row['name'] = '现金'
+          } else {
+            row['name'] = this.showFundName(row['b_code']).substring(2)
           }
-          chartdata.sort((a,b)=>{
-              return this.class_order.indexOf(a['name'])-this.class_order.indexOf(b['name'])
-          });
-          // this.tableData.push({"class_type":"现金","short_name":"现金","code":"CASH","profit":999})
-          this.pieData.series.data=chartdata
-          this.$refs.piechart.initChart()   //子组件$on中的名字
-          this.subData.series[0].data=this.holdings.filter(row=>!row["rt"]).map(row=>{return {"name":row["name"],"value":row["marketval"]}})
-          this.$refs.subPie.initChart() 
-    }}
+          if (row['class_type']) {
+            if (row['class_type'] == 'FOF') {
+              cdata[row['name']] = row['marketval']
+            } else {
+              let key = row['rank_type']
+              if (key) {
+              } else {
+                key = row['class_type']
+              }
+              let ov = cdata[key]
+              if (!ov) {
+                ov = 0
+              }
+              ov += row['marketval']
+              cdata[key] = ov
+            }
+          }
+        })
+        let chartdata = []
+        for (let key in cdata) {
+          chartdata.push({ 'name': key, 'value': cdata[key] })
+        }
+        chartdata.sort((a, b) => {
+          return (
+            this.class_order.indexOf(a['name']) -
+            this.class_order.indexOf(b['name'])
+          )
+        })
+        // this.tableData.push({"class_type":"现金","short_name":"现金","code":"CASH","profit":999})
+        this.pieData.series.data = chartdata
+        this.$refs.piechart.initChart() //子组件$on中的名字
+        this.subData.series[0].data = this.holdings
+          .filter((row) => !row['rt'])
+          .map((row) => {
+            return { 'name': row['name'], 'value': row['marketval'] }
+          })
+        this.$refs.subPie.initChart()
+      }
+    }
   },
   created() {
+    this.getProfitTable()
+    console.log(this.$refs)
+    // if (this.$refs.piechart) {
     axis({
-        url: "/fof/holdingType",
-        method: "GET"
-      })
-        .then((response) => {
-         this.rawData=response.data
-        this.subsum={}
-         for(let fof of this.sysparam.FOF){
-             this.subresult[fof['code']]=this.rawData.filter(row=>row['mcode']==fof['code'])
-             this.subsum[fof['code']]=this.rawData.filter(row=>row['mcode']==fof['code']).reduce((preVal, row) => { return preVal + row["marketval"];}, 0)
-         }
-         this.changePie() 
-         this.getTableData();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-this.pieData.action["click"]=(params)=>{
-            this.$emit("mainpieClick",params)
+      url: '/fof/holdingType',
+      method: 'GET'
+    })
+      .then((response) => {
+        this.rawData = response.data
+        this.subsum = {}
+        for (let fof of this.sysparam.FOF) {
+          this.subresult[fof['code']] = this.rawData.filter(
+            (row) => row['mcode'] == fof['code']
+          )
+          this.subsum[fof['code']] = this.rawData
+            .filter((row) => row['mcode'] == fof['code'])
+            .reduce((preVal, row) => {
+              return preVal + row['marketval']
+            }, 0)
         }
-    this.$on('mainpieClick',(arg)=> {
-        this.subtype=arg.name
-        console.log(arg)
-        let ret=this.sysparam.FOF.filter(r=>r['value']==this.subtype)
-        if(ret.length>0){
-        this.subData.series[0].data=this.rawData.filter(row=>row["mcode"]==ret[0]['code']).map(row=>{return {"name":row["b_name"].replace(/(指数增强|证券|私募).*基金/,""),"value":row["marketval"]}})
-        }else{
-        this.subData.series[0].data=this.holdings.filter(row=>row["rank_type"]==this.subtype||row["class_type"]==this.subtype).map(row=>{return {"name":row["name"],"value":row["marketval"]}})
-        }
-        console.log(this.subData.series[0].data)
-        this.$refs.subPie.initChart() 
-
+        this.changePie()
+        this.getTableData()
       })
-    this.code = this.cur_fof+",000300.SH,000905.SH,000852.SH";
-      Bus.$on('cartchart',(arg)=> {
-          console.log("========cartchart========")
-          this.showChartByCodes(arg)
-         })
-  },
-};
+      .catch((error) => {
+        console.log(error)
+      })
+
+    this.pieData.action['click'] = (params) => {
+      this.$emit('mainpieClick', params)
+    }
+    this.$on('mainpieClick', (arg) => {
+      this.subtype = arg.name
+      console.log(arg)
+      let ret = this.sysparam.FOF.filter((r) => r['value'] == this.subtype)
+      if (ret.length > 0) {
+        this.subData.series[0].data = this.rawData
+          .filter((row) => row['mcode'] == ret[0]['code'])
+          .map((row) => {
+            return {
+              'name': row['b_name'].replace(/(指数增强|证券|私募).*基金/, ''),
+              'value': row['marketval']
+            }
+          })
+      } else {
+        this.subData.series[0].data = this.holdings
+          .filter(
+            (row) =>
+              row['rank_type'] == this.subtype ||
+              row['class_type'] == this.subtype
+          )
+          .map((row) => {
+            return { 'name': row['name'], 'value': row['marketval'] }
+          })
+      }
+      console.log(this.subData.series[0].data)
+      this.$refs.subPie.initChart()
+    })
+    // }
+
+    this.code = this.cur_fof + ',000300.SH,000905.SH,000852.SH'
+    Bus.$on('cartchart', (arg) => {
+      console.log('========cartchart========')
+      this.showChartByCodes(arg)
+    })
+  }
+}
 </script>
 
 <style lang="scss" scoped>
