@@ -172,7 +172,7 @@ export default {
       tps: ['指增', '中性', 'CTA', '混合', '套利', '期权', '可转债'],
       company_ranks: [],
       selusers: ['chenjie', 'mayh', 'wangl', 'liuxq', 'qiwq'],
-      startdate: '20230501',
+      startdate: '',
       enddate: '',
       suser: '',
       showCompanyRanks: false,
@@ -427,6 +427,7 @@ export default {
     this.getStatInfo()
   },
   created() {
+    this.startdate = this.$moment(this.max_date).dayOfYear(1).format('YYYYMMDD')
     // this.getMisc("fof_action")
   }
 }

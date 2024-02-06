@@ -173,7 +173,7 @@ export default {
       selusers: ['chenjie', 'mayh', 'wangl', 'liuxq', 'qiwq'],
       suser: '',
       company_ranks: [],
-      startdate: '20230501',
+      startdate: '',
       enddate: '',
       showCompanyRanks: false,
       rawlen: 0,
@@ -431,6 +431,7 @@ export default {
     this.getStatInfo()
   },
   created() {
+    this.startdate = this.$moment(this.max_date).dayOfYear(1).format('YYYYMMDD')
     // this.getMisc("fof_action")
   }
 }
