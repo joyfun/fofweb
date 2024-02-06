@@ -6,7 +6,12 @@
         <vxe-button size="mini" @click="showRankHis">排名</vxe-button>
         <vxe-button size="mini" @click="showStatHisBatch">指标</vxe-button>
         <vxe-button size="mini" @click="compareData">业绩</vxe-button>
-        <vxe-button size="mini" @click="compareInvest">已投对比</vxe-button>
+        <vxe-button
+          v-if="usermenu.indexOf('holding-info') > -1"
+          size="mini"
+          @click="compareInvest"
+          >已投对比</vxe-button
+        >
         <el-date-picker
           style="width: 130px"
           v-model="date"
@@ -98,6 +103,7 @@
           {{ prodTitle }}
           <br />{{ tableList.length }}
           <vxe-switch
+            v-if="usermenu.indexOf('holding-info') > -1"
             v-model="showList"
             open-label="已投"
             :open-value="true"
@@ -124,7 +130,13 @@
                             <el-button  @click.native.prevent="showBaseInfo(row)" type="text" size="small"><i class="el-icon-info" ></i></el-button> -->
         </template>
       </vxe-column>
-      <vxe-column field="marketval" width="50" sortable :title="'持仓(万)'">
+      <vxe-column
+        v-if="usermenu.indexOf('holding-info') > -1"
+        field="marketval"
+        width="50"
+        sortable
+        :title="'持仓(万)'"
+      >
         <template #default="{ row }">
           {{ $tools.formatMoney(row['marketval'] / 10000, 0) }}
         </template>
@@ -790,7 +802,7 @@ export default {
       }
     },
     ...mapState(['foflist', 'holding', 'mholding']),
-    ...mapGetters(['sysparam', 'token', 'showFundName'])
+    ...mapGetters(['sysparam', 'token', 'showFundName', 'usermenu'])
   },
   data() {
     return {

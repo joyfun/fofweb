@@ -41,7 +41,7 @@ const getters = {
     }
     let blen=state.holding.filter(row=>row['b_code']==code).length
     let name=""
-    if(blen>0){
+    if(blen>0 && state.usermenu.indexOf('holding-info') > -1){
       name="💰"
     }
 
@@ -51,6 +51,10 @@ const getters = {
           name=name+"🈵"
         }else if(item['other_stage']=="高费率") {
           name=name+"💎"
+        }else if(item['other_stage']=="✴️") {
+          name=name+"✴️"
+        }else if(item['other_stage']=="⭐️") {
+          name=name+"⭐️"
         }else if(item['scale']=='同类可投'){
           name=name+"🔃"
         }
