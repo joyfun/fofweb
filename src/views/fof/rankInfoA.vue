@@ -171,7 +171,6 @@
       </vxe-column>
       <!-- -->
       <vxe-column
-        v-if="ftype != '投后' && type != '非常规'"
         sortable
         title="级别"
         width="36"
@@ -726,7 +725,7 @@ export default {
     },
     type: {
       handler(n) {
-        if (this.type == '高费率') {
+        if (this.type == '非常规') {
           this.showList = false
         }
         this.getProducts()
@@ -1334,9 +1333,9 @@ export default {
         )
         .filter((row) => clss.indexOf(row['class_type']) > -1)
         .map((row) => row['code'])
-      if (['中性', '混合'].indexOf(ntype) > -1 && holds.indexOf('ST8876') < 0) {
-        holds.push('ST8876')
-      }
+      // if (['中性', '混合'].indexOf(ntype) > -1 && holds.indexOf('ST8876') < 0) {
+      //   holds.push('ST8876')
+      // }
 
       console.log(holds)
       let sels = this.multipleSelection.concat(holds)
@@ -1633,8 +1632,9 @@ export default {
           if (this.tableData && this.tableData.length > 0) {
             this.calcdate = this.tableData[0]['date']
           }
-          this.getBaseInfo()
-
+          this.$nextTick(() => {
+            this.getBaseInfo()
+          })
           this.$axios
             .get('/fof/rankstat', {
               params: { ftype: this.ftype, date: this.date, type: this.type }
@@ -1645,7 +1645,7 @@ export default {
                 this.avgcnt[k] = parseInt(this.avgcnt[k])
               }
             })
-          if (this.type == '高费率') {
+          if (this.type == '非常规') {
             this.$axios
               .get('/fof/list', { params: { scale: '高费率,黑名单,不可投' } })
               .then((response) => {
@@ -1658,6 +1658,7 @@ export default {
                     let finfo = infos[0]
                     row['fee'] = finfo['fee']
                     row['carry'] = finfo['carry']
+                    row['carry1'] = finfo['carry1']
                     row['perf_comp'] = finfo['perf_comp']
                     row['remark'] = finfo['remark']
                   }
