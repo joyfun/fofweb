@@ -559,6 +559,7 @@ import XLSX from 'xlsx'
 import Vue from 'vue'
 import FileSaver from 'file-saver'
 import Bus from '@/store/bus.js'
+import { indexOf } from 'xe-utils'
 // const sort_key =['mean26','mean52','mean104','listrate26','listrate52','listrate104','std26','std52','std104','yeaily_return','sharpe', 'calmar', 'sortino', 'dd', 'win_ratio']
 const colitems = [
   { key: 'yr', name: '移动年均收益' },
@@ -1196,6 +1197,7 @@ export default {
       if (this.multipleSelection.length > 0)
         Bus.$emit('showChart', {
           cur_code: this.multipleSelection.join(','),
+          wk: '1',
           diagName: 'fullDialog'
         })
     },
@@ -1562,6 +1564,9 @@ export default {
               let dkey = r1 + '_' + subkey
               let tcnt = 0
               for (let arow of rets) {
+                if (['dd', 'volatility', 'win_ratio'].indexOf(subkey) > -1) {
+                  arow[r1 + '_' + subkey] = arow[r1 + '_' + subkey] * 100
+                }
                 if (dkey in arow) {
                   tcnt++
                 }

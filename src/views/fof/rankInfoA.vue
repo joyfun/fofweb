@@ -1291,6 +1291,7 @@ export default {
       if (this.multipleSelection.length > 0)
         Bus.$emit('showChart', {
           cur_code: this.multipleSelection.join(','),
+          wk: '1',
           diagName: 'fullDialog'
         })
     },
