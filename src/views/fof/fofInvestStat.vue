@@ -170,7 +170,7 @@ export default {
     return {
       statdict: {},
       tps: ['指增', '中性', 'CTA', '混合', '套利', '期权', '可转债'],
-      selusers: ['chenjie', 'mayh', 'wangl', 'liuxq', 'qiwq'],
+      selusers: ['chenjie', 'mayh', 'wangl', 'liuxq', 'qiwq', 'zhaoyx'],
       suser: '',
       company_ranks: [],
       startdate: '',
