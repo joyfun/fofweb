@@ -38,6 +38,7 @@
           keep-source
           tooltip-effect="dark"
           :mouse-config="{ selected: true }"
+          :area-config="{ autoClear: false }"
           :edit-config="{
             trigger: 'dblclick',
             mode: 'cell',
@@ -544,6 +545,7 @@ export default {
         '套利': { 'marketval': 0, 'adj': 0 },
         '中性': { 'marketval': 0, 'adj': 0 },
         '期权': { 'marketval': 0, 'adj': 0 },
+        'FOF': { 'marketval': 0, 'adj': 0 },
         '中性': { 'marketval': 0, 'adj': 0 },
         '混合': { 'marketval': 0, 'adj': 0 },
         null: { 'marketval': 0, 'adj': 0 },

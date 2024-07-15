@@ -165,6 +165,18 @@ export default {
                 label: '未排名统计',
                 name: 'norank-prod',
                 icon: 'setting'
+              },
+              {
+                path: '/fofremark',
+                label: '备注信息',
+                name: 'fof-remark',
+                icon: 'setting'
+              },
+              {
+                path: '/volatilityhigh',
+                label: '净值异常',
+                name: 'volatility-high',
+                icon: 'setting'
               }
             ]
           }
@@ -184,6 +196,20 @@ export default {
             label: '初选基金管理',
             primary: true,
             name: 'fund-info',
+            icon: 'setting'
+          },
+          {
+            path: '/fundinvest',
+            label: '已投基金管理',
+            primary: true,
+            name: 'holding-info',
+            icon: 'setting'
+          },
+          {
+            path: '/fundredeem',
+            label: '已赎基金管理',
+            primary: true,
+            name: 'redeem-info',
             icon: 'setting'
           }
           // {

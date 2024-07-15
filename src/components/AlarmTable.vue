@@ -4,7 +4,6 @@
       ref="hisTable"
       size="mini"
       max-height="480"
-      :mouse-config="{ selected: true }"
       show-overflow
       :data="tableData"
     >

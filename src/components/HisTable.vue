@@ -43,6 +43,7 @@
       size="mini"
       max-height="480"
       :mouse-config="{ selected: true }"
+      :area-config="{ autoClear: false }"
       show-overflow
       :data="tableData"
       :edit-config="{ trigger: 'dblclick', mode: 'cell' }"
