@@ -26,8 +26,15 @@
           size="small"
           >上传尽调表</el-button
         >
-
+        <!--
+   v-for="item in sysparam.stage
+            .filter(
+              (r) =>
+                ['对标', '投后', '已投', '已赎', '备投'].indexOf(r.value) < 0
+            )"
+-->
         <el-select
+          v-if="show_invest"
           v-model="filter.stage"
           @change="getList"
           style="width: 80px"
@@ -36,7 +43,7 @@
         >
           <el-option
             v-for="item in sysparam.stage.filter(
-              (r) => r.value != '对标' && r.value != '投后'
+              (r) => ['对标', '投后'].indexOf(r.value) < 0
             )"
             :key="item.value"
             :label="item.value"
@@ -314,13 +321,26 @@
       show-overflow-tooltip>
      <template slot-scope="scope">{{ scope.row.buy_date }}</template>
     </el-table-column> -->
-      <el-table-column prop="stage" label="状态" sortable show-overflow-tooltip>
+      <el-table-column
+        v-if="show_invest"
+        prop="stage"
+        label="状态"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row.stage }}</template>
       </el-table-column>
-      <el-table-column prop="fee" label="管理费" sortable show-overflow-tooltip>
+      <el-table-column
+        v-if="show_invest"
+        prop="fee"
+        label="管理费"
+        sortable
+        show-overflow-tooltip
+      >
         <template slot-scope="scope">{{ scope.row.fee }}</template>
       </el-table-column>
       <el-table-column
+        v-if="show_invest"
         prop="carry1"
         label="carry"
         sortable
@@ -383,6 +403,7 @@
               </el-tooltip>
             </el-button>
             <el-button
+              v-if="usermenu.indexOf('info-audit') > -1"
               @click.native.prevent="viewAudit(scope.row)"
               type="text"
               size="small"
@@ -548,7 +569,7 @@
           :page-sizes="[10, 15, 25, 30]"
           :page-size="PageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="totaltableData.length"
+          :total="totalCount"
         >
         </el-pagination>
       </div>
@@ -648,6 +669,7 @@
             <el-radio label="部分赎回"></el-radio>
             <el-radio label="分红"></el-radio>
             <el-radio label="提醒"></el-radio>
+            <el-radio label="断更"></el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="投资份额">
@@ -696,7 +718,6 @@
       >
 
       <vxe-table
-        border
         ref="crawInfo"
         size="mini"
         :sort-config="{ trigger: 'cell', orders: ['desc', 'asc', null] }"
@@ -755,7 +776,6 @@
         <el-tab-pane
           ><span slot="label">单位净值</span>
           <vxe-table
-            border
             ref="netValsInfo"
             size="mini"
             height="480"
@@ -1300,7 +1320,12 @@ const cForm0 = [
   { tilte: '产品简称', dataIndex: 'short_name', required: 'true' },
   { tilte: '可投状态', dataIndex: 'scale', param: 'scale' },
   { tilte: '产品全称', dataIndex: 'name', required: 'true' },
-  { tilte: '投资阶段', dataIndex: 'stage', param: 'stage' },
+  {
+    tilte: '投资阶段',
+    dataIndex: 'pre_stage',
+    param: 'stage',
+    required: 'true'
+  },
   {
     tilte: '一级策略',
     dataIndex: 'class_type',
@@ -1383,7 +1408,12 @@ export default {
       'allparam',
       'sources',
       'days'
-    ])
+    ]),
+    show_invest: {
+      get() {
+        return this.usermenu.indexOf('holding-info') > -1
+      }
+    }
   },
   data() {
     return {
@@ -1448,6 +1478,11 @@ export default {
     }
   },
   watch: {
+    currentPage: {
+      handler(n) {
+        this.getList()
+      }
+    },
     $route: {
       handler(n) {
         console.log(n)
@@ -1703,6 +1738,9 @@ export default {
           this.current.type.length < 2 ||
           (this.current.type.length > 2 && this.current[this.current.type])
         ) {
+          if ('已投' != this.current.stage || '已赎' != this.current.stage) {
+            this.current.stage = this.current.pre_stage
+          }
           axis({
             method: 'post',
             url: '/fof/saveinfo', // 请求地址
@@ -1762,7 +1800,7 @@ export default {
       )
     },
     addInfo() {
-      this.current = { stage: '入库', scale: '待尽调', sub_type: '' }
+      this.current = { pre_stage: '入库', scale: '待尽调', sub_type: '' }
       this.curCompany = {}
       this.org_id = ''
       this.fcompanys = []
@@ -1983,6 +2021,7 @@ export default {
       var ret = this.$tools.checkModi(this.current, this.origin)
       var $this = this
       ret['code'] = this.origin.code
+      ret['pre_stage'] = this.current.pre_stage
       ret['stage'] = this.current.stage
       ret['user'] = this.token
       ret['scale'] = this.current.scale
@@ -2320,6 +2359,8 @@ export default {
       }
       if (data) {
         data = this.$tools.cleanNulls(data)
+        data.page_size = this.PageSize
+        data.page_index = this.currentPage
       }
       console.log(data)
       //  if(this.input)
@@ -2329,12 +2370,12 @@ export default {
       //  data["stage"]=this.stage
       //   axis.get('/fof/list')//axis后面的.get可以省略；
       axis({
-        url: '/fof/list',
+        url: '/fof/pagelist',
         method: 'GET',
         params: data
       })
         .then((response) => {
-          this.totaltableData = response.data.sort((a, b) => {
+          this.totaltableData = response.data.items.sort((a, b) => {
             return b['create_time'].localeCompare(a['create_time'])
           })
           if (this.token == 'demo') {
@@ -2346,7 +2387,9 @@ export default {
               this.totaltableData[row]['company'] = ''
             }
           }
-          this.tableData = this.totaltableData.slice(0, $this.PageSize)
+          this.tableData = this.totaltableData
+          this.totalCount = response.data.total
+          //.slice(0, $this.PageSize)
           this.resizeChart()
         })
         .catch((error) => {
@@ -2431,6 +2474,8 @@ export default {
   padding: 10px 10px;
 }
 .span-green {
-  color: green;
+  // color: hsl(Math.random() * 360, Math.random(), Math.random());
+  background-color: green;
+  color: white;
 }
 </style>
