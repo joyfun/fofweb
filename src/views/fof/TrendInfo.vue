@@ -165,7 +165,7 @@
           v-for="rg of titles"
           :width="42"
           sortable
-          :title="rg"
+          :title="rg + '_' + af"
           :field="rg + '_' + af"
         >
           <template #default="{ row }">
@@ -1510,6 +1510,10 @@ export default {
               if (this.rawdata[ykey][akey]) {
                 for (let skey in this.rawdata[ykey][akey]) {
                   arow[ykey + '_' + skey] = this.rawdata[ykey][akey][skey]
+                  if (arow['tlength'] < 0) {
+                    arow[ykey + '_' + skey] = 0
+                    console.log(ykey + '_' + skey)
+                  }
                 }
               }
             }
@@ -1525,8 +1529,10 @@ export default {
             if (this.subtypes.indexOf(arow['sub_type']) < 0) {
               this.subtypes.push(arow['sub_type'])
             }
+
             rets.push(arow)
           }
+          console.log(rets)
           // for (let acode in this.rawdata['hydata']){
           //   for
           // }
