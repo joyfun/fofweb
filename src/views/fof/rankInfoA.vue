@@ -880,9 +880,17 @@ export default {
   methods: {
     customSort({ data, sortList }) {
       const sortItem = sortList[0]
+      const { property, order, field } = sortItem
+
       console.log(sortItem)
+      if (field == 'marketval') {
+        if (order === 'desc') {
+          return data.sort((a, b) => b[field] - a[field])
+        } else {
+          return data.sort((a, b) => a[field] - b[field])
+        }
+      }
       // 取出第一个排序的列
-      const { property, order } = sortItem
       let list = []
       if (order === 'asc') {
         // 例如：实现中英文混排，按照字母排序
@@ -1311,29 +1319,35 @@ export default {
       if (ntype.startsWith('I')) {
         ntype = '指增'
       }
+      if ('可转债'.indexOf(ntype) > -1) {
+        ntype = ntype[0]
+      }
+
       let clss = class_dict[ntype]
       console.log(clss)
       // let sels=this.$refs.rankTable.getCheckboxRecords()
       // if(sels.length==0){
       //   sels=this.tableList
       // }
-      console.log(
-        this.foflist.filter(
-          (row) =>
-            this.holding.filter((hd) => hd['b_code'] == row['code']).length > 0
-        )
+      let aholds = this.foflist.filter(
+        (row) =>
+          this.holding.filter((hd) => hd['b_code'] == row['code']).length > 0
       )
-      let holds = this.foflist
-        .filter(
+      let holds = []
+      if (ntype == 'aas') {
+        holds = aholds.filter((row) => row['class_type'] != '指增')
+      } else {
+        holds = aholds.filter(
           (row) =>
-            this.holding.filter(
-              (hd) =>
-                hd['b_code'] == row['code'] &&
-                (ntype == 'aas' || ntype == row['type'])
-            ).length > 0
+            clss.indexOf(row['class_type']) > -1 &&
+            row['type'].indexOf(this.type) > -1
         )
-        .filter((row) => clss.indexOf(row['class_type']) > -1)
-        .map((row) => row['code'])
+      }
+      // if (this.type.startsWith('I')) {
+      //   holds = holds.filter((row) => row['type'] == this.type)
+      // }
+      holds = holds.map((row) => row['code'])
+
       // if (['中性', '混合'].indexOf(ntype) > -1 && holds.indexOf('ST8876') < 0) {
       //   holds.push('ST8876')
       // }

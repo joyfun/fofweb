@@ -71,6 +71,18 @@ const routes = [
         
       },
       {
+        path: '/fofremark',
+        name: 'fof-remark',
+        component:() => import('@/views/fof/fofRemark.vue'),
+        
+      },
+      {
+        path: '/volatilityhigh',
+        name: 'volatility-high',
+        component:() => import('@/views/fof/volatilityHigh.vue'),
+        
+      },
+      {
         path: '/investdash',
         name: 'invest-dash',
         component:() => import('@/views/fof/fofInvestDash.vue'),
@@ -96,6 +108,22 @@ const routes = [
             type:'0',
        }
   
+      },
+      {
+        path: '/fundinvest',
+        name: 'holding-info',
+        component:() => import('@/views/fof/fofManage.vue'),
+        props:{
+            filters:{stage:'已投'}
+       }
+      },
+      {
+        path: '/fundredeem',
+        name: 'redeem-info',
+        component:() => import('@/views/fof/fofManage.vue'),
+        props:{
+            filters:{stage:'已赎'}
+       }
       },
       {
         path: '/fundinfo1',

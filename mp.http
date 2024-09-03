@@ -1,0 +1,162 @@
+GET https://esf.fang.com/house/i31/?rfss=1-03cfb20f8cc435442a-42
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Accept-Encoding: gzip, deflate, br
+Accept-Language:zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43
+
+
+
+GET https://miniapp.58.com/weixin/broker/ldt?cid=1&from=tongcheng_weapp&app=a-wb&platform=windows&b=microsoft&s=Windows11x64&t=1687247663&cv=5.0&wcv=5.0&wv=3.9.5&sv=2.29.2&batteryLevel=0&muid=662bd8fb6bee443bb8ed9b17e35613a0&weapp_version=1.0.0&user_id=&oid=E682DCD313812AEDF3505F7FF3E0AD2DD69991172DC56075AC0EF41D6F56610A&udid=E682DCD313812AEDF3505F7FF3E0AD2DD69991172DC56075AC0EF41D6F56610A&type=1&uid=2003977&lego_info={%22origin_mac%22:%22%22,%22source_page%22:%22UA_ESF_PROP%22,%22spm%22:%22Anjuke%20App%22,%22ad_type%22:%22%22,%22origin_imei%22:%22%22,%22entityid%22:%22-%22,%22utmsrc%22:%22Anjuke%20App%22,%22tid%22:%22-%22,%22platform%22:%222%22}&bid=74&site=2&houseId=53767570044072&city_id=1 HTTP/1.1
+Host: miniapp.58.com
+Connection: keep-alive
+Cookie: aQQ_ajkguid=E682DCD313812AEDF3505F7FF3E0AD2DD69991172DC56075AC0EF41D6F56610A;PPU=;
+X_AJK_APP: a-weapp
+PPU: 
+X-WECHAT-HOSTSIGN: {"noncestr":"c26432e8b814225edc11b6d2791de767","timestamp":1687247137,"signature":"ad7a1afb527f03345a6cfa8544fba1fcea9bcd32"}
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF XWEB/6945
+X-Forwarded-For: 112.64.131.100
+Content-Type: application/x-www-form-urlencoded
+ak: 931d0f0a7f7bc73c7cee04b87a1f3cb83d175517
+referer: https://servicewechat.com/wxc97b21c63d084d92/337/page-frame.html
+xweb_xhr: 1
+switchrecommend: 1
+ft: ajk-weapp
+sig: c947dc7240212515cf63fe350377ec28
+Accept: */*
+Sec-Fetch-Site: cross-site
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh
+
+
+GET https://api.anjuke.com/weixin/broker/ldt?cid=0&from=weapp&app=a-ajk&platform=windows&b=microsoft&s=Windows11x64&cv=5.0&wcv=5.0&t=1687248424&wv=3.9.5&sv=2.29.2&batteryLevel=0&muid=6588e2a4990d813f00ec1258e4a99af3&weapp_version=1.0.0&user_id=&oid=ocS7q0JDLGInEOypoDNMEGMkS-64&udid=o9PQhtxs2_p54Ma8fwbh5jFsnK0I&type=1&uid=3470955&lego_info={%22origin_mac%22:%22%22,%22source_page%22:%22UA_ESF_PROP%22,%22spm%22:%22Anjuke%20App%22,%22ad_type%22:%22%22,%22origin_imei%22:%22%22,%22entityid%22:%22-%22,%22utmsrc%22:%22Anjuke%20App%22,%22tid%22:%22-%22,%22platform%22:%222%22}&bid=62&site=1&houseId=6626057112&city_id=14 HTTP/1.1
+Host: api.anjuke.com
+Connection: keep-alive
+Cookie: CURRENT_VERSION=5.0;aQQ_ajkguid=ocS7q0JDLGInEOypoDNMEGMkS-64;ajkAuthTicket=;
+X_AJK_APP: a-weapp
+PPU: 
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF XWEB/6945
+X-Forwarded-For: 112.64.131.100
+ajkAuthTicket: 
+ak: f8d5b75d0b3991fbcaf64de096d025537fb40f3e
+referer: https://servicewechat.com/wx099e0647f9a4717d/896/page-frame.html
+xweb_xhr: 1
+switchrecommend: 1
+ft: ajk-weapp
+Content-Type: application/x-www-form-urlencoded
+sig: 1a8907fc256e7fe09c6e680254d54416
+Accept: */*
+Sec-Fetch-Site: cross-site
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh
+
+
+
+GET https://www.licai.com/simu/product/P278219
+
+
+POST http://192.168.0.22:3000/crawl/GeShang
+Content-Type: application/json
+
+{"code":"SJE797", "pcode":"P189348" }
+
+{ code: 'SJE797', pcode: 'P189348' }
+
+
+POST http://192.168.0.22:3000/crawl/HuoFuNiu
+Content-Type: application/json
+
+{"code":"SY9620", "id":"94e395daef972809" ,"token":"6ce8bf74e24797ee8cd184a0c2d1b0c29b08c3067052b1539eb7d81ad21d623b18aeedf3be6e7c2b"}
+
+
+POST http://localhost:3000/crawl/amac
+Content-Type: application/json
+
+{"code":"SY9620","token":"4b07bfd3-998f-4a0e-95ab-103c78325f33"}
+
+
+GET  https://pyapi.huofuniu.com/pyapi/fund/view?token=6ce8bf74e24797ee8cd184a0c2d1b0c29b08c3067052b1539eb7d81ad21d623b18aeedf3be6e7c2b&fid=065908196196a1c0&pt=1&shareToken=
+Access-Token:6ce8bf74e24797ee8cd184a0c2d1b0c29b08c3067052b1539eb7d81ad21d623b18aeedf3be6e7c2b
+
+SVA089	P283041
+
+POST https://gs.amac.org.cn/amac-infodisc/api/pof/fund?&page=0&size=20
+Content-Type: application/json
+
+{"keywordCode":"SAMV18"}
+
+curl 'https://api.m.jd.com/api?appid=paimai&functionId=getPaimaiRealTimeData&loginType=3&body=%7B%22end%22%3A69%2C%22paimaiId%22%3A307094153%2C%22source%22%3A0%2C%22start%22%3A60%7D&url=https%3A%2F%2Fpaimai.jd.com%2F307094153&isM=false&isRiskHandlerEnable=false&clientVersion=paimai-h5-1.0.0&client=paimai-h5&t=1719369796738&h5st=20240626104316742%3B9g6y96g6im5tzy92%3B106e8%3Btk03wa55f1cc118nj2PlN72bWp1TaxO3K4Pd_xjYzD_BBcSy6hgnIj_IUfsoLVGg57ACCKx3fe4fqfFRevlhnop3vP_o%3Be1459a6ed40437e2feb07762aa032811e0734905e40562772c7f9ed5cdbf1934%3B4.7%3B1719369796742%3BVmf1FcBykTZDdJRkiWgi2AKEyAhnUUK4J1c_VXfc_A3b4ntOvDjuAETGphtC0rWRWG73nCAikww1WMF95m5M5RvCCJNOGJ4vVB7xSqoTdHDYPnmKz8sowC9iIzTTE3rsUB0QygP4cnuPsiX4VzexoMqKguuo4FyKxU5JsVs2SmEXuc86tmytczLMhm-X-m8e0b_WMfEo9B8ZeIQaAKlVlCLaL5dvkf-FmpfrLVqWtZwmpYn4YF9VqT19buDO4QCLZRC2wLNl834QcC3xBblFtELxCN7n04eTqnj2-kYC9lIutN3RQSnubxddLAphHBfztR9xDqrkWDySqSgz9NJ0NcS8fY_p5xIpUsrVxOLCu7nZggE7nDk8PeheJO0dl8zjLad9Prk3hGJ0DQIeqffFGvzEemLTD52YgeDqWQHLXbk3&x-api-eid-token=' \
+  -X 'POST' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6' \
+  -H 'content-length: 0' \
+  -H 'content-type: application/x-www-form-urlencoded' \
+  -H 'cookie: shshshfpa=c09988d8-aac0-cf5b-bca0-f069191c968b-1656484009; shshshfpx=c09988d8-aac0-cf5b-bca0-f069191c968b-1656484009; pinId=0YMdaZzMjRo; jcap_dvzw_fp=HIKJPRvIpHNS6RRTrfsLPA6cxDoqonD7PlrD_Q2E-mrqqt6zPaaDI2h9iMvWUapysPA7w1zbI7b9ugw95fB3Rg==; autoOpenApp_downCloseDate_jd_homePage=1716027489850_1; whwswswws=; TrackID=1cqmUCerP--b-_VZi8shscIN94Rh-dovSk4JkS2CKn6ELHA0Pjig7iTuu7ZgCImy23nARP2szK-fCT85YjLRkuKC3Tjxk8II672y6Wd9XxHU; thor=EA549E5CB04478D37B68573130C1E2E183D83C1763B856ED301F86748D1BC36B2E348E7D39DCC4051256E42C7CBA2A026F008F094CC91AE4CC5C9249ECE052E99B2005CD190691FB2BDB546C8DD2F98FFB5BFAAD5BA9A25E76F75B629F286E85228FD6BCDCC125024D67F28C1725336CFD1B10F997C31CA8DF77422C8137AE31; pin=joyfun; unick=%E8%93%9D%E6%B5%B74685; _tp=NCxcgRxazvBxNF5TiXfkjg%3D%3D; _pst=joyfun; flash=2_5_FUSQPK8_mIEZFeiCHy4loalefyHE8HObHbLWdcpoPRsQHhjUHw5AYlpoFPy6DakJocbkWxdebOSzO6JorrbWCtG2JNWvSc6AgjpYnJi4Q_p8KD6xP6df7YTByutvEcuzHTyKHDX8wymuhVbIaHU7tW2GFwu2e9b9TTOMhWTYo*; areaId=1; ipLoc-djd=1-2800-0-0; PCSYCityID=CN_110000_110100_0; mba_muid=16583049147131724319429; unpl=JF8EAO5nNSttX0tUVU5QHRIXGAlTW1sKQ0cAaTNRBF1aHwcHG1UaQBV7XlVdWBRKEB9sYhRUWlNKUQ4eBCsSFXtdVV9cAUkeC25iNWRbX0xcBBoFdWF3S1QMW14IKBFBNgl3ZF5Ye1U1GwUfGxJKWFxeWA5LFQNpZABWXVBOVw0rAysSGE9tVF9cAEgfBmhgAFVbXUhkBhoAGhMYQ15UWDMNSxYCZ2QEUlVQJVYFGgMfExZLW1ZuXQxMHgZtZg1cXGhKZAcaAxsWGU1eUlttSSUQA2ZkAVAQWExQDBkDHhoQTltUXF0OSBIBb28AV1VoSmQG; __jdv=128418189%7Cwww.bilibili.com%7Ct_1000838904_2030099217_4100920799_3100507173%7Ctuiguang%7C611adc716be64739a27eea13eb31f0c4%7C1719216287273; x-rp-evtoken=N-nAb5Oj6OS1u8hkvixIgJf36aXetWIVtSnO6AemxFGirOzz6OwTFoLloOTpJ1XI4ItHAfKb-d2Xaki_lxXYfk9jsVLb1VoPVUyw6lprc-obw4m7h2OYMuc5lL_So-sVB0hQNGa4AwOIuriuMHz4zMz3zdv0SAjcJufat64IJhMixuHGJr2onrMZFCu8zcTVncIyKoIMpd3YR96MBGdxnP2uHXqYjBUFMze2QL523LQ%3D; __jda=150982071.16583049147131724319429.1658304915.1719220767.1719369100.112; __jdc=150982071; __jdb=150982071.7.16583049147131724319429|112.1719369100; mba_sid=17193691115594163079762451032.2; RT="z=1&dm=jd.com&si=pesxiu6df68&ss=lxv7z35c&sl=0&tt=0&r=3b12bd61c91df73cb4949e25687ecf1c&ul=1dg8&hd=1dgf"; shshshfpb=BApXcyA5rUfVAbybIWIch7w5pmR6i2idRBxQJRyZG9xJ1MhTjvYO2' \
+  -H 'origin: https://paimai.jd.com' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://paimai.jd.com/' \
+  -H 'sec-ch-ua: "Not/A)Brand";v="8", "Chromium";v="126", "Microsoft Edge";v="126"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-site' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0'
+
+POST https://pb.htsc.com.cn/evar/api/midMonitor/indexOverview
+Cookie: EVARSESSIONID=49167aa1-8cf4-4af5-926e-7cdecf58df40
+Accept-Encoding:gzip, deflate, br, zstd
+Content-Type: application/json
+
+{"poolId":1004916,"productId":[],"dataSource":["ALL"]}
+
+
+POST https://pb.htsc.com.cn/evar/api/fundPool/getPoolProList
+
+{"groupId":1004916}
+
+### 获取基金池
+GET  https://pb.htsc.com.cn/evar/api/fundPool/fundPoolList?type=self&_=1719815755653
+Cookie: EVARSESSIONID=49167aa1-8cf4-4af5-926e-7cdecf58df40
+Accept-Encoding:gzip, deflate, br, zstd
+Content-Type: application/json
+
+### 删除基金池
+
+GET https://pb.htsc.com.cn/evar/api/fundPool/deleteGroup?groupId=1004935&groupName=pool20&isDirectory=false&level=1&_=1719815755535
+
+
+POST https://pb.htsc.com.cn/evar/api/fundPool/add
+
+{"isPublic":"N","isInstitutionalShare":0,"groupName":"pool20","creator":"zs18611709540","isDirectory":0,"level":1}
+
+### 添加产品
+POST https://pb.htsc.com.cn/evar/api/fundPoolDetail/addAttention
+
+{"groupId":1004916,"products":[{"productId":6057385,"fundType":"SMPPSIMU"}]}
+
+### 删除基金池下产品 
+POST https://pb.htsc.com.cn/evar/api/fundPoolDetail/deleteAttention
+
+{"groupId":1004916,"products":[{"productId":6057385,"fundType":"SMPPSIMU"}],"allGroup":true}
+
+### 获取基金池产品
+
+GET https://pb.htsc.com.cn/evar/api/fundPool/getPoolElement?groupId=1004916&_=1719886544764
+
+### 获取详细信息
+GET https://pb.htsc.com.cn/evar/api/fundPool/getPoolProList
+
+
+POST http://localhost:8080/fof/upValues
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDOTZutnUOer5qwWd
+
+------WebKitFormBoundaryDOTZutnUOer5qwWd
+Content-Disposition: form-data; name="file[]"; filename="template.xlsx"
+Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+< O:/template2.xlsx
+------WebKitFormBoundaryDOTZutnUOer5qwWd--

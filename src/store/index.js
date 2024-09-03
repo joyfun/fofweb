@@ -43,6 +43,8 @@ export default new Vuex.Store({
         {lable:"尽调统计",value:"invest-stat"},
         {lable:"运营尽调列表",value:"invest-dash"},
         {lable:"未排名产品",value:"norank-prod"},
+        {lable:"备注信息",value:"fof-remark"},
+        {lable:"净值异常",value:"volatility-high"},
         {lable:"CTA",value:"fund-info1"},
         {lable:"指数增强",value:"fund-info2"},
         {lable:"套利",value:"fund-info3"},
@@ -89,6 +91,7 @@ export default new Vuex.Store({
         {lable:"数据监控",value:"data-monitor"},
         {lable:"额外信息",value:"info-meta"},
         {lable:"持仓信息",value:"holding-info"},
+        {lable:"赎回产品",value:"redeem-info"},
         {lable:"用户管理",value:"user-manage"}]
   },
   mutations: {

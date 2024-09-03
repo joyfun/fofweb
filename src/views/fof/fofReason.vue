@@ -420,7 +420,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.el-table /deep/ .cell {
-  white-space: pre-line;
-}
 </style>

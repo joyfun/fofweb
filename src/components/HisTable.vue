@@ -29,6 +29,8 @@
               <vxe-button id="uploadButton" size="small" >导入净值</vxe-button>
     </el-upload> -->
         <vxe-button @click="saveHis" v-preventReClick>保存净值</vxe-button>
+        <vxe-button @click="showFundHis" v-preventReClick>查看曲线</vxe-button>
+
         <span
           >&nbsp;&nbsp;&nbsp;&nbsp;注意:净值日期格式为YYYYmmDD格式 即
           20210304格式
@@ -124,9 +126,11 @@
 <script>
 // import echarts from 'echarts'
 // import 'echarts/lib/chart/line'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 import axis from 'axios'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
+import Bus from '@/store/bus.js'
 // import DB from '@/store/localapi.js';
 var echarts = require('echarts')
 // 引入柱状图
@@ -188,6 +192,7 @@ export default {
       }, 300)
     }
   },
+  computed: { ...mapGetters(['sysparam', 'token']) },
   data() {
     return {
       raw_data: {},
@@ -205,6 +210,14 @@ export default {
     }
   },
   methods: {
+    showFundHis() {
+      Bus.$emit('showChart', {
+        cur_code: this.code,
+        diagName: 'hisChart',
+        wk: '0'
+      })
+    },
+
     importData() {
       console.log(this.frecord)
       //  console.log(this.$moment("19000101").add(44620-2,"d").format("YYYYMMDD"))
@@ -290,7 +303,7 @@ export default {
         axis({
           method: 'post',
           url: '/fof/savehis', // 请求地址
-          data: { code: this.code, data: tosave }, // 参数
+          data: { code: this.code, data: tosave, 'user': this.token }, // 参数
           responseType: 'json' // 表明返回服务器返回的数据类型
         }).then(
           (response) => {

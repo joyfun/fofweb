@@ -281,10 +281,10 @@ export default {
   data() {
     return {
       showall: false,
-      tags: ['SiMuWang', 'GeShang', 'ZhaoYang', '邮件其它'],
-      types: ['SiMuWang', 'GeShang', 'ZhaoYang', '1'],
+      tags: ['SiMuWang', 'GeShang', 'ZhaoYang', 'HuoFuNiu', '邮件其它'],
+      types: ['SiMuWang', 'GeShang', 'ZhaoYang', 'HuoFuNiu', '1'],
       current: {},
-      reqType: 'GeShang,SiMuWang,ZhaoYang',
+      reqType: 'GeShang,SiMuWang,ZhaoYang,HuoFuNiu',
       cur_code: '',
       dialogVisible: false,
       hisVisible: false,
@@ -346,11 +346,7 @@ export default {
         this.tableData = this.rawData
       } else {
         this.tableData = this.rawData.filter(
-          (row) =>
-            ['不可投', '数据存疑', '已封盘', '黑名单'].indexOf(row['scale']) <
-              0 &&
-            row['cnt'] &&
-            row['other_stage'] != '数据存疑'
+          (row) => row['cnt'] && row['other_stage'] != '数据存疑'
         )
       }
       console.log(this.tableData)

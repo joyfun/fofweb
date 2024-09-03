@@ -1,20 +1,21 @@
 
-
+const { defineConfig } = require('@vue/cli-service')
+const webpack = require('webpack');
 
 module.exports = {
     devServer: {
-        host: '0.0.0.0',
+        host: '127.0.0.1',
         port: 8080,
         open: true,
         proxy: {
             '/fof': {
-                target: 'http://192.168.0.22:3002/', //接口域名
+                target: 'http://localhost:3002/', //接口域名
                 changeOrigin: true,             //是否跨域
                 ws: true,                       //是否代理 websockets
                 secure: false                  //是否https接口
             },
             '/sys': {
-                target: 'http://192.168.0.22:3002/', //接口域名
+                target: 'http://localhost:3002/', //接口域名
                 changeOrigin: true,             //是否跨域
                 ws: true,                       //是否代理 websockets
                 secure: false                  //是否https接口
@@ -64,11 +65,34 @@ module.exports = {
                 }
             }
         }
-    }
+    },
+    configureWebpack: {
+        plugins: [
+          new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+          }),
+          new webpack.ProvidePlugin({
+              process: 'process/browser',
+          })
+        ],
+        resolve: {
+          fallback: {
+            "os": require.resolve("os-browserify/browser"),
+            "url": require.resolve("url/"),
+            "crypto": require.resolve("crypto-browserify"),
+            "https": require.resolve("https-browserify"),
+            "http": require.resolve("stream-http"),
+            "assert": require.resolve("assert/"),
+            "stream": require.resolve("stream-browserify"),
+            "buffer": require.resolve("buffer")
+          }
+        }
+      },
+    
+      transpileDependencies: [
+        'vuetify'
+      ]
 }
-
-
-
 
 
 

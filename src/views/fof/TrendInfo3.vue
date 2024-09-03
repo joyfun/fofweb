@@ -1412,6 +1412,7 @@ export default {
           this.tableData.map((row) => {
             // row['company_code'] = this.baseData[row.code]['company_code']
             //获取持仓信息 待优化
+            row['name'] = this.showFundName(row['code'])
             let holds = this.holding.filter((hd) => hd['b_code'] == row['code'])
             if (holds.length > 0) {
               row['marketval'] = holds.reduce((prev, r) => {

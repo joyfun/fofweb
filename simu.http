@@ -1,9 +1,24 @@
 
-GET https://fof.simuwang.com/dataservice/v1/secuirties/HF00005OYP/growth-contrast?startDate=2015-01-01&endDate=2029-12-31&navType=CumulativeNav&timeRange=FromSetup&initValue=0.0000&dataSourceType=Ret&raiseType=Private&strategy=Equity&visibility=Both&showAssetStyleBenmark=true&dataSource=Default&sceneIds=&t=1664504782459
+GET https://datapi-test.simuwang.com/v1/search-nav?startDate=2010-06-02&pageSize=1000&registerNumber=SZK625
 accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
 accept-encoding: gzip, deflate, br
 accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7
 cache-control: no-cache
-cookie: Hm_lvt_c3f6328a1a952e922e996c667234cdae=1648429723; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221740344%22%2C%22first_id%22%3A%221740344%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217e46cddcf628f-0d0ca7dce42e37-7f697c63-2304000-17e46cddcf788b%22%7D; certification=1; qualified_investor=1; focus-certification-pop=-1; cur_ck_time=1664503582; ck_request_key=Xvfmov6z%2Bw0EAQoHCMSRZUzAQtwuHin%2FhFLL7Ncrrt4%3D; rz_rem_u_p=jaLzzOM4MeirNXMNdIgW%2F%2B6Sf302rFInfY88tQcTMZ0%3D%24tYkvz1s%2BkJf56f0%2F48R%2BoQdvREFYDbiS9SZp0965XOI%3D; evaluation_result=2; smppw_tz_auth=1; 49f290d6e8459c53f31f97de37921086=r32m2IB6da2xd6WrhqunmYbOp2yZsqeYsaF8YsdpvN62pqvVjYl9bcet06yGuNHMhrieaYN8fdywooeosXvNzrFsspeCeqOfx3qqrpyXxtmc0YiehWhsm8iJb24; PHPSESSID=7qjuj6as9adt1oqv0kj43jrmm7; rem_username=1; 9d46d29a2c7821f5444536df9e761393=18801165008%2C755b14c58365fd9437a758c236d5c8e8%2Cf306f52224977116ce46965673177e9ab9d5ced8%2C2%2Cmaster; passport=553742%09%E9%99%88%E6%9D%B0%E5%8D%8E%E9%81%93%E8%B5%84%E6%9C%AC%09DlYFUAgDAQVZUQUFA1BfAQVRUAMAClAFBA8GU1UMVF0%3Dfdba3b7745; http_tK_cache=f306f52224977116ce46965673177e9ab9d5ced8; fof_passport=553742%0918801165008%09%E9%99%88%E6%9D%B0%E5%8D%8E%E9%81%93%E8%B5%84%E6%9C%AC; stat_passport=553742%0918801165008%09%E9%99%88%E6%9D%B0%E5%8D%8E%E9%81%93%E8%B5%84%E6%9C%AC; c034c9c0fdf5cdb54c7cf29546669be9=803bcfdbe7cff04021c81bd854f74086; master_common_token=y4Kzs5n7xJ0PpSFrhl4j%2BlVKXHlSofL%2BmoFJhV2TFwrCGGSK%2FZm8RYCIFtxveRykU1Y%2B8d7dcCyuKIhb4rCpOOhAAsLSxEH2LSWmUfz%2F7kMl9ewLpJn5thOcACOZLXssDpMxSbmNCBHrDeZ93Pq8DbNOVyytJcabGhC2CW2CZeewQI8jEqxGzlnbynRsq8QDRGC1SWh2kpjBSQ8aW6KNLg%3D%3D; smppw_user_type=2; uc_login_stat=1
 pragma: no-cache
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.50
+apikey: 23B62E8481B3AEE5AD03A3D942E5AE8575C19D42566B110F186367AC
+
+
+POST https://fof.simuwang.com/FollowPool/saveConcern
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+Cookie: 76b908e777baf2efd958183ee39bac75=7fd8bfc80b8b0d0ab1970ab2e31b5bd797c46add; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221740344%22%2C%22first_id%22%3A%221740344%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217e46cddcf628f-0d0ca7dce42e37-7f697c63-2304000-17e46cddcf788b%22%7D; focus-certification-pop=-1; relogin_from_54=1; rz_rem_u_p=72QpVygYdtM%3D%244s9EdbOO%2Bhwrz9c3Awzq6g%3D%3D; certification=1; qualified_investor=1; evaluation_result=5; acw_tc=2f6a1fa217046777893701521e10947b81efb66be0baf7e37a96588a716f23; PHPSESSID=f1mhhckglvdsvjopgkkhs98gv4; rem_username=1; 9d46d29a2c7821f5444536df9e761393=18618151735%2C347e13984223543724a4b3eaba849e8d%2C68c275f904a1e2f133f7696cc944092feb5ad1c1a%2C2%2Cmaster; 49f290d6e8459c53f31f97de37921086=r32m2IB6da2xd6WrhqunmYbOp2yZsqeYsaF8YsdpvN62pqvVjYl9bcet06yGuNHMhrieZ4OMn9ywjHdksbG7zrFsspeCeqOfx3qqrpyXxtmc0YiehWhsm8iJb24; passport=954177%09u6759946098887%09BVVVBgZSDlkMVFFRAAYAVAIBVwxbUlEDV1JeA1tVAFc%3Daafbe90c82; http_tK_cache=68c275f904a1e2f133f7696cc944092feb5ad1c1a; fof_passport=954177%0918618151735%09u6759946098887; stat_passport=954177%0918618151735%09u6759946098887; 16b7c3773192552360ceb6d6e374c541=4eaa1305406b4be899749ccacf3f5b51; master_common_token=aWmwS3tUIa%2FMCWXRCMAsv8jYCx6mxxlZslVnx3vvlQOuYJQ%2BQKviYXLUzLNr1AopCbvx93NMcviUJv0oDa5juQna2i0IlbXSax3r25X%2BbszKRuZcTNUhEyPIVZr3AGpRZF74yu3I3nW90OMIL1iw8ZGhcZl32Q76JgzQxfzdleBZ9uf3M2AiTqzDyUmuOQKbnjrSBGE6%2BpXBXh6CbDve7E3S6aPltT%2F1SUbbCAN%2FAu4%3D; smppw_user_type=2; uc_login_stat=1
+
+{"type":"1","poolId":25455,"fundId":["HF00009TL7"]}
+
+'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44', 'x-pro': 'cm2cpl',
+ 'accept': 'application/json, text/plain, */*',
+  'accept-encoding': 'gzip, deflate, br',
+   'x-requested-with': 'XMLHttpRequest', 
+   'accept-language': 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7'
+
+

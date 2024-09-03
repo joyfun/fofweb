@@ -39,7 +39,6 @@
   </div>
 </template>
 <script>
-import axis from 'axios'
 import FundEchart from '../../components/FundEchart.vue'
 import HisTable from '../../components/HisTable.vue'
 import Vue from 'vue'

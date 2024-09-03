@@ -131,6 +131,7 @@
     <el-table
       ref="multipleTable"
       :data="foflist"
+      @select-all="doSelAll"
       tooltip-effect="dark"
       :row-key="
         (row) => {
@@ -283,6 +284,24 @@ export default {
     ...mapMutations({
       setFoflist: 'setFoflist'
     }),
+    doSelAll(a, b, c) {
+      // console.log(a)
+      // console.log(b)
+      // console.log(c)
+      if (this.foflist.length > 0) {
+        var code0 = this.foflist[0]['code']
+        var dsel = a.filter((r) => r['code'] == code0)
+        if (dsel.length < 1) {
+          console.log('do clear selection')
+          this.sel = []
+          this.$refs.multipleTable.clearSelection()
+        }
+      }
+      // if(this.foflist[0][])
+      // if (this.foflist.length > 0 && a.length < this.foflist.length) {
+
+      // }
+    },
     getCart() {
       if (this.suser) {
         this.$axios({
@@ -400,6 +419,7 @@ export default {
         }
       }
       console.log(ret)
+      // this.tmaxh = this.$refs.tableContainer.clientHeight - 120
       Vue.set(this, 'foflist', ret)
       console.log(this.foflist)
     },
@@ -509,6 +529,7 @@ export default {
         this.alllist = this.rawlist
       }
       this.fofoptions = this.alllist
+      this.tmaxh = this.$refs.tableContainer.clientHeight - 120
     },
     remoteMethod(query) {
       // this.$axios({

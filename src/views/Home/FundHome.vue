@@ -758,9 +758,6 @@ export default {
   color: #333;
   text-decoration: none;
 }
-.el-table /deep/ .cell {
-  white-space: pre-line;
-}
 .tab-tit .cur {
   background: #09f;
   color: #fff;

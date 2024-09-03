@@ -28,7 +28,10 @@ import service from '@/api/config.js'
 // import VXETablePluginExportXLSX from 'vxe-table-plugin-export-xlsx'
 
 // VXETable.use(VXETablePluginExportXLSX)
+// VXETable.setConfig({table: {"area-config": {autoClear: false}}})
+// console.log(VXETable)
 Vue.use(VXETable)
+
 Vue.use(tools)
 Vue.prototype.$process=process
 

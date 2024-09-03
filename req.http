@@ -1,11 +1,24 @@
-GET https://fof.12345fund.com/api/v1/zyfp_dst_fund_details/get_history_nav?rows=10&order_type=-1&page=1&fund_id=298741&dst=1
-cookie: acw_tc=0bca30fe16600934034876089e015c674d01afc9330069c9d01e483c026fc0; sntpwt=dcb91fee7c6449cf9dec2b22587d0304; sntpauth=eyJhdXRoTGlzdCI6WyJHb2Z1bmRfMDlfMDEiLCJHb2Z1bmRfMDVfMDFfMDEiLCJHb2Z1bmRfMDgiLCJHb2Z1bmRfMDlfMDIiLCJHb2Z1bmRfMDYiLCJHb2Z1bmRfMDRfMDFfMDFfMDEiLCJHb2Z1bmRfMDRfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDFfMDVfMDQiLCJHb2Z1bmRfMDJfMDNfMDEiLCJHb2Z1bmRfMDVfMDFfMDIiLCJHb2Z1bmRfMDRfMDFfMDFfMDQiLCJHb2Z1bmRfMDkiLCJHb2Z1bmRfMTJfMDEiLCJHb2Z1bmRfMDRfMDFfMDJfMDEiLCJHb2Z1bmRfMTIiLCJHb2Z1bmRfMTMiLCJHb2Z1bmRfMDJfMDNfMDJfMDEiLCJHb2Z1bmRfMDRfMDFfMDJfMDIiLCJHb2Z1bmRfMDJfMDNfMDJfMDIiLCJHb2Z1bmRfMDJfMDMiLCJHb2Z1bmRfMTNfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDEiLCJHb2Z1bmRfMTNfMDFfMDJfMDEiLCJHb2Z1bmRfMTNfMDFfMDFfMDQiLCJHb2Z1bmRfMDZfMDIiLCJHb2Z1bmRfMDZfMDEiLCJHb2Z1bmRfMDNfMDFfMDFfMDEiLCJHb2Z1bmRfMDJfMDFfMDIiLCJHb2Z1bmRfMDNfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDFfMDQiLCJHb2Z1bmRfMDhfMDEiLCJHb2Z1bmRfMTNfMDFfMDJfMDIiLCJHb2Z1bmRfMDNfMDFfMDFfMDQiLCJHb2Z1bmRfMDNfMDFfMDJfMDEiLCJHb2Z1bmRfMDZfMDJfMDEiLCJHb2Z1bmRfMTUiLCJHb2Z1bmRfMDIiLCJHb2Z1bmRfMDhfMDIiLCJHb2Z1bmRfMDJfMDFfMDFfMDEiLCJHb2Z1bmRfMDNfMDFfMDJfMDIiLCJHb2Z1bmRfMDZfMDJfMDIiLCJHb2Z1bmRfMTVfMDEiLCJHb2Z1bmRfMDMiLCJHb2Z1bmRfMDJfMDFfMDFfMDIiLCJHb2Z1bmRfMDZfMDRfMDEiLCJHb2Z1bmRfMDQiLCJHb2Z1bmRfMDJfMDFfMDVfMDEiLCJHb2Z1bmRfMTVfMDIiLCJHb2Z1bmRfMDJfMDFfMDVfMDIiLCJHb2Z1bmRfMDZfMDRfMDIiLCJHb2Z1bmRfMDUiXSwiZHV0eVZvTGlzdCI6W10sIndlYnNpdGUiOiJodHRwczovL2ZvZi4xMjM0NWZ1bmQuY29tIiwicHJvamVjdElkIjoiY20yY3BsIiwiaGFzTW9iaWxlIjp0cnVlLCJhY2NvdW50RXhjIjpmYWxzZSwiYWNjb3VudFR5cGUiOjMsImFjY291bnROYW1lIjoiUDAwMDQwODAyMSIsInZvcmdJZCI6bnVsbCwiaXNTaG93QWxsIjoxLCJpc0F1dGgiOjB9; sntpsign=9f426f5c9aed7e86c84839d84276e096
+GET https://fof.12345fund.com/api/v1/zyfp_dst_fund_details/get_history_nav?rows=100&order_type=-1&page=1&fund_id=298741&dst=1
+cookie: _abfpc=34bea953f3a784c11b336f84aeadc1247a1690d0_2.0; cna=84ec108521951dc939dcd2d3b61ba042; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22P000408021%22%2C%22first_id%22%3A%221857ab6063215f2-0d82a23d1a5663-7a575473-2304000-1857ab606331427%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTg1N2FiNjA2MzIxNWYyLTBkODJhMjNkMWE1NjYzLTdhNTc1NDczLTIzMDQwMDAtMTg1N2FiNjA2MzMxNDI3IiwiJGlkZW50aXR5X2xvZ2luX2lkIjoiUDAwMDQwODAyMSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%24identity_login_id%22%2C%22value%22%3A%22P000408021%22%7D%2C%22%24device_id%22%3A%221857ab6063215f2-0d82a23d1a5663-7a575473-2304000-1857ab606331427%22%7D; acw_tc=0bca31ca16740897488674593e2299fdc65116cc4ce37a54c047bb986d9a24; sntpwt=3d880765e7864fa3be441d2f5d06872d; sntpauth=eyJhdXRoTGlzdCI6WyJHb2Z1bmRfMDJfMDEiLCJHb2Z1bmRfMDJfMDFfMDFfMDEiLCJHb2Z1bmRfMDJfMDFfMDVfMDEiLCJHb2Z1bmRfMDJfMDNfMDEiLCJHb2Z1bmRfMDJfMDNfMDJfMDEiLCJHb2Z1bmRfMDNfMDFfMDFfMDEiLCJHb2Z1bmRfMDNfMDFfMDJfMDEiLCJHb2Z1bmRfMDRfMDFfMDFfMDEiLCJHb2Z1bmRfMDRfMDFfMDJfMDEiLCJHb2Z1bmRfMDVfMDFfMDEiLCJHb2Z1bmRfMDZfMDEiLCJHb2Z1bmRfMDZfMDJfMDEiLCJHb2Z1bmRfMDZfMDRfMDEiLCJHb2Z1bmRfMDlfMDEiLCJHb2Z1bmRfMTBfMDEiLCJHb2Z1bmRfMTJfMDEiLCJHb2Z1bmRfMTNfMDFfMDJfMDEiLCJHb2Z1bmRfMDhfMDEiLCJHb2Z1bmRfMTVfMDEiLCJHb2Z1bmRfMDIiLCJHb2Z1bmRfMDJfMDMiLCJHb2Z1bmRfMDJfMDFfMDIiLCJHb2Z1bmRfMDJfMDFfMDFfMDIiLCJHb2Z1bmRfMDJfMDFfMDVfMDIiLCJHb2Z1bmRfMDJfMDNfMDJfMDIiLCJHb2Z1bmRfMDNfMDFfMDJfMDIiLCJHb2Z1bmRfMDRfMDFfMDJfMDIiLCJHb2Z1bmRfMDVfMDFfMDIiLCJHb2Z1bmRfMDZfMDIiLCJHb2Z1bmRfMDZfMDJfMDIiLCJHb2Z1bmRfMDZfMDRfMDIiLCJHb2Z1bmRfMDlfMDIiLCJHb2Z1bmRfMTNfMDFfMDJfMDIiLCJHb2Z1bmRfMDhfMDIiLCJHb2Z1bmRfMTVfMDIiLCJHb2Z1bmRfMDMiLCJHb2Z1bmRfMDNfMDFfMDFfMDMiLCJHb2Z1bmRfMDRfMDFfMDFfMDMiLCJHb2Z1bmRfMTNfMDFfMDFfMDMiLCJHb2Z1bmRfMDQiLCJHb2Z1bmRfMDJfMDFfMDQiLCJHb2Z1bmRfMDJfMDFfMDVfMDQiLCJHb2Z1bmRfMDNfMDFfMDFfMDQiLCJHb2Z1bmRfMDRfMDFfMDFfMDQiLCJHb2Z1bmRfMTBfMDQiLCJHb2Z1bmRfMTNfMDFfMDFfMDQiLCJHb2Z1bmRfMDUiLCJHb2Z1bmRfMTBfMDUiLCJHb2Z1bmRfMDYiLCJHb2Z1bmRfMDgiLCJHb2Z1bmRfMDkiLCJHb2Z1bmRfMTAiLCJHb2Z1bmRfMTIiLCJHb2Z1bmRfMTMiLCJHb2Z1bmRfMTUiXSwiZHV0eVZvTGlzdCI6W10sIndlYnNpdGUiOiJodHRwczovL2ZvZi4xMjM0NWZ1bmQuY29tIiwicHJvamVjdElkIjoiY20yY3BsIiwiaGFzTW9iaWxlIjp0cnVlLCJhY2NvdW50RXhjIjpmYWxzZSwiYWNjb3VudFR5cGUiOjMsInVzZXJUeXBlIjozLCJhY2NvdW50TmFtZSI6IlAwMDA0MDgwMjEiLCJyZWFsTmFtZSI6Im51bGwiLCJ2b3JnSWQiOm51bGwsImlzU2hvd0FsbCI6MSwiaXNBdXRoIjowLCJleHBEYXRlIjoiMjAyMy0wMy0yNCAwMDowMDowMCIsImNvbmZpZ0ZpbGVOYW1lIjpudWxsfQ==; sntpsign=dcb801cda497ca8a9a362b60728efc72
 x-pro: cm2cpl
 
+GET https://fof.12345fund.com/api/v1/zyfp_dst_org_base/get_title?org_id=14582&dst=101&is_hg=1
+cookie: _abfpc=34bea953f3a784c11b336f84aeadc1247a1690d0_2.0; cna=84ec108521951dc939dcd2d3b61ba042; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22P000408021%22%2C%22first_id%22%3A%221857ab6063215f2-0d82a23d1a5663-7a575473-2304000-1857ab606331427%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTg1N2FiNjA2MzIxNWYyLTBkODJhMjNkMWE1NjYzLTdhNTc1NDczLTIzMDQwMDAtMTg1N2FiNjA2MzMxNDI3IiwiJGlkZW50aXR5X2xvZ2luX2lkIjoiUDAwMDQwODAyMSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%24identity_login_id%22%2C%22value%22%3A%22P000408021%22%7D%2C%22%24device_id%22%3A%221857ab6063215f2-0d82a23d1a5663-7a575473-2304000-1857ab606331427%22%7D; sntpwt=d0f5c17456df4de4ada26ebdf7f520d4; sntpauth=eyJhdXRoTGlzdCI6WyJHb2Z1bmRfMDJfMDEiLCJHb2Z1bmRfMDJfMDFfMDFfMDEiLCJHb2Z1bmRfMDJfMDFfMDVfMDEiLCJHb2Z1bmRfMDJfMDNfMDEiLCJHb2Z1bmRfMDJfMDNfMDJfMDEiLCJHb2Z1bmRfMDNfMDFfMDFfMDEiLCJHb2Z1bmRfMDNfMDFfMDJfMDEiLCJHb2Z1bmRfMDRfMDFfMDFfMDEiLCJHb2Z1bmRfMDRfMDFfMDJfMDEiLCJHb2Z1bmRfMDVfMDFfMDEiLCJHb2Z1bmRfMDZfMDEiLCJHb2Z1bmRfMDZfMDJfMDEiLCJHb2Z1bmRfMDZfMDRfMDEiLCJHb2Z1bmRfMDlfMDEiLCJHb2Z1bmRfMTBfMDEiLCJHb2Z1bmRfMTJfMDEiLCJHb2Z1bmRfMTNfMDFfMDJfMDEiLCJHb2Z1bmRfMDhfMDEiLCJHb2Z1bmRfMTVfMDEiLCJHb2Z1bmRfMDIiLCJHb2Z1bmRfMDJfMDMiLCJHb2Z1bmRfMDJfMDFfMDIiLCJHb2Z1bmRfMDJfMDFfMDFfMDIiLCJHb2Z1bmRfMDJfMDFfMDVfMDIiLCJHb2Z1bmRfMDJfMDNfMDJfMDIiLCJHb2Z1bmRfMDNfMDFfMDJfMDIiLCJHb2Z1bmRfMDRfMDFfMDJfMDIiLCJHb2Z1bmRfMDVfMDFfMDIiLCJHb2Z1bmRfMDZfMDIiLCJHb2Z1bmRfMDZfMDJfMDIiLCJHb2Z1bmRfMDZfMDRfMDIiLCJHb2Z1bmRfMDlfMDIiLCJHb2Z1bmRfMTNfMDFfMDJfMDIiLCJHb2Z1bmRfMDhfMDIiLCJHb2Z1bmRfMTVfMDIiLCJHb2Z1bmRfMDMiLCJHb2Z1bmRfMDNfMDFfMDFfMDMiLCJHb2Z1bmRfMDRfMDFfMDFfMDMiLCJHb2Z1bmRfMTNfMDFfMDFfMDMiLCJHb2Z1bmRfMDQiLCJHb2Z1bmRfMDJfMDFfMDQiLCJHb2Z1bmRfMDJfMDFfMDVfMDQiLCJHb2Z1bmRfMDNfMDFfMDFfMDQiLCJHb2Z1bmRfMDRfMDFfMDFfMDQiLCJHb2Z1bmRfMTBfMDQiLCJHb2Z1bmRfMTNfMDFfMDFfMDQiLCJHb2Z1bmRfMDUiLCJHb2Z1bmRfMTBfMDUiLCJHb2Z1bmRfMDYiLCJHb2Z1bmRfMDgiLCJHb2Z1bmRfMDkiLCJHb2Z1bmRfMTAiLCJHb2Z1bmRfMTIiLCJHb2Z1bmRfMTMiLCJHb2Z1bmRfMTUiXSwiZHV0eVZvTGlzdCI6W10sIndlYnNpdGUiOiJodHRwczovL2ZvZi4xMjM0NWZ1bmQuY29tIiwicHJvamVjdElkIjoiY20yY3BsIiwiaGFzTW9iaWxlIjp0cnVlLCJhY2NvdW50RXhjIjpmYWxzZSwiYWNjb3VudFR5cGUiOjMsInVzZXJUeXBlIjozLCJhY2NvdW50TmFtZSI6IlAwMDA0MDgwMjEiLCJyZWFsTmFtZSI6Im51bGwiLCJ2b3JnSWQiOm51bGwsImlzU2hvd0FsbCI6MSwiaXNBdXRoIjowLCJleHBEYXRlIjoiMjAyMy0wMy0yNCAwMDowMDowMCIsImNvbmZpZ0ZpbGVOYW1lIjpudWxsfQ==; sntpsign=2f30933a6b2fb58d6b3fe3f797e364d4
+x-pro: cm2cpl
 
 POST https://fof.12345fund.com/api/v1/zyfp_dst_fund_search/org_search
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+cache-control: no-cache
+content-length: 398
 content-type: application/json;charset=UTF-8
-cookie: acw_tc=0bca30fe16570915936582227e016b260bc806e2cc61b7817a33a3f452e663; sntpwt=ef983b1b9c7640d1a5bfcd98fa431e2e; sntpauth=eyJhdXRoTGlzdCI6WyJHb2Z1bmRfMDlfMDEiLCJHb2Z1bmRfMDVfMDFfMDEiLCJHb2Z1bmRfMDgiLCJHb2Z1bmRfMDlfMDIiLCJHb2Z1bmRfMDYiLCJHb2Z1bmRfMDRfMDFfMDFfMDEiLCJHb2Z1bmRfMDRfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDFfMDVfMDQiLCJHb2Z1bmRfMDJfMDNfMDEiLCJHb2Z1bmRfMDVfMDFfMDIiLCJHb2Z1bmRfMDRfMDFfMDFfMDQiLCJHb2Z1bmRfMDkiLCJHb2Z1bmRfMTJfMDEiLCJHb2Z1bmRfMDRfMDFfMDJfMDEiLCJHb2Z1bmRfMTIiLCJHb2Z1bmRfMTMiLCJHb2Z1bmRfMDJfMDNfMDJfMDEiLCJHb2Z1bmRfMDRfMDFfMDJfMDIiLCJHb2Z1bmRfMDJfMDNfMDJfMDIiLCJHb2Z1bmRfMDJfMDMiLCJHb2Z1bmRfMTNfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDEiLCJHb2Z1bmRfMTNfMDFfMDJfMDEiLCJHb2Z1bmRfMTNfMDFfMDFfMDQiLCJHb2Z1bmRfMDZfMDIiLCJHb2Z1bmRfMDZfMDEiLCJHb2Z1bmRfMDNfMDFfMDFfMDEiLCJHb2Z1bmRfMDJfMDFfMDIiLCJHb2Z1bmRfMDNfMDFfMDFfMDMiLCJHb2Z1bmRfMDJfMDFfMDQiLCJHb2Z1bmRfMDhfMDEiLCJHb2Z1bmRfMTNfMDFfMDJfMDIiLCJHb2Z1bmRfMDNfMDFfMDFfMDQiLCJHb2Z1bmRfMDNfMDFfMDJfMDEiLCJHb2Z1bmRfMDZfMDJfMDEiLCJHb2Z1bmRfMTUiLCJHb2Z1bmRfMDIiLCJHb2Z1bmRfMDhfMDIiLCJHb2Z1bmRfMDJfMDFfMDFfMDEiLCJHb2Z1bmRfMDNfMDFfMDJfMDIiLCJHb2Z1bmRfMDZfMDJfMDIiLCJHb2Z1bmRfMTVfMDEiLCJHb2Z1bmRfMDMiLCJHb2Z1bmRfMDJfMDFfMDFfMDIiLCJHb2Z1bmRfMDZfMDRfMDEiLCJHb2Z1bmRfMDQiLCJHb2Z1bmRfMDJfMDFfMDVfMDEiLCJHb2Z1bmRfMTVfMDIiLCJHb2Z1bmRfMDJfMDFfMDVfMDIiLCJHb2Z1bmRfMDZfMDRfMDIiLCJHb2Z1bmRfMDUiXSwiZHV0eVZvTGlzdCI6W10sIndlYnNpdGUiOiJodHRwczovL2ZvZi4xMjM0NWZ1bmQuY29tIiwicHJvamVjdElkIjoiY20yY3BsIiwiaGFzTW9iaWxlIjp0cnVlLCJhY2NvdW50RXhjIjpmYWxzZSwiYWNjb3VudFR5cGUiOjMsImFjY291bnROYW1lIjoiUDAwMDQwODAyMSIsInZvcmdJZCI6bnVsbCwiaXNTaG93QWxsIjoxLCJpc0F1dGgiOjB9; sntpsign=24ffcf175dc26a1e92e8a05461e6e0d8
+cookie: _abfpc=34bea953f3a784c11b336f84aeadc1247a1690d0_2.0; cna=84ec108521951dc939dcd2d3b61ba042; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22P000408021%22%2C%22first_id%22%3A%221857ab6063215f2-0d82a23d1a5663-7a575473-2304000-1857ab606331427%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTg1N2FiNjA2MzIxNWYyLTBkODJhMjNkMWE1NjYzLTdhNTc1NDczLTIzMDQwMDAtMTg1N2FiNjA2MzMxNDI3IiwiJGlkZW50aXR5X2xvZ2luX2lkIjoiUDAwMDQwODAyMSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%24identity_login_id%22%2C%22value%22%3A%22P000408021%22%7D%2C%22%24device_id%22%3A%221857ab6063215f2-0d82a23d1a5663-7a575473-2304000-1857ab606331427%22%7D; acw_tc=0bca31ca16740897488674593e2299fdc65116cc4ce37a54c047bb986d9a24; sntpwt=3d880765e7864fa3be441d2f5d06872d; sntpauth=eyJhdXRoTGlzdCI6WyJHb2Z1bmRfMDJfMDEiLCJHb2Z1bmRfMDJfMDFfMDFfMDEiLCJHb2Z1bmRfMDJfMDFfMDVfMDEiLCJHb2Z1bmRfMDJfMDNfMDEiLCJHb2Z1bmRfMDJfMDNfMDJfMDEiLCJHb2Z1bmRfMDNfMDFfMDFfMDEiLCJHb2Z1bmRfMDNfMDFfMDJfMDEiLCJHb2Z1bmRfMDRfMDFfMDFfMDEiLCJHb2Z1bmRfMDRfMDFfMDJfMDEiLCJHb2Z1bmRfMDVfMDFfMDEiLCJHb2Z1bmRfMDZfMDEiLCJHb2Z1bmRfMDZfMDJfMDEiLCJHb2Z1bmRfMDZfMDRfMDEiLCJHb2Z1bmRfMDlfMDEiLCJHb2Z1bmRfMTBfMDEiLCJHb2Z1bmRfMTJfMDEiLCJHb2Z1bmRfMTNfMDFfMDJfMDEiLCJHb2Z1bmRfMDhfMDEiLCJHb2Z1bmRfMTVfMDEiLCJHb2Z1bmRfMDIiLCJHb2Z1bmRfMDJfMDMiLCJHb2Z1bmRfMDJfMDFfMDIiLCJHb2Z1bmRfMDJfMDFfMDFfMDIiLCJHb2Z1bmRfMDJfMDFfMDVfMDIiLCJHb2Z1bmRfMDJfMDNfMDJfMDIiLCJHb2Z1bmRfMDNfMDFfMDJfMDIiLCJHb2Z1bmRfMDRfMDFfMDJfMDIiLCJHb2Z1bmRfMDVfMDFfMDIiLCJHb2Z1bmRfMDZfMDIiLCJHb2Z1bmRfMDZfMDJfMDIiLCJHb2Z1bmRfMDZfMDRfMDIiLCJHb2Z1bmRfMDlfMDIiLCJHb2Z1bmRfMTNfMDFfMDJfMDIiLCJHb2Z1bmRfMDhfMDIiLCJHb2Z1bmRfMTVfMDIiLCJHb2Z1bmRfMDMiLCJHb2Z1bmRfMDNfMDFfMDFfMDMiLCJHb2Z1bmRfMDRfMDFfMDFfMDMiLCJHb2Z1bmRfMTNfMDFfMDFfMDMiLCJHb2Z1bmRfMDQiLCJHb2Z1bmRfMDJfMDFfMDQiLCJHb2Z1bmRfMDJfMDFfMDVfMDQiLCJHb2Z1bmRfMDNfMDFfMDFfMDQiLCJHb2Z1bmRfMDRfMDFfMDFfMDQiLCJHb2Z1bmRfMTBfMDQiLCJHb2Z1bmRfMTNfMDFfMDFfMDQiLCJHb2Z1bmRfMDUiLCJHb2Z1bmRfMTBfMDUiLCJHb2Z1bmRfMDYiLCJHb2Z1bmRfMDgiLCJHb2Z1bmRfMDkiLCJHb2Z1bmRfMTAiLCJHb2Z1bmRfMTIiLCJHb2Z1bmRfMTMiLCJHb2Z1bmRfMTUiXSwiZHV0eVZvTGlzdCI6W10sIndlYnNpdGUiOiJodHRwczovL2ZvZi4xMjM0NWZ1bmQuY29tIiwicHJvamVjdElkIjoiY20yY3BsIiwiaGFzTW9iaWxlIjp0cnVlLCJhY2NvdW50RXhjIjpmYWxzZSwiYWNjb3VudFR5cGUiOjMsInVzZXJUeXBlIjozLCJhY2NvdW50TmFtZSI6IlAwMDA0MDgwMjEiLCJyZWFsTmFtZSI6Im51bGwiLCJ2b3JnSWQiOm51bGwsImlzU2hvd0FsbCI6MSwiaXNBdXRoIjowLCJleHBEYXRlIjoiMjAyMy0wMy0yNCAwMDowMDowMCIsImNvbmZpZ0ZpbGVOYW1lIjpudWxsfQ==; sntpsign=dcb801cda497ca8a9a362b60728efc72
+origin: https://fof.12345fund.com
+pragma: no-cache
+referer: https://fof.12345fund.com/list/1-101
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54
+x-pro: cm2cpl
 
 {
             "is_hg": 1,
@@ -32,14 +45,58 @@ cookie: acw_tc=0bca30fe16570915936582227e016b260bc806e2cc61b7817a33a3f452e663; s
             "order": "fund_num",
             "order_type": -1,
             "advanced_filter": {},
-            "config_search": {}
+            "config_search": {"org_keyword": "鸿熵"}
 }
+
+POST https://fof.12345fund.com/api/v1/zyfp_dst_fund_search/list_search
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+cache-control: no-cache
+content-length: 398
+content-type: application/json;charset=UTF-8
+cookie: sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22E000098525%22%2C%22first_id%22%3A%221857ab6063215f2-0d82a23d1a5663-7a575473-2304000-1857ab606331427%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTg1N2FiNjA2MzIxNWYyLTBkODJhMjNkMWE1NjYzLTdhNTc1NDczLTIzMDQwMDAtMTg1N2FiNjA2MzMxNDI3IiwiJGlkZW50aXR5X2xvZ2luX2lkIjoiRTAwMDA5ODUyNSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%24identity_login_id%22%2C%22value%22%3A%22E000098525%22%7D%2C%22%24device_id%22%3A%221857ab6063215f2-0d82a23d1a5663-7a575473-2304000-1857ab606331427%22%7D; acw_tc=0bca30f217138361054726445ee1b52f094e7d8f5640ab7cfca7b3803b9ced; sntpwt=51d8ea9c4e5a455d9e7f4e5237613027; sntpauth=eyJhdXRoTGlzdCI6WyJHRl8wMSIsIkdGXzAyIiwiR0ZfMDMiLCJHRl8wNCIsIkdGXzA1IiwiR0ZfMDYiLCJHRl8wNyIsIkdGXzA4IiwiR0ZfMDkiLCJHRl8xMCIsIkdGXzEyIiwiR0ZfMTMiLCJHRl8xNCIsIkdGXzk4IiwiR0ZfOTkiLCJHRl8wMV8wMiIsIkdGXzAyXzAxIiwiR0ZfMDJfMDIiLCJHRl8wMl8wMyIsIkdGXzAzXzAxIiwiR0ZfMDNfMDIiLCJHRl8wM18wMyIsIkdGXzEwXzAxIiwiR0ZfMTBfMDQiLCJHRl8xMF8wNSIsIkdGXzk4XzAxIiwiR0ZfOTlfMDEiLCJHRl85OV8wMiIsIkdGXzAxXzAxIl0sImR1dHlWb0xpc3QiOltdLCJ3ZWJzaXRlIjoiaHR0cHM6Ly9mb2YuMTIzNDVmdW5kLmNvbSIsInByb2plY3RJZCI6ImNtMmNwbCIsImhhc01vYmlsZSI6dHJ1ZSwiYWNjb3VudEV4YyI6ZmFsc2UsImFjY291bnRBdXRoVmVyc2lvbiI6IjEwMzAyMDIiLCJhY2NvdW50VHlwZSI6MywiYWNjb3VudEF1dGhUeXBlIjo1LCJhY2NvdW50TmFtZSI6IkUwMDAwOTg1MjUiLCJyZWFsTmFtZSI6bnVsbCwidm9yZ0lkIjpudWxsLCJpc1Nob3dBbGwiOjEsImlzQXV0aCI6MCwiZXhwRGF0ZSI6IjIwMjQtMDYtMTIgMjM6NTk6NTkiLCJjb25maWdGaWxlTmFtZSI6bnVsbH0=; sntpsign=308d4f86abc38dbb5a1bd16b9e73a9e1
+origin: https://fof.12345fund.com
+pragma: no-cache
+referer: https://fof.12345fund.com/list/1-101
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54
+x-pro: cm2cpl
+
+
+POST https://fof.12345fund.com/file/export_comm_excel
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+cache-control: no-cache
+content-length: 398
+content-type: application/json;charset=UTF-8
+cookie: sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22E000098525%22%2C%22first_id%22%3A%221857ab6063215f2-0d82a23d1a5663-7a575473-2304000-1857ab606331427%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTg1N2FiNjA2MzIxNWYyLTBkODJhMjNkMWE1NjYzLTdhNTc1NDczLTIzMDQwMDAtMTg1N2FiNjA2MzMxNDI3IiwiJGlkZW50aXR5X2xvZ2luX2lkIjoiRTAwMDA5ODUyNSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%24identity_login_id%22%2C%22value%22%3A%22E000098525%22%7D%2C%22%24device_id%22%3A%221857ab6063215f2-0d82a23d1a5663-7a575473-2304000-1857ab606331427%22%7D; acw_tc=0b68a82a17224743066616022e2f25670b1ac33bb9891281b3650770c67533; sntpwt=c2c0effb56454df2b5d5f628afff10a9; sntpauth=eyJhdXRoTGlzdCI6WyJHRl8wMSIsIkdGXzAyIiwiR0ZfMDMiLCJHRl8wNCIsIkdGXzA1IiwiR0ZfMDYiLCJHRl8wNyIsIkdGXzA4IiwiR0ZfMDkiLCJHRl8xMCIsIkdGXzEyIiwiR0ZfMTMiLCJHRl8xNCIsIkdGXzk4IiwiR0ZfOTkiLCJHRl8wMV8wMiIsIkdGXzAyXzAxIiwiR0ZfMDJfMDIiLCJHRl8wMl8wMyIsIkdGXzAzXzAxIiwiR0ZfMDNfMDIiLCJHRl8wM18wMyIsIkdGXzEwXzAxIiwiR0ZfMTBfMDQiLCJHRl8xMF8wNSIsIkdGXzk4XzAxIiwiR0ZfOTlfMDEiLCJHRl85OV8wMiIsIkdGXzAxXzAxIl0sImR1dHlWb0xpc3QiOltdLCJ3ZWJzaXRlIjoiaHR0cHM6Ly9mb2YuMTIzNDVmdW5kLmNvbSIsInByb2plY3RJZCI6ImNtMmNwbCIsImhhc01vYmlsZSI6dHJ1ZSwiYWNjb3VudEV4YyI6ZmFsc2UsImFjY291bnRBdXRoVmVyc2lvbiI6IjEwMzAyMDIiLCJhY2NvdW50VHlwZSI6MywiYWNjb3VudEF1dGhUeXBlIjo1LCJhY2NvdW50TmFtZSI6IkUwMDAwOTg1MjUiLCJyZWFsTmFtZSI6bnVsbCwidm9yZ0lkIjpudWxsLCJpc1Nob3dBbGwiOjEsImlzQXV0aCI6MCwiZXhwRGF0ZSI6IjIwMjQtMDktMTMgMjM6NTk6NTkiLCJjb25maWdGaWxlTmFtZSI6bnVsbH0=; sntpsign=4df4f24197a7d2679ffb4da467c2ba97
+origin: https://fof.12345fund.com
+pragma: no-cache
+referer: https://fof.12345fund.com/list/1-101
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54
+x-pro: cm2cpl
+
+{"api_url":"v1/zyfp_dst_fund_search/pool_search","api_params":"{\"is_vorg\":0,\"dst_type\":0,\"type\":0,\"group_ids\":[277849],\"cust\":\"5nhdp6\",\"return_field\":[\"fund_name\",\"join_time\",\"statistic_date\",\"nav\",\"added_nav\",\"swanav\",\"w1_return\",\"m1_return\",\"y1_return\",\"id\",\"reg_code\",\"vorg_id\",\"id\",\"reg_code\",\"va_days\",\"org_asset_mgt_scale\",\"is_vorg\",\"is_hide\"],\"template_id\":3,\"custom_dst\":351,\"sys_config\":true,\"order\":\"join_time\",\"order_type\":-1,\"field\":[\"fund_name\",\"fund_full_name\",\"reg_code\"],\"person_all\":1,\"duty_id\":null,\"is_hg\":1,\"page\":1,\"rows\":1500}","table_fields":"[{\"field\":\"fund_name\",\"name\":\"产品简称\",\"format\":0,\"width\":180},{\"field\":\"join_time\",\"name\":\"入池时间\",\"format\":111,\"width\":150},{\"field\":\"statistic_date\",\"name\":\"净值日期\",\"format\":11,\"width\":100},{\"field\":\"nav\",\"name\":\"单位净值\",\"format\":4,\"width\":100},{\"field\":\"added_nav\",\"name\":\"累计净值\",\"format\":4,\"width\":100},{\"field\":\"swanav\",\"name\":\"复权累计净值\",\"format\":4,\"width\":120},{\"field\":\"w1_return\",\"name\":\"近1周收益率\",\"format\":9,\"width\":100},{\"field\":\"m1_return\",\"name\":\"近1月收益率\",\"format\":9,\"width\":100},{\"field\":\"y1_return\",\"name\":\"近1年收益率\",\"format\":9,\"width\":100}]","file_name":"20240423175920分组8.xlsx","request_method_type":2}
+
+
+
+{"dst_list":["1"],"multi_cust":["5nhdp6"],"is_vorg":0,"dst":"1","cust":"5nhdp6","is_hg":1,"return_field":["fund_name","reg_code","foundation_date","fund_type_strategy_level2","fund_manager","fund_member","statistic_date","nav","swanav","added_nav","w1_return","vorg_id"],"arithmetic_period":"week","order":"year_return","order_type":-1,"filter":[],"config_search":{"fund_type_strategy_level2_code":[105100103,105100102,105100101,105102102,105102101,105102100,105103106,105103105,105106100,105107101],"fund_type_quant":"量化","fund_status":"存续中"},"auto_column":0,"page":1,"rows":20000,"pool_check":true}
+
+
+
+GET https://www.38xs.com//82644/?btwaf=27044860
+Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Accept-Encoding:gzip, deflate, br
+Accept-Language:en,zh-CN;q=0.9,zh;q=0.8,en-US;q=0.7
+Cache-Control:no-cache
+Cookie:1ef141a9ac127e226a6a9444b5438674=f6065b4ec86f5ac04913cc9c35d9b7f8; waf_sc=5889647726; 1ef141a9ac127e226a6a9444b5438674=6c80182c253ab5e419e5f0ce0e9e50b1; novel_82644=97948997%7C1697442676
 
 
 POST https://www.licai.com/api/v1/data/simu/product/netvalue
 accept: application/json, text/plain, */*
-accept-encoding: gzip, deflate, br
-accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+accept-encoding:  deflate, br
+
 cache-control: no-cache
 content-type: application/json;charset=UTF-8
 cookie: sessionid=cpiyie2m9gvp9g8o5i77gdqqtxtp50qf;
@@ -84,6 +141,21 @@ accept-encoding: gzip, deflate, br
 content-type: application/json;charset=UTF-8
 cookie: Hm_lvt_c3f6328a1a952e922e996c667234cdae=1648429723; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221740344%22%2C%22first_id%22%3A%221740344%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217e46cddcf628f-0d0ca7dce42e37-7f697c63-2304000-17e46cddcf788b%22%7D; certification=1; qualified_investor=1; focus-certification-pop=-1; cur_ck_time=1666159230; ck_request_key=JBgd3zI7dIPtBuc1rkyNVU9dSGDm9oGiC5J%2Bc277ZgM%3D; rz_rem_u_p=jaLzzOM4MeirNXMNdIgW%2F%2B6Sf302rFInfY88tQcTMZ0%3D%24tYkvz1s%2BkJf56f0%2F48R%2BoQdvREFYDbiS9SZp0965XOI%3D; evaluation_result=5; PHPSESSID=ooqtot9q72pkrrl6th2qif55l6; rem_username=1; 9d46d29a2c7821f5444536df9e761393=18801165008%2C755b14c58365fd9437a758c236d5c8e8%2C1814ebc2b9dcda6e6701388934aded48ee58efc0%2C2%2Cmaster; 49f290d6e8459c53f31f97de37921086=r32m2IB6da2xd6WrhqunmYbOp2yZsqeYsaF8YsdpvN62pqvVjYl9bcet06yGuNHMhrieaYN8fdywooeosXvNzrFsspeCeqOfx3qqrpyXxtmc0YiehWhsm8iJb24; passport=553742%09%E9%99%88%E6%9D%B0%E5%8D%8E%E9%81%93%E8%B5%84%E6%9C%AC%09DlYFUAgDAQVZUQUFA1BfAQVRUAMAClAFBA8GU1UMVF0%3Dfdba3b7745; http_tK_cache=1814ebc2b9dcda6e6701388934aded48ee58efc0; fof_passport=553742%0918801165008%09%E9%99%88%E6%9D%B0%E5%8D%8E%E9%81%93%E8%B5%84%E6%9C%AC; stat_passport=553742%0918801165008%09%E9%99%88%E6%9D%B0%E5%8D%8E%E9%81%93%E8%B5%84%E6%9C%AC; c034c9c0fdf5cdb54c7cf29546669be9=1873b17ea9c7e409de38765a84b3dac9; master_common_token=y4Kzs5n7xJ0PpSFrhl4j%2BlVKXHlSofL%2BmoFJhV2TFwoNKfnrTePguUSXw%2FC%2BjV9jBPTiHsetIZwnhH3%2BUBjvhyQEO3Kp0ZR7QE1Gr%2B%2Fn3lQl9ewLpJn5thOcACOZLXssDpMxSbmNCBHrDeZ93Pq8DbNOVyytJcabGhC2CW2CZeewQI8jEqxGzlnbynRsq8QDRGC1SWh2kpjBSQ8aW6KNLg%3D%3D; smppw_user_type=2; uc_login_stat=1
 
+
+GET https://api.huofuniu.com/newgoapi/fund/global/search?keyValue=SY9620
+accept:application/json, text/plain, */*
+accept-encoding: gzip, deflate, br, zstd
+accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+access-token: 6ce8bf74e24797ee8cd184a0c2d1b0c29b08c3067052b1539eb7d81ad21d623b18aeedf3be6e7c2b
+
+
+GET https://fof.simuwang.com/dataservice/v1/trend/secuirties/HF00004RQZ/growth-single?startDate=2016-01-01&endDate=2099-12-31&navType=OriginalNav&timeRange=FromSetup&initValue=0.0000&dataSourceType=Ret&raiseType=Private&strategy=Portfolio&visibility=Both&showAssetStyleBenmark=true&dataSource=Default&sceneIds=&trendType=Ret&sampleId=HF00004RQZ&needTableData=true&ifExtract=false&extraTrendType=ExtraRetGeo
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+cache-control: no-cache
+cookie: Hm_lvt_c3f6328a1a952e922e996c667234cdae=1648429723; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221740344%22%2C%22first_id%22%3A%221740344%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217e46cddcf628f-0d0ca7dce42e37-7f697c63-2304000-17e46cddcf788b%22%7D; certification=1; qualified_investor=1; focus-certification-pop=-1; cur_ck_time=1679278324; ck_request_key=mtOcHOfjuz7zhRJYSagC5NxwYHdvJa50EKY4WHPd2PY%3D; rz_rem_u_p=jaLzzOM4MeirNXMNdIgW%2F%2B6Sf302rFInfY88tQcTMZ0%3D%24tYkvz1s%2BkJf56f0%2F48R%2BoQdvREFYDbiS9SZp0965XOI%3D; evaluation_result=4; acw_tc=784e2c8e16793014537335394e1cca2b9324a71b294096d13c4eec3efc6dda; 49f290d6e8459c53f31f97de37921086=r32m2IB6da2xd6WrhqunmYbOp2yZsqeYsaF8YsdpvN62pqvVjYl9bcet06yGuNHMhriEZoSMgZWxfJVhsaG3zrFsspeCeqOfx3qqrpyXxtmc0YiehWhsm8iJb24; PHPSESSID=e8u80grqics68fdhunfqel7lo5; rem_username=1; 9d46d29a2c7821f5444536df9e761393=13552587424%2C8673ce2c2f0eb82d2cd5e6d13e7f4b7e%2C63b8e9d3b3f0a0a167c31f8bb85be75cd43ab763%2C2%2Cmaster; passport=1657079%09u7263970869769%09WwYFBgYDAABXBQFQUgxQUFZVBgRWVVZTAFMGVA1QD1w%3D0c298e0c0a; http_tK_cache=63b8e9d3b3f0a0a167c31f8bb85be75cd43ab763; fof_passport=1657079%0913552587424%09u7263970869769; stat_passport=1657079%0913552587424%09u7263970869769; d3b21efda1d4e16cabd331ccbde2062d=285aef7fc522c0de2138e209c18d33b9; master_common_token=s2Da8C%2FrHEnTQHa%2Bhpgi9FSCsqAfo6ZhHXnzM1P66VCqIe0PDVMd7aGkQpeMn7i8GPFG2K%2BXVUaa%2Fh6xJHBBkCwWgUHnJ07CJ3nNPuX28okg9JFC9rZtaVCYMI6cQAiMIPo5ZG9EaRSEfuLzk1qTQqBGxK98mSU2hRiI8IZonJOKfrEntth4k6mCN7QwiAe418b1wI5fU5LaON%2F8eA1%2FrU3S6aPltT%2F1SUbbCAN%2FAu4%3D; smppw_user_type=2; uc_login_stat=1
+
 GET https://s.simuwang.com/www/quick/?search_type=fund&q=SCW118&callback=__jp1
 
 
@@ -104,6 +176,26 @@ cookie: sessionid=cpiyie2m9gvp9g8o5i77gdqqtxtp50qf;
   ]
 }
 
+GET http://192.168.0.22/fof/confirmBatch?codes=SLH098
+
+
+POST https://www.licai.com/api/v1/data/simu/product/netvalue
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+content-type: application/json;charset=UTF-8
+cookie: _ga=GA1.2.716878732.1625464924; Hm_lvt_c09b6af925ee0121f9617c3f09d2a088=1695261548; Hm_lvt_4f5f61d55230ff308da1069fd4da34dd=1695261548; sessionid=ycymj48k0dbqx9yxcmx74dau8k3kvx14; Hm_lpvt_c09b6af925ee0121f9617c3f09d2a088=1695261584; Hm_lpvt_4f5f61d55230ff308da1069fd4da34dd=1695261584
+
+{
+  "product_id": "P251944"
+}
+
+POST http://192.168.0.21:3002/fof/saveinfo
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+content-type: application/json;charset=UTF-8
+cookie: sessionid=cpiyie2m9gvp9g8o5i77gdqqtxtp50qf;
+
+{"code": "SALC13", "name": "\u4e2d\u57a6\u4e09\u6c5f1\u53f7", "short_name": "\u4e2d\u57a6\u4e09\u6c5f1\u53f7", "type": "0", "class_type": "\u6df7\u5408", "sub_type": "\u4fe1\u7528\u503a", "stage": "\u5165\u5e93", "create_user": "superadmin", "ZhaoYang": "891789", "SiMuWang": "HF0000BGDH", "GeShang": null, "fee": 1, "carry1": "20", "carry2": null, "source_remark": null, "user": "superadmin"} 
 
 GET https://iclubh5.gtmc.com.cn/carbon-api/user/dailytask/totalList
 accessToken:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZU1pbGxpcyI6IjE2NjczNzM3ODY5NjAiLCJVU0VSX0lEIjoiMTA3NDAiLCJVU0VSX05BTUUiOiI1Ym0vNUxpd09UVXlOamd6IiwiZXhwIjoxNjY3NDYwMTg2fQ.AbJFQAmvHJE5aRI7ynbEJ5r-vyh_pw1pPXp74f76zDA
@@ -119,3 +211,119 @@ accessToken:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZU1pbGxpcyI6IjE
 content-type: application/x-www-form-urlencoded;
 
 taskId=20&taskBigClassify=2&finished=3&id=20
+
+
+
+https://pb.htsc.com.cn/evar/api/sms/send-for-login?account=cj18801165008&checkGraph=false&_=1679274523756
+
+
+
+https://pb.htsc.com.cn/evar/api/ajaxlogin
+{"username":"cj18801165008","password":"1qaz@WSX","SMSCode":"285618","checkGraph":false}
+
+
+GET http://192.168.0.22/fof/reCrawlNew?code=SXR715
+
+POST https://pb.htsc.com.cn/evar/api/product/getPortListByConditionsTwo
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+Content-Type: application/json
+Cookie: Xsrf-token=; BIGipServerqO/VgYKJnOaOxXgvDdrSAQ=!ZfZLQn9NNzwaQtZTrPnPKSov3fDas8wyKHyZ/kXrcI7NfPwMS3e0b5oSOyJSiLC63YS2FokrFCU8dsI=; BIGipServerw2vkv3mj3WFE/9lpq0vhQA=!QCzn/VU+GpfMiJ9TrPnPKSov3fDas+ytVaT4Ajl5zv5J+iumm0vIBc3yyFX0GVczWaf8dwrqwlfrvQ==; SESSION=YmRjN2I4YzgtMThiYS00MGE0LThhNmMtMzBjMGQ0Y2Y0N2Yy
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41
+X-Requested-With: XMLHttpRequest
+
+{"portTypeList":["SMPPSIMU","ZYYXSIMU"],"productCodeOrName":"SY9620"}
+
+
+blob:https://pb.htsc.com.cn/76ad9e96-0460-4e24-8c6c-ef3ba316cf4e
+
+SMPPSIMU
+GET https://pb.htsc.com.cn/evar/api/fundDetail/getPerformanceTrend?portId=6057385&freq=DAY&beginDate=2010-01-01&endDate=2023-02-10&portType=ZYYXSIMU&benchId=1&net=n_ljdwjz&calculateSource=uwsgi
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+Content-Type: application/json
+Cookie: Xsrf-token=; BIGipServerqO/VgYKJnOaOxXgvDdrSAQ=!23vpNbRUcyKCEyZTrPnPKSov3fDas6SCpyRwwiDrPVtZnIGohV/etqM9l3WTL9Owr921LyjpMSSi2qs=; BIGipServerw2vkv3mj3WFE/9lpq0vhQA=!RuypYhx8vzy/1DlTrPnPKSov3fDas+OKx+ji+SI/zaZpMYLFDTTcHehULOu3W2Pf/rSYnOvJK5DGcA==; SESSION=Zjk1ZmI4MzEtMzZhMC00ZGVhLThkMTgtNmJiM2NjMzBmMDZi
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41
+X-Requested-With: XMLHttpRequest
+
+POST https://pb.htsc.com.cn/evar/api/product/getPortListByConditions
+Cookie: Xsrf-token=; SESSION=OWVlYWY5ZjgtYjBmMC00MTU3LWEzMDMtZjlhYjVkMTgxOTg2; BIGipServerqO/VgYKJnOaOxXgvDdrSAQ=!23vpNbRUcyKCEyZTrPnPKSov3fDas6SCpyRwwiDrPVtZnIGohV/etqM9l3WTL9Owr921LyjpMSSi2qs=; BIGipServerw2vkv3mj3WFE/9lpq0vhQA=!RuypYhx8vzy/1DlTrPnPKSov3fDas+OKx+ji+SI/zaZpMYLFDTTcHehULOu3W2Pf/rSYnOvJK5DGcA==
+Content-Type: application/json
+
+{"productCodeOrName":"SY9620","portTypeList":["SMPPSIMU"]}
+
+
+https://pb.htsc.com.cn/evar/api/fundDetail/getPerformanceTrend?portId=6188193&freq=DAY&beginDate=2010-01-01&endDate=2024-12-31&portType=SMPPSIMU&benchId=1&net=n_ljdwjz&calculateSource=uwsgi&_=1701739006
+
+GET https://pb.htsc.com.cn/evar/api/fundDetail/getPerformanceTrend?benchId=1&freq=DAY&portId=6057385&portType=SMPPSIMU&net=n_ljdwjz&beginDate=2010-01-01&endDate=2023-11-24&productCode=SY9620&cDataSource=SMPPSIMU&isDesensitization=false&indexName=%E6%B2%AA%E6%B7%B1300&_=1701738013897
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+Authorization:
+Cache-Control: no-cache
+Connection: keep-alive
+Cookie: Xsrf-token=; BIGipServerqO/VgYKJnOaOxXgvDdrSAQ=!ZfZLQn9NNzwaQtZTrPnPKSov3fDas8wyKHyZ/kXrcI7NfPwMS3e0b5oSOyJSiLC63YS2FokrFCU8dsI=; BIGipServerw2vkv3mj3WFE/9lpq0vhQA=!QCzn/VU+GpfMiJ9TrPnPKSov3fDas+ytVaT4Ajl5zv5J+iumm0vIBc3yyFX0GVczWaf8dwrqwlfrvQ==; SESSION=YmRjN2I4YzgtMThiYS00MGE0LThhNmMtMzBjMGQ0Y2Y0N2Yy
+Host: pb.htsc.com.cn
+Pragma: no-cache
+Referer: https://pb.htsc.com.cn/evar/
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0
+X-Requested-With: XMLHttpRequest
+
+
+GET https://pb.htsc.com.cn/evar/api/fundDetail/getPerformanceTrend?benchId=1&freq=DAY&portId=6057385&portType=SMPPSIMU&net=n_ljdwjz&beginDate=2018-05-31&endDate=2023-11-24&productCode=SY9620&cDataSource=SMPPSIMU&productName=%E5%8D%8E%E9%81%93%E5%A4%9A%E7%AD%96%E7%95%A5FOF%E7%A7%81%E5%8B%9F%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%9F%BA%E9%87%91&isDesensitization=false&indexCode=104912&indexType=stock&indexName=%E6%B2%AA%E6%B7%B1300&_=1701738013809
+
+
+GET http://localhost:3002/fof/autoConfirm
+
+GET http://localhost:3002/fof/updateInfos
+
+POST http://localhost:8000/login
+
+
+
+{"productCodeOrName":"SY9620","portTypeList":["SMPPSIMU"]}
+
+
+GET https://pb.htsc.com.cn/evar/api/sms/send-for-login?account=zs18611709540&checkGraph=false&_=1681867437430
+Xsrf-token=; BIGipServerqO/VgYKJnOaOxXgvDdrSAQ=!JroXDLS7xM9aqGpTrPnPKSov3fDaszkwN8x4JvI/DVEh4a8fWo2uF7Gpedizu8AEGGBhZmH5EPtk2gs=; BIGipServerw2vkv3mj3WFE/9lpq0vhQA=!xx0gcow7m9N6AwxTrPnPKSov3fDas4aW9eCO8GrWe8sJLHw+oeZ0E3fMdf6el/zhvGYXbwCn5c3fuw==; SESSION=ZGE3NzA0YjEtN2Q2ZS00NmMyLTk5YTMtN2YzNDRlMzRhM2Rl
+
+
+POST https://pb.htsc.com.cn/evar/api/ajaxlogin
+Content-Type: application/json
+Cookie: Xsrf-token=; BIGipServerqO/VgYKJnOaOxXgvDdrSAQ=!JroXDLS7xM9aqGpTrPnPKSov3fDaszkwN8x4JvI/DVEh4a8fWo2uF7Gpedizu8AEGGBhZmH5EPtk2gs=; BIGipServerw2vkv3mj3WFE/9lpq0vhQA=!xx0gcow7m9N6AwxTrPnPKSov3fDas4aW9eCO8GrWe8sJLHw+oeZ0E3fMdf6el/zhvGYXbwCn5c3fuw==; SESSION=ZGE3NzA0YjEtN2Q2ZS00NmMyLTk5YTMtN2YzNDRlMzRhM2Rl
+
+{"username":"zs18611709540","password":"1qaz@WSX","SMSCode":"535608","checkGraph":false}
+
+
+POST http://127.0.0.1:8080/fof/saveinfo
+Content-Type: application/json
+
+GET http://127.0.0.1:3002/protected  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4NDcyMTcxMywianRpIjoiN2VhNDZiNjEtODZkYy00MTQ2LWE1MGYtODc2YjE2NTFkODBmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNjg0NzIxNzEzLCJleHAiOjE2ODQ3MjI2MTN9.PXwvTRvl2mZ0jNkheRIa0SLqtF4MBrsqB6t72tTx9is
+
+{"stage":"入库","scale":"待尽调","sub_type":"CTA中低频","code":"STJ477","company":"会世元驰2号","short_name":"会世元驰2号","name":"会世元驰2号","remark":"测试产品","class_type":"CTA","type":"SiMuWang","mail":"华泰证券","user":"admin","SiMuWang":"HF0000839Y"}
+    https://fof.simuwang.com/dataservice/v1/trend/secuirties/{scode}/growth-single?startDate=2016-01-01&endDate=2099-12-31&navType={navtype}&timeRange=FromSetup&initValue=0.0000&dataSourceType=Ret&raiseType=Private&strategy=Portfolio&visibility=Both&showAssetStyleBenmark=true&dataSource=Default&sceneIds=&trendType=Ret&sampleId={scode}&needTableData=true&ifExtract=false&extraTrendType=ExtraRetGeo'
+GET https://fof.simuwang.com/dataservice/v1/trend/secuirties/HF00006HJM/growth-single?startDate=2020-09-28&endDate=2023-05-19&navType=OriginalNav&timeRange=FromSetup&initValue=0.0000&dataSourceType=Ret&raiseType=Private&strategy=Equity&visibility=Both&showAssetStyleBenmark=true&dataSource=Default&sceneIds=&trendType=Ret&sampleId=HF00006HJM&needTableData=true&ifExtract=false&userId=1073522&benchmarkId=IN0000007M&extraTrendType=ExtraRetGeo&t=1684727342824
+GET https://fof.simuwang.com/dataservice/v1/trend/secuirties/HF00006HJM/growth-single?startDate=2016-01-01&endDate=2099-12-31&navType=OriginalNav&timeRange=FromSetup&initValue=0.0000&dataSourceType=Ret&raiseType=Private&strategy=Equity&visibility=Both&showAssetStyleBenmark=true&dataSource=Default&sceneIds=&trendType=Ret&sampleId=HF00006HJM&needTableData=true&ifExtract=false&extraTrendType=ExtraRetGeo'
+GET https://fof.simuwang.com/dataservice/v1/trend/secuirties/SLN758/growth-single?startDate=2016-01-01&endDate=2099-12-31&navType=OriginalNav&timeRange=FromSetup&initValue=0.0000&dataSourceType=Ret&raiseType=Private&strategy=Equity&visibility=Both&showAssetStyleBenmark=true&dataSource=Default&sceneIds=&trendType=Ret&sampleId=SLN758&needTableData=true&ifExtract=false&extraTrendType=ExtraRetGeo
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+cache-control: no-cache
+cookie: sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221740344%22%2C%22first_id%22%3A%221740344%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217e46cddcf628f-0d0ca7dce42e37-7f697c63-2304000-17e46cddcf788b%22%7D; focus-certification-pop=-1; cur_ck_time=1680506662; ck_request_key=xMnvtRIErN8R%2FHrGt3PEbnEqT8qbptY2kfLLhEXdHTA%3D; relogin_from_54=1; rz_rem_u_p=72QpVygYdtM%3D%244s9EdbOO%2Bhwrz9c3Awzq6g%3D%3D; certification=1; qualified_investor=1; evaluation_result=5; acw_tc=784e2c9c16847263544711701e3da490e1753b0098cea57ccf139e5f103d63; PHPSESSID=mle5tll3ldsf1slkqise01esg0; rem_username=1; 9d46d29a2c7821f5444536df9e761393=18910388244%2C4224580d502058674e3d24a878c8c71e%2C4f720ab283ba7271c1bf0cec6c5e33eeaa0225b0%2C2%2Cmaster; 49f290d6e8459c53f31f97de37921086=r32m2IB6da2xd6WrhqunmYbOp2yZsqeYsaF8YsdpvN62pqvVjYl9bcet06yGuNHMhrieaoOMed6xfJmqsnu3zrFsspeCeqOfx3qqrpyXxtmc0YiehWhsm8iJb24; passport=1073522%09u3960990407049%09UABQBVEPB1EHBQYHUVsBAVIHB10HAFdZDwhbXFZTBVA%3D1e97858c6d; http_tK_cache=4f720ab283ba7271c1bf0cec6c5e33eeaa0225b0; fof_passport=1073522%0918910388244%09u3960990407049; stat_passport=1073522%0918910388244%09u3960990407049; 402b4ee71bffd3d951fa58a1fc4dea34=055086ce51e3c8868f1828bdc7d4e237; master_common_token=%2B%2F5uJyldIuvv2vWQ1al4hC6X%2BS%2Fr5Shg%2BDNiYuaM16OwY9LjaOAMrMHXkHue3Umf98QuVA3pfwzzV9Z1RQqDGaP4C3nDeYLvNj8sYd8N35zm4NYPe7NaH5kiXRWwNxtx1An9f72Nvc4sIZOCfBMseZlox%2BBceibg4TvKZAkEYpvqq1gMAFcRV%2FaasM%2BfbpMA9F9H6FNzhXuR2b%2Bl9pM0Pk3S6aPltT%2F1SUbbCAN%2FAu4%3D; smppw_user_type=2; uc_login_stat=1
+
+
+GET http://192.168.0.22/fof/downdoc?fileid=169096083288837
+
+
+GET http://localhost:3002/fof/concat?base=SGD013&comb=SCW118
+
+
+POST https://ifof.cmschina.com/nfof/api/report/v1.0/data/sql/a8a4bc38-d172-4760-b95b-823b3cdf983a
+Content-Type: application/json
+Cookie:JSESSIONID=4b07bfd3-998f-4a0e-95ab-103c78325f33; sidebarStatus=1
+Authorization: 4b07bfd3-998f-4a0e-95ab-103c78325f33
+
+{"indexCode":"a8a4bc38-d172-4760-b95b-823b3cdf983a","startDate":"2010-01-01","endDate":"2024-08-12","fundCode":"SY9620","kpiCode":"000300","contrasCode":"000300,000905","_pageSize":9999,"_pageNum":1,"_pageFlag":true}

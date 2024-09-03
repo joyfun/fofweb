@@ -26,6 +26,7 @@
                 size="mini"
                 :mouse-config="{ selected: true }"
                 show-overflow
+                :area-config="{ autoClear: false }"
                 :data="compData1"
                 :edit-config="{
                   trigger: 'dblclick',
@@ -85,6 +86,7 @@
                 :align="allAlign"
                 size="mini"
                 :mouse-config="{ selected: true }"
+                :area-config="{ autoClear: false }"
                 show-overflow
                 :data="compData2"
                 :edit-config="{
@@ -139,6 +141,7 @@
                 :align="allAlign"
                 size="mini"
                 :mouse-config="{ selected: true }"
+                :area-config="{ autoClear: false }"
                 show-overflow
                 :data="compData21"
                 :edit-config="{
@@ -193,6 +196,7 @@
                 :align="allAlign"
                 size="mini"
                 :mouse-config="{ selected: true }"
+                :area-config="{ autoClear: false }"
                 show-overflow
                 :data="compData3"
                 :edit-config="{

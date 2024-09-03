@@ -965,7 +965,8 @@ const compForm = [
   { tilte: '城市', dataIndex: 'city' },
   { tilte: '成立时间', dataIndex: 'founded' },
   { tilte: '主策略', dataIndex: 'master_strategy', param: 'strategy' },
-  { tilte: '负责人', dataIndex: 'manager' },
+  { tilte: '接触状态', dataIndex: 'status', param: 'strategy' },
+  { tilte: '负责人', dataIndex: 'manager', param: 'corp_status' },
   { tilte: '管理规模', dataIndex: 'scale', param: 'mgt_scale' },
   { tilte: '渠道', dataIndex: 'channel' },
   { tilte: '市场经理', dataIndex: 'business_man' },
@@ -1378,7 +1379,7 @@ export default {
     Bus.$on('showProds', (arg) => {
       this.prodlist = arg['prodlist']
       this.prodVisible = true
-      this.canEdit = arg['canEidt']
+      this.canEdit = arg['canEdit']
       console.log('on监听参数====', arg) //['string',false,{name:'vue'}]
     })
     Bus.$on('showCompany', (arg) => {

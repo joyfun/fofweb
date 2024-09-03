@@ -1449,7 +1449,8 @@ export default {
         }),
         this.$axios.get('/fof/raterank', {
           params: {
-            type: this.type
+            type: this.type,
+            date: this.date
           }
         }) //axis后面的.get可以省略；
       ])

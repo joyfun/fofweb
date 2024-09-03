@@ -7,7 +7,7 @@
         <el-button size="small" @click="addInfo()">添加</el-button>
         <el-button size="small" @click="compare()">对比</el-button>
         <el-button size="small" @click="showcorr()">相关性</el-button>
-        <!-- <el-button size="small" @click="compare()">业绩对标</el-button> -->
+        <!-- <el-button size="small" @click="compare()">业绩对标</el-button> 
         <el-button
           v-if="usermenu.indexOf('rank-btn') > -1"
           size="small"
@@ -19,6 +19,12 @@
           size="small"
           @click="showSimulate()"
           >仿真</el-button
+        >-->
+        <el-button
+          v-if="usermenu.indexOf('info-edit') > -1"
+          @click="uploadValues()"
+          size="small"
+          >上传净值</el-button
         >
         <el-button
           v-if="usermenu.indexOf('info-edit') > -1"
@@ -1837,6 +1843,38 @@ export default {
           // document.getElementById('uploadButton').click()
         }
       )
+    },
+
+    uploadValues() {
+      VXETable.readFile({ multiple: true, types: ['xlsx'] }).then((file) => {
+        var formData = new FormData()
+        let fls = file.files
+        console.log(fls)
+        for (let idx = 0; idx < fls.length; idx++) {
+          formData.append('file[]', fls[idx])
+        }
+        formData.append('user', this.token)
+        this.$axios({
+          method: 'post',
+          url: '/fof/upValues', // 请求地址
+          data: formData, // 参数
+          responseType: 'json' // 表明返回服务器返回的数据类型
+        }).then((res) => {
+          console.log(res)
+          this.$alert(`${res.data.msg}`, '上传结果', {
+            confirmButtonText: '确定',
+            dangerouslyUseHTMLString: true
+            // callback: (action) => {
+            //   this.$message({
+            //     type: 'info',
+            //     message: `action: ${res.data.msg}`
+            //   })
+            // }
+          })
+        })
+
+        // document.getElementById('uploadButton').click()
+      })
     },
     uploadInvest(row) {
       VXETable.readFile({ multiple: false, types: ['xlsx'] }).then((file) => {

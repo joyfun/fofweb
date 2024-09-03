@@ -5,7 +5,7 @@ import router from '@/router'
 // 创建一个axios实例
 const instance  = axios.create({
     //请求超时配置
-    timeout:3000
+    timeout:120000
 })
 //添加请求拦截器
 instance .interceptors.request.use(

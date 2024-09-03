@@ -5,12 +5,12 @@
         class="mytable-style"
         border
         ref="rankTable"
-        height="auto"
         min-width="400"
         :max-height="tmaxh"
         align="right"
         size="mini"
         show-overflow
+        @filter-change="prodChange"
         :sort-config="{ trigger: 'cell', orders: ['desc', 'asc', null] }"
         :data="tableData"
       >
@@ -24,7 +24,8 @@
         >
           <template #header>
             基金名称
-            <vxe-button @click="exportEvent">导出.xlsx</vxe-button>
+            <vxe-button @click="exportEvent">导出</vxe-button>
+            <vxe-button @click="showHelp">?说明</vxe-button>
           </template>
 
           <template #default="{ row }">
@@ -59,7 +60,8 @@
           field="类型"
           title="类型"
           align="left"
-          :filters="[]"
+          :filters="clsfilters"
+          filter-change="prodChange"
           fixed="left"
         ></vxe-column>
         <vxe-column
@@ -79,6 +81,12 @@
         ></vxe-column>
         <vxe-column
           sortable
+          field="净值日期"
+          title="净值日期"
+          align="right"
+        ></vxe-column>
+        <vxe-column
+          sortable
           :key="key"
           :field="key"
           :title="key"
@@ -89,9 +97,9 @@
             '当年收益',
             '近6月收益',
             '近12月收益',
+            '2023',
             '2022',
-            '2021',
-            '2020'
+            '2021'
           ]"
         >
           <template #default="{ row }">
@@ -240,6 +248,30 @@ export default {
     }
   },
   methods: {
+    prodChange() {
+      console.log(this.$refs.rankTable.afterFullData)
+      this.$nextTick(() => {
+        let tdata = this.$refs.rankTable.tableData
+          .map((row) => row.code)
+          .join(',')
+        Bus.$emit('chartFilter', { 'ncode': tdata })
+      })
+    },
+    showHelp() {
+      // Bus.$emit('showChart', {
+      //   cur_code:
+      //     'http://192.168.0.21:4999/web/#/p/8f5ce9a1813e060d275b1fb454c227cd',
+      //   diagName: 'iframe'
+      // })
+      window.open(
+        'http://192.168.0.21:4999/web/#/p/8f5ce9a1813e060d275b1fb454c227cd'
+      )
+    },
+    // showHelp() {
+    //   window.open(
+    //     'http://192.168.0.21:4999/web/#/p/8f5ce9a1813e060d275b1fb454c227cd'
+    //   )
+    // },
     exportEvent() {
       const header = XLSX.utils.table_to_sheet(
         this.$refs.rankTable.$el.querySelector(
@@ -296,6 +328,7 @@ export default {
             this.$refs.rankTable.getColumnByField('类型'),
             this.clsfilters
           )
+          console.log(this.clsfilters)
           if (this.showDrop) {
             this.$axios({
               url: '/fof/recentDrop',

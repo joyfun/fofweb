@@ -101,11 +101,17 @@
         show-overflow-tooltip
       >
       </el-table-column>
-      <el-table-column label="阶段" sortable prop="stage" show-overflow-tooltip>
+      <el-table-column
+        label="阶段"
+        sortable
+        prop="pre_stage"
+        show-overflow-tooltip
+      >
       </el-table-column>
 
       <el-table-column
         label="最新净值"
+        width="96"
         sortable
         prop="latest_date"
         show-overflow-tooltip

@@ -39,7 +39,28 @@
           >{{ item }}</el-radio-button
         >
       </el-radio-group>
+      <!-- <el-radio-group v-model="wk" size="small">
+        <el-radio-button type="primary" key="1" label="1" icon="el-icon-edit">
+          周
+        </el-radio-button>
+        <el-radio-button type="primary" key="0" label="0" icon="el-icon-edit">
+          日
+        </el-radio-button>
+      </el-radio-group> -->
       <el-button @click="downPDF('echartdiv')">保存图表</el-button>
+      <el-radio-group v-model="source" size="small" v-show="orig">
+        <el-radio-button
+          type="primary"
+          :key="i"
+          :label="item"
+          icon="el-icon-edit"
+          v-for="(item, i) in sources"
+          >{{ item }}</el-radio-button
+        >
+      </el-radio-group>
+
+      <!-- <el-radio v-model="showall" label="false">周度</el-radio>
+      <el-radio v-model="showall" label="true">所有</el-radio> -->
     </div>
     <div style="height: 420px" ref="echart">
       <!-- <el-button-group>
@@ -127,8 +148,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sysparam', 'token', 'days']),
-
+    ...mapGetters(['sysparam', 'token', 'days', 'sources', 'usermenu']),
+    show_invest: {
+      get() {
+        return this.usermenu.indexOf('holding-info') > -1
+      }
+    },
     collen: {
       get() {
         return this.raw_data['columns'].length
@@ -141,6 +166,14 @@ export default {
       set() {
         this.close()
       }
+    },
+    nwk: {
+      get() {
+        return this.visable
+      }
+      // set() {
+      //   this.close()
+      // }
     },
     options() {
       return this.isAxisChart ? this.axisOption : this.normalOption
@@ -240,6 +273,8 @@ export default {
       lowest: 0.9,
       startdate: '',
       range: 6,
+      source: '',
+      showall: false,
       selseries: [],
       showdrop: false,
       tags: [
@@ -973,7 +1008,9 @@ export default {
                   }
                   if (ac.stage == '已投' && invest == null) {
                     invest = point
-                    mp.data.push(point)
+                    if (this.show_invest) {
+                      mp.data.push(point)
+                    }
                   }
                   if (ac.stage == '已赎') {
                     redeem = point
@@ -1003,7 +1040,7 @@ export default {
                   }
                 }
               }
-              if (redeem) {
+              if (redeem && this.show_invest) {
                 mp.data.push(redeem)
                 // actionpts.push(redeem)
               }
@@ -1548,6 +1585,27 @@ export default {
         if (arr[i] >= vady && i > 0) return i
       }
     },
+    changeSource() {
+      this.$confirm(`确认切换成${this.source}？`)
+        .then((_) => {
+          console.log(`${this.code}切换成${this.source}`)
+          this.$axios({
+            method: 'post',
+            url: '/fof/update_source', // 请求地址
+            data: { code: this.code, source: this.source }, // 参数
+            responseType: 'json' // 表明返回服务器返回的数据类型
+          })
+            .then((response) => {
+              this.source = ''
+              // this.resizeChart()
+              //this.tableData = this.totaltableData;
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        })
+        .catch((_) => {})
+    },
     initChartData() {
       if (this.isAxisChart) {
         this.axisOption.xAxis.data = this.chartData.xData
@@ -1557,7 +1615,7 @@ export default {
       }
     },
     resizeChart() {
-      if (this.$refs.echartdiv.clientHeight) {
+      if (this.$refs.echartdiv && this.$refs.echartdiv.clientHeight) {
         this.echart ? this.echart.resize() : ''
       }
     }

@@ -1,0 +1,47 @@
+POST https://fof.simuwang.com/FollowPool/getPoolData
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6
+cache-control: no-cache
+cookie: sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221740344%22%2C%22first_id%22%3A%221740344%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217e46cddcf628f-0d0ca7dce42e37-7f697c63-2304000-17e46cddcf788b%22%7D; relogin_from_54=1; rz_rem_u_p=72QpVygYdtM%3D%244s9EdbOO%2Bhwrz9c3Awzq6g%3D%3D; evaluation_result=5; collect=%7B%22count%22%3A1%2C%22time%22%3A1710294866873%7D; certification=1; qualified_investor=1; focus-certification-pop=-1; acw_tc=2f6a1fa117110692624225762e522d194f0a02954faea1bcd316bb5b12d58d; PHPSESSID=f6g1nkb19m6g9r4ad12gvcfsv5; rem_username=1; 9d46d29a2c7821f5444536df9e761393=18618151735%2C347e13984223543724a4b3eaba849e8d%2Ce90bf0f454eecee34247e02bc5333360dcb0d926a%2C2%2Cmaster; 49f290d6e8459c53f31f97de37921086=r32m2IB6da2xd6WrhqunmYbOp2yZsqeYsaF8YsdpvN62pqvVjYl9bcet06yGuNHMhrieZ4OMn9ywjHdksbG7zrFsspeCeqOfx3qqrpyXxtmc0YiehWhsm8iJb24; passport=954177%09u6759946098887%09BVVVBgZSDlkMVFFRAAYAVAIBVwxbUlEDV1JeA1tVAFc%3Daafbe90c82; http_tK_cache=e90bf0f454eecee34247e02bc5333360dcb0d926a; fof_passport=954177%0918618151735%09u6759946098887; stat_passport=954177%0918618151735%09u6759946098887; 16b7c3773192552360ceb6d6e374c541=590d530a71ceff15455cf8942bf1f75b; master_common_token=aWmwS3tUIa%2FMCWXRCMAsv8jYCx6mxxlZslVnx3vvlQNUDfgM7iWAjxKCKmzJCWbSkQuUI9c%2B%2FydXpgTfrlTV9JF7BrGjjRUL8lWKqxSa5lOlL0Wc%2Bg1IhaD4DWrdm45ZZF74yu3I3nW90OMIL1iw8ZGhcZl32Q76JgzQxfzdleBZ9uf3M2AiTqzDyUmuOQKbnjrSBGE6%2BpXBXh6CbDve7E3S6aPltT%2F1SUbbCAN%2FAu4%3D; smppw_user_type=2; uc_login_stat=1
+
+{"type":1,"poolId":"24580","conditionStyle":true,"keyword":"","filter":{"fundTypes":["whole"],"productResponsible":["whole"],"strategies":["whole","Private","1001","100101","10010101","10010102","100102","10010201","10010202","10010203","10010204","10010205","100103","100104","1002","100201","100202","100203","100204","1003","100301","10030101","10030102","10030103","100302","10030201","10030202","10030203","100303","100304","1004","100401","100402","100403","1005","100501","100502","-1","Public","106","10601","101","10101","10102","10103","102","10201","10202","10203","103","10301","10302","10303","104","10401","10402","105","10501","107","10701","10702","10703","108","10801","10802","10803","-100","-10000"],"isSection":"union","tags":{"operation":"union","values":["whole"]},"trustName":"","fundChildType":[]},"source":"Private","template_id":"15601","display":["listStatistics"],"benchmarkType":"rz_strategy"}
+
+
+POST https://fof.simuwang.com/FollowPool/importConcernFile
+
+type: 1
+poolId: 24702
+file: (binary)
+
+
+
+{
+    "status": 1,
+    "data": {
+        "error": [],
+        "success": [
+            {
+                "fundName": "\u601d\u7a33\u534e\u9053\u4e94\u5341\u4e5d\u53f7\u79c1\u52df\u8bc1\u5238\u6295\u8d44\u57fa\u91d1",
+                "registerNumber": "SCW118",
+                "strategyName": null,
+                "fundId": "HF00004PH4",
+                "fundShortName": "\u601d\u7a33\u534e\u9053\u4e94\u5341\u4e5d\u53f7"
+            },
+            {
+                "fundName": "\u805a\u5bbd\u4e00\u53f7\u79c1\u52df\u8bc1\u5238\u6295\u8d44\u57fa\u91d1",
+                "registerNumber": "SCV634",
+                "strategyName": null,
+                "fundId": "HF00004MF8",
+                "fundShortName": "\u805a\u5bbd\u4e00\u53f7"
+            }
+        ]
+    }
+}
+
+
+POST https://fof.simuwang.com/FollowPool/saveConcern
+
+{"type":"1","poolId":"24702","fundId":["HF00004PH4","HF00004MF8"],"fundList":{"HF00004PH4":null,"HF00004MF8":null}}
+
+

@@ -996,8 +996,12 @@ export default {
             })
             .then((response) => {
               this.avgcnt = response.data
+              console.log(response.data)
               for (let k in this.avgcnt) {
-                this.avgcnt[k] = parseInt(this.avgcnt[k])
+                if (k) {
+                  console.log(k)
+                  this.avgcnt[k] = parseInt(this.avgcnt[k])
+                }
               }
             })
           if (this.type == '高费率') {

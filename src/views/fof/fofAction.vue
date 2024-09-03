@@ -27,7 +27,10 @@
         <el-button type="primary" @click="sendmail">发送邮件</el-button>
         <el-button type="primary" @click="fetchmail">收取邮件</el-button>
         <el-button type="primary" @click="calcWeekly">排名计算</el-button>
-        <el-button type="primary" @click="testAction">测试事件</el-button>
+        <el-button type="primary" @click="testAction" v-preventReClick
+          >测试事件</el-button
+        >
+        <!-- <vxe-button @click="testAction" v-preventReClick>保存净值</vxe-button> -->
       </el-col>
     </el-row>
 
@@ -193,13 +196,18 @@ export default {
       })
     },
     testAction() {
-      this.$axios({
-        url: '/sys/protected',
-        // data: { 'code': 'fetchmail' }, //
-        method: 'GET'
-      }).then((response) => {
-        console.log(response.data)
+      console.log('button click')
+      this.$message({
+        type: 'info',
+        message: '按键点击'
       })
+      // this.$axios({
+      //   url: '/sys/protected',
+      //   // data: { 'code': 'fetchmail' }, //
+      //   method: 'GET'
+      // }).then((response) => {
+      //   console.log(response.data)
+      // })
     }
   }
 }

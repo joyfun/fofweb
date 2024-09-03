@@ -62,6 +62,11 @@
       <vxe-column field="rank_type" width="80" sortable title="排名">
       </vxe-column>
       <vxe-column field="scale" width="80" sortable title="状态"> </vxe-column>
+      <vxe-column field="create_time" width="80" sortable title="添加日期">
+        <template #default="{ row }">
+          {{ $tools.showDate(row.create_time) }}
+        </template>
+      </vxe-column>
       <vxe-column field="start_date" width="80" sortable title="开始日期">
       </vxe-column>
       <vxe-column field="latest_date" width="80" sortable title="结束日期">
