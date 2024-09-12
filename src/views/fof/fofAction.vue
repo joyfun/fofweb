@@ -21,16 +21,18 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col span="12">
+      <el-col span="24">
         <el-button type="primary" @click="doaction">刷新最新净值</el-button>
         <el-button type="primary" @click="updateparam">刷新参数</el-button>
         <el-button type="primary" @click="sendmail">发送邮件</el-button>
         <el-button type="primary" @click="fetchmail">收取邮件</el-button>
         <el-button type="primary" @click="calcWeekly">排名计算</el-button>
-        <el-button type="primary" @click="testAction" v-preventReClick
+        <el-button type="primary" @click="crawlHfnAll">爬火富牛</el-button>
+
+        <!--<el-button type="primary" @click="testAction" v-preventReClick
           >测试事件</el-button
         >
-        <!-- <vxe-button @click="testAction" v-preventReClick>保存净值</vxe-button> -->
+        <vxe-button @click="testAction" v-preventReClick>保存净值</vxe-button> -->
       </el-col>
     </el-row>
 
@@ -177,10 +179,10 @@ export default {
         console.log(response.data)
       })
     },
-    fetchmail() {
+    crawlHfnAll() {
       this.$axios({
         url: '/fof/action',
-        data: { 'code': 'fetchmail', 'user': this.token }, //
+        data: { 'code': 'crawlHfnAll', 'user': this.token }, //
         method: 'POST'
       }).then((response) => {
         console.log(response.data)

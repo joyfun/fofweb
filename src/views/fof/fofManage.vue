@@ -4,7 +4,7 @@
       <div style="display: flex; justify-content: space-between">
         <!-- <el-button  size="small" @click="delSelection()">删除</el-button> -->
         <el-button size="small" @click="toggleSelection()">取消选择</el-button>
-        <el-button size="small" @click="addInfo()">添加</el-button>
+        <!-- <el-button size="small" @click="addInfo()">添加</el-button> -->
         <el-button size="small" @click="compare()">对比</el-button>
         <el-button size="small" @click="showcorr()">相关性</el-button>
         <!-- <el-button size="small" @click="compare()">业绩对标</el-button> 
@@ -1742,6 +1742,7 @@ export default {
         }
         if (
           this.current.type.length < 2 ||
+          this.current.type == 'HuoFuNiu' ||
           (this.current.type.length > 2 && this.current[this.current.type])
         ) {
           if ('已投' != this.current.stage || '已赎' != this.current.stage) {
